@@ -9,6 +9,7 @@ import { ShippingService } from '../../services/shipping.service';
 import { WalletService } from '../../services/wallet.service';
 import { NotificationService } from '../../services/notification.service';
 import { Customer, CustomerProfileDto, CustomerSearchDto, Governorate, Order, Product, SalesPlatform, ShippingCompany, Wallet } from '../../models/models';
+import { CustomDropdownComponent, DropdownOption } from '../shared/custom-dropdown/custom-dropdown.component';
 
 interface OrderItemRow {
   productId: number;
@@ -19,7 +20,7 @@ interface OrderItemRow {
 @Component({
   selector: 'app-create-order',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, CustomDropdownComponent],
   templateUrl: './create-order.component.html'
 })
 export class CreateOrderComponent implements OnInit {
@@ -125,6 +126,28 @@ export class CreateOrderComponent implements OnInit {
       const merchantProds = allProds.filter(p => !p.isFulfillment && !p.code?.startsWith('BO-') && !p.code?.startsWith('BST-'));
       return merchantProds.length > 0 ? merchantProds : allProds;
     }
+  }
+
+  getProductDropdownOptions(): DropdownOption[] {
+    return this.getFilteredProducts().map(p => ({
+      value: p.id,
+      label: p.name,
+      sublabel: `المتاح: ${p.stockQuantity} قطعة | السعر: ${p.sellingPrice} ج.م`,
+      icon: p.isFulfillment || p.code?.startsWith('BO-') || p.code?.startsWith('BST-') ? 'fa-solid fa-bolt text-amber-400' : 'fa-solid fa-house-user text-sky-400',
+      badge: p.isFulfillment || p.code?.startsWith('BO-') || p.code?.startsWith('BST-') ? 'بوسطة' : 'المخزن'
+    }));
+  }
+
+  onProductCustomSelect(rowIndex: number, selectedId: number): void {
+    if (this.selectedItems[rowIndex]) {
+      this.selectedItems[rowIndex].productId = Number(selectedId) || 0;
+      this.onProductSelect(rowIndex);
+    }
+  }
+
+  getCleanShippingCompanyName(comp: ShippingCompany): string {
+    if (!comp?.name) return '';
+    return comp.name.replace(/\(.*\)/g, '').trim();
   }
 
   loadLookups(): void {

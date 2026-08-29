@@ -51,99 +51,102 @@
   <form (ngSubmit)="submitOrder()">
 
     <!-- ============ STEP 1: CUSTOMER & DELIVERY ============ -->
-    <div *ngIf="currentStep === 1" class="glass-card p-4 sm:p-6 space-y-5 border-slate-700/80 shadow-md fade-in">
+    <div *ngIf="currentStep === 1" class="glass-card p-3 sm:p-4 space-y-2.5 border-slate-700/80 shadow-md fade-in">
 
-      <h3 class="font-bold text-sm text-slate-100 flex items-center gap-1.5">
+      <h3 class="font-bold text-xs sm:text-sm text-slate-100 flex items-center gap-1.5 border-b border-slate-700/50 pb-1.5">
         <i class="fa-solid fa-user text-indigo-400 text-xs"></i>
-        <span>بيانات العميل والتوصيل</span>
+        <span>1. بيانات العميل والتوصيل</span>
       </h3>
 
       <!-- Mode toggle -->
-      <div class="grid grid-cols-2 gap-1 p-1 bg-slate-800/40 rounded-xl border border-slate-700/60">
-        <button type="button" (click)="setCustomerMode(true)" [class.btn-primary]="isNewCustomer" [class.btn-secondary]="!isNewCustomer" class="btn btn-xs py-2 text-xs font-bold justify-center rounded-lg flex items-center gap-1.5">
-          <i class="fa-solid fa-user-plus text-[10px]"></i>
+      <div class="grid grid-cols-2 gap-1 p-0.5 bg-slate-800/40 rounded-xl border border-slate-700/60">
+        <button type="button" (click)="setCustomerMode(true)" [class.btn-primary]="isNewCustomer" [class.btn-secondary]="!isNewCustomer" class="btn btn-xs py-1 text-[11px] font-bold justify-center rounded-lg flex items-center gap-1">
+          <i class="fa-solid fa-user-plus text-[9px]"></i>
           <span>عميل جديد</span>
         </button>
-        <button type="button" (click)="setCustomerMode(false)" [class.btn-primary]="!isNewCustomer" [class.btn-secondary]="isNewCustomer" class="btn btn-xs py-2 text-xs font-bold justify-center rounded-lg flex items-center gap-1.5">
-          <i class="fa-solid fa-user-check text-[10px]"></i>
+        <button type="button" (click)="setCustomerMode(false)" [class.btn-primary]="!isNewCustomer" [class.btn-secondary]="isNewCustomer" class="btn btn-xs py-1 text-[11px] font-bold justify-center rounded-lg flex items-center gap-1">
+          <i class="fa-solid fa-user-check text-[9px]"></i>
           <span>عميل مسجل</span>
         </button>
       </div>
 
       <!-- ===== Mode A: New customer ===== -->
-      <div *ngIf="isNewCustomer" class="space-y-4">
+      <div *ngIf="isNewCustomer" class="space-y-2">
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <!-- Name & Main Phone Side-By-Side -->
+        <div class="grid grid-cols-2 gap-2">
           <div class="form-group mb-0">
-            <label class="form-label text-[11px] mb-1">اسم العميل بالكامل</label>
-            <input type="text" [(ngModel)]="newCustomer.name" name="custName" class="form-control text-xs py-2 px-3" placeholder="اسم العميل الرباعي" required />
+            <label class="form-label text-[10px] mb-0.5">اسم العميل بالكامل</label>
+            <input type="text" [(ngModel)]="newCustomer.name" name="custName" class="form-control text-xs py-1 px-2.5 h-8" placeholder="الاسم الرباعي" required />
           </div>
           <div class="form-group mb-0">
-            <label class="form-label text-[11px] mb-1">رقم الهاتف الأساسي</label>
-            <input type="text" [(ngModel)]="newCustomer.phone" (input)="onNewCustomerPhoneInput(newCustomer.phone)" name="custPhone" class="form-control text-xs py-2 px-3" placeholder="01xxxxxxxxx" required />
+            <label class="form-label text-[10px] mb-0.5">رقم الهاتف الأساسي</label>
+            <input type="text" [(ngModel)]="newCustomer.phone" (input)="onNewCustomerPhoneInput(newCustomer.phone)" name="custPhone" class="form-control text-xs py-1 px-2.5 h-8 font-mono" placeholder="01xxxxxxxxx" required />
           </div>
         </div>
 
         <!-- Existing customer alert -->
-        <div *ngIf="existingPhoneMatch" class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/40 space-y-2 fade-in">
-          <div class="flex items-start gap-2 text-amber-200">
+        <div *ngIf="existingPhoneMatch" class="p-2 rounded-xl bg-amber-500/10 border border-amber-500/40 space-y-1.5 fade-in">
+          <div class="flex items-start gap-1.5 text-amber-200">
             <i class="fa-solid fa-triangle-exclamation text-amber-400 text-xs mt-0.5"></i>
-            <span class="text-[11px] font-bold leading-snug">هذا الرقم مسجل بالفعل باسم "{{ existingPhoneMatch.name }}" — نسبة تسليم {{ existingPhoneMatch.deliverySuccessRate }}%</span>
+            <span class="text-[10px] font-bold leading-snug">الرقم مسجل باسم "{{ existingPhoneMatch.name }}" (تسليم {{ existingPhoneMatch.deliverySuccessRate }}%)</span>
           </div>
-          <div class="flex flex-wrap items-center gap-2">
-            <button type="button" (click)="useExistingCustomerMatch(existingPhoneMatch)" class="btn btn-xs py-1 px-2.5 font-bold bg-amber-500 hover:bg-amber-400 border-none text-slate-950 rounded-lg">
+          <div class="flex items-center gap-1.5">
+            <button type="button" (click)="useExistingCustomerMatch(existingPhoneMatch)" class="btn btn-xs py-0.5 px-2 text-[10px] font-bold bg-amber-500 hover:bg-amber-400 border-none text-slate-950 rounded-md">
               <i class="fa-solid fa-bolt text-[9px]"></i>
-              <span>استخدام هذا العميل</span>
+              <span>استخدام العميل</span>
             </button>
-            <button type="button" (click)="openCustomerHistoryModal(existingPhoneMatch.id)" class="btn btn-secondary btn-xs py-1 px-2.5 text-sky-300 font-bold border-sky-500/30 rounded-lg">
+            <button type="button" (click)="openCustomerHistoryModal(existingPhoneMatch.id)" class="btn btn-secondary btn-xs py-0.5 px-2 text-sky-300 text-[10px] font-bold border-sky-500/30 rounded-md">
               <i class="fa-solid fa-clock-rotate-left text-[9px]"></i>
               <span>سجل الطلبات ({{ existingPhoneMatch.totalOrders }})</span>
             </button>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <!-- Secondary Phone & Governorate Side-By-Side -->
+        <div class="grid grid-cols-2 gap-2">
           <div class="form-group mb-0">
-            <label class="form-label text-[11px] mb-1">رقم هاتف بديل <span class="text-slate-500 font-normal">(اختياري)</span></label>
-            <input type="text" [(ngModel)]="newCustomer.secondaryPhone" name="custSecPhone" class="form-control text-xs py-2 px-3" placeholder="رقم آخر إن وجد" />
+            <label class="form-label text-[10px] mb-0.5">هاتف بديل <span class="text-slate-500 font-normal">(اختياري)</span></label>
+            <input type="text" [(ngModel)]="newCustomer.secondaryPhone" name="custSecPhone" class="form-control text-xs py-1 px-2.5 h-8 font-mono" placeholder="رقم آخر" />
           </div>
           <div class="form-group mb-0">
-            <label class="form-label text-[11px] mb-1">المحافظة</label>
-            <select [(ngModel)]="newCustomer.governorateId" (ngModelChange)="onGovernorateChange()" name="custGov" class="form-select text-xs py-2 px-3" required>
-              <option [ngValue]="0" disabled>-- اختر المحافظة --</option>
+            <label class="form-label text-[10px] mb-0.5">المحافظة</label>
+            <select [(ngModel)]="newCustomer.governorateId" (ngModelChange)="onGovernorateChange()" name="custGov" class="form-select text-xs py-1 px-2 h-8" required>
+              <option [ngValue]="0" disabled>-- المحافظة --</option>
               <option *ngFor="let gov of governorates()" [ngValue]="gov.id">{{ gov.name }}</option>
             </select>
           </div>
         </div>
 
+        <!-- Address -->
         <div class="form-group mb-0">
-          <label class="form-label text-[11px] mb-1">العنوان التفصيلي للشحن</label>
-          <textarea [(ngModel)]="newCustomer.address" name="custAddress" class="form-textarea text-xs py-2 px-3" rows="2" placeholder="الشارع، رقم العمارة، الشقة، العلامة المميزة" required></textarea>
+          <label class="form-label text-[10px] mb-0.5">العنوان التفصيلي للشحن</label>
+          <textarea [(ngModel)]="newCustomer.address" name="custAddress" class="form-textarea text-xs py-1 px-2.5" rows="2" placeholder="الشارع، رقم العمارة، الشقة، العلامة المميزة..." required></textarea>
         </div>
       </div>
 
       <!-- ===== Mode B: Existing customer ===== -->
-      <div *ngIf="!isNewCustomer" class="space-y-4">
+      <div *ngIf="!isNewCustomer" class="space-y-2">
 
         <div class="form-group relative mb-0">
-          <label class="form-label text-[11px] font-bold flex items-center justify-between mb-1">
+          <label class="form-label text-[10px] font-bold flex items-center justify-between mb-0.5">
             <span>بحث بالاسم أو رقم الموبايل</span>
-            <span *ngIf="selectedCustomerSearchDto" class="text-[10px] text-emerald-400 font-bold flex items-center gap-1">
+            <span *ngIf="selectedCustomerSearchDto" class="text-[9px] text-emerald-400 font-bold flex items-center gap-1">
               <i class="fa-solid fa-circle-check"></i> تم الاختيار
             </span>
           </label>
 
           <div class="relative">
-            <i class="fa-solid fa-magnifying-glass absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-            <input type="text" [(ngModel)]="searchQuery" (input)="onCustomerSearchInput(searchQuery)" name="customerSearch" class="form-control text-xs py-2 pr-8 pl-16" placeholder="اكتب اسم العميل أو الموبايل للبحث الفوري..." />
-            <button *ngIf="searchQuery" type="button" (click)="clearCustomerSearch()" class="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] btn btn-secondary py-1 px-2 rounded-md">تفريغ</button>
+            <i class="fa-solid fa-magnifying-glass absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+            <input type="text" [(ngModel)]="searchQuery" (input)="onCustomerSearchInput(searchQuery)" name="customerSearch" class="form-control text-xs py-1 pr-7 pl-14 h-8" placeholder="ابحث باسم العميل أو الموبايل..." />
+            <button *ngIf="searchQuery" type="button" (click)="clearCustomerSearch()" class="absolute left-1.5 top-1/2 -translate-y-1/2 text-[9px] btn btn-secondary py-0.5 px-1.5 rounded">تفريغ</button>
           </div>
 
           <!-- Autocomplete dropdown -->
-          <div *ngIf="searchResults().length > 0" class="absolute z-50 left-0 right-0 top-full mt-1 bg-white text-slate-800 rounded-xl shadow-2xl border border-slate-200 overflow-hidden divide-y divide-slate-100 max-h-56 overflow-y-auto">
-            <div *ngFor="let res of searchResults()" (click)="selectCustomerFromSearch(res)" class="p-2.5 hover:bg-sky-50 cursor-pointer flex items-center justify-between gap-2 transition-colors">
+          <div *ngIf="searchResults().length > 0" class="absolute z-50 left-0 right-0 top-full mt-1 bg-white text-slate-800 rounded-xl shadow-2xl border border-slate-200 overflow-hidden divide-y divide-slate-100 max-h-52 overflow-y-auto">
+            <div *ngFor="let res of searchResults()" (click)="selectCustomerFromSearch(res)" class="p-2 hover:bg-sky-50 cursor-pointer flex items-center justify-between gap-2 transition-colors">
               <div class="min-w-0">
-                <div class="font-bold text-slate-900 text-xs flex items-center gap-1.5">
+                <div class="font-bold text-slate-900 text-xs flex items-center gap-1">
                   <span class="truncate">{{ res.name }}</span>
                   <span *ngIf="res.isBlacklisted" class="badge badge-cancelled text-[8px] shrink-0">قائمة سوداء</span>
                 </div>
@@ -152,7 +155,7 @@
                   <span>• {{ res.governorateName }}</span>
                 </div>
               </div>
-              <span class="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold"
+              <span class="shrink-0 inline-flex items-center gap-1 px-1.5 py-0.2 rounded-full text-[9px] font-bold"
                     [ngClass]="res.deliverySuccessRate >= 80 ? 'bg-emerald-100 text-emerald-800' : (res.deliverySuccessRate >= 50 ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-800')">
                 {{ res.deliverySuccessRate }}%
               </span>
@@ -162,8 +165,8 @@
 
         <!-- Fallback select -->
         <div class="form-group mb-0">
-          <label class="form-label text-[10px] text-slate-500 mb-1">أو اختر مباشرة من القائمة</label>
-          <select [(ngModel)]="selectedCustomerId" (ngModelChange)="onCustomerChange()" name="selectedCustomerId" class="form-select text-xs py-2 px-3">
+          <label class="form-label text-[9px] text-slate-500 mb-0.5">أو اختر من قائمة العملاء المسجلين:</label>
+          <select [(ngModel)]="selectedCustomerId" (ngModelChange)="onCustomerChange()" name="selectedCustomerId" class="form-select text-xs py-1 px-2 h-8">
             <option [ngValue]="null">-- اختر عميل --</option>
             <option *ngFor="let cust of customers()" [ngValue]="cust.id">
               {{ cust.name }} - {{ cust.phone }} ({{ cust.governorateName }})
@@ -172,47 +175,28 @@
         </div>
 
         <!-- Selected customer card -->
-        <div *ngIf="selectedCustomerSearchDto" class="p-3 rounded-xl bg-slate-800/40 border border-slate-700/60 space-y-3 fade-in">
-          <div class="flex items-center justify-between gap-2">
-            <div class="flex items-center gap-2 min-w-0">
-              <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-300 flex items-center justify-center text-xs shrink-0">
+        <div *ngIf="selectedCustomerSearchDto" class="p-2 rounded-xl bg-slate-800/40 border border-slate-700/60 space-y-1.5 fade-in">
+          <div class="flex items-center justify-between gap-1.5">
+            <div class="flex items-center gap-1.5 min-w-0">
+              <div class="w-7 h-7 rounded-lg bg-indigo-500/20 text-indigo-300 flex items-center justify-center text-xs shrink-0">
                 <i class="fa-solid fa-user-check"></i>
               </div>
               <div class="min-w-0">
                 <h4 class="font-extrabold text-xs text-slate-100 truncate">{{ selectedCustomerSearchDto.name }}</h4>
-                <p class="text-[10px] text-slate-400 truncate">{{ selectedCustomerSearchDto.phone }} · {{ selectedCustomerSearchDto.governorateName }} · {{ selectedCustomerSearchDto.address }}</p>
+                <p class="text-[9px] text-slate-400 truncate">{{ selectedCustomerSearchDto.phone }} · {{ selectedCustomerSearchDto.governorateName }}</p>
               </div>
             </div>
-            <button type="button" (click)="openCustomerHistoryModal(selectedCustomerSearchDto.id)" class="btn btn-secondary btn-xs py-1 px-2.5 text-sky-400 font-bold border-sky-500/30 shrink-0 text-[10px] rounded-lg">
-              <i class="fa-solid fa-clock-rotate-left text-[9px]"></i>
+            <button type="button" (click)="openCustomerHistoryModal(selectedCustomerSearchDto.id)" class="btn btn-secondary btn-xs py-0.5 px-2 text-sky-400 font-bold border-sky-500/30 shrink-0 text-[9px] rounded-md">
+              <i class="fa-solid fa-clock-rotate-left text-[8px]"></i>
               <span>السجل ({{ selectedCustomerSearchDto.totalOrders }})</span>
             </button>
-          </div>
-
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs pt-2 border-t border-slate-700/50">
-            <div class="text-center">
-              <span class="text-slate-400 text-[9px] block mb-0.5">إجمالي الطلبات</span>
-              <span class="font-bold text-slate-100 text-xs">{{ selectedCustomerSearchDto.totalOrders }}</span>
-            </div>
-            <div class="text-center">
-              <span class="text-emerald-400 text-[9px] block mb-0.5">مسلمة</span>
-              <span class="font-bold text-emerald-400 text-xs">{{ selectedCustomerSearchDto.deliveredOrders }}</span>
-            </div>
-            <div class="text-center">
-              <span class="text-rose-400 text-[9px] block mb-0.5">ملغاة/مرتجعة</span>
-              <span class="font-bold text-rose-400 text-xs">{{ selectedCustomerSearchDto.cancelledOrders + selectedCustomerSearchDto.returnedOrders }}</span>
-            </div>
-            <div class="text-center">
-              <span class="text-sky-400 text-[9px] block mb-0.5">نسبة التسليم</span>
-              <span class="font-black text-sky-300 text-xs">{{ selectedCustomerSearchDto.deliverySuccessRate }}%</span>
-            </div>
           </div>
         </div>
       </div>
 
       <!-- Nav -->
-      <div class="flex justify-end pt-3 border-t border-slate-700/50">
-        <button type="button" (click)="nextStep()" class="btn btn-primary py-2 px-5 font-bold text-xs flex items-center gap-1.5 shadow-xs rounded-lg">
+      <div class="flex justify-end pt-2 border-t border-slate-700/50">
+        <button type="button" (click)="nextStep()" class="btn btn-primary py-1.5 px-4 font-bold text-xs flex items-center gap-1 shadow-xs rounded-lg">
           <span>الخطوة التالية</span>
           <i class="fa-solid fa-arrow-left text-[10px]"></i>
         </button>
@@ -220,144 +204,140 @@
     </div>
 
     <!-- ============ STEP 2: SHIPPING & PRODUCTS ============ -->
-    <div *ngIf="currentStep === 2" class="glass-card p-4 sm:p-6 space-y-5 border-slate-700/80 shadow-md fade-in">
+    <div *ngIf="currentStep === 2" class="glass-card p-3 sm:p-4 space-y-3 border-slate-700/80 shadow-md fade-in">
 
-      <h3 class="font-bold text-sm text-slate-100 flex items-center gap-1.5">
+      <h3 class="font-bold text-xs sm:text-sm text-slate-100 flex items-center gap-1.5 border-b border-slate-700/50 pb-1.5">
         <i class="fa-solid fa-truck-fast text-sky-400 text-xs"></i>
-        <span>شركة الشحن والمنتجات</span>
+        <span>2. شركة الشحن والمنتجات</span>
       </h3>
 
-      <!-- Shipping company / platform -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <!-- Shipping Company & Sales Platform SIDE-BY-SIDE in 1 compact row -->
+      <div class="grid grid-cols-2 gap-2">
         <div class="form-group mb-0">
-          <label class="form-label text-[11px] mb-1">شركة الشحن</label>
-          <select [(ngModel)]="selectedShippingCompanyId" (ngModelChange)="onShippingCompanyChange()" name="shippingCompany" class="form-select text-xs py-2 px-3" required>
+          <label class="form-label text-[10px] mb-0.5">شركة الشحن</label>
+          <select [(ngModel)]="selectedShippingCompanyId" (ngModelChange)="onShippingCompanyChange()" name="shippingCompany" class="form-select text-xs py-1 px-2 h-8" required>
             <option [ngValue]="0" disabled>-- اختر شركة الشحن --</option>
-            <option *ngFor="let comp of shippingCompanies()" [ngValue]="comp.id">{{ comp.name }} ({{ comp.phone }})</option>
+            <option *ngFor="let comp of shippingCompanies()" [ngValue]="comp.id">{{ getCleanShippingCompanyName(comp) }}</option>
           </select>
         </div>
 
         <div class="form-group mb-0">
-          <div class="flex items-center justify-between mb-1">
-            <label class="form-label text-[11px] mb-0">منصة البيع / الصفحة</label>
-            <button type="button" (click)="showPlatformModal = true" class="text-[10px] text-sky-400 hover:text-sky-300 font-bold flex items-center gap-0.5">
-              <i class="fa-solid fa-circle-plus"></i> إضافة منصة
+          <div class="flex items-center justify-between mb-0.5">
+            <label class="form-label text-[10px] mb-0">منصة البيع</label>
+            <button type="button" (click)="showPlatformModal = true" class="text-[9px] text-sky-400 hover:text-sky-300 font-bold flex items-center gap-0.5">
+              <i class="fa-solid fa-circle-plus"></i> إضافة
             </button>
           </div>
-          <select [(ngModel)]="selectedSalesPlatformId" name="salesPlatform" class="form-select text-xs py-2 px-3" required>
-            <option [ngValue]="0" disabled>-- اختر المنصة أو الصفحة --</option>
+          <select [(ngModel)]="selectedSalesPlatformId" name="salesPlatform" class="form-select text-xs py-1 px-2 h-8" required>
+            <option [ngValue]="0" disabled>-- المنصة --</option>
             <option *ngFor="let plat of salesPlatforms()" [ngValue]="plat.id">{{ plat.name }}</option>
           </select>
         </div>
       </div>
 
       <!-- Warehouse origin (Bosta) -->
-      <div *ngIf="hasBostaIntegration" class="p-3 rounded-xl bg-slate-900/60 border border-slate-700/70 space-y-2">
-        <div class="flex items-center justify-between gap-2">
-          <span class="font-bold text-xs text-slate-100 flex items-center gap-1.5">
-            <i class="fa-solid fa-warehouse text-amber-400 text-xs"></i>
-            مصدر المنتجات
+      <div *ngIf="hasBostaIntegration" class="p-2 rounded-xl bg-slate-900/60 border border-slate-700/70 space-y-1.5">
+        <div class="flex items-center justify-between gap-1.5">
+          <span class="font-bold text-[11px] text-slate-100 flex items-center gap-1">
+            <i class="fa-solid fa-warehouse text-amber-400 text-[10px]"></i>
+            مصدر المنتجات:
           </span>
-          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold"
+          <span class="inline-flex items-center px-1.5 py-0.2 rounded-md text-[9px] font-bold"
                 [ngClass]="isBostaFulfillmentOrder ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' : 'bg-sky-500/20 text-sky-300 border border-sky-500/40'">
             {{ isBostaFulfillmentOrder ? 'مخازن بوسطة' : 'مخزن التاجر' }}
           </span>
         </div>
 
-        <div class="grid grid-cols-2 gap-2 bg-slate-950/70 p-1 rounded-xl border border-slate-800">
-          <button type="button" (click)="toggleBostaFulfillment(false)" [class]="!isBostaFulfillmentOrder ? 'bg-sky-600 text-white font-bold shadow-sm' : 'text-slate-400 hover:text-slate-200 font-semibold'" class="py-2 px-2 rounded-lg text-[11px] transition-all flex items-center justify-center gap-1.5">
-            <i class="fa-solid fa-house-user text-xs"></i>
+        <div class="grid grid-cols-2 gap-1 bg-slate-950/70 p-0.5 rounded-lg border border-slate-800">
+          <button type="button" (click)="toggleBostaFulfillment(false)" [class]="!isBostaFulfillmentOrder ? 'bg-sky-600 text-white font-bold shadow-xs' : 'text-slate-400 hover:text-slate-200 font-semibold'" class="py-1 px-1 rounded-md text-[10px] transition-all flex items-center justify-center gap-1">
+            <i class="fa-solid fa-house-user text-[10px]"></i>
             <span>مخزن التاجر</span>
           </button>
-          <button type="button" (click)="toggleBostaFulfillment(true)" [class]="isBostaFulfillmentOrder ? 'bg-amber-500 text-slate-950 font-black shadow-sm' : 'text-slate-400 hover:text-slate-200 font-semibold'" class="py-2 px-2 rounded-lg text-[11px] transition-all flex items-center justify-center gap-1.5">
-            <i class="fa-solid fa-bolt text-xs"></i>
+          <button type="button" (click)="toggleBostaFulfillment(true)" [class]="isBostaFulfillmentOrder ? 'bg-amber-500 text-slate-950 font-black shadow-xs' : 'text-slate-400 hover:text-slate-200 font-semibold'" class="py-1 px-1 rounded-md text-[10px] transition-all flex items-center justify-center gap-1">
+            <i class="fa-solid fa-bolt text-[10px]"></i>
             <span>مخازن بوسطة</span>
           </button>
         </div>
       </div>
 
-      <!-- Products -->
-      <div class="space-y-2.5">
+      <!-- Products Section -->
+      <div class="space-y-2">
         <div class="flex items-center justify-between">
-          <span class="text-xs font-bold text-slate-300">المنتجات ({{ selectedItems.length }})</span>
-          <button type="button" (click)="addItemRow()" class="btn btn-secondary btn-xs py-1 px-2.5 text-indigo-400 font-bold flex items-center gap-1 text-[11px] rounded-lg">
-            <i class="fa-solid fa-plus text-[9px]"></i>
+          <span class="text-xs font-bold text-slate-200">المنتجات ({{ selectedItems.length }})</span>
+          <button type="button" (click)="addItemRow()" class="btn btn-secondary btn-xs py-1 px-2 text-indigo-400 font-bold flex items-center gap-1 text-[10px] rounded-md">
+            <i class="fa-solid fa-plus text-[8px]"></i>
             <span>إضافة منتج</span>
           </button>
         </div>
 
-        <!-- Column headers — desktop only -->
-        <div class="hidden sm:grid items-center gap-2 px-3 text-[10px] font-bold text-slate-500" style="grid-template-columns: 1fr 90px 130px 110px 32px;">
-          <span>المنتج</span>
-          <span class="text-center">الكمية</span>
-          <span class="text-center">سعر القطعة</span>
-          <span class="text-center">الإجمالي</span>
-          <span></span>
-        </div>
-
+        <!-- Product Row Items using Custom Dropdown Component -->
         <div *ngFor="let item of selectedItems; let i = index"
-             class="grid grid-cols-1 sm:grid-cols-[1fr_90px_130px_110px_32px] sm:items-center gap-2 bg-slate-800/40 p-3 rounded-xl border border-slate-700/60">
+             class="p-2 rounded-xl bg-slate-800/40 border border-slate-700/60 space-y-1.5">
 
-          <div>
-            <label class="text-[10px] text-slate-400 mb-1 block sm:hidden">المنتج</label>
-            <select [(ngModel)]="item.productId" (ngModelChange)="onProductSelect(i)" [name]="'prod_' + i" class="form-select text-xs py-2 px-3" required>
-              <option [ngValue]="0" disabled>-- اختر المنتج --</option>
-              <option *ngFor="let p of getFilteredProducts()" [ngValue]="p.id" [disabled]="p.stockQuantity <= 0">
-                {{ p.name }}
-              </option>
-            </select>
-          </div>
-
-          <div>
-            <label class="text-[10px] text-slate-400 mb-1 block sm:hidden">الكمية</label>
-            <input type="number" [(ngModel)]="item.quantity" (ngModelChange)="onItemQuantityOrPriceChange()" [name]="'qty_' + i" min="1" [max]="getMaxStock(item.productId)" class="form-control text-xs py-2 text-center font-bold" required />
-          </div>
-
-          <div>
-            <label class="text-[10px] text-amber-400 font-bold mb-1 block sm:hidden">سعر القطعة</label>
-            <div class="relative">
-              <input type="number" [(ngModel)]="item.unitPrice" (ngModelChange)="onItemQuantityOrPriceChange()" [name]="'price_' + i" min="0" step="0.5" class="form-control text-xs py-2 font-bold text-amber-300 text-center border-amber-500/40" required />
-              <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-[9px] text-amber-400 font-bold pointer-events-none">ج.م</span>
+          <!-- Single horizontal flex row for Product, Quantity, Unit Price, Subtotal, Delete -->
+          <div class="flex items-center gap-1.5">
+            <!-- Custom Product Dropdown Popover Modal -->
+            <div class="flex-1 min-w-0">
+              <app-custom-dropdown
+                [label]="''"
+                [placeholder]="'اختر المنتج...'"
+                [options]="getProductDropdownOptions()"
+                [value]="item.productId"
+                (valueChange)="onProductCustomSelect(i, $event)"
+                icon="fa-solid fa-box"
+              ></app-custom-dropdown>
             </div>
-          </div>
 
-          <div class="flex sm:justify-center items-center justify-between sm:pt-0">
-            <span class="text-[10px] text-slate-400 sm:hidden">الإجمالي</span>
-            <span class="font-black text-emerald-400 text-xs">{{ getItemSubtotal(item) }} ج.م</span>
-          </div>
+            <!-- Quantity Input -->
+            <div class="w-16 shrink-0 text-center">
+              <label class="text-[9px] text-slate-400 block mb-0.5">الكمية</label>
+              <input type="number" [(ngModel)]="item.quantity" (ngModelChange)="onItemQuantityOrPriceChange()" [name]="'qty_' + i" min="1" [max]="getMaxStock(item.productId)" class="form-control text-xs py-1 px-1 text-center font-bold h-8" required />
+            </div>
 
-          <div class="flex sm:justify-center">
-            <button type="button" (click)="removeItemRow(i)" [disabled]="selectedItems.length <= 1" class="text-rose-400 hover:text-rose-300 disabled:opacity-30 disabled:hover:text-rose-400 p-1.5" title="حذف المنتج">
+            <!-- Price Input -->
+            <div class="w-20 shrink-0 text-center">
+              <label class="text-[9px] text-amber-400 font-bold block mb-0.5">سعر القطعة</label>
+              <input type="number" [(ngModel)]="item.unitPrice" (ngModelChange)="onItemQuantityOrPriceChange()" (focus)="$event.target.select()" [name]="'price_' + i" min="0" step="0.5" class="form-control text-xs py-1 px-1 font-bold text-amber-300 text-center border-amber-500/40 h-8" required />
+            </div>
+
+            <!-- Delete Button -->
+            <button type="button" (click)="removeItemRow(i)" [disabled]="selectedItems.length <= 1" class="text-rose-400 hover:text-rose-300 disabled:opacity-20 p-1 shrink-0 mt-3" title="حذف المنتج">
               <i class="fa-solid fa-trash-can text-xs"></i>
             </button>
+          </div>
+
+          <!-- Item Subtotal Summary Row -->
+          <div class="flex justify-between items-center text-[10px] font-bold pt-1 border-t border-slate-700/40 text-slate-400 px-1">
+            <span>إجمالي المنتج:</span>
+            <span class="text-emerald-400 font-black text-xs">{{ getItemSubtotal(item) }} ج.م</span>
           </div>
         </div>
       </div>
 
       <div class="form-group mb-0">
-        <label class="form-label text-[11px] mb-1">ملاحظات الأوردر / تفاصيل الشحن <span class="text-slate-500 font-normal">(اختياري)</span></label>
-        <textarea [(ngModel)]="orderNotes" name="notes" class="form-textarea text-xs py-2 px-3" rows="2" placeholder="ملاحظات العميل، موعد التسليم المفضل، إلخ..."></textarea>
+        <label class="form-label text-[10px] mb-0.5">ملاحظات الأوردر <span class="text-slate-500 font-normal">(اختياري)</span></label>
+        <textarea [(ngModel)]="orderNotes" name="notes" class="form-textarea text-xs py-1 px-2.5" rows="1.5" placeholder="ملاحظات التسليم..."></textarea>
       </div>
 
       <!-- Subtotal / shipping summary -->
       <div class="grid grid-cols-2 gap-2 text-xs font-bold text-slate-200">
-        <div class="p-2.5 rounded-xl bg-indigo-500/10 border border-indigo-500/30 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-0.5">
-          <span class="text-[10px] sm:text-xs text-slate-300">المجموع الجزئي</span>
-          <span class="font-black text-indigo-300 text-sm">{{ calculatedSubTotal }} ج.م</span>
+        <div class="p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/30 flex justify-between items-center">
+          <span class="text-[10px] text-slate-300">المجموع الجزئي:</span>
+          <span class="font-black text-indigo-300 text-xs sm:text-sm">{{ calculatedSubTotal }} ج.م</span>
         </div>
-        <div class="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-0.5">
-          <span class="text-[10px] sm:text-xs text-slate-300">مصاريف الشحن</span>
-          <span class="font-black text-amber-400 text-sm">{{ calculatedShippingCost }} ج.م</span>
+        <div class="p-2 rounded-xl bg-amber-500/10 border border-amber-500/30 flex justify-between items-center">
+          <span class="text-[10px] text-slate-300">مصاريف الشحن:</span>
+          <span class="font-black text-amber-400 text-xs sm:text-sm">{{ calculatedShippingCost }} ج.م</span>
         </div>
       </div>
 
       <!-- Nav -->
-      <div class="flex justify-between items-center pt-3 border-t border-slate-700/50">
-        <button type="button" (click)="prevStep()" class="btn btn-secondary py-2 px-4 text-xs font-bold rounded-lg">
+      <div class="flex justify-between items-center pt-2 border-t border-slate-700/50">
+        <button type="button" (click)="prevStep()" class="btn btn-secondary py-1.5 px-3 text-xs font-bold rounded-lg">
           <i class="fa-solid fa-arrow-right text-[10px]"></i>
           <span>السابق</span>
         </button>
-        <button type="button" (click)="nextStep()" class="btn btn-primary py-2 px-5 font-bold text-xs flex items-center gap-1.5 shadow-xs rounded-lg">
+        <button type="button" (click)="nextStep()" class="btn btn-primary py-1.5 px-4 font-bold text-xs flex items-center gap-1 shadow-xs rounded-lg">
           <span>الخطوة التالية</span>
           <i class="fa-solid fa-arrow-left text-[10px]"></i>
         </button>
@@ -365,119 +345,125 @@
     </div>
 
     <!-- ============ STEP 3: FINANCIAL SUMMARY ============ -->
-    <div *ngIf="currentStep === 3" class="glass-card p-4 sm:p-6 space-y-5 border-slate-700/80 shadow-md fade-in">
+    <div *ngIf="currentStep === 3" class="glass-card p-3 sm:p-4 space-y-3 border-slate-700/80 shadow-md fade-in">
 
-      <h3 class="font-bold text-sm text-slate-100 flex items-center gap-1.5">
+      <h3 class="font-bold text-xs sm:text-sm text-slate-100 flex items-center gap-1.5 border-b border-slate-700/50 pb-1.5">
         <i class="fa-solid fa-calculator text-emerald-400 text-xs"></i>
-        <span>مراجعة الحسابات وتأكيد الأوردر</span>
+        <span>3. مراجعة الحسابات وتأكيد الأوردر</span>
       </h3>
 
       <!-- Customer / shipping recap -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-        <div class="p-3 rounded-xl bg-slate-800/40 border border-slate-700/50 space-y-1.5">
-          <h4 class="font-bold text-sky-300 text-[11px] flex items-center gap-1.5">
-            <i class="fa-solid fa-user text-[9px]"></i> العميل والتوصيل
+      <div class="grid grid-cols-2 gap-2 text-xs">
+        <div class="p-2 rounded-xl bg-slate-800/40 border border-slate-700/50 space-y-1">
+          <h4 class="font-bold text-sky-300 text-[10px] flex items-center gap-1">
+            <i class="fa-solid fa-user text-[8px]"></i> العميل
           </h4>
-          <p class="text-slate-200"><span class="text-slate-500">الاسم:</span> {{ getSummaryCustomerName() }}</p>
-          <p class="text-slate-300"><span class="text-slate-500">الهاتف:</span> {{ getSummaryCustomerPhone() }}</p>
-          <p class="text-slate-400 truncate"><span class="text-slate-500">العنوان:</span> {{ getSummaryCustomerAddress() }}</p>
+          <p class="text-slate-200 text-[10px] truncate"><strong>{{ getSummaryCustomerName() }}</strong></p>
+          <p class="text-slate-400 text-[9px] dir-ltr text-right truncate">{{ getSummaryCustomerPhone() }}</p>
         </div>
 
-        <div class="p-3 rounded-xl bg-slate-800/40 border border-slate-700/50 space-y-1.5">
-          <h4 class="font-bold text-sky-300 text-[11px] flex items-center gap-1.5">
-            <i class="fa-solid fa-truck text-[9px]"></i> الشحن والمنصة
+        <div class="p-2 rounded-xl bg-slate-800/40 border border-slate-700/50 space-y-1">
+          <h4 class="font-bold text-sky-300 text-[10px] flex items-center gap-1">
+            <i class="fa-solid fa-truck text-[8px]"></i> الشحن والمنصة
           </h4>
-          <p class="text-slate-200"><span class="text-slate-500">الشركة:</span> {{ getSelectedShippingCompanyName() }}</p>
-          <p class="text-slate-300"><span class="text-slate-500">المنصة:</span> {{ getSelectedSalesPlatformName() }}</p>
-          <p *ngIf="orderNotes" class="text-slate-400 truncate"><span class="text-slate-500">ملاحظات:</span> {{ orderNotes }}</p>
+          <p class="text-slate-200 text-[10px] truncate"><strong>{{ getSelectedShippingCompanyName() }}</strong></p>
+          <p class="text-slate-400 text-[9px] truncate">{{ getSelectedSalesPlatformName() }}</p>
         </div>
       </div>
 
-      <!-- Financial breakdown -->
-      <div class="rounded-xl border border-slate-700/60 divide-y divide-slate-700/50 overflow-hidden">
+      <!-- Financial breakdown card -->
+      <div class="rounded-xl border border-slate-700/60 divide-y divide-slate-700/50 overflow-hidden space-y-0">
 
         <!-- Simple line items -->
-        <div class="p-3 space-y-2 bg-slate-800/30">
-          <div class="flex justify-between items-center text-xs text-slate-300">
-            <span>إجمالي المنتجات ({{ selectedItems.length }})</span>
+        <div class="p-2 space-y-1 bg-slate-800/30 text-xs">
+          <div class="flex justify-between items-center text-slate-300 text-[11px]">
+            <span>إجمالي المنتجات ({{ selectedItems.length }}):</span>
             <span class="font-bold text-white">{{ calculatedSubTotal }} ج.م</span>
           </div>
-          <div class="flex justify-between items-center text-xs text-slate-300">
-            <span>مصاريف الشحن</span>
+          <div class="flex justify-between items-center text-slate-300 text-[11px]">
+            <span>مصاريف الشحن:</span>
             <span class="font-bold text-amber-400">{{ calculatedShippingCost }} ج.م</span>
           </div>
         </div>
 
         <!-- Editable total -->
-        <div class="p-3 bg-emerald-500/5">
-          <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
+        <div class="p-2.5 bg-emerald-500/5">
+          <div class="flex items-center justify-between gap-2">
             <div>
-              <label class="font-extrabold text-slate-100 text-xs block">المبلغ الإجمالي مع الشحن</label>
-              <span class="text-[10px] text-emerald-400">تعديل هذا المبلغ يغيّر سعر القطعة تلقائياً</span>
+              <label class="font-extrabold text-slate-100 text-xs block mb-0.5">المبلغ الإجمالي مع الشحن:</label>
+              <span class="text-[9px] text-emerald-400 block">اضغط لتغيير المبلغ بسهولة</span>
             </div>
-            <div class="relative w-full sm:w-40">
-              <input type="number" [(ngModel)]="calculatedTotalAmount" (ngModelChange)="onTotalAmountManualChange()" name="manualTotal" min="0" step="0.5" class="w-full text-lg font-black text-emerald-400 bg-slate-900/80 border-2 border-emerald-500/60 rounded-xl px-3 py-1.5 text-left focus:outline-none" required />
-              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] text-emerald-400 font-bold pointer-events-none">ج.م</span>
+            <div class="relative w-36">
+              <input 
+                type="number" 
+                [(ngModel)]="calculatedTotalAmount" 
+                (ngModelChange)="onTotalAmountManualChange()" 
+                (focus)="$event.target.select()"
+                name="manualTotal" 
+                min="0" 
+                step="0.5" 
+                class="w-full text-base font-black text-emerald-400 bg-slate-900 border-2 border-emerald-500/60 rounded-lg px-2 py-1 text-center focus:outline-none focus:border-emerald-400" 
+                required 
+              />
             </div>
           </div>
         </div>
 
         <!-- Deposit -->
-        <div class="p-3 bg-purple-500/5 space-y-2.5">
-          <div class="flex items-center justify-between gap-2 flex-wrap">
-            <h5 class="text-xs font-bold text-purple-300 flex items-center gap-1.5">
-              <i class="fa-solid fa-receipt text-amber-400"></i>
-              <span>العربون والدفع المسبق</span>
-              <span class="text-[10px] font-normal text-slate-500">(اختياري)</span>
+        <div class="p-2.5 bg-purple-500/5 space-y-2">
+          <div class="flex items-center justify-between gap-1 flex-wrap">
+            <h5 class="text-xs font-bold text-purple-300 flex items-center gap-1">
+              <i class="fa-solid fa-receipt text-amber-400 text-[10px]"></i>
+              <span>العربون والدفع المسبق (اختياري)</span>
             </h5>
-            <span class="text-[10px] text-slate-500">يُخصم آلياً من التحصيل COD</span>
+            <span class="text-[9px] text-slate-500">يُخصم آلياً من التحصيل COD</span>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
             <div class="form-group mb-0">
-              <label class="block text-[11px] font-semibold text-slate-300 mb-1">مبلغ العربون (ج.م)</label>
-              <input type="number" [(ngModel)]="depositAmount" name="depositAmount" min="0" [max]="calculatedTotalAmount" placeholder="0" class="form-control text-xs py-2 px-2.5 bg-slate-900 border-slate-700 text-emerald-400 font-bold font-mono" />
+              <label class="block text-[10px] font-semibold text-slate-300 mb-0.5">مبلغ العربون (ج.م)</label>
+              <input type="number" [(ngModel)]="depositAmount" (focus)="$event.target.select()" name="depositAmount" min="0" [max]="calculatedTotalAmount" placeholder="0" class="form-control text-xs py-1 px-2 bg-slate-900 border-slate-700 text-emerald-400 font-bold font-mono h-8" />
             </div>
 
             <div class="form-group mb-0" *ngIf="(depositAmount || 0) > 0">
-              <label class="block text-[11px] font-semibold text-slate-300 mb-1">المحفظة / الخزينة</label>
-              <select [(ngModel)]="selectedPaidToWalletId" name="paidToWallet" class="form-control text-xs py-2 px-2.5 bg-slate-900 border-slate-700 text-slate-100">
+              <label class="block text-[10px] font-semibold text-slate-300 mb-0.5">المحفظة المستلمة</label>
+              <select [(ngModel)]="selectedPaidToWalletId" name="paidToWallet" class="form-control text-xs py-1 px-2 bg-slate-900 border-slate-700 text-slate-100 h-8">
                 <option *ngFor="let w of wallets()" [ngValue]="w.id">{{ w.name }} ({{ w.balance | number:'1.0-0' }} ج.م)</option>
               </select>
             </div>
 
             <div class="form-group mb-0" *ngIf="(depositAmount || 0) > 0">
-              <label class="block text-[11px] font-semibold text-slate-300 mb-1">رقم الحوالة / المرجع</label>
-              <input type="text" [(ngModel)]="depositReference" name="depositRef" placeholder="فودافون كاش / إنستاباي" class="form-control text-xs py-2 px-2.5 bg-slate-900 border-slate-700 text-slate-100 font-mono" />
+              <label class="block text-[10px] font-semibold text-slate-300 mb-0.5">رقم المرجع / الحوالة</label>
+              <input type="text" [(ngModel)]="depositReference" name="depositRef" placeholder="فودافون كاش / إنستاباي" class="form-control text-xs py-1 px-2 bg-slate-900 border-slate-700 text-slate-100 font-mono h-8" />
             </div>
           </div>
         </div>
 
         <!-- Remaining COD -->
-        <div class="p-3.5 bg-amber-500/10 flex items-center justify-between gap-3">
+        <div class="p-2.5 bg-amber-500/10 flex items-center justify-between gap-2">
           <div class="min-w-0">
-            <div class="text-xs font-bold text-amber-300 flex items-center gap-1.5">
-              <i class="fa-solid fa-hand-holding-dollar"></i>
+            <div class="text-xs font-bold text-amber-300 flex items-center gap-1">
+              <i class="fa-solid fa-hand-holding-dollar text-[10px]"></i>
               <span>المتبقي للتحصيل عند التسليم (COD)</span>
             </div>
-            <div class="text-[10px] text-slate-500">المبلغ الذي سيتم تحصيله عبر شركة الشحن</div>
+            <div class="text-[9px] text-slate-500">المبلغ المطلوب تحصيله عبر شركة الشحن</div>
           </div>
-          <div class="text-xl sm:text-2xl font-black text-amber-400 font-mono shrink-0">
+          <div class="text-lg sm:text-xl font-black text-amber-400 font-mono shrink-0">
             {{ calculatedRemainingAmount | number:'1.0-0' }} <span class="text-xs font-bold text-slate-500">ج.م</span>
           </div>
         </div>
       </div>
 
       <!-- Nav -->
-      <div class="flex justify-between items-center pt-3 border-t border-slate-700/50">
-        <button type="button" (click)="prevStep()" class="btn btn-secondary py-2 px-4 text-xs font-bold rounded-lg">
+      <div class="flex justify-between items-center pt-2 border-t border-slate-700/50">
+        <button type="button" (click)="prevStep()" class="btn btn-secondary py-1.5 px-3 text-xs font-bold rounded-lg">
           <i class="fa-solid fa-arrow-right text-[10px]"></i>
           <span>السابق</span>
         </button>
 
-        <button type="submit" [disabled]="submitting" class="btn btn-primary py-2 px-5 text-xs sm:text-sm font-extrabold shadow-sm flex items-center gap-1.5 rounded-lg">
+        <button type="submit" [disabled]="submitting" class="btn btn-primary py-1.5 px-4 text-xs sm:text-sm font-extrabold shadow-sm flex items-center gap-1.5 rounded-lg">
           <i *ngIf="submitting" class="fa-solid fa-circle-notch fa-spin"></i>
-          <span *ngIf="!submitting" class="flex items-center gap-1.5"><i class="fa-solid fa-check-double text-sm"></i> حفظ وإنشاء الأوردر</span>
+          <span *ngIf="!submitting" class="flex items-center gap-1.5"><i class="fa-solid fa-check-double text-xs"></i> حفظ وإنشاء الأوردر</span>
         </button>
       </div>
     </div>
