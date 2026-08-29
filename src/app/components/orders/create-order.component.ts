@@ -132,9 +132,9 @@ export class CreateOrderComponent implements OnInit {
     return this.getFilteredProducts().map(p => ({
       value: p.id,
       label: p.name,
-      sublabel: `المتاح: ${p.stockQuantity} قطعة | السعر: ${p.sellingPrice} ج.م`,
-      icon: p.isFulfillment || p.code?.startsWith('BO-') || p.code?.startsWith('BST-') ? 'fa-solid fa-bolt text-amber-400' : 'fa-solid fa-house-user text-sky-400',
-      badge: p.isFulfillment || p.code?.startsWith('BO-') || p.code?.startsWith('BST-') ? 'بوسطة' : 'المخزن'
+      imageUrl: p.imageUrl,
+      icon: !p.imageUrl ? (p.isFulfillment || p.code?.startsWith('BO-') || p.code?.startsWith('BST-') ? 'fa-solid fa-bolt text-amber-400' : 'fa-solid fa-box text-sky-400') : undefined,
+      badge: p.isFulfillment || p.code?.startsWith('BO-') || p.code?.startsWith('BST-') ? 'بوسطة' : undefined
     }));
   }
 
@@ -154,6 +154,10 @@ export class CreateOrderComponent implements OnInit {
     if (!c || !c.totalOrders || c.totalOrders <= 0) return 0;
     const returnedOrCancelled = (c.cancelledOrders || 0) + (c.returnedOrders || 0);
     return Math.round((returnedOrCancelled / c.totalOrders) * 100);
+  }
+
+  hasFulfillmentProducts(): boolean {
+    return this.products().some(p => p.isFulfillment || p.code?.startsWith('BO-') || p.code?.startsWith('BST-'));
   }
 
   loadLookups(): void {

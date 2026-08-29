@@ -238,11 +238,11 @@
         <span>2. شركة الشحن والمنتجات</span>
       </h3>
 
-      <!-- Shipping Company & Sales Platform SIDE-BY-SIDE in 1 row -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <!-- Shipping Company & Sales Platform SIDE-BY-SIDE in 1 row (always 2 columns) -->
+      <div class="grid grid-cols-2 gap-2 sm:gap-3">
         <div class="form-group mb-0">
           <label class="text-xs text-slate-400 font-medium mb-1 block">شركة الشحن</label>
-          <select [(ngModel)]="selectedShippingCompanyId" (ngModelChange)="onShippingCompanyChange()" name="shippingCompany" class="form-select text-xs py-2 px-3.5 rounded-xl" required>
+          <select [(ngModel)]="selectedShippingCompanyId" (ngModelChange)="onShippingCompanyChange()" name="shippingCompany" class="form-select text-xs py-2 px-3 sm:px-3.5 rounded-xl" required>
             <option [ngValue]="0" disabled>-- اختر شركة الشحن --</option>
             <option *ngFor="let comp of shippingCompanies()" [ngValue]="comp.id">{{ getCleanShippingCompanyName(comp) }}</option>
           </select>
@@ -250,20 +250,20 @@
 
         <div class="form-group mb-0">
           <div class="flex items-center justify-between mb-1">
-            <label class="text-xs text-slate-400 font-medium block">منصة البيع</label>
-            <button type="button" (click)="showPlatformModal = true" class="text-xs text-sky-400 hover:text-sky-300 font-bold flex items-center gap-1">
-              <i class="fa-solid fa-circle-plus"></i> إضافة منصة
+            <label class="text-xs text-slate-400 font-medium block truncate">منصة البيع</label>
+            <button type="button" (click)="showPlatformModal = true" class="text-xs text-sky-400 hover:text-sky-300 font-bold flex items-center gap-0.5 shrink-0">
+              <i class="fa-solid fa-circle-plus"></i> <span class="hidden sm:inline">إضافة منصة</span><span class="inline sm:hidden">إضافة</span>
             </button>
           </div>
-          <select [(ngModel)]="selectedSalesPlatformId" name="salesPlatform" class="form-select text-xs py-2 px-3.5 rounded-xl" required>
+          <select [(ngModel)]="selectedSalesPlatformId" name="salesPlatform" class="form-select text-xs py-2 px-3 sm:px-3.5 rounded-xl" required>
             <option [ngValue]="0" disabled>-- اختر المنصة --</option>
             <option *ngFor="let plat of salesPlatforms()" [ngValue]="plat.id">{{ plat.name }}</option>
           </select>
         </div>
       </div>
 
-      <!-- Warehouse origin (Bosta) -->
-      <div *ngIf="hasBostaIntegration" class="p-3 rounded-xl bg-slate-900/60 border border-slate-700/70 space-y-2">
+      <!-- Warehouse origin (Bosta) - ONLY SHOWN IF BOSTA INTEGRATION ACTIVE & FULFILLMENT PRODUCTS EXIST -->
+      <div *ngIf="hasBostaIntegration && hasFulfillmentProducts()" class="p-3 rounded-xl bg-slate-900/60 border border-slate-700/70 space-y-2">
         <div class="flex items-center justify-between gap-2">
           <span class="font-bold text-xs text-slate-100 flex items-center gap-1.5">
             <i class="fa-solid fa-warehouse text-amber-400 text-xs"></i>
@@ -299,44 +299,47 @@
 
         <!-- Product Row Items using Custom Dropdown Component -->
         <div *ngFor="let item of selectedItems; let i = index"
-             class="p-3 rounded-xl bg-slate-800/40 border border-slate-700/60 space-y-2">
+             class="p-3 rounded-xl bg-slate-800/40 border border-slate-700/60 space-y-2.5">
 
-          <!-- Single horizontal flex row for Product, Quantity, Unit Price, Subtotal, Delete -->
-          <div class="flex items-center gap-2">
-            <!-- Custom Product Dropdown Popover Modal -->
-            <div class="flex-1 min-w-0">
-              <app-custom-dropdown
-                [label]="''"
-                [placeholder]="'اختر المنتج...'"
-                [options]="getProductDropdownOptions()"
-                [value]="item.productId"
-                (valueChange)="onProductCustomSelect(i, $event)"
-                icon="fa-solid fa-box"
-              ></app-custom-dropdown>
-            </div>
-
-            <!-- Quantity Input -->
-            <div class="w-16 sm:w-20 shrink-0 text-center">
-              <label class="text-xs text-slate-400 font-medium block mb-1">الكمية</label>
-              <input type="number" [(ngModel)]="item.quantity" (ngModelChange)="onItemQuantityOrPriceChange()" [name]="'qty_' + i" min="1" [max]="getMaxStock(item.productId)" class="form-control text-xs py-2 px-2 text-center font-bold rounded-xl" required />
-            </div>
-
-            <!-- Price Input -->
-            <div class="w-20 sm:w-24 shrink-0 text-center">
-              <label class="text-xs text-amber-400 font-bold block mb-1">سعر القطعة</label>
-              <input type="number" [(ngModel)]="item.unitPrice" (ngModelChange)="onItemQuantityOrPriceChange()" (focus)="$event.target.select()" [name]="'price_' + i" min="0" step="0.5" class="form-control text-xs py-2 px-2 font-bold text-amber-300 text-center border-amber-500/40 rounded-xl" required />
-            </div>
-
-            <!-- Delete Button -->
-            <button type="button" (click)="removeItemRow(i)" [disabled]="selectedItems.length <= 1" class="text-rose-400 hover:text-rose-300 disabled:opacity-20 p-1.5 shrink-0 mt-5" title="حذف المنتج">
-              <i class="fa-solid fa-trash-can text-sm"></i>
-            </button>
+          <!-- Row 1: Product Selection Dropdown (Full width on its own dedicated row!) -->
+          <div class="w-full">
+            <label class="text-xs text-slate-400 font-medium block mb-1">اسم المنتج</label>
+            <app-custom-dropdown
+              [label]="''"
+              [placeholder]="'اختر المنتج من القائمة...'"
+              [options]="getProductDropdownOptions()"
+              [value]="item.productId"
+              (valueChange)="onProductCustomSelect(i, $event)"
+              icon="fa-solid fa-box"
+            ></app-custom-dropdown>
           </div>
 
-          <!-- Item Subtotal Summary Row -->
-          <div class="flex justify-between items-center text-xs font-bold pt-1.5 border-t border-slate-700/40 text-slate-400 px-1">
-            <span>إجمالي المنتج:</span>
-            <span class="text-emerald-400 font-black text-xs sm:text-sm">{{ getItemSubtotal(item) }} ج.م</span>
+          <!-- Row 2: Quantity + Unit Price + Delete Button + Subtotal -->
+          <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-700/40 flex-wrap">
+            <div class="flex items-center gap-2">
+              <!-- Quantity Input -->
+              <div class="w-20">
+                <label class="text-[11px] text-slate-400 font-medium block mb-0.5">الكمية</label>
+                <input type="number" [(ngModel)]="item.quantity" (ngModelChange)="onItemQuantityOrPriceChange()" [name]="'qty_' + i" min="1" [max]="getMaxStock(item.productId)" class="form-control text-xs py-1.5 px-2 text-center font-bold rounded-xl" required />
+              </div>
+
+              <!-- Price Input -->
+              <div class="w-24">
+                <label class="text-[11px] text-amber-400 font-bold block mb-0.5">سعر القطعة</label>
+                <input type="number" [(ngModel)]="item.unitPrice" (ngModelChange)="onItemQuantityOrPriceChange()" (focus)="$event.target.select()" [name]="'price_' + i" min="0" step="0.5" class="form-control text-xs py-1.5 px-2 font-bold text-amber-300 text-center border-amber-500/40 rounded-xl" required />
+              </div>
+
+              <!-- Delete Button -->
+              <button type="button" (click)="removeItemRow(i)" [disabled]="selectedItems.length <= 1" class="btn btn-secondary btn-xs py-1.5 px-2.5 text-rose-400 hover:text-rose-300 disabled:opacity-20 rounded-xl border-rose-500/30 mt-4" title="حذف المنتج">
+                <i class="fa-solid fa-trash-can text-xs"></i>
+              </button>
+            </div>
+
+            <!-- Item Subtotal -->
+            <div class="text-right mt-1">
+              <span class="text-[10px] text-slate-400 block">إجمالي المنتج:</span>
+              <span class="text-emerald-400 font-black text-xs sm:text-sm">{{ getItemSubtotal(item) }} ج.م</span>
+            </div>
           </div>
         </div>
       </div>
@@ -415,10 +418,10 @@
 
         <!-- Editable total (PROMINENT HIERARCHY) -->
         <div class="p-3.5 bg-emerald-500/10">
-          <div class="flex items-center justify-between gap-3">
+          <div class="flex items-center justify-between gap-2">
             <div>
-              <label class="font-black text-slate-100 text-xs sm:text-sm block mb-0.5">المبلغ الإجمالي مع الشحن:</label>
-              <span class="text-xs text-emerald-400 block font-medium">اضغط لتعديل المبلغ يدوياً</span>
+              <label class="font-black text-slate-100 text-xs sm:text-sm block mb-0.5">المبلغ الإجمالي  :</label>
+              <!-- <span class="text-xs text-emerald-400 block font-medium">اضغط لتعديل المبلغ يدوياً</span> -->
             </div>
             <div class="relative w-36 sm:w-44">
               <input 
@@ -441,9 +444,9 @@
           <div class="flex items-center justify-between gap-2 flex-wrap">
             <h5 class="text-xs font-bold text-purple-300 flex items-center gap-1.5">
               <i class="fa-solid fa-receipt text-amber-400 text-xs"></i>
-              <span>العربون والدفع المسبق (اختياري)</span>
+              <span>العربون(اختياري)</span>
             </h5>
-            <span class="text-xs text-slate-400">يُخصم آلياً من تحصيل COD</span>
+            <!-- <span class="text-xs text-slate-400">يُخصم آلياً من تحصيل COD</span> -->
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -473,7 +476,7 @@
               <i class="fa-solid fa-hand-holding-dollar text-xs"></i>
               <span>المتبقي للتحصيل عند التسليم (COD)</span>
             </div>
-            <div class="text-xs text-slate-400 mt-0.5">المبلغ المطلوب تحصيله عبر شركة الشحن</div>
+            <!-- <div class="text-xs text-slate-400 mt-0.5">المبلغ المطلوب تحصيله عبر شركة الشحن</div> -->
           </div>
           <div class="text-xl sm:text-2xl font-black text-amber-400 font-mono shrink-0">
             {{ calculatedRemainingAmount | number:'1.0-0' }} <span class="text-xs font-bold text-slate-400">ج.م</span>

@@ -7,32 +7,33 @@
   <!-- Dropdown Trigger Box -->
   <div 
     (click)="toggleOpen()" 
-    class="dropdown-trigger flex items-center justify-between px-3.5 py-2.5 bg-slate-800/90 border border-slate-700/80 rounded-xl cursor-pointer hover:border-amber-500/50 hover:bg-slate-800 transition shadow-sm group"
+    class="dropdown-trigger flex items-center justify-between px-3 py-2 bg-slate-800/90 border border-slate-700/80 rounded-xl cursor-pointer hover:border-amber-500/50 hover:bg-slate-800 transition shadow-sm group min-h-[40px]"
     [class.border-amber-500]="isOpen()"
     [class.ring-2]="isOpen()"
     [class.ring-amber-500\/25]="isOpen()"
   >
-    <div class="flex items-center gap-2.5 overflow-hidden">
-      <!-- Icon pill if option has icon -->
-      <div *ngIf="selectedOption?.icon" class="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center text-xs shrink-0">
+    <div class="flex items-center gap-2 overflow-hidden min-w-0">
+      <!-- Product Image or Icon -->
+      <img *ngIf="selectedOption?.imageUrl" [src]="selectedOption?.imageUrl" class="w-7 h-7 rounded-lg object-cover border border-slate-700 shrink-0" alt="" (error)="$event.target.style.display='none'" />
+      <div *ngIf="!selectedOption?.imageUrl && selectedOption?.icon" class="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center text-xs shrink-0">
         <i [class]="selectedOption?.icon"></i>
       </div>
 
-      <div class="overflow-hidden">
+      <div class="overflow-hidden min-w-0">
         <div *ngIf="selectedOption" class="text-xs font-bold text-slate-100 truncate flex items-center gap-2">
-          <span>{{ selectedOption.label }}</span>
-          <span *ngIf="selectedOption.badge" class="text-[9px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
+          <span class="truncate">{{ selectedOption.label }}</span>
+          <span *ngIf="selectedOption.badge" class="text-[9px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 shrink-0">
             {{ selectedOption.badge }}
           </span>
         </div>
-        <div *ngIf="selectedOption?.sublabel" class="text-[10px] text-slate-400 truncate dir-ltr text-right">
+        <div *ngIf="selectedOption?.sublabel" class="text-[10px] text-slate-400 truncate">
           {{ selectedOption?.sublabel }}
         </div>
-        <span *ngIf="!selectedOption" class="text-xs text-slate-400">{{ placeholder }}</span>
+        <span *ngIf="!selectedOption" class="text-xs text-slate-400 truncate">{{ placeholder }}</span>
       </div>
     </div>
 
-    <div class="flex items-center gap-2 shrink-0">
+    <div class="flex items-center gap-1.5 shrink-0 mr-1">
       <button 
         *ngIf="value !== null && value !== undefined" 
         type="button"
@@ -58,7 +59,7 @@
         type="text" 
         [ngModel]="searchTerm()"
         (ngModelChange)="searchTerm.set($event)"
-        placeholder="بحث في القائمة..." 
+        placeholder="بحث باسم المنتج..." 
         class="w-full pr-8 pl-3 py-1.5 bg-slate-800/80 border border-slate-700 rounded-lg text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500"
       />
     </div>
@@ -68,21 +69,22 @@
       <div 
         *ngFor="let opt of filteredOptions"
         (click)="selectOption(opt)"
-        class="flex items-center justify-between p-2.5 rounded-xl cursor-pointer text-xs font-semibold transition hover:bg-amber-500/15 hover:text-amber-300"
+        class="flex items-center justify-between p-2 rounded-xl cursor-pointer text-xs font-semibold transition hover:bg-amber-500/15 hover:text-amber-300"
         [class.bg-amber-500\/20]="opt.value === value"
         [class.text-amber-300]="opt.value === value"
         [class.font-bold]="opt.value === value"
         [class.text-slate-200]="opt.value !== value"
       >
-        <div class="flex items-center gap-2.5 overflow-hidden">
-          <i *ngIf="opt.icon" [class]="opt.icon + ' text-amber-400 text-xs shrink-0'"></i>
-          <div class="overflow-hidden">
-            <div class="truncate">{{ opt.label }}</div>
-            <div *ngIf="opt.sublabel" class="text-[10px] text-slate-400 truncate dir-ltr text-right">{{ opt.sublabel }}</div>
+        <div class="flex items-center gap-2.5 overflow-hidden min-w-0">
+          <img *ngIf="opt.imageUrl" [src]="opt.imageUrl" class="w-8 h-8 rounded-lg object-cover border border-slate-700 shrink-0" alt="" (error)="$event.target.style.display='none'" />
+          <i *ngIf="!opt.imageUrl && opt.icon" [class]="opt.icon + ' text-amber-400 text-xs shrink-0'"></i>
+          <div class="overflow-hidden min-w-0">
+            <div class="truncate font-bold text-xs">{{ opt.label }}</div>
+            <div *ngIf="opt.sublabel" class="text-[10px] text-slate-400 truncate">{{ opt.sublabel }}</div>
           </div>
         </div>
 
-        <div class="flex items-center gap-2 shrink-0">
+        <div class="flex items-center gap-1.5 shrink-0">
           <span *ngIf="opt.badge" class="text-[9px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
             {{ opt.badge }}
           </span>

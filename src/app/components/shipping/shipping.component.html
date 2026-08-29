@@ -40,10 +40,10 @@
           <span class="text-[9px] font-extrabold uppercase tracking-widest text-rose-200 mt-0.5">Express</span>
         </div>
 
-        <div class="space-y-1">
+        <div class="space-y-2">
           <div class="flex flex-wrap items-center gap-2.5">
             <h2 class="text-lg sm:text-xl font-black text-white flex items-center gap-2">
-              <span>تكامل وربط بوسطة (Bosta Integration)</span>
+              <span>الربط مع Bosta</span>
             </h2>
             <!-- Status Badge -->
             <span *ngIf="isBostaConnected()"
@@ -58,20 +58,16 @@
             </span>
           </div>
 
-          <p class="text-slate-300 text-xs max-w-2xl leading-relaxed">
-            ربط متجرك مباشرة مع شبكة بوسطة لتوليد بوالص الشحن الفورية (AWB PDF)، التتبع الحي للشحنات، استيراد أسعار التعاقد، الشحن والتخزين من Bosta Fulfillment، وتحديث الحالات عبر Webhook تلقائياً على دومين <strong class="text-rose-300 font-mono">www.besnesy.com</strong>.
-          </p>
-
           <!-- Quick Features Pills -->
           <div class="flex flex-wrap items-center gap-2 pt-1">
-            <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-400 bg-slate-800/80 px-2.5 py-1 rounded-lg border border-slate-700/60">
-              <i class="fa-solid fa-bolt text-amber-400"></i> توليد بوالص AWB بضغطة زر
+            <span class="inline-flex items-center gap-1.5 text-xs font-bold text-sky-300 bg-sky-500/10 px-3 py-1.5 rounded-xl border border-sky-500/30">
+              <i class="fa-solid fa-arrows-rotate text-sky-400"></i> تحديث تلقائي
             </span>
-            <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-400 bg-slate-800/80 px-2.5 py-1 rounded-lg border border-slate-700/60">
-              <i class="fa-solid fa-arrows-rotate text-sky-400"></i> تحديث حالات Webhook لحظي
+            <span class="inline-flex items-center gap-1.5 text-xs font-bold text-amber-300 bg-amber-500/10 px-3 py-1.5 rounded-xl border border-amber-500/30">
+              <i class="fa-solid fa-paper-plane text-amber-400"></i> إرسال الطلبات دفعة
             </span>
-            <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-400 bg-slate-800/80 px-2.5 py-1 rounded-lg border border-slate-700/60">
-              <i class="fa-solid fa-boxes-packing text-emerald-400"></i> دعم مخازن Fulfillment
+            <span class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-300 bg-emerald-500/10 px-3 py-1.5 rounded-xl border border-emerald-500/30">
+              <i class="fa-solid fa-warehouse text-emerald-400"></i> التكامل مع المخزن fulfillment
             </span>
           </div>
         </div>

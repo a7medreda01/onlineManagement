@@ -8,6 +8,7 @@ export interface DropdownOption {
   sublabel?: string;
   icon?: string;
   badge?: string;
+  imageUrl?: string;
 }
 
 @Component({
