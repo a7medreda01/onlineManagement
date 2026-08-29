@@ -372,7 +372,9 @@ export class ProfileComponent implements OnInit {
 
   getAvatarFullUrl(avatarUrl?: string): string {
     if (!avatarUrl) return '';
-    if (avatarUrl.startsWith('http')) return avatarUrl;
-    return `${environment.apiBaseUrl}${avatarUrl.startsWith('/') ? '' : '/'}${avatarUrl}`;
+    if (avatarUrl.startsWith('http://')) return avatarUrl.replace('http://', 'https://');
+    if (avatarUrl.startsWith('https://')) return avatarUrl;
+    const base = environment.apiBaseUrl.replace('http://', 'https://');
+    return `${base}${avatarUrl.startsWith('/') ? '' : '/'}${avatarUrl}`;
   }
 }

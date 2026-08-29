@@ -96,8 +96,10 @@ export class ProductsComponent implements OnInit {
 
   getImageUrl(url?: string): string {
     if (!url) return '';
-    if (url.startsWith('http://') || url.startsWith('https://')) return url;
-    return `${environment.apiBaseUrl}${url.startsWith('/') ? '' : '/'}${url}`;
+    if (url.startsWith('http://')) return url.replace('http://', 'https://');
+    if (url.startsWith('https://')) return url;
+    const base = environment.apiBaseUrl.replace('http://', 'https://');
+    return `${base}${url.startsWith('/') ? '' : '/'}${url}`;
   }
 
   openAddModal(): void {

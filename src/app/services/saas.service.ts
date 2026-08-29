@@ -54,7 +54,7 @@ export class SaasService {
   }
 
   getPlans(): Observable<Plan[]> {
-    return this.http.get<Plan[]>(`${this.superAdminUrl}/plans`);
+    return this.http.get<Plan[]>(`${environment.apiUrl}/plans`);
   }
 
   createPlan(data: any): Observable<Plan> {

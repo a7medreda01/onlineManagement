@@ -20,10 +20,16 @@ export const jwtInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, nex
 
   return next(authReq).pipe(
     catchError((error) => {
-      // If 401 and not a login/refresh request itself, attempt silent token refresh
-      const isAuthUrl = req.url.includes('/api/auth/login') || req.url.includes('/api/auth/refresh-token') || req.url.includes('/api/superadmin/login');
-      
-      if (error.status === 401 && !isAuthUrl && authService.getRefreshToken()) {
+      // If 401 and not a login/refresh request or public SaaS route, attempt silent token refresh or ignore
+      const isPublicUrl = req.url.includes('/api/auth/login') ||
+                          req.url.includes('/api/auth/refresh-token') ||
+                          req.url.includes('/api/superadmin/login') ||
+                          req.url.includes('/api/plans') ||
+                          req.url.includes('/api/saas/register') ||
+                          req.url.includes('/api/saas/activate') ||
+                          req.url.includes('/api/saas/resend-token');
+
+      if (error.status === 401 && !isPublicUrl && authService.getRefreshToken()) {
         return authService.refreshToken().pipe(
           switchMap((newRes) => {
             // Retry failed request with new access token
@@ -45,7 +51,7 @@ export const jwtInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, nex
             return throwError(() => refreshErr);
           })
         );
-      } else if (error.status === 401 && !isAuthUrl) {
+      } else if (error.status === 401 && !isPublicUrl) {
         authService.logout();
         const currentUrl = router.url;
         if (currentUrl.includes('/super-admin')) {
