@@ -1,60 +1,62 @@
-<div *ngIf="moderatorsOnly.length > 0" class="glass-card p-2.5 sm:p-3 rounded-2xl border border-indigo-500/30 bg-slate-50 dark:bg-slate-900/90 shadow-sm space-y-2 font-cairo">
+<div *ngIf="moderatorsOnly.length > 0" class="p-3 sm:p-3.5 rounded-2xl border border-indigo-500/40 bg-white dark:bg-slate-900/95 shadow-md space-y-2.5 font-cairo">
   <!-- Header Row: High contrast title with Bootstrap Icons -->
-  <div class="flex items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-1.5">
-    <div class="flex items-center gap-1.5">
-      <i class="bi bi-fire text-rose-500 text-sm animate-pulse"></i>
-      <h3 class="font-black !text-slate-900 dark:!text-slate-100 text-xs sm:text-sm">
+  <div class="flex items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-2">
+    <div class="flex items-center gap-2">
+      <i class="bi bi-fire text-rose-500 text-base animate-pulse"></i>
+      <h3 class="font-black text-slate-900 dark:text-white text-xs sm:text-sm tracking-wide">
         سباق الشيفتات اليومي (تحدي المودريتورز)
       </h3>
     </div>
-    <span class="text-[10px] font-bold !text-amber-700 dark:!text-amber-300 bg-amber-500/15 px-2.5 py-0.5 rounded-full border border-amber-500/30 shrink-0 flex items-center gap-1">
+    <span class="text-[11px] font-black text-amber-700 dark:text-amber-300 bg-amber-500/20 px-2.5 py-0.5 rounded-full border border-amber-500/40 shrink-0 flex items-center gap-1">
       <i class="bi bi-trophy-fill text-amber-500 text-[10px]"></i>
       <span>تنافس اليوم</span>
     </span>
   </div>
 
   <!-- PK Battle Competitors Row -->
-  <div class="space-y-1.5">
+  <div class="space-y-2">
     <div class="flex items-center justify-between gap-2">
       <!-- Competitor 1 (Left / Moderator 1 - Rose Team) -->
-      <div class="flex items-center gap-2 min-w-0">
-        <img *ngIf="modA?.avatarUrl" [src]="modA?.avatarUrl" class="w-8 h-8 rounded-full object-cover border-2 border-rose-500 shrink-0 shadow-xs" alt="" (error)="$event.target.style.display='none'" />
-        <div *ngIf="!modA?.avatarUrl" class="w-8 h-8 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs font-black shrink-0 shadow-xs">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <img *ngIf="modA?.avatarUrl" [src]="modA?.avatarUrl" class="w-9 h-9 rounded-full object-cover border-2 border-rose-500 shrink-0 shadow-sm" alt="" (error)="$event.target.style.display='none'" />
+        <div *ngIf="!modA?.avatarUrl" class="w-9 h-9 rounded-full bg-gradient-to-br from-rose-500 to-red-600 text-white flex items-center justify-center text-xs font-black shrink-0 shadow-sm border border-rose-400/30">
           {{ modA?.userName ? modA?.userName?.substring(0, 1) : 'M' }}
         </div>
         <div class="min-w-0">
-          <span class="font-extrabold text-xs !text-rose-600 dark:!text-rose-400 block truncate">{{ modA?.userName || 'المودريتور الأوّل' }}</span>
-          <span class="text-xs font-black !text-slate-900 dark:!text-slate-100">
-            {{ modAScore }} <span class="text-[11px] !text-slate-600 dark:!text-slate-300 font-bold">أوردر ({{ modAPercent }}%)</span>
-          </span>
+          <span class="font-black text-xs text-rose-600 dark:text-rose-400 block truncate">{{ modA?.userName || 'المودريتور الأوّل' }}</span>
+          <div class="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1">
+            <span>{{ modAScore }} أوردر</span>
+            <span class="text-[11px] text-slate-600 dark:text-slate-300 font-bold">({{ modAPercent }}%)</span>
+          </div>
         </div>
       </div>
 
       <!-- Center VS Badge -->
-      <div class="px-2.5 py-0.5 rounded-lg bg-gradient-to-r from-rose-600 to-indigo-600 text-white text-[10px] font-black italic shadow-xs shrink-0 flex items-center gap-0.5">
-        <i class="bi bi-lightning-fill text-amber-300 text-[9px]"></i>
+      <div class="px-2.5 py-1 rounded-xl bg-gradient-to-r from-rose-600 to-indigo-600 text-white text-[11px] font-black italic shadow-md shrink-0 flex items-center gap-1 border border-white/20">
+        <i class="bi bi-lightning-fill text-amber-300 text-[10px]"></i>
         <span>VS</span>
       </div>
 
       <!-- Competitor 2 (Right / Moderator 2 - Indigo Team) -->
-      <div class="flex items-center justify-end gap-2 text-left min-w-0 dir-ltr">
-        <img *ngIf="modB?.avatarUrl" [src]="modB?.avatarUrl" class="w-8 h-8 rounded-full object-cover border-2 border-indigo-500 shrink-0 shadow-xs" alt="" (error)="$event.target.style.display='none'" />
-        <div *ngIf="!modB?.avatarUrl" class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-black shrink-0 shadow-xs">
+      <div class="flex items-center justify-end gap-2.5 text-left min-w-0 dir-ltr">
+        <img *ngIf="modB?.avatarUrl" [src]="modB?.avatarUrl" class="w-9 h-9 rounded-full object-cover border-2 border-indigo-500 shrink-0 shadow-sm" alt="" (error)="$event.target.style.display='none'" />
+        <div *ngIf="!modB?.avatarUrl" class="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-blue-600 text-white flex items-center justify-center text-xs font-black shrink-0 shadow-sm border border-indigo-400/30">
           {{ modB?.userName ? modB?.userName?.substring(0, 1) : 'M' }}
         </div>
         <div class="min-w-0 text-right dir-rtl">
-          <span class="font-extrabold text-xs !text-indigo-600 dark:!text-indigo-400 block truncate">
+          <span class="font-black text-xs text-indigo-600 dark:text-indigo-400 block truncate">
             {{ modB?.userName || (moderatorsOnly.length > 1 ? 'المودريتور الثاني' : 'منافس جديد') }}
           </span>
-          <span class="text-xs font-black !text-slate-900 dark:!text-slate-100">
-            {{ modBScore }} <span class="text-[11px] !text-slate-600 dark:!text-slate-300 font-bold">أوردر ({{ modBPercent }}%)</span>
-          </span>
+          <div class="text-xs font-black text-slate-900 dark:text-white flex items-center justify-end gap-1">
+            <span>{{ modBScore }} أوردر</span>
+            <span class="text-[11px] text-slate-600 dark:text-slate-300 font-bold">({{ modBPercent }}%)</span>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Dual Progress Bar using Bootstrap Icons theme colors -->
-    <div class="w-full h-2.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden flex border border-slate-300 dark:border-slate-700/80 p-0.5 shadow-inner">
+    <div class="w-full h-3 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden flex border border-slate-300 dark:border-slate-700/80 p-0.5 shadow-inner">
       <div class="h-full bg-gradient-to-r from-rose-600 to-red-500 rounded-r-full transition-all duration-700" [style.width.%]="modAPercent"></div>
       <div class="h-full bg-gradient-to-r from-indigo-500 to-blue-600 rounded-l-full transition-all duration-700" [style.width.%]="modBPercent"></div>
     </div>
