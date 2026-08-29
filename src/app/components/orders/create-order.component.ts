@@ -150,6 +150,12 @@ export class CreateOrderComponent implements OnInit {
     return comp.name.replace(/\(.*\)/g, '').trim();
   }
 
+  getCustomerReturnRate(c: CustomerSearchDto | null): number {
+    if (!c || !c.totalOrders || c.totalOrders <= 0) return 0;
+    const returnedOrCancelled = (c.cancelledOrders || 0) + (c.returnedOrders || 0);
+    return Math.round((returnedOrCancelled / c.totalOrders) * 100);
+  }
+
   loadLookups(): void {
     this.customerService.getAll(undefined, undefined, 1, 1000).subscribe(res => this.customers.set(res.items));
     this.productService.getAll().subscribe(res => {

@@ -144,6 +144,17 @@ export class OrderDetailComponent implements OnInit {
     return id ? id.toString() : '1';
   }
 
+  isItemFulfillment(item: any): boolean {
+    if (!item) return false;
+    const code = item.productCode || item.productSku || item.code || '';
+    return item.isFulfillment || code.startsWith('BO-') || code.startsWith('BST-');
+  }
+
+  hasBostaFulfillmentItems(): boolean {
+    const items = this.order()?.orderItems || [];
+    return items.some((item: any) => this.isItemFulfillment(item));
+  }
+
   isAdmin(): boolean {
     return this.authService.isAdmin();
   }

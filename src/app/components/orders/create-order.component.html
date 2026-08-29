@@ -74,29 +74,29 @@
       <div *ngIf="isNewCustomer" class="space-y-2">
 
         <!-- Name & Main Phone Side-By-Side -->
-        <div class="grid grid-cols-2 gap-2">
+        <div class="grid grid-cols-2 gap-2.5">
           <div class="form-group mb-0">
-            <label class="form-label text-[10px] mb-0.5">اسم العميل بالكامل</label>
-            <input type="text" [(ngModel)]="newCustomer.name" name="custName" class="form-control text-xs py-1 px-2.5 h-8" placeholder="الاسم الرباعي" required />
+            <label class="form-label text-[11px] mb-1">اسم العميل بالكامل</label>
+            <input type="text" [(ngModel)]="newCustomer.name" name="custName" class="form-control text-xs py-2 px-3" placeholder="الاسم الرباعي" required />
           </div>
           <div class="form-group mb-0">
-            <label class="form-label text-[10px] mb-0.5">رقم الهاتف الأساسي</label>
-            <input type="text" [(ngModel)]="newCustomer.phone" (input)="onNewCustomerPhoneInput(newCustomer.phone)" name="custPhone" class="form-control text-xs py-1 px-2.5 h-8 font-mono" placeholder="01xxxxxxxxx" required />
+            <label class="form-label text-[11px] mb-1">رقم الهاتف الأساسي</label>
+            <input type="text" [(ngModel)]="newCustomer.phone" (input)="onNewCustomerPhoneInput(newCustomer.phone)" name="custPhone" class="form-control text-xs py-2 px-3 font-mono" placeholder="01xxxxxxxxx" required />
           </div>
         </div>
 
         <!-- Existing customer alert -->
-        <div *ngIf="existingPhoneMatch" class="p-2 rounded-xl bg-amber-500/10 border border-amber-500/40 space-y-1.5 fade-in">
+        <div *ngIf="existingPhoneMatch" class="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/40 space-y-1.5 fade-in">
           <div class="flex items-start gap-1.5 text-amber-200">
             <i class="fa-solid fa-triangle-exclamation text-amber-400 text-xs mt-0.5"></i>
-            <span class="text-[10px] font-bold leading-snug">الرقم مسجل باسم "{{ existingPhoneMatch.name }}" (تسليم {{ existingPhoneMatch.deliverySuccessRate }}%)</span>
+            <span class="text-[11px] font-bold leading-snug">الرقم مسجل باسم "{{ existingPhoneMatch.name }}" (تسليم {{ existingPhoneMatch.deliverySuccessRate }}% | مرتجع {{ getCustomerReturnRate(existingPhoneMatch) }}%)</span>
           </div>
           <div class="flex items-center gap-1.5">
-            <button type="button" (click)="useExistingCustomerMatch(existingPhoneMatch)" class="btn btn-xs py-0.5 px-2 text-[10px] font-bold bg-amber-500 hover:bg-amber-400 border-none text-slate-950 rounded-md">
+            <button type="button" (click)="useExistingCustomerMatch(existingPhoneMatch)" class="btn btn-xs py-1 px-2.5 text-[10px] font-bold bg-amber-500 hover:bg-amber-400 border-none text-slate-950 rounded-md">
               <i class="fa-solid fa-bolt text-[9px]"></i>
               <span>استخدام العميل</span>
             </button>
-            <button type="button" (click)="openCustomerHistoryModal(existingPhoneMatch.id)" class="btn btn-secondary btn-xs py-0.5 px-2 text-sky-300 text-[10px] font-bold border-sky-500/30 rounded-md">
+            <button type="button" (click)="openCustomerHistoryModal(existingPhoneMatch.id)" class="btn btn-secondary btn-xs py-1 px-2.5 text-sky-300 text-[10px] font-bold border-sky-500/30 rounded-md">
               <i class="fa-solid fa-clock-rotate-left text-[9px]"></i>
               <span>سجل الطلبات ({{ existingPhoneMatch.totalOrders }})</span>
             </button>
@@ -104,14 +104,14 @@
         </div>
 
         <!-- Secondary Phone & Governorate Side-By-Side -->
-        <div class="grid grid-cols-2 gap-2">
+        <div class="grid grid-cols-2 gap-2.5">
           <div class="form-group mb-0">
-            <label class="form-label text-[10px] mb-0.5">هاتف بديل <span class="text-slate-500 font-normal">(اختياري)</span></label>
-            <input type="text" [(ngModel)]="newCustomer.secondaryPhone" name="custSecPhone" class="form-control text-xs py-1 px-2.5 h-8 font-mono" placeholder="رقم آخر" />
+            <label class="form-label text-[11px] mb-1">هاتف بديل <span class="text-slate-500 font-normal">(اختياري)</span></label>
+            <input type="text" [(ngModel)]="newCustomer.secondaryPhone" name="custSecPhone" class="form-control text-xs py-2 px-3 font-mono" placeholder="رقم آخر" />
           </div>
           <div class="form-group mb-0">
-            <label class="form-label text-[10px] mb-0.5">المحافظة</label>
-            <select [(ngModel)]="newCustomer.governorateId" (ngModelChange)="onGovernorateChange()" name="custGov" class="form-select text-xs py-1 px-2 h-8" required>
+            <label class="form-label text-[11px] mb-1">المحافظة</label>
+            <select [(ngModel)]="newCustomer.governorateId" (ngModelChange)="onGovernorateChange()" name="custGov" class="form-select text-xs py-2 px-3" required>
               <option [ngValue]="0" disabled>-- المحافظة --</option>
               <option *ngFor="let gov of governorates()" [ngValue]="gov.id">{{ gov.name }}</option>
             </select>
@@ -120,31 +120,31 @@
 
         <!-- Address -->
         <div class="form-group mb-0">
-          <label class="form-label text-[10px] mb-0.5">العنوان التفصيلي للشحن</label>
-          <textarea [(ngModel)]="newCustomer.address" name="custAddress" class="form-textarea text-xs py-1 px-2.5" rows="2" placeholder="الشارع، رقم العمارة، الشقة، العلامة المميزة..." required></textarea>
+          <label class="form-label text-[11px] mb-1">العنوان التفصيلي للشحن</label>
+          <textarea [(ngModel)]="newCustomer.address" name="custAddress" class="form-textarea text-xs py-2 px-3" rows="2" placeholder="الشارع، رقم العمارة، الشقة، العلامة المميزة..." required></textarea>
         </div>
       </div>
 
       <!-- ===== Mode B: Existing customer ===== -->
-      <div *ngIf="!isNewCustomer" class="space-y-2">
+      <div *ngIf="!isNewCustomer" class="space-y-2.5">
 
         <div class="form-group relative mb-0">
-          <label class="form-label text-[10px] font-bold flex items-center justify-between mb-0.5">
+          <label class="form-label text-[11px] font-bold flex items-center justify-between mb-1">
             <span>بحث بالاسم أو رقم الموبايل</span>
-            <span *ngIf="selectedCustomerSearchDto" class="text-[9px] text-emerald-400 font-bold flex items-center gap-1">
+            <span *ngIf="selectedCustomerSearchDto" class="text-[10px] text-emerald-400 font-bold flex items-center gap-1">
               <i class="fa-solid fa-circle-check"></i> تم الاختيار
             </span>
           </label>
 
           <div class="relative">
-            <i class="fa-solid fa-magnifying-glass absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-            <input type="text" [(ngModel)]="searchQuery" (input)="onCustomerSearchInput(searchQuery)" name="customerSearch" class="form-control text-xs py-1 pr-7 pl-14 h-8" placeholder="ابحث باسم العميل أو الموبايل..." />
-            <button *ngIf="searchQuery" type="button" (click)="clearCustomerSearch()" class="absolute left-1.5 top-1/2 -translate-y-1/2 text-[9px] btn btn-secondary py-0.5 px-1.5 rounded">تفريغ</button>
+            <i class="fa-solid fa-magnifying-glass absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+            <input type="text" [(ngModel)]="searchQuery" (input)="onCustomerSearchInput(searchQuery)" name="customerSearch" class="form-control text-xs py-2 pr-8 pl-16" placeholder="ابحث باسم العميل أو الموبايل..." />
+            <button *ngIf="searchQuery" type="button" (click)="clearCustomerSearch()" class="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] btn btn-secondary py-1 px-2 rounded-md">تفريغ</button>
           </div>
 
           <!-- Autocomplete dropdown -->
-          <div *ngIf="searchResults().length > 0" class="absolute z-50 left-0 right-0 top-full mt-1 bg-white text-slate-800 rounded-xl shadow-2xl border border-slate-200 overflow-hidden divide-y divide-slate-100 max-h-52 overflow-y-auto">
-            <div *ngFor="let res of searchResults()" (click)="selectCustomerFromSearch(res)" class="p-2 hover:bg-sky-50 cursor-pointer flex items-center justify-between gap-2 transition-colors">
+          <div *ngIf="searchResults().length > 0" class="absolute z-50 left-0 right-0 top-full mt-1 bg-white text-slate-800 rounded-xl shadow-2xl border border-slate-200 overflow-hidden divide-y divide-slate-100 max-h-56 overflow-y-auto">
+            <div *ngFor="let res of searchResults()" (click)="selectCustomerFromSearch(res)" class="p-2.5 hover:bg-sky-50 cursor-pointer flex items-center justify-between gap-2 transition-colors">
               <div class="min-w-0">
                 <div class="font-bold text-slate-900 text-xs flex items-center gap-1">
                   <span class="truncate">{{ res.name }}</span>
@@ -155,18 +155,22 @@
                   <span>• {{ res.governorateName }}</span>
                 </div>
               </div>
-              <span class="shrink-0 inline-flex items-center gap-1 px-1.5 py-0.2 rounded-full text-[9px] font-bold"
-                    [ngClass]="res.deliverySuccessRate >= 80 ? 'bg-emerald-100 text-emerald-800' : (res.deliverySuccessRate >= 50 ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-800')">
-                {{ res.deliverySuccessRate }}%
-              </span>
+              <div class="flex items-center gap-1 shrink-0">
+                <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-emerald-100 text-emerald-800">
+                  تسليم: {{ res.deliverySuccessRate }}%
+                </span>
+                <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-rose-100 text-rose-800">
+                  مرتجع: {{ getCustomerReturnRate(res) }}%
+                </span>
+              </div>
             </div>
           </div>
         </div>
 
         <!-- Fallback select -->
         <div class="form-group mb-0">
-          <label class="form-label text-[9px] text-slate-500 mb-0.5">أو اختر من قائمة العملاء المسجلين:</label>
-          <select [(ngModel)]="selectedCustomerId" (ngModelChange)="onCustomerChange()" name="selectedCustomerId" class="form-select text-xs py-1 px-2 h-8">
+          <label class="form-label text-[10px] text-slate-400 mb-1">أو اختر من قائمة العملاء المسجلين:</label>
+          <select [(ngModel)]="selectedCustomerId" (ngModelChange)="onCustomerChange()" name="selectedCustomerId" class="form-select text-xs py-2 px-3">
             <option [ngValue]="null">-- اختر عميل --</option>
             <option *ngFor="let cust of customers()" [ngValue]="cust.id">
               {{ cust.name }} - {{ cust.phone }} ({{ cust.governorateName }})
@@ -174,22 +178,45 @@
           </select>
         </div>
 
-        <!-- Selected customer card -->
-        <div *ngIf="selectedCustomerSearchDto" class="p-2 rounded-xl bg-slate-800/40 border border-slate-700/60 space-y-1.5 fade-in">
-          <div class="flex items-center justify-between gap-1.5">
-            <div class="flex items-center gap-1.5 min-w-0">
-              <div class="w-7 h-7 rounded-lg bg-indigo-500/20 text-indigo-300 flex items-center justify-center text-xs shrink-0">
+        <!-- Selected customer card with Delivery Rate & Return Rate -->
+        <div *ngIf="selectedCustomerSearchDto" class="p-3 rounded-xl bg-slate-800/60 border border-slate-700/80 space-y-2.5 fade-in">
+          <div class="flex items-center justify-between gap-2 border-b border-slate-700/50 pb-2">
+            <div class="flex items-center gap-2 min-w-0">
+              <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-300 flex items-center justify-center text-xs shrink-0 font-bold">
                 <i class="fa-solid fa-user-check"></i>
               </div>
               <div class="min-w-0">
-                <h4 class="font-extrabold text-xs text-slate-100 truncate">{{ selectedCustomerSearchDto.name }}</h4>
-                <p class="text-[9px] text-slate-400 truncate">{{ selectedCustomerSearchDto.phone }} · {{ selectedCustomerSearchDto.governorateName }}</p>
+                <h4 class="font-extrabold text-xs sm:text-sm text-slate-100 truncate">{{ selectedCustomerSearchDto.name }}</h4>
+                <p class="text-[10px] text-slate-400 truncate">{{ selectedCustomerSearchDto.phone }} · {{ selectedCustomerSearchDto.governorateName }}</p>
               </div>
             </div>
-            <button type="button" (click)="openCustomerHistoryModal(selectedCustomerSearchDto.id)" class="btn btn-secondary btn-xs py-0.5 px-2 text-sky-400 font-bold border-sky-500/30 shrink-0 text-[9px] rounded-md">
-              <i class="fa-solid fa-clock-rotate-left text-[8px]"></i>
+            <button type="button" (click)="openCustomerHistoryModal(selectedCustomerSearchDto.id)" class="btn btn-secondary btn-xs py-1 px-2 text-sky-400 font-bold border-sky-500/30 shrink-0 text-[10px] rounded-lg">
+              <i class="fa-solid fa-clock-rotate-left text-[9px]"></i>
               <span>السجل ({{ selectedCustomerSearchDto.totalOrders }})</span>
             </button>
+          </div>
+
+          <!-- Quick Stats Row: Delivery Success Rate & Return Rate -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+            <div class="bg-slate-900/80 p-2 rounded-lg border border-slate-700/60 text-center">
+              <span class="text-slate-400 text-[9px] block mb-0.5">إجمالي الطلبات</span>
+              <span class="font-bold text-slate-100 text-xs">{{ selectedCustomerSearchDto.totalOrders }}</span>
+            </div>
+
+            <div class="bg-emerald-500/10 p-2 rounded-lg border border-emerald-500/30 text-center">
+              <span class="text-emerald-400 text-[9px] block mb-0.5">نسبة التسليم</span>
+              <span class="font-black text-emerald-300 text-xs">{{ selectedCustomerSearchDto.deliverySuccessRate }}%</span>
+            </div>
+
+            <div class="bg-rose-500/10 p-2 rounded-lg border border-rose-500/30 text-center">
+              <span class="text-rose-400 text-[9px] block mb-0.5">نسبة المرتجع</span>
+              <span class="font-black text-rose-400 text-xs">{{ getCustomerReturnRate(selectedCustomerSearchDto) }}%</span>
+            </div>
+
+            <div class="bg-indigo-500/10 p-2 rounded-lg border border-indigo-500/30 text-center">
+              <span class="text-indigo-300 text-[9px] block mb-0.5">مسلمة / مرتجعة</span>
+              <span class="font-bold text-slate-200 text-xs">{{ selectedCustomerSearchDto.deliveredOrders }} / {{ selectedCustomerSearchDto.cancelledOrders + selectedCustomerSearchDto.returnedOrders }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -204,7 +231,7 @@
     </div>
 
     <!-- ============ STEP 2: SHIPPING & PRODUCTS ============ -->
-    <div *ngIf="currentStep === 2" class="glass-card p-3 sm:p-4 space-y-3 border-slate-700/80 shadow-md fade-in">
+    <div *ngIf="currentStep === 2" class="glass-card p-3.5 sm:p-4 space-y-3 border-slate-700/80 shadow-md fade-in">
 
       <h3 class="font-bold text-xs sm:text-sm text-slate-100 flex items-center gap-1.5 border-b border-slate-700/50 pb-1.5">
         <i class="fa-solid fa-truck-fast text-sky-400 text-xs"></i>
@@ -212,23 +239,23 @@
       </h3>
 
       <!-- Shipping Company & Sales Platform SIDE-BY-SIDE in 1 compact row -->
-      <div class="grid grid-cols-2 gap-2">
+      <div class="grid grid-cols-2 gap-2.5">
         <div class="form-group mb-0">
-          <label class="form-label text-[10px] mb-0.5">شركة الشحن</label>
-          <select [(ngModel)]="selectedShippingCompanyId" (ngModelChange)="onShippingCompanyChange()" name="shippingCompany" class="form-select text-xs py-1 px-2 h-8" required>
+          <label class="form-label text-[11px] mb-1">شركة الشحن</label>
+          <select [(ngModel)]="selectedShippingCompanyId" (ngModelChange)="onShippingCompanyChange()" name="shippingCompany" class="form-select text-xs py-2 px-3" required>
             <option [ngValue]="0" disabled>-- اختر شركة الشحن --</option>
             <option *ngFor="let comp of shippingCompanies()" [ngValue]="comp.id">{{ getCleanShippingCompanyName(comp) }}</option>
           </select>
         </div>
 
         <div class="form-group mb-0">
-          <div class="flex items-center justify-between mb-0.5">
-            <label class="form-label text-[10px] mb-0">منصة البيع</label>
-            <button type="button" (click)="showPlatformModal = true" class="text-[9px] text-sky-400 hover:text-sky-300 font-bold flex items-center gap-0.5">
+          <div class="flex items-center justify-between mb-1">
+            <label class="form-label text-[11px] mb-0">منصة البيع</label>
+            <button type="button" (click)="showPlatformModal = true" class="text-[10px] text-sky-400 hover:text-sky-300 font-bold flex items-center gap-0.5">
               <i class="fa-solid fa-circle-plus"></i> إضافة
             </button>
           </div>
-          <select [(ngModel)]="selectedSalesPlatformId" name="salesPlatform" class="form-select text-xs py-1 px-2 h-8" required>
+          <select [(ngModel)]="selectedSalesPlatformId" name="salesPlatform" class="form-select text-xs py-2 px-3" required>
             <option [ngValue]="0" disabled>-- المنصة --</option>
             <option *ngFor="let plat of salesPlatforms()" [ngValue]="plat.id">{{ plat.name }}</option>
           </select>
@@ -236,25 +263,25 @@
       </div>
 
       <!-- Warehouse origin (Bosta) -->
-      <div *ngIf="hasBostaIntegration" class="p-2 rounded-xl bg-slate-900/60 border border-slate-700/70 space-y-1.5">
+      <div *ngIf="hasBostaIntegration" class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-700/70 space-y-1.5">
         <div class="flex items-center justify-between gap-1.5">
-          <span class="font-bold text-[11px] text-slate-100 flex items-center gap-1">
-            <i class="fa-solid fa-warehouse text-amber-400 text-[10px]"></i>
+          <span class="font-bold text-xs text-slate-100 flex items-center gap-1">
+            <i class="fa-solid fa-warehouse text-amber-400 text-xs"></i>
             مصدر المنتجات:
           </span>
-          <span class="inline-flex items-center px-1.5 py-0.2 rounded-md text-[9px] font-bold"
+          <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold"
                 [ngClass]="isBostaFulfillmentOrder ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' : 'bg-sky-500/20 text-sky-300 border border-sky-500/40'">
             {{ isBostaFulfillmentOrder ? 'مخازن بوسطة' : 'مخزن التاجر' }}
           </span>
         </div>
 
-        <div class="grid grid-cols-2 gap-1 bg-slate-950/70 p-0.5 rounded-lg border border-slate-800">
-          <button type="button" (click)="toggleBostaFulfillment(false)" [class]="!isBostaFulfillmentOrder ? 'bg-sky-600 text-white font-bold shadow-xs' : 'text-slate-400 hover:text-slate-200 font-semibold'" class="py-1 px-1 rounded-md text-[10px] transition-all flex items-center justify-center gap-1">
-            <i class="fa-solid fa-house-user text-[10px]"></i>
+        <div class="grid grid-cols-2 gap-1 bg-slate-950/70 p-1 rounded-lg border border-slate-800">
+          <button type="button" (click)="toggleBostaFulfillment(false)" [class]="!isBostaFulfillmentOrder ? 'bg-sky-600 text-white font-bold shadow-xs' : 'text-slate-400 hover:text-slate-200 font-semibold'" class="py-1.5 px-2 rounded-md text-xs transition-all flex items-center justify-center gap-1">
+            <i class="fa-solid fa-house-user text-xs"></i>
             <span>مخزن التاجر</span>
           </button>
-          <button type="button" (click)="toggleBostaFulfillment(true)" [class]="isBostaFulfillmentOrder ? 'bg-amber-500 text-slate-950 font-black shadow-xs' : 'text-slate-400 hover:text-slate-200 font-semibold'" class="py-1 px-1 rounded-md text-[10px] transition-all flex items-center justify-center gap-1">
-            <i class="fa-solid fa-bolt text-[10px]"></i>
+          <button type="button" (click)="toggleBostaFulfillment(true)" [class]="isBostaFulfillmentOrder ? 'bg-amber-500 text-slate-950 font-black shadow-xs' : 'text-slate-400 hover:text-slate-200 font-semibold'" class="py-1.5 px-2 rounded-md text-xs transition-all flex items-center justify-center gap-1">
+            <i class="fa-solid fa-bolt text-xs"></i>
             <span>مخازن بوسطة</span>
           </button>
         </div>
@@ -264,18 +291,18 @@
       <div class="space-y-2">
         <div class="flex items-center justify-between">
           <span class="text-xs font-bold text-slate-200">المنتجات ({{ selectedItems.length }})</span>
-          <button type="button" (click)="addItemRow()" class="btn btn-secondary btn-xs py-1 px-2 text-indigo-400 font-bold flex items-center gap-1 text-[10px] rounded-md">
-            <i class="fa-solid fa-plus text-[8px]"></i>
+          <button type="button" (click)="addItemRow()" class="btn btn-secondary btn-xs py-1 px-2.5 text-indigo-400 font-bold flex items-center gap-1 text-[11px] rounded-md">
+            <i class="fa-solid fa-plus text-[9px]"></i>
             <span>إضافة منتج</span>
           </button>
         </div>
 
         <!-- Product Row Items using Custom Dropdown Component -->
         <div *ngFor="let item of selectedItems; let i = index"
-             class="p-2 rounded-xl bg-slate-800/40 border border-slate-700/60 space-y-1.5">
+             class="p-2.5 rounded-xl bg-slate-800/40 border border-slate-700/60 space-y-1.5">
 
           <!-- Single horizontal flex row for Product, Quantity, Unit Price, Subtotal, Delete -->
-          <div class="flex items-center gap-1.5">
+          <div class="flex items-center gap-2">
             <!-- Custom Product Dropdown Popover Modal -->
             <div class="flex-1 min-w-0">
               <app-custom-dropdown
@@ -290,14 +317,14 @@
 
             <!-- Quantity Input -->
             <div class="w-16 shrink-0 text-center">
-              <label class="text-[9px] text-slate-400 block mb-0.5">الكمية</label>
-              <input type="number" [(ngModel)]="item.quantity" (ngModelChange)="onItemQuantityOrPriceChange()" [name]="'qty_' + i" min="1" [max]="getMaxStock(item.productId)" class="form-control text-xs py-1 px-1 text-center font-bold h-8" required />
+              <label class="text-[10px] text-slate-400 block mb-0.5">الكمية</label>
+              <input type="number" [(ngModel)]="item.quantity" (ngModelChange)="onItemQuantityOrPriceChange()" [name]="'qty_' + i" min="1" [max]="getMaxStock(item.productId)" class="form-control text-xs py-1.5 px-2 text-center font-bold" required />
             </div>
 
             <!-- Price Input -->
             <div class="w-20 shrink-0 text-center">
-              <label class="text-[9px] text-amber-400 font-bold block mb-0.5">سعر القطعة</label>
-              <input type="number" [(ngModel)]="item.unitPrice" (ngModelChange)="onItemQuantityOrPriceChange()" (focus)="$event.target.select()" [name]="'price_' + i" min="0" step="0.5" class="form-control text-xs py-1 px-1 font-bold text-amber-300 text-center border-amber-500/40 h-8" required />
+              <label class="text-[10px] text-amber-400 font-bold block mb-0.5">سعر القطعة</label>
+              <input type="number" [(ngModel)]="item.unitPrice" (ngModelChange)="onItemQuantityOrPriceChange()" (focus)="$event.target.select()" [name]="'price_' + i" min="0" step="0.5" class="form-control text-xs py-1.5 px-2 font-bold text-amber-300 text-center border-amber-500/40" required />
             </div>
 
             <!-- Delete Button -->
@@ -307,37 +334,37 @@
           </div>
 
           <!-- Item Subtotal Summary Row -->
-          <div class="flex justify-between items-center text-[10px] font-bold pt-1 border-t border-slate-700/40 text-slate-400 px-1">
+          <div class="flex justify-between items-center text-xs font-bold pt-1 border-t border-slate-700/40 text-slate-400 px-1">
             <span>إجمالي المنتج:</span>
-            <span class="text-emerald-400 font-black text-xs">{{ getItemSubtotal(item) }} ج.م</span>
+            <span class="text-emerald-400 font-black text-xs sm:text-sm">{{ getItemSubtotal(item) }} ج.م</span>
           </div>
         </div>
       </div>
 
       <div class="form-group mb-0">
-        <label class="form-label text-[10px] mb-0.5">ملاحظات الأوردر <span class="text-slate-500 font-normal">(اختياري)</span></label>
-        <textarea [(ngModel)]="orderNotes" name="notes" class="form-textarea text-xs py-1 px-2.5" rows="1.5" placeholder="ملاحظات التسليم..."></textarea>
+        <label class="form-label text-[11px] mb-1">ملاحظات الأوردر <span class="text-slate-500 font-normal">(اختياري)</span></label>
+        <textarea [(ngModel)]="orderNotes" name="notes" class="form-textarea text-xs py-2 px-3" rows="1.5" placeholder="ملاحظات التسليم..."></textarea>
       </div>
 
       <!-- Subtotal / shipping summary -->
       <div class="grid grid-cols-2 gap-2 text-xs font-bold text-slate-200">
-        <div class="p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/30 flex justify-between items-center">
-          <span class="text-[10px] text-slate-300">المجموع الجزئي:</span>
+        <div class="p-2.5 rounded-xl bg-indigo-500/10 border border-indigo-500/30 flex justify-between items-center">
+          <span class="text-[11px] text-slate-300">المجموع الجزئي:</span>
           <span class="font-black text-indigo-300 text-xs sm:text-sm">{{ calculatedSubTotal }} ج.م</span>
         </div>
-        <div class="p-2 rounded-xl bg-amber-500/10 border border-amber-500/30 flex justify-between items-center">
-          <span class="text-[10px] text-slate-300">مصاريف الشحن:</span>
+        <div class="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex justify-between items-center">
+          <span class="text-[11px] text-slate-300">مصاريف الشحن:</span>
           <span class="font-black text-amber-400 text-xs sm:text-sm">{{ calculatedShippingCost }} ج.م</span>
         </div>
       </div>
 
       <!-- Nav -->
       <div class="flex justify-between items-center pt-2 border-t border-slate-700/50">
-        <button type="button" (click)="prevStep()" class="btn btn-secondary py-1.5 px-3 text-xs font-bold rounded-lg">
+        <button type="button" (click)="prevStep()" class="btn btn-secondary py-2 px-4 text-xs font-bold rounded-lg">
           <i class="fa-solid fa-arrow-right text-[10px]"></i>
           <span>السابق</span>
         </button>
-        <button type="button" (click)="nextStep()" class="btn btn-primary py-1.5 px-4 font-bold text-xs flex items-center gap-1 shadow-xs rounded-lg">
+        <button type="button" (click)="nextStep()" class="btn btn-primary py-2 px-4 font-bold text-xs flex items-center gap-1 shadow-xs rounded-lg">
           <span>الخطوة التالية</span>
           <i class="fa-solid fa-arrow-left text-[10px]"></i>
         </button>
@@ -345,7 +372,7 @@
     </div>
 
     <!-- ============ STEP 3: FINANCIAL SUMMARY ============ -->
-    <div *ngIf="currentStep === 3" class="glass-card p-3 sm:p-4 space-y-3 border-slate-700/80 shadow-md fade-in">
+    <div *ngIf="currentStep === 3" class="glass-card p-3.5 sm:p-4 space-y-3 border-slate-700/80 shadow-md fade-in">
 
       <h3 class="font-bold text-xs sm:text-sm text-slate-100 flex items-center gap-1.5 border-b border-slate-700/50 pb-1.5">
         <i class="fa-solid fa-calculator text-emerald-400 text-xs"></i>
@@ -354,20 +381,20 @@
 
       <!-- Customer / shipping recap -->
       <div class="grid grid-cols-2 gap-2 text-xs">
-        <div class="p-2 rounded-xl bg-slate-800/40 border border-slate-700/50 space-y-1">
-          <h4 class="font-bold text-sky-300 text-[10px] flex items-center gap-1">
-            <i class="fa-solid fa-user text-[8px]"></i> العميل
+        <div class="p-2.5 rounded-xl bg-slate-800/40 border border-slate-700/50 space-y-1">
+          <h4 class="font-bold text-sky-300 text-[11px] flex items-center gap-1">
+            <i class="fa-solid fa-user text-[9px]"></i> العميل
           </h4>
-          <p class="text-slate-200 text-[10px] truncate"><strong>{{ getSummaryCustomerName() }}</strong></p>
-          <p class="text-slate-400 text-[9px] dir-ltr text-right truncate">{{ getSummaryCustomerPhone() }}</p>
+          <p class="text-slate-200 text-[11px] truncate"><strong>{{ getSummaryCustomerName() }}</strong></p>
+          <p class="text-slate-400 text-[10px] dir-ltr text-right truncate">{{ getSummaryCustomerPhone() }}</p>
         </div>
 
-        <div class="p-2 rounded-xl bg-slate-800/40 border border-slate-700/50 space-y-1">
-          <h4 class="font-bold text-sky-300 text-[10px] flex items-center gap-1">
-            <i class="fa-solid fa-truck text-[8px]"></i> الشحن والمنصة
+        <div class="p-2.5 rounded-xl bg-slate-800/40 border border-slate-700/50 space-y-1">
+          <h4 class="font-bold text-sky-300 text-[11px] flex items-center gap-1">
+            <i class="fa-solid fa-truck text-[9px]"></i> الشحن والمنصة
           </h4>
-          <p class="text-slate-200 text-[10px] truncate"><strong>{{ getSelectedShippingCompanyName() }}</strong></p>
-          <p class="text-slate-400 text-[9px] truncate">{{ getSelectedSalesPlatformName() }}</p>
+          <p class="text-slate-200 text-[11px] truncate"><strong>{{ getSelectedShippingCompanyName() }}</strong></p>
+          <p class="text-slate-400 text-[10px] truncate">{{ getSelectedSalesPlatformName() }}</p>
         </div>
       </div>
 
@@ -375,23 +402,23 @@
       <div class="rounded-xl border border-slate-700/60 divide-y divide-slate-700/50 overflow-hidden space-y-0">
 
         <!-- Simple line items -->
-        <div class="p-2 space-y-1 bg-slate-800/30 text-xs">
-          <div class="flex justify-between items-center text-slate-300 text-[11px]">
+        <div class="p-2.5 space-y-1 bg-slate-800/30 text-xs">
+          <div class="flex justify-between items-center text-slate-300 text-xs">
             <span>إجمالي المنتجات ({{ selectedItems.length }}):</span>
             <span class="font-bold text-white">{{ calculatedSubTotal }} ج.م</span>
           </div>
-          <div class="flex justify-between items-center text-slate-300 text-[11px]">
+          <div class="flex justify-between items-center text-slate-300 text-xs">
             <span>مصاريف الشحن:</span>
             <span class="font-bold text-amber-400">{{ calculatedShippingCost }} ج.م</span>
           </div>
         </div>
 
         <!-- Editable total -->
-        <div class="p-2.5 bg-emerald-500/5">
+        <div class="p-3 bg-emerald-500/5">
           <div class="flex items-center justify-between gap-2">
             <div>
               <label class="font-extrabold text-slate-100 text-xs block mb-0.5">المبلغ الإجمالي مع الشحن:</label>
-              <span class="text-[9px] text-emerald-400 block">اضغط لتغيير المبلغ بسهولة</span>
+              <span class="text-[10px] text-emerald-400 block">اضغط لتغيير المبلغ بسهولة</span>
             </div>
             <div class="relative w-36">
               <input 
@@ -402,7 +429,7 @@
                 name="manualTotal" 
                 min="0" 
                 step="0.5" 
-                class="w-full text-base font-black text-emerald-400 bg-slate-900 border-2 border-emerald-500/60 rounded-lg px-2 py-1 text-center focus:outline-none focus:border-emerald-400" 
+                class="w-full text-base font-black text-emerald-400 bg-slate-900 border-2 border-emerald-500/60 rounded-lg px-2.5 py-1.5 text-center focus:outline-none focus:border-emerald-400" 
                 required 
               />
             </div>
@@ -410,31 +437,31 @@
         </div>
 
         <!-- Deposit -->
-        <div class="p-2.5 bg-purple-500/5 space-y-2">
+        <div class="p-3 bg-purple-500/5 space-y-2">
           <div class="flex items-center justify-between gap-1 flex-wrap">
             <h5 class="text-xs font-bold text-purple-300 flex items-center gap-1">
               <i class="fa-solid fa-receipt text-amber-400 text-[10px]"></i>
               <span>العربون والدفع المسبق (اختياري)</span>
             </h5>
-            <span class="text-[9px] text-slate-500">يُخصم آلياً من التحصيل COD</span>
+            <span class="text-[10px] text-slate-500">يُخصم آلياً من التحصيل COD</span>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
             <div class="form-group mb-0">
-              <label class="block text-[10px] font-semibold text-slate-300 mb-0.5">مبلغ العربون (ج.م)</label>
-              <input type="number" [(ngModel)]="depositAmount" (focus)="$event.target.select()" name="depositAmount" min="0" [max]="calculatedTotalAmount" placeholder="0" class="form-control text-xs py-1 px-2 bg-slate-900 border-slate-700 text-emerald-400 font-bold font-mono h-8" />
+              <label class="block text-[11px] font-semibold text-slate-300 mb-1">مبلغ العربون (ج.م)</label>
+              <input type="number" [(ngModel)]="depositAmount" (focus)="$event.target.select()" name="depositAmount" min="0" [max]="calculatedTotalAmount" placeholder="0" class="form-control text-xs py-2 px-2.5 bg-slate-900 border-slate-700 text-emerald-400 font-bold font-mono" />
             </div>
 
             <div class="form-group mb-0" *ngIf="(depositAmount || 0) > 0">
-              <label class="block text-[10px] font-semibold text-slate-300 mb-0.5">المحفظة المستلمة</label>
-              <select [(ngModel)]="selectedPaidToWalletId" name="paidToWallet" class="form-control text-xs py-1 px-2 bg-slate-900 border-slate-700 text-slate-100 h-8">
+              <label class="block text-[11px] font-semibold text-slate-300 mb-1">المحفظة المستلمة</label>
+              <select [(ngModel)]="selectedPaidToWalletId" name="paidToWallet" class="form-control text-xs py-2 px-2.5 bg-slate-900 border-slate-700 text-slate-100">
                 <option *ngFor="let w of wallets()" [ngValue]="w.id">{{ w.name }} ({{ w.balance | number:'1.0-0' }} ج.م)</option>
               </select>
             </div>
 
             <div class="form-group mb-0" *ngIf="(depositAmount || 0) > 0">
-              <label class="block text-[10px] font-semibold text-slate-300 mb-0.5">رقم المرجع / الحوالة</label>
-              <input type="text" [(ngModel)]="depositReference" name="depositRef" placeholder="فودافون كاش / إنستاباي" class="form-control text-xs py-1 px-2 bg-slate-900 border-slate-700 text-slate-100 font-mono h-8" />
+              <label class="block text-[11px] font-semibold text-slate-300 mb-1">رقم المرجع / الحوالة</label>
+              <input type="text" [(ngModel)]="depositReference" name="depositRef" placeholder="فودافون كاش / إنستاباي" class="form-control text-xs py-2 px-2.5 bg-slate-900 border-slate-700 text-slate-100 font-mono" />
             </div>
           </div>
         </div>
