@@ -26,12 +26,12 @@
         <span>جميع المنتجات ({{ products().length }})</span>
       </button>
       <button type="button" (click)="setWarehouseFilter('fulfillment')" [class]="selectedWarehouseFilter === 'fulfillment' ? 'bg-amber-500 text-slate-950 font-black' : 'bg-slate-800 text-amber-300 hover:bg-slate-700'" class="btn btn-xs py-1.5 px-3 rounded-lg text-xs transition-all flex items-center gap-1.5">
-        <i class="bi bi-lightning-charge-fill"></i>
-        <span>⚡ مخازن بوسطة (Fulfillment) ({{ getFulfillmentCount() }})</span>
+        <i class="bi bi-lightning-charge-fill text-amber-400"></i>
+        <span>مخازن بوسطة (Fulfillment) ({{ getFulfillmentCount() }})</span>
       </button>
       <button type="button" (click)="setWarehouseFilter('merchant')" [class]="selectedWarehouseFilter === 'merchant' ? 'bg-sky-600 text-white font-bold' : 'bg-slate-800 text-sky-300 hover:bg-slate-700'" class="btn btn-xs py-1.5 px-3 rounded-lg text-xs transition-all flex items-center gap-1.5">
-        <i class="bi bi-house-door-fill"></i>
-        <span>📦 مخزن التاجر الخاص ({{ getMerchantCount() }})</span>
+        <i class="bi bi-house-door-fill text-sky-400"></i>
+        <span>مخزن التاجر الخاص ({{ getMerchantCount() }})</span>
       </button>
     </div>
 
@@ -69,11 +69,13 @@
           <tr *ngFor="let product of filteredProducts()">
             <td class="font-bold text-sky-400">{{ product.code }}</td>
             <td>
-              <span *ngIf="product.isFulfillment || product.code?.startsWith('BO-') || product.code?.startsWith('BST-')" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
-                ⚡ بوسطة (Fulfillment)
+              <span *ngIf="product.isFulfillment || product.code?.startsWith('BO-') || product.code?.startsWith('BST-')" class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                <i class="bi bi-lightning-charge-fill text-amber-400 text-[9px]"></i>
+                <span>بوسطة (Fulfillment)</span>
               </span>
-              <span *ngIf="!product.isFulfillment && !product.code?.startsWith('BO-') && !product.code?.startsWith('BST-')" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-sky-500/20 text-sky-300 border border-sky-500/40">
-                📦 مخزن التاجر
+              <span *ngIf="!product.isFulfillment && !product.code?.startsWith('BO-') && !product.code?.startsWith('BST-')" class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-sky-500/20 text-sky-300 border border-sky-500/40">
+                <i class="bi bi-house-door-fill text-sky-400 text-[9px]"></i>
+                <span>مخزن التاجر</span>
               </span>
             </td>
             <td>
@@ -141,7 +143,17 @@
           </div>
           <div>
             <div class="font-bold text-slate-100 text-sm">{{ product.name }}</div>
-            <div class="font-mono text-xs text-sky-400 font-bold">كود: {{ product.code }}</div>
+            <div class="flex items-center gap-2 mt-0.5">
+              <span class="font-mono text-xs text-sky-400 font-bold">كود: {{ product.code }}</span>
+              <span *ngIf="product.isFulfillment || product.code?.startsWith('BO-') || product.code?.startsWith('BST-')" class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                <i class="bi bi-lightning-charge-fill text-amber-400 text-[8px]"></i>
+                <span>بوسطة</span>
+              </span>
+              <span *ngIf="!product.isFulfillment && !product.code?.startsWith('BO-') && !product.code?.startsWith('BST-')" class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-sky-500/20 text-sky-300 border border-sky-500/40">
+                <i class="bi bi-house-door-fill text-sky-400 text-[8px]"></i>
+                <span>مخزن التاجر</span>
+              </span>
+            </div>
           </div>
         </div>
         <span class="badge" [class.badge-delivered]="product.isActive" [class.badge-cancelled]="!product.isActive">

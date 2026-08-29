@@ -241,30 +241,31 @@
         </button>
       </div>
 
-      <!-- Warehouse Origin Filter Toggle Bar -->
-      <div class="p-3 rounded-xl bg-slate-800/80 border border-amber-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 shadow-sm">
-        <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-300 flex items-center justify-center font-bold text-sm shrink-0 border border-amber-500/30">
-            <i class="fa-solid fa-warehouse"></i>
+      <!-- Warehouse Origin Filter Segmented Control (ONLY shown if store has active Bosta integration) -->
+      <div *ngIf="hasBostaIntegration" class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80 space-y-2 shadow-sm">
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-warehouse text-amber-400 text-xs"></i>
+            <span class="font-extrabold text-xs text-slate-100">مصدر المنتجات:</span>
           </div>
-          <div>
-            <h4 class="font-extrabold text-xs text-slate-100 flex items-center gap-2">
-              <span>مصدر مخزن المنتجات:</span>
-              <span *ngIf="isBostaFulfillmentOrder" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
-                ⚡ مخازن بوسطة (Fulfillment)
-              </span>
-              <span *ngIf="!isBostaFulfillmentOrder" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-sky-500/20 text-sky-300 border border-sky-500/40">
-                📦 مخزن التاجر الخاص (Merchant)
-              </span>
-            </h4>
-            <p class="text-[10px] text-slate-400">تصفية المنتجات الظاهرة حسب مصدر التخزين واختيار كود بوسطة تلقائياً</p>
-          </div>
+          <span *ngIf="isBostaFulfillmentOrder" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+            مخازن بوسطة (Fulfillment)
+          </span>
+          <span *ngIf="!isBostaFulfillmentOrder" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-sky-500/20 text-sky-300 border border-sky-500/40">
+            مخزن التاجر
+          </span>
         </div>
 
-        <div class="flex items-center gap-2 w-full sm:w-auto justify-end pt-1 sm:pt-0">
-          <button type="button" (click)="toggleBostaFulfillment(!isBostaFulfillmentOrder)" [class]="isBostaFulfillmentOrder ? 'bg-amber-500 text-slate-950 font-black border-amber-400' : 'bg-slate-700 text-slate-300 font-bold border-slate-600'" class="btn btn-xs py-1.5 px-3 rounded-lg border text-[11px] transition-all flex items-center gap-1.5 shadow-xs">
-            <i [class]="isBostaFulfillmentOrder ? 'fa-solid fa-circle-check text-slate-950' : 'fa-regular fa-circle text-slate-400'"></i>
-            <span>الشحن من مخزن بوسطة (Fulfillment)</span>
+        <!-- Touch-friendly Segmented Buttons for Mobile & Desktop -->
+        <div class="grid grid-cols-2 gap-2 bg-slate-950/80 p-1 rounded-xl border border-slate-800">
+          <button type="button" (click)="toggleBostaFulfillment(false)" [class]="!isBostaFulfillmentOrder ? 'bg-sky-600 text-white font-bold shadow-sm' : 'text-slate-400 hover:text-slate-200 font-semibold'" class="py-1.5 px-3 rounded-lg text-xs transition-all flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-house-user text-xs"></i>
+            <span>مخزن التاجر الخاص</span>
+          </button>
+
+          <button type="button" (click)="toggleBostaFulfillment(true)" [class]="isBostaFulfillmentOrder ? 'bg-amber-500 text-slate-950 font-black shadow-sm' : 'text-slate-400 hover:text-slate-200 font-semibold'" class="py-1.5 px-3 rounded-lg text-xs transition-all flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-bolt text-xs"></i>
+            <span>مخازن بوسطة (Fulfillment)</span>
           </button>
         </div>
       </div>
@@ -276,7 +277,7 @@
             <select [(ngModel)]="item.productId" (ngModelChange)="onProductSelect(i)" [name]="'prod_' + i" class="form-select text-xs py-1.5 px-3" required>
               <option [ngValue]="0" disabled>-- اختر المنتج --</option>
               <option *ngFor="let p of getFilteredProducts()" [ngValue]="p.id" [disabled]="p.stockQuantity <= 0">
-                {{ p.name }} (كود: {{ p.code }}) - سعر البيع: {{ p.sellingPrice }} ج.م | المتاح: {{ p.stockQuantity }}
+                {{ p.name }}
               </option>
             </select>
           </div>

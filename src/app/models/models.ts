@@ -21,6 +21,15 @@ export enum SubscriptionStatus {
   Expired = 'Expired'
 }
 
+export interface DropdownOption<T = any> {
+  value: T;
+  label: string;
+  sublabel?: string;
+  icon?: string;
+  badge?: string;
+  disabled?: boolean;
+}
+
 export interface PagedResult<T> {
   items: T[];
   totalCount: number;

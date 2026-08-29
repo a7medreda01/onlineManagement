@@ -108,8 +108,16 @@ export class CreateOrderComponent implements OnInit {
     this.recalculateCosts();
   }
 
+  get hasBostaIntegration(): boolean {
+    return this.shippingCompanies().some(c => c.isIntegrated && (c.name.toLowerCase().includes('bosta') || c.name.includes('بوسطة')));
+  }
+
   getFilteredProducts(): Product[] {
     const allProds = this.products();
+    if (!this.hasBostaIntegration) {
+      return allProds;
+    }
+
     if (this.isBostaFulfillmentOrder) {
       const fulfillmentProds = allProds.filter(p => p.isFulfillment || p.code?.startsWith('BO-') || p.code?.startsWith('BST-'));
       return fulfillmentProds.length > 0 ? fulfillmentProds : allProds;
