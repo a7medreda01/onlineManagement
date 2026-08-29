@@ -2,6 +2,8 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProfileService } from '../../services/profile.service';
+import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 import { UserProfile, UserRole } from '../../models/models';
 import { environment } from '../../../environments/environment';
 
@@ -52,13 +54,18 @@ import { environment } from '../../../environments/environment';
             </p>
           </div>
 
-          <!-- Quick WhatsApp Support Action -->
+          <!-- Quick WhatsApp Support & Mobile Logout Action -->
           <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
             <a href="https://wa.me/201080225502?text=مرحباً، لدي استفسار بخصوص حسابي في نظام Besnesy" target="_blank" 
                class="btn bg-emerald-600 hover:bg-emerald-500 text-white text-xs py-2 px-4 flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/40">
               <i class="bi bi-whatsapp text-base"></i>
               <span>الدعم الفني والشكاوى</span>
             </a>
+
+            <button (click)="logout()" class="btn bg-rose-600/20 hover:bg-rose-600 text-rose-300 hover:text-white border border-rose-500/40 text-xs py-2 px-4 flex items-center justify-center gap-2 shadow-lg transition-colors">
+              <i class="bi bi-box-arrow-right text-base"></i>
+              <span>تسجيل الخروج</span>
+            </button>
           </div>
 
         </div>
@@ -250,7 +257,16 @@ export class ProfileComponent implements OnInit {
   loadingUpdate = signal<boolean>(false);
   loadingPassword = signal<boolean>(false);
 
-  constructor(private profileService: ProfileService) {}
+  constructor(
+    private profileService: ProfileService,
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
 
   ngOnInit(): void {
     this.loadProfile();

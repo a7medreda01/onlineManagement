@@ -1,84 +1,107 @@
-<div class="auth-page-bg font-cairo min-h-screen relative overflow-hidden">
+<div class="auth-page-bg font-cairo min-h-screen relative overflow-hidden flex flex-col justify-between" dir="rtl">
   <!-- Ambient Glow Orbs -->
   <div class="absolute top-1/4 -right-32 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
   <div class="absolute bottom-1/4 -left-32 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
   <!-- Top Theme Switcher & Back Home -->
-  <div class="absolute top-4 left-4 right-4 flex items-center justify-between z-20">
+  <div class="p-4 sm:p-6 flex items-center justify-between z-20">
     <a routerLink="/" class="text-xs font-bold text-slate-400 hover:text-indigo-400 flex items-center gap-1.5 transition">
       <i class="fa-solid fa-arrow-right"></i>
       <span>الرئيسية</span>
     </a>
 
-    <button (click)="toggleTheme()" class="btn btn-secondary btn-sm rounded-xl py-1.5 px-3 text-xs shadow-sm">
+    <button (click)="toggleTheme()" class="btn btn-secondary btn-sm rounded-xl py-1.5 px-3 text-xs shadow-sm border-slate-700">
       <i class="fa-solid text-amber-400" [class.fa-sun]="isDarkMode" [class.fa-moon]="!isDarkMode"></i>
       <span>{{ isDarkMode ? 'مظهر فاتح' : 'مظهر داكن' }}</span>
     </button>
   </div>
 
   <!-- Main Login Card -->
-  <div class="auth-card w-full max-w-md p-8 fade-in relative z-10">
-    <div class="text-center mb-8">
-      <div class="w-16 h-16 bg-gradient-to-tr from-indigo-600 to-sky-500 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 border border-indigo-400/30 shadow-lg shadow-indigo-500/20">
-        <i class="fa-solid fa-store text-2xl"></i>
+  <div class="flex-1 flex items-center justify-center p-4">
+    <div class="auth-card w-full max-w-md p-6 sm:p-8 fade-in relative z-10 my-4 shadow-2xl border-slate-700/80">
+      <div class="text-center mb-6">
+        <div class="w-16 h-16 bg-gradient-to-tr from-indigo-600 to-sky-500 text-white rounded-2xl flex items-center justify-center mx-auto mb-3 border border-indigo-400/30 shadow-lg shadow-indigo-500/20">
+          <i class="fa-solid fa-store text-2xl"></i>
+        </div>
+        <h2 class="text-2xl font-black text-slate-100 mb-1">نظام إدارة المبيعات أونلاين</h2>
+        <p class="text-slate-400 text-xs sm:text-sm">تسجيل الدخول للوحة تحكم المتجر</p>
       </div>
-      <h2 class="text-2xl font-black text-slate-100 mb-1">نظام إدارة المبيعات أونلاين</h2>
-      <p class="text-slate-400 text-xs sm:text-sm">تسجيل الدخول للوحة تحكم المتجر</p>
-    </div>
 
-    <div *ngIf="errorMessage" class="bg-rose-500/10 border border-rose-500/30 text-rose-400 p-4 rounded-xl text-xs mb-6 flex flex-col gap-2">
-      <div class="flex items-center gap-2 font-bold">
-        <i class="fa-solid fa-circle-exclamation text-sm"></i>
-        <span>{{ errorMessage }}</span>
+      <div *ngIf="errorMessage" class="bg-rose-500/10 border border-rose-500/30 text-rose-400 p-4 rounded-xl text-xs mb-6 flex flex-col gap-2">
+        <div class="flex items-center gap-2 font-bold">
+          <i class="fa-solid fa-circle-exclamation text-sm"></i>
+          <span>{{ errorMessage }}</span>
+        </div>
+        <div *ngIf="requiresActivation" class="pt-2 border-t border-rose-500/20 text-center">
+          <a [routerLink]="['/activate-account']" [queryParams]="{ email: username }" class="text-sky-400 hover:underline font-bold text-xs">
+            اضغط هنا لتأكيد تفعيل الإيميل الآن ←
+          </a>
+        </div>
       </div>
-      <div *ngIf="requiresActivation" class="pt-2 border-t border-rose-500/20 text-center">
-        <a [routerLink]="['/activate-account']" [queryParams]="{ email: username }" class="text-sky-400 hover:underline font-bold text-xs">
-          اضغط هنا لتأكيد تفعيل الإيميل الآن ←
+
+      <form (ngSubmit)="onSubmit()" class="space-y-4">
+        <div class="form-group">
+          <label class="form-label">اسم المستخدم أو البريد الإلكتروني</label>
+          <input type="text" [(ngModel)]="username" name="username" class="form-control text-sm" placeholder="أدخل اسم المستخدم أو الإيميل" required
+                 autocomplete="username" autocorrect="off" autocapitalize="none" spellcheck="false" />
+        </div>
+
+        <div class="form-group">
+          <div class="flex items-center justify-between mb-1">
+            <label class="form-label mb-0">كلمة المرور</label>
+            <a routerLink="/forgot-password" class="text-xs text-sky-400 hover:underline font-semibold">نسيت كلمة المرور؟</a>
+          </div>
+
+          <!-- Password Input with Eye Toggle -->
+          <div class="relative flex items-center">
+            <input [type]="showPassword ? 'text' : 'password'"
+                   [(ngModel)]="password"
+                   name="password"
+                   class="form-control text-sm pl-10"
+                   placeholder="أدخل كلمة المرور"
+                   required
+                   autocomplete="current-password"
+                   autocorrect="off"
+                   autocapitalize="none"
+                   spellcheck="false" />
+
+            <button type="button"
+                    (click)="togglePasswordVisibility()"
+                    class="absolute left-3 text-slate-400 hover:text-sky-400 transition-colors p-1 flex items-center justify-center"
+                    title="إظهار / إخفاء كلمة المرور">
+              <i class="fa-solid" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Remember Me -->
+        <div class="flex items-center gap-2.5 mt-1">
+          <input type="checkbox"
+                 id="rememberMe"
+                 [(ngModel)]="rememberMe"
+                 name="rememberMe"
+                 class="w-4 h-4 rounded accent-indigo-500 cursor-pointer" />
+          <label for="rememberMe" class="text-xs text-slate-400 cursor-pointer select-none font-medium">
+            تذكرني وابقِ تسجيل دخولي
+          </label>
+        </div>
+
+        <button type="submit" [disabled]="loading" class="btn btn-primary w-full py-3.5 text-base shadow-lg shadow-indigo-600/30 font-bold mt-2 flex items-center justify-center gap-2">
+          <i *ngIf="loading" class="fa-solid fa-circle-notch fa-spin"></i>
+          <span *ngIf="!loading"><i class="fa-solid fa-right-to-bracket"></i> تسجيل الدخول</span>
+        </button>
+      </form>
+
+      <div class="mt-6 pt-5 border-t border-slate-700/50 text-center">
+        <p class="text-xs text-slate-400 mb-2">ليس لديك متجر بعد؟</p>
+        <a routerLink="/signup" class="text-xs text-sky-400 font-bold hover:underline">
+          سجّل متجرك الجديد واحصل على سنة مجاناً 🎉
         </a>
       </div>
     </div>
+  </div>
 
-    <form (ngSubmit)="onSubmit()" class="space-y-4">
-      <div class="form-group">
-        <label class="form-label">اسم المستخدم أو البريد الإلكتروني</label>
-        <input type="text" [(ngModel)]="username" name="username" class="form-control" placeholder="أدخل اسم المستخدم أو الإيميل" required
-               autocomplete="username" autocorrect="off" autocapitalize="none" spellcheck="false" />
-      </div>
-
-      <div class="form-group">
-        <div class="flex items-center justify-between mb-1">
-          <label class="form-label mb-0">كلمة المرور</label>
-          <a routerLink="/forgot-password" class="text-xs text-sky-400 hover:underline font-semibold">نسيت كلمة المرور؟</a>
-        </div>
-        <input type="password" [(ngModel)]="password" name="password" class="form-control" placeholder="أدخل كلمة المرور" required
-               autocomplete="current-password" autocorrect="off" autocapitalize="none" spellcheck="false" />
-      </div>
-
-      <!-- Remember Me -->
-      <div class="flex items-center gap-2.5 mt-1">
-        <input
-          type="checkbox"
-          id="rememberMe"
-          [(ngModel)]="rememberMe"
-          name="rememberMe"
-          class="w-4 h-4 rounded accent-indigo-500 cursor-pointer"
-        />
-        <label for="rememberMe" class="text-xs text-slate-400 cursor-pointer select-none">
-          تذكرني وابقِ تسجيل دخولي
-        </label>
-      </div>
-
-      <button type="submit" [disabled]="loading" class="btn btn-primary w-full py-3 text-base shadow-lg shadow-indigo-600/30 font-bold mt-2">
-        <i *ngIf="loading" class="fa-solid fa-circle-notch fa-spin"></i>
-        <span *ngIf="!loading">تسجيل الدخول</span>
-      </button>
-    </form>
-
-    <div class="mt-8 pt-6 border-t border-slate-700/50 text-center">
-      <p class="text-xs text-slate-400 mb-2">ليس لديك متجر بعد؟</p>
-      <a routerLink="/signup" class="text-xs text-sky-400 font-bold hover:underline">
-        سجّل متجرك الجديد واحصل على سنة مجاناً 🎉
-      </a>
-    </div>
+  <div class="p-4 text-center text-xs text-slate-500">
+    © 2026 Besnesy. جميع الحقوق محفوظة.
   </div>
 </div>

@@ -13,6 +13,7 @@ import { AuthService } from '../../services/auth.service';
 export class LoginComponent implements OnInit {
   username = '';
   password = '';
+  showPassword = false;
   rememberMe = false;
   loading = false;
   errorMessage = '';
@@ -39,6 +40,10 @@ export class LoginComponent implements OnInit {
     }
   }
 
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
   toggleTheme(): void {
     this.isDarkMode = !this.isDarkMode;
     if (this.isDarkMode) {
@@ -50,8 +55,17 @@ export class LoginComponent implements OnInit {
     }
   }
 
+  private normalizeArabicDigits(str: string): string {
+    if (!str) return str;
+    return str.replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d).toString())
+              .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d).toString());
+  }
+
   onSubmit(): void {
-    if (!this.username || !this.password) {
+    const normalizedUsername = this.normalizeArabicDigits(this.username.trim());
+    const normalizedPassword = this.normalizeArabicDigits(this.password.trim());
+
+    if (!normalizedUsername || !normalizedPassword) {
       this.errorMessage = 'يرجى إدخال اسم المستخدم وكلمة المرور';
       return;
     }
@@ -62,12 +76,12 @@ export class LoginComponent implements OnInit {
 
     // Save username if remember me is checked
     if (this.rememberMe) {
-      localStorage.setItem('saved_username', this.username);
+      localStorage.setItem('saved_username', normalizedUsername);
     } else {
       localStorage.removeItem('saved_username');
     }
 
-    this.authService.login({ username: this.username.trim(), password: this.password.trim() }, this.rememberMe).subscribe({
+    this.authService.login({ username: normalizedUsername, password: normalizedPassword }, this.rememberMe).subscribe({
       next: () => {
         this.loading = false;
         this.router.navigate(['/dashboard']);
@@ -80,7 +94,7 @@ export class LoginComponent implements OnInit {
         if (msg.includes('تفعيل') || msg.includes('تأكيد')) {
           this.requiresActivation = true;
           setTimeout(() => {
-            this.router.navigate(['/activate-account'], { queryParams: { email: this.username } });
+            this.router.navigate(['/activate-account'], { queryParams: { email: normalizedUsername } });
           }, 1800);
         }
       }

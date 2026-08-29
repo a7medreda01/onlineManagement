@@ -1,1 +1,46 @@
 <router-outlet></router-outlet>
+
+<!-- Global Notification & Confirm Modal Host -->
+<div *ngIf="notificationService.activeModal()" class="app-modal-overlay">
+  <div class="glass-card w-full max-w-md p-6 fade-in shadow-2xl border border-slate-700/80 space-y-4 my-auto relative text-center">
+    
+    <!-- Icon Badge -->
+    <div class="w-14 h-14 rounded-2xl mx-auto flex items-center justify-center text-2xl shadow-lg"
+         [ngClass]="{
+           'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40': notificationService.activeModal()?.type === 'success',
+           'bg-rose-500/20 text-rose-400 border border-rose-500/40': notificationService.activeModal()?.type === 'error' || notificationService.activeModal()?.type === 'confirm',
+           'bg-amber-500/20 text-amber-400 border border-amber-500/40': notificationService.activeModal()?.type === 'warning',
+           'bg-sky-500/20 text-sky-400 border border-sky-500/40': notificationService.activeModal()?.type === 'info'
+         }">
+      <i class="bi"
+         [ngClass]="{
+           'bi-check-circle-fill': notificationService.activeModal()?.type === 'success',
+           'bi-exclamation-triangle-fill': notificationService.activeModal()?.type === 'error' || notificationService.activeModal()?.type === 'confirm',
+           'bi-exclamation-diamond-fill': notificationService.activeModal()?.type === 'warning',
+           'bi-info-circle-fill': notificationService.activeModal()?.type === 'info'
+         }"></i>
+    </div>
+
+    <!-- Title & Message -->
+    <div>
+      <h3 class="text-lg font-black text-slate-100 mb-1">{{ notificationService.activeModal()?.title }}</h3>
+      <p class="text-xs text-slate-300 leading-relaxed">{{ notificationService.activeModal()?.message }}</p>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex items-center justify-center gap-3 pt-2">
+      <button *ngIf="notificationService.activeModal()?.type === 'confirm'"
+              (click)="notificationService.handleConfirm(false)"
+              class="btn btn-secondary text-xs px-5 py-2 font-bold">
+        {{ notificationService.activeModal()?.cancelText || 'إلغاء' }}
+      </button>
+
+      <button (click)="notificationService.handleConfirm(true)"
+              class="btn text-xs px-6 py-2 font-bold shadow-md"
+              [ngClass]="notificationService.activeModal()?.type === 'confirm' || notificationService.activeModal()?.type === 'error' ? 'btn-danger bg-rose-600 hover:bg-rose-500 text-white' : 'btn-primary'">
+        {{ notificationService.activeModal()?.confirmText || 'حسناً' }}
+      </button>
+    </div>
+
+  </div>
+</div>

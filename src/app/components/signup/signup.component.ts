@@ -12,12 +12,14 @@ import { Plan } from '../../models/models';
   templateUrl: './signup.component.html'
 })
 export class SignupComponent implements OnInit {
+  step = 1; // 1: Details, 2: Plan Selection, 3: Success / Payment / Activation
+
   ownerName = '';
   storeName = '';
   email = '';
   phone = '';
   password = '';
-  
+
   plans = signal<Plan[]>([]);
   selectedPlanId: number | null = null;
   selectedPlan: Plan | null = null;
@@ -30,7 +32,7 @@ export class SignupComponent implements OnInit {
   resending = false;
   isDarkMode = true;
 
-  // InstaPay Payment Form
+  // InstaPay / Vodafone Cash Form
   paymentForm = {
     senderPhone: '',
     amount: 0,
@@ -58,9 +60,10 @@ export class SignupComponent implements OnInit {
   loadPlans(): void {
     this.saasService.getPlans().subscribe({
       next: (res) => {
-        this.plans.set(res.filter(p => p.isActive));
-        if (res.length > 0) {
-          const defaultPlan = res.find(p => p.price === 0 || p.annualOfferPrice === 0) || res[0];
+        const active = res.filter(p => p.isActive);
+        this.plans.set(active);
+        if (active.length > 0) {
+          const defaultPlan = active.find(p => p.price === 0 || p.annualOfferPrice === 0) || active[0];
           this.selectPlan(defaultPlan);
         }
       },
@@ -74,6 +77,23 @@ export class SignupComponent implements OnInit {
     this.paymentForm.amount = plan.annualOfferPrice;
   }
 
+  goToStep2(): void {
+    if (!this.ownerName || !this.storeName || !this.email || !this.phone || !this.password) {
+      this.errorMessage = 'يرجى استكمال جميع البيانات الأساسية المطلوبة';
+      return;
+    }
+    if (this.password.length < 8) {
+      this.errorMessage = 'كلمة المرور يجب أن لا تقل عن 8 أحرف';
+      return;
+    }
+    this.errorMessage = '';
+    this.step = 2;
+  }
+
+  goToStep1(): void {
+    this.step = 1;
+  }
+
   toggleTheme(): void {
     this.isDarkMode = !this.isDarkMode;
     if (this.isDarkMode) {
@@ -85,9 +105,22 @@ export class SignupComponent implements OnInit {
     }
   }
 
+  private normalizeArabicDigits(str: string): string {
+    if (!str) return str;
+    return str.replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d).toString())
+              .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d).toString());
+  }
+
   onSubmit(): void {
+    this.ownerName = this.ownerName.trim();
+    this.storeName = this.storeName.trim();
+    this.email = this.email.trim();
+    this.phone = this.normalizeArabicDigits(this.phone.trim());
+    this.password = this.normalizeArabicDigits(this.password.trim());
+
     if (!this.ownerName || !this.storeName || !this.email || !this.phone || !this.password) {
       this.errorMessage = 'يرجى استكمال جميع البيانات المطلوبة';
+      this.step = 1;
       return;
     }
 
@@ -105,12 +138,15 @@ export class SignupComponent implements OnInit {
       next: (res) => {
         this.loading = false;
         this.registered = true;
+        this.step = 3;
         this.activationToken = res.activationToken;
 
         if (this.selectedPlan && this.selectedPlan.annualOfferPrice > 0) {
           this.showPaymentStep = true;
           this.paymentForm.senderPhone = this.phone;
           this.paymentForm.amount = this.selectedPlan.annualOfferPrice;
+        } else {
+          this.showPaymentStep = false;
         }
       },
       error: (err) => {
@@ -151,7 +187,7 @@ export class SignupComponent implements OnInit {
       next: (res) => {
         this.resending = false;
         this.activationToken = res.activationToken;
-        alert('تم إعادة إرسال رابط التفعيل بنجاح!');
+        alert('تم إعادة إرسال رابط التفعيل إلى بريدك الإلكتروني بنجاح!');
       },
       error: (err) => {
         this.resending = false;
