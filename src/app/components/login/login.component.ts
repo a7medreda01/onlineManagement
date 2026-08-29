@@ -67,7 +67,7 @@ export class LoginComponent implements OnInit {
       localStorage.removeItem('saved_username');
     }
 
-    this.authService.login({ username: this.username, password: this.password }, this.rememberMe).subscribe({
+    this.authService.login({ username: this.username.trim(), password: this.password.trim() }, this.rememberMe).subscribe({
       next: () => {
         this.loading = false;
         this.router.navigate(['/dashboard']);
