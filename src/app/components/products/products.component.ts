@@ -53,8 +53,17 @@ export class ProductsComponent implements OnInit {
     });
   }
 
+  selectedWarehouseFilter: 'all' | 'fulfillment' | 'merchant' = 'all';
+
   applyFilter(): void {
     let list = this.products();
+
+    if (this.selectedWarehouseFilter === 'fulfillment') {
+      list = list.filter(p => p.isFulfillment || p.code?.startsWith('BO-') || p.code?.startsWith('BST-'));
+    } else if (this.selectedWarehouseFilter === 'merchant') {
+      list = list.filter(p => !p.isFulfillment && !p.code?.startsWith('BO-') && !p.code?.startsWith('BST-'));
+    }
+
     if (this.searchTerm) {
       const term = this.searchTerm.toLowerCase();
       list = list.filter(p => p.name.toLowerCase().includes(term) || p.code.toLowerCase().includes(term));
@@ -63,6 +72,19 @@ export class ProductsComponent implements OnInit {
       list = list.filter(p => p.isLowStock);
     }
     this.filteredProducts.set(list);
+  }
+
+  setWarehouseFilter(filter: 'all' | 'fulfillment' | 'merchant'): void {
+    this.selectedWarehouseFilter = filter;
+    this.applyFilter();
+  }
+
+  getFulfillmentCount(): number {
+    return this.products().filter(p => p.isFulfillment || p.code?.startsWith('BO-') || p.code?.startsWith('BST-')).length;
+  }
+
+  getMerchantCount(): number {
+    return this.products().filter(p => !p.isFulfillment && !p.code?.startsWith('BO-') && !p.code?.startsWith('BST-')).length;
   }
 
   toggleLowStockFilter(): void {

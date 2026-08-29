@@ -17,7 +17,24 @@
   </div>
 
   <!-- Search & Filters -->
-  <div class="glass-card p-4">
+  <div class="glass-card p-4 space-y-3">
+    <!-- Warehouse Tabs -->
+    <div class="flex flex-wrap items-center gap-2 border-b border-slate-700/60 pb-3">
+      <span class="text-xs font-bold text-slate-400 ml-2">تصفية حسب المخزن:</span>
+      <button type="button" (click)="setWarehouseFilter('all')" [class]="selectedWarehouseFilter === 'all' ? 'bg-indigo-600 text-white font-bold' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'" class="btn btn-xs py-1.5 px-3 rounded-lg text-xs transition-all flex items-center gap-1.5">
+        <i class="bi bi-grid-fill"></i>
+        <span>جميع المنتجات ({{ products().length }})</span>
+      </button>
+      <button type="button" (click)="setWarehouseFilter('fulfillment')" [class]="selectedWarehouseFilter === 'fulfillment' ? 'bg-amber-500 text-slate-950 font-black' : 'bg-slate-800 text-amber-300 hover:bg-slate-700'" class="btn btn-xs py-1.5 px-3 rounded-lg text-xs transition-all flex items-center gap-1.5">
+        <i class="bi bi-lightning-charge-fill"></i>
+        <span>⚡ مخازن بوسطة (Fulfillment) ({{ getFulfillmentCount() }})</span>
+      </button>
+      <button type="button" (click)="setWarehouseFilter('merchant')" [class]="selectedWarehouseFilter === 'merchant' ? 'bg-sky-600 text-white font-bold' : 'bg-slate-800 text-sky-300 hover:bg-slate-700'" class="btn btn-xs py-1.5 px-3 rounded-lg text-xs transition-all flex items-center gap-1.5">
+        <i class="bi bi-house-door-fill"></i>
+        <span>📦 مخزن التاجر الخاص ({{ getMerchantCount() }})</span>
+      </button>
+    </div>
+
     <div class="flex flex-col sm:flex-row gap-3">
       <div class="relative flex-1">
         <i class="bi bi-search absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
@@ -38,6 +55,7 @@
         <thead>
           <tr>
             <th>كود المنتج</th>
+            <th>مصدر المخزن</th>
             <th>الصورة والاسم</th>
             <th>سعر الجملة</th>
             <th>سعر البيع</th>
@@ -50,6 +68,14 @@
         <tbody>
           <tr *ngFor="let product of filteredProducts()">
             <td class="font-bold text-sky-400">{{ product.code }}</td>
+            <td>
+              <span *ngIf="product.isFulfillment || product.code?.startsWith('BO-') || product.code?.startsWith('BST-')" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                ⚡ بوسطة (Fulfillment)
+              </span>
+              <span *ngIf="!product.isFulfillment && !product.code?.startsWith('BO-') && !product.code?.startsWith('BST-')" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-sky-500/20 text-sky-300 border border-sky-500/40">
+                📦 مخزن التاجر
+              </span>
+            </td>
             <td>
               <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-lg bg-slate-800 border border-slate-700 overflow-hidden flex items-center justify-center shrink-0">
