@@ -1,13 +1,13 @@
 <div *ngIf="moderatorsOnly.length > 0" class="glass-card p-2.5 sm:p-3 rounded-2xl border border-indigo-500/30 bg-slate-50 dark:bg-slate-900/90 shadow-sm space-y-2 font-cairo">
-  <!-- Header Row: Compact title with Bootstrap Icons -->
+  <!-- Header Row: High contrast title with Bootstrap Icons -->
   <div class="flex items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-1.5">
     <div class="flex items-center gap-1.5">
       <i class="bi bi-fire text-rose-500 text-sm animate-pulse"></i>
-      <h3 class="font-extrabold text-slate-800 dark:text-slate-100 text-xs">
+      <h3 class="font-black !text-slate-900 dark:!text-slate-100 text-xs sm:text-sm">
         سباق الشيفتات اليومي (تحدي المودريتورز)
       </h3>
     </div>
-    <span class="text-[10px] font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20 shrink-0 flex items-center gap-1">
+    <span class="text-[10px] font-bold !text-amber-700 dark:!text-amber-300 bg-amber-500/15 px-2.5 py-0.5 rounded-full border border-amber-500/30 shrink-0 flex items-center gap-1">
       <i class="bi bi-trophy-fill text-amber-500 text-[10px]"></i>
       <span>تنافس اليوم</span>
     </span>
@@ -18,34 +18,36 @@
     <div class="flex items-center justify-between gap-2">
       <!-- Competitor 1 (Left / Moderator 1 - Rose Team) -->
       <div class="flex items-center gap-2 min-w-0">
-        <div class="w-7 h-7 rounded-full bg-rose-500 text-white flex items-center justify-center text-xs font-black shrink-0 shadow-xs">
+        <img *ngIf="modA?.avatarUrl" [src]="modA?.avatarUrl" class="w-8 h-8 rounded-full object-cover border-2 border-rose-500 shrink-0 shadow-xs" alt="" (error)="$event.target.style.display='none'" />
+        <div *ngIf="!modA?.avatarUrl" class="w-8 h-8 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs font-black shrink-0 shadow-xs">
           {{ modA?.userName ? modA?.userName?.substring(0, 1) : 'M' }}
         </div>
         <div class="min-w-0">
-          <span class="font-bold text-xs text-rose-600 dark:text-rose-400 block truncate">{{ modA?.userName || 'المودريتور الأوّل' }}</span>
-          <span class="text-xs font-black text-slate-900 dark:text-slate-100">
-            {{ modAScore }} <span class="text-[10px] text-slate-500 dark:text-slate-400 font-normal">أوردر ({{ modAPercent }}%)</span>
+          <span class="font-extrabold text-xs !text-rose-600 dark:!text-rose-400 block truncate">{{ modA?.userName || 'المودريتور الأوّل' }}</span>
+          <span class="text-xs font-black !text-slate-900 dark:!text-slate-100">
+            {{ modAScore }} <span class="text-[11px] !text-slate-600 dark:!text-slate-300 font-bold">أوردر ({{ modAPercent }}%)</span>
           </span>
         </div>
       </div>
 
       <!-- Center VS Badge -->
-      <div class="px-2 py-0.5 rounded-lg bg-gradient-to-r from-rose-600 to-indigo-600 text-white text-[10px] font-black italic shadow-xs shrink-0 flex items-center gap-0.5">
+      <div class="px-2.5 py-0.5 rounded-lg bg-gradient-to-r from-rose-600 to-indigo-600 text-white text-[10px] font-black italic shadow-xs shrink-0 flex items-center gap-0.5">
         <i class="bi bi-lightning-fill text-amber-300 text-[9px]"></i>
         <span>VS</span>
       </div>
 
       <!-- Competitor 2 (Right / Moderator 2 - Indigo Team) -->
       <div class="flex items-center justify-end gap-2 text-left min-w-0 dir-ltr">
-        <div class="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-black shrink-0 shadow-xs">
+        <img *ngIf="modB?.avatarUrl" [src]="modB?.avatarUrl" class="w-8 h-8 rounded-full object-cover border-2 border-indigo-500 shrink-0 shadow-xs" alt="" (error)="$event.target.style.display='none'" />
+        <div *ngIf="!modB?.avatarUrl" class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-black shrink-0 shadow-xs">
           {{ modB?.userName ? modB?.userName?.substring(0, 1) : 'M' }}
         </div>
         <div class="min-w-0 text-right dir-rtl">
-          <span class="font-bold text-xs text-indigo-600 dark:text-indigo-400 block truncate">
+          <span class="font-extrabold text-xs !text-indigo-600 dark:!text-indigo-400 block truncate">
             {{ modB?.userName || (moderatorsOnly.length > 1 ? 'المودريتور الثاني' : 'منافس جديد') }}
           </span>
-          <span class="text-xs font-black text-slate-900 dark:text-slate-100">
-            {{ modBScore }} <span class="text-[10px] text-slate-500 dark:text-slate-400 font-normal">أوردر ({{ modBPercent }}%)</span>
+          <span class="text-xs font-black !text-slate-900 dark:!text-slate-100">
+            {{ modBScore }} <span class="text-[11px] !text-slate-600 dark:!text-slate-300 font-bold">أوردر ({{ modBPercent }}%)</span>
           </span>
         </div>
       </div>

@@ -407,6 +407,7 @@ export interface TeamActivitySummary {
   userId: number;
   userName: string;
   userRole: string;
+  avatarUrl?: string;
   ordersCreatedCount: number;
   ordersConfirmedCount: number;
 }
