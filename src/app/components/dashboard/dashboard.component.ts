@@ -5,11 +5,12 @@ import { ReportService } from '../../services/report.service';
 import { OrderService } from '../../services/order.service';
 import { AuthService } from '../../services/auth.service';
 import { DashboardSummary, Order, OrderStatus, TeamActivitySummary } from '../../models/models';
+import { ModeratorPkBannerComponent } from './moderator-pk-banner/moderator-pk-banner.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, ModeratorPkBannerComponent],
   templateUrl: './dashboard.component.html'
 })
 export class DashboardComponent implements OnInit {
