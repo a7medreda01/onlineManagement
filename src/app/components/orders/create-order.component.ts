@@ -168,7 +168,11 @@ export class CreateOrderComponent implements OnInit {
     });
     this.customerService.getGovernorates().subscribe(res => this.governorates.set(res));
     this.shippingService.getAll().subscribe(res => {
-      this.shippingCompanies.set(res);
+      const validCompanies = res.filter(c => {
+        const isBosta = c.name.toLowerCase().includes('bosta') || c.name.includes('بوسطة');
+        return isBosta ? c.isIntegrated === true : true;
+      });
+      this.shippingCompanies.set(validCompanies);
       this.autoSelectShippingAndFulfillment();
     });
     this.orderService.getSalesPlatforms().subscribe(res => {

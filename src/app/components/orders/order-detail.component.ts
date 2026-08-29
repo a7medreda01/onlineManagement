@@ -102,7 +102,12 @@ export class OrderDetailComponent implements OnInit {
 
   loadLookups(): void {
     this.productService.getAll().subscribe((res: Product[]) => this.availableProducts = res);
-    this.shippingService.getAll().subscribe((res: ShippingCompany[]) => this.shippingCompanies = res);
+    this.shippingService.getAll().subscribe((res: ShippingCompany[]) => {
+      this.shippingCompanies = res.filter(c => {
+        const isBosta = c.name.toLowerCase().includes('bosta') || c.name.includes('بوسطة');
+        return isBosta ? c.isIntegrated === true : true;
+      });
+    });
     this.governorateService.getGovernorates().subscribe((res: Governorate[]) => this.governorates = res);
     this.orderService.getSalesPlatforms().subscribe((res: SalesPlatform[]) => this.salesPlatforms = res);
     this.walletService.getAll().subscribe((res: Wallet[]) => {

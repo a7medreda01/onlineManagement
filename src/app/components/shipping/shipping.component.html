@@ -25,75 +25,58 @@
   <!-- ========================================================================= -->
   <!-- SECTION 1: BOSTA PREMIER AUTOMATED INTEGRATION HUB                        -->
   <!-- ========================================================================= -->
-  <div class="relative overflow-hidden rounded-3xl border border-rose-500/30 bg-gradient-to-br from-slate-900/95 via-slate-900/90 to-rose-950/30 p-6 shadow-2xl backdrop-blur-xl">
-    <!-- Background subtle ambient glow -->
-    <div class="absolute -top-24 -left-24 w-72 h-72 bg-rose-600/10 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-24 -right-24 w-72 h-72 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
-
-    <div class="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-
+  <!-- SECTION 1: BOSTA INTEGRATION HUB -->
+  <div class="glass-card p-3.5 sm:p-4 rounded-2xl border border-rose-500/30 shadow-md space-y-3">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
       <!-- Bosta Brand & Identity -->
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-3">
         <!-- Bosta Logo Emblem -->
-        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-rose-500 via-red-600 to-rose-700 text-white flex flex-col items-center justify-center shadow-xl shadow-rose-600/25 border border-rose-400/30 shrink-0">
-          <span class="text-xl font-black tracking-tighter lowercase leading-none">bosta</span>
-          <span class="text-[9px] font-extrabold uppercase tracking-widest text-rose-200 mt-0.5">Express</span>
+        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-rose-500 to-red-600 text-white flex flex-col items-center justify-center shadow-md border border-rose-400/30 shrink-0">
+          <span class="text-sm sm:text-base font-black tracking-tighter lowercase leading-none">bosta</span>
+          <span class="text-[7px] sm:text-[8px] font-extrabold uppercase tracking-widest text-rose-200 mt-0.5">Express</span>
         </div>
 
-        <div class="space-y-2">
-          <div class="flex flex-wrap items-center gap-2.5">
-            <h2 class="text-lg sm:text-xl font-black text-white flex items-center gap-2">
-              <span>الربط مع Bosta</span>
-            </h2>
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <h2 class="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100">الربط مع Bosta</h2>
             <!-- Status Badge -->
             <span *ngIf="isBostaConnected()"
-                  class="badge bg-emerald-500/25 text-emerald-300 border-emerald-500/50 text-xs py-1.5 px-3 font-black flex items-center gap-1.5 shadow-md shadow-emerald-500/10">
-              <i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>
-              <span>مربوط بنجاح ✅</span>
+                  class="badge bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-xs py-0.5 px-2.5 font-bold">
+              مربوط بنجاح ✅
             </span>
             <span *ngIf="!isBostaConnected()"
-                  class="badge bg-amber-500/20 text-amber-300 border-amber-500/40 text-xs py-1.5 px-3 font-bold flex items-center gap-1.5">
-              <i class="fa-solid fa-triangle-exclamation text-amber-400 text-[11px]"></i>
-              <span>غير مربوط ⚠️ (اضغط لضبط الربط)</span>
+                  class="badge bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 text-xs py-0.5 px-2.5 font-bold">
+              غير مربوط ⚠️ (اضغط لضبط الربط)
             </span>
           </div>
 
-          <!-- Quick Features Pills -->
-          <div class="flex flex-wrap items-center gap-2 pt-1">
-            <span class="inline-flex items-center gap-1.5 text-xs font-bold text-sky-300 bg-sky-500/10 px-3 py-1.5 rounded-xl border border-sky-500/30">
-              <i class="fa-solid fa-arrows-rotate text-sky-400"></i> تحديث تلقائي
-            </span>
-            <span class="inline-flex items-center gap-1.5 text-xs font-bold text-amber-300 bg-amber-500/10 px-3 py-1.5 rounded-xl border border-amber-500/30">
-              <i class="fa-solid fa-paper-plane text-amber-400"></i> إرسال الطلبات دفعة
-            </span>
-            <span class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-300 bg-emerald-500/10 px-3 py-1.5 rounded-xl border border-emerald-500/30">
-              <i class="fa-solid fa-warehouse text-emerald-400"></i> التكامل مع المخزن fulfillment
-            </span>
-          </div>
+          <!-- Simple text description (no heavy pills) -->
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            تحديث تلقائي • إرسال الطلبات دفعة • التكامل مع المخزن fulfillment
+          </p>
         </div>
       </div>
 
       <!-- Action Buttons -->
-      <div class="flex flex-col sm:flex-row lg:flex-col items-stretch sm:items-center lg:items-end gap-2.5 w-full lg:w-auto shrink-0">
-        <button *ngIf="isBostaConnected()" (click)="openBostaModal('api')" class="btn bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-extrabold text-xs py-2.5 px-5 rounded-xl shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 border border-indigo-400/30 transition-all hover:scale-[1.02]">
-          <i class="fa-solid fa-pen-to-square text-sm"></i>
+      <div class="flex flex-col sm:items-end gap-2 w-full sm:w-auto shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-700/30">
+        <button *ngIf="isBostaConnected()" (click)="openBostaModal('api')" class="btn btn-primary py-2 px-4 text-xs font-bold rounded-xl shadow-sm flex items-center justify-center gap-1.5">
+          <i class="fa-solid fa-pen-to-square text-xs"></i>
           <span>تعديل بيانات الربط ⚙️</span>
         </button>
 
-        <button *ngIf="!isBostaConnected()" (click)="openBostaModal('instructions')" class="btn bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-extrabold text-xs py-3 px-5 rounded-xl shadow-lg shadow-rose-600/30 flex items-center justify-center gap-2 border border-rose-400/30 transition-all hover:scale-[1.02]">
-          <i class="fa-solid fa-link text-sm"></i>
+        <button *ngIf="!isBostaConnected()" (click)="openBostaModal('instructions')" class="btn bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-bold text-xs py-2 px-4 rounded-xl shadow-sm flex items-center justify-center gap-1.5 border border-rose-400/30">
+          <i class="fa-solid fa-link text-xs"></i>
           <span>ربط حساب بوسطة والتعليمات 🔗</span>
         </button>
 
-        <div class="flex items-center justify-center gap-2 text-[11px] text-slate-400">
-          <button (click)="openBostaModal('rates')" class="hover:text-rose-300 underline font-medium">استيراد الأسعار</button>
+        <div class="flex items-center justify-center sm:justify-end gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+          <button (click)="openBostaModal('rates')" class="hover:text-rose-500 dark:hover:text-rose-300 underline font-medium">استيراد الأسعار</button>
           <span>•</span>
-          <button (click)="openBostaModal('fulfillment')" class="hover:text-rose-300 underline font-medium">خدمة التخزين</button>
+          <button (click)="openBostaModal('fulfillment')" class="hover:text-rose-500 dark:hover:text-rose-300 underline font-medium">خدمة التخزين</button>
           <span>•</span>
-          <button (click)="openBostaModal('stock')" class="hover:text-rose-300 underline font-medium">مزامنة المخزون</button>
+          <button (click)="openBostaModal('stock')" class="hover:text-rose-500 dark:hover:text-rose-300 underline font-medium">مزامنة المخزون</button>
         </div>
       </div>
-
     </div>
   </div>
 
