@@ -1,53 +1,55 @@
 <div class="w-full max-w-7xl mx-auto space-y-3.5 fade-in font-cairo text-sm pb-10 px-2 sm:px-4">
   
   <!-- Top Action Header & Breadcrumb Bar -->
-  <div *ngIf="!loading() && order()" class="glass-card p-3 sm:p-4 flex flex-col md:flex-row md:items-center justify-between gap-3 border-slate-700/80 shadow-lg">
-    <div class="flex items-center gap-2.5">
-      <a routerLink="/orders" class="btn btn-secondary btn-xs py-1.5 px-2.5 text-xs text-slate-300 hover:text-white flex items-center gap-1 rounded-lg">
-        <i class="fa-solid fa-arrow-right"></i>
-        <span>كل الأوردرات</span>
-      </a>
-      <div>
-        <div class="flex items-center gap-2">
-          <h1 class="text-lg sm:text-xl font-black text-white tracking-wide">أوردر #{{ getDisplayOrderNumber(order()?.orderNumber, order()?.id) }}</h1>
-          <span class="badge py-0.5 px-2.5 text-[11px] font-bold" [ngClass]="getStatusBadgeClass(order()?.status)">
-            {{ getStatusArabic(order()?.status) }}
-          </span>
+  <div *ngIf="!loading() && order()" class="glass-card p-3.5 sm:p-4 border-slate-700/80 shadow-lg space-y-3">
+    <!-- Top Row: Back button + Order Title & Badge -->
+    <div class="flex items-center justify-between gap-2.5 flex-wrap">
+      <div class="flex items-center gap-3 min-w-0">
+        <a routerLink="/orders" class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 text-slate-200 flex items-center justify-center text-xs shrink-0 hover:bg-slate-700 transition-colors" title="كل الأوردرات">
+          <i class="fa-solid fa-arrow-right"></i>
+        </a>
+        <div class="min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <h1 class="text-base sm:text-xl font-black text-slate-100 tracking-wide">أوردر #{{ getDisplayOrderNumber(order()?.orderNumber, order()?.id) }}</h1>
+            <span class="badge py-0.5 px-2.5 text-xs font-bold shrink-0" [ngClass]="getStatusBadgeClass(order()?.status)">
+              {{ getStatusArabic(order()?.status) }}
+            </span>
+          </div>
+          <p class="text-xs text-slate-400 font-medium mt-0.5 flex items-center gap-2 flex-wrap">
+            <span>التاريخ: {{ order()?.createdAt | date:'shortDate' }}</span>
+            <span>•</span>
+            <span>بواسطة: <strong class="text-indigo-300">{{ order()?.createdByName }}</strong></span>
+          </p>
         </div>
-        <p class="text-slate-400 text-[11px] mt-0.5 flex items-center gap-2">
-          <span>التاريخ: {{ order()?.createdAt | date:'shortDate' }}</span>
-          <span>•</span>
-          <span>بواسطة: <strong class="text-indigo-300">{{ order()?.createdByName }}</strong></span>
-        </p>
       </div>
     </div>
 
-    <!-- Header Quick Action Buttons -->
-    <div class="flex items-center flex-wrap gap-1.5">
-      <!-- Deposit Button -->
-      <button (click)="openDepositModal()" class="btn btn-emerald btn-xs py-1.5 px-3 text-xs font-bold shadow-md shadow-emerald-900/30 flex items-center gap-1 rounded-lg">
-        <i class="fa-solid fa-receipt text-emerald-200 text-[10px]"></i>
-        <span>{{ (order()?.depositAmount || 0) > 0 ? 'تعديل العربون' : 'تسجيل عربون' }}</span>
-      </button>
-
+    <!-- Bottom Row / Action Buttons Bar: Grid on mobile, Flex on desktop -->
+    <div class="grid grid-cols-2 sm:flex sm:items-center sm:flex-wrap gap-2 pt-2 border-t border-slate-700/50">
       <!-- Main Edit Order Button -->
-      <button (click)="openEditModal()" class="btn btn-primary btn-xs py-1.5 px-3 text-xs font-bold shadow-md shadow-indigo-500/20 flex items-center gap-1 rounded-lg">
-        <i class="fa-solid fa-pen-to-square text-[10px]"></i>
+      <button (click)="openEditModal()" class="btn btn-primary py-2 px-3 text-xs font-bold shadow-md shadow-indigo-500/20 flex items-center justify-center gap-1.5 rounded-xl">
+        <i class="fa-solid fa-pen-to-square text-xs"></i>
         <span>تعديل الأوردر</span>
       </button>
 
-      <button (click)="openStatusModal()" class="btn btn-secondary btn-xs py-1.5 px-3 text-xs font-bold text-sky-400 border-sky-500/30 hover:bg-sky-500/10 flex items-center gap-1 rounded-lg">
-        <i class="fa-solid fa-arrows-rotate text-[10px]"></i>
+      <!-- Deposit Button -->
+      <button (click)="openDepositModal()" class="btn btn-emerald py-2 px-3 text-xs font-bold shadow-md shadow-emerald-900/30 flex items-center justify-center gap-1.5 rounded-xl">
+        <i class="fa-solid fa-receipt text-emerald-200 text-xs"></i>
+        <span>{{ (order()?.depositAmount || 0) > 0 ? 'تعديل العربون' : 'تسجيل عربون' }}</span>
+      </button>
+
+      <button (click)="openStatusModal()" class="btn btn-secondary py-2 px-3 text-xs font-bold text-sky-400 border-sky-500/30 hover:bg-sky-500/10 flex items-center justify-center gap-1.5 rounded-xl">
+        <i class="fa-solid fa-arrows-rotate text-xs"></i>
         <span>تحديث الحالة</span>
       </button>
 
-      <button (click)="printReceipt()" class="btn btn-secondary btn-xs py-1.5 px-2.5 text-xs text-slate-300 hover:text-white flex items-center gap-1 rounded-lg">
-        <i class="fa-solid fa-print text-[10px]"></i>
+      <button (click)="printReceipt()" class="btn btn-secondary py-2 px-3 text-xs text-slate-300 hover:text-white flex items-center justify-center gap-1.5 rounded-xl">
+        <i class="fa-solid fa-print text-xs"></i>
         <span>طباعة</span>
       </button>
 
-      <button *ngIf="order()?.status !== OrderStatus.Cancelled" (click)="quickCancel()" class="btn btn-secondary btn-xs py-1.5 px-2.5 text-xs text-rose-400 border-rose-500/30 hover:bg-rose-500/10 flex items-center gap-1 rounded-lg">
-        <i class="fa-solid fa-ban text-[10px]"></i>
+      <button *ngIf="order()?.status !== OrderStatus.Cancelled" (click)="quickCancel()" class="btn btn-secondary py-2 px-3 text-xs text-rose-400 border-rose-500/30 hover:bg-rose-500/10 flex items-center justify-center gap-1.5 rounded-xl col-span-2 sm:col-auto">
+        <i class="fa-solid fa-ban text-xs"></i>
         <span>إلغاء</span>
       </button>
     </div>
@@ -209,23 +211,15 @@
 
       <!-- 3. Products Table & Pricing Breakdown -->
       <div class="glass-card p-3.5 sm:p-4 space-y-3 border-slate-700/80 shadow-md">
-        <div class="flex items-center justify-between border-b border-slate-700/60 pb-2">
+        <div class="flex items-center justify-between border-b border-slate-700/60 pb-2 flex-wrap gap-2">
           <div class="flex items-center gap-2">
             <i class="fa-solid fa-box-open text-amber-400 text-sm"></i>
             <h3 class="font-bold text-xs sm:text-sm text-slate-100">تفاصيل المنتجات والأسعار</h3>
+            <span *ngIf="hasBostaFulfillmentItems()" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30">
+              <i class="fa-solid fa-bolt text-amber-500 text-[9px]"></i> مخزن بوسطة (Fulfillment)
+            </span>
           </div>
           <span class="text-xs text-slate-400 font-medium">عدد المنتجات: <strong class="text-amber-400 font-bold">{{ order()!.orderItems.length }}</strong></span>
-        </div>
-
-        <!-- Bosta Fulfillment Banner Header (Shown if order contains Bosta Fulfillment products) -->
-        <div *ngIf="hasBostaFulfillmentItems()" class="p-2.5 rounded-xl bg-amber-500/15 border border-amber-500/40 flex items-center justify-between gap-2 shadow-xs mb-2">
-          <div class="flex items-center gap-2">
-            <i class="fa-solid fa-bolt text-amber-400 text-sm"></i>
-            <span class="font-extrabold text-xs text-amber-200">منتجات شحن مخازن بوسطة (Bosta Fulfillment)</span>
-          </div>
-          <span class="badge py-0.5 px-2 text-[10px] font-bold bg-amber-500 text-slate-950">
-            مخزن بوسطة
-          </span>
         </div>
 
         <!-- Desktop Items Table -->
@@ -250,11 +244,11 @@
                   <span class="font-mono text-indigo-300 text-xs bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20 font-bold">{{ item.productCode }}</span>
                 </td>
                 <td>
-                  <span *ngIf="isItemFulfillment(item)" class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-extrabold bg-amber-500/20 text-amber-300 border border-amber-500/40">
-                    <i class="fa-solid fa-bolt text-[9px]"></i> مخزن بوسطة (Fulfillment)
+                  <span *ngIf="isItemFulfillment(item)" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30">
+                    <i class="fa-solid fa-bolt text-amber-500 text-[9px]"></i> مخزن بوسطة (Fulfillment)
                   </span>
-                  <span *ngIf="!isItemFulfillment(item)" class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-sky-500/20 text-sky-300 border border-sky-500/40">
-                    <i class="fa-solid fa-house-user text-[9px]"></i> مخزن التاجر
+                  <span *ngIf="!isItemFulfillment(item)" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-sky-500/15 text-sky-700 dark:text-sky-300 border border-sky-500/30">
+                    <i class="fa-solid fa-house-user text-sky-500 text-[9px]"></i> مخزن التاجر
                   </span>
                 </td>
                 <td class="font-bold text-slate-200">{{ item.sellingPrice }} ج.م</td>
@@ -270,8 +264,8 @@
           <div *ngFor="let item of order()!.orderItems" class="p-2.5 rounded-xl bg-slate-800/50 border border-slate-700/60 space-y-1.5">
             <div class="flex items-center justify-between gap-2">
               <div class="font-bold text-white text-xs truncate">{{ item.productName }}</div>
-              <span *ngIf="isItemFulfillment(item)" class="font-bold text-amber-300 text-[9px] bg-amber-500/20 px-2 py-0.5 rounded border border-amber-500/40 shrink-0">
-                <i class="fa-solid fa-bolt text-[8px]"></i> مخزن بوسطة
+              <span *ngIf="isItemFulfillment(item)" class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 shrink-0">
+                <i class="fa-solid fa-bolt text-amber-500 text-[8px]"></i> مخزن بوسطة
               </span>
             </div>
             <div class="flex items-center justify-between text-xs text-slate-300 pt-1 border-t border-slate-700/50">
