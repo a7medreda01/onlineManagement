@@ -85,6 +85,7 @@ export interface Product {
   availableQuantity: number;
   isLowStock: boolean;
   isActive: boolean;
+  isFulfillment?: boolean;
   createdAt: string;
 }
 

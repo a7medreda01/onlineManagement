@@ -79,8 +79,44 @@ export class CreateOrderComponent implements OnInit {
     private router: Router
   ) {}
 
+  isBostaFulfillmentOrder = false;
+
   ngOnInit(): void {
+    const savedFulfillment = typeof localStorage !== 'undefined' ? localStorage.getItem('bosta_fulfillment_enabled') : null;
+    if (savedFulfillment === 'true') {
+      this.isBostaFulfillmentOrder = true;
+    }
     this.loadLookups();
+  }
+
+  toggleBostaFulfillment(enabled?: boolean): void {
+    if (enabled !== undefined) {
+      this.isBostaFulfillmentOrder = enabled;
+    }
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('bosta_fulfillment_enabled', this.isBostaFulfillmentOrder.toString());
+    }
+
+    // Reset product selection in rows if chosen product doesn't fit current warehouse mode
+    const availableIds = new Set(this.getFilteredProducts().map(p => p.id));
+    this.selectedItems.forEach(item => {
+      if (!availableIds.has(item.productId)) {
+        item.productId = 0;
+        item.unitPrice = 0;
+      }
+    });
+    this.recalculateCosts();
+  }
+
+  getFilteredProducts(): Product[] {
+    const allProds = this.products();
+    if (this.isBostaFulfillmentOrder) {
+      const fulfillmentProds = allProds.filter(p => p.isFulfillment || p.code?.startsWith('BO-') || p.code?.startsWith('BST-'));
+      return fulfillmentProds.length > 0 ? fulfillmentProds : allProds;
+    } else {
+      const merchantProds = allProds.filter(p => !p.isFulfillment && !p.code?.startsWith('BO-') && !p.code?.startsWith('BST-'));
+      return merchantProds.length > 0 ? merchantProds : allProds;
+    }
   }
 
   loadLookups(): void {

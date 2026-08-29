@@ -80,24 +80,43 @@ export class OrdersComponent implements OnInit {
     this.selectedOrderIds.clear();
   }
 
+  getConfirmedSelectedOrdersCount(): number {
+    return this.orders().filter(o => this.selectedOrderIds.has(o.id) && (o.status === OrderStatus.Confirmed || o.status === OrderStatus.New)).length;
+  }
+
   sendBulkToBosta(): void {
     if (this.selectedOrderIds.size === 0) return;
-    const ids = Array.from(this.selectedOrderIds);
 
+    const allSelectedOrders = this.orders().filter(o => this.selectedOrderIds.has(o.id));
+    const confirmedOrders = allSelectedOrders.filter(o => o.status === OrderStatus.Confirmed || o.status === OrderStatus.New);
+
+    if (confirmedOrders.length === 0) {
+      this.notificationService.warning('لا توجد طلبات مؤكدة بين الطلبات المحددة. الشحن متاح للطلبات المؤكدة فقط.');
+      return;
+    }
+
+    const idsToSend = confirmedOrders.map(o => o.id);
     const sourceText = this.bulkIsFulfillment ? 'مخزن بوسطة (Fulfillment)' : 'المخزن الخاص';
+
+    let confirmMsg = `هل أنت متأكد من إرسال ${confirmedOrders.length} أوردر مؤكد إلى بوسطة (${sourceText}) وتوليد أرقام التتبع تلقائياً؟`;
+    if (allSelectedOrders.length > confirmedOrders.length) {
+      const skippedCount = allSelectedOrders.length - confirmedOrders.length;
+      confirmMsg = `تنبيه: تم تحديد ${allSelectedOrders.length} طلب، منها ${confirmedOrders.length} طلب مؤكد فقط جاهز للشحن.\n(سيتم تخطي ${skippedCount} طلب غير مؤكد تلقائياً).\n\nهل تريد الشحن لـ ${confirmedOrders.length} أوردر مؤكد فقط؟`;
+    }
+
     this.notificationService.confirm(
-      `هل أنت مقتنع بإرسال ${ids.length} أوردر إلى بوسطة (${sourceText}) وتوليد أرقام التتبع تلقائياً؟`,
-      'إرسال جماعي لبوسطة'
+      confirmMsg,
+      'إرسال الشحنات المؤكدة لبوسطة'
     ).then(confirmed => {
       if (!confirmed) return;
 
       this.sendingBulk = true;
-      this.bostaService.createBulkShipments(ids, this.bulkIsFulfillment).subscribe({
+      this.bostaService.createBulkShipments(idsToSend, this.bulkIsFulfillment).subscribe({
         next: (res) => {
           this.sendingBulk = false;
           this.clearSelection();
           if (res.success) {
-            this.notificationService.success(res.message || `تم إرسال ${res.successCount} أوردر إلى بوسطة بنجاح واستقبال أرقام التتبع!`);
+            this.notificationService.success(res.message || `تم إرسال ${res.successCount} أوردر مؤكد إلى بوسطة بنجاح واستقبال أرقام التتبع!`);
             this.loadOrders();
           } else {
             this.notificationService.error(res.message || 'حدث خطأ أثناء الإرسال لبوسطة');
