@@ -4,7 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { ReportService } from '../../services/report.service';
 import { OrderService } from '../../services/order.service';
 import { AuthService } from '../../services/auth.service';
-import { DashboardSummary, Order, OrderStatus, TeamActivitySummary } from '../../models/models';
+import { DashboardSummary, Order, OrderStatus, TeamActivitySummary, ModeratorPkBattleResult } from '../../models/models';
 import { ModeratorPkBannerComponent } from './moderator-pk-banner/moderator-pk-banner.component';
 
 @Component({
@@ -17,6 +17,7 @@ export class DashboardComponent implements OnInit {
   summary = signal<DashboardSummary | null>(null);
   recentOrders = signal<Order[]>([]);
   teamActivity = signal<TeamActivitySummary[]>([]);
+  pkBattleResult = signal<ModeratorPkBattleResult | null>(null);
   loading = signal<boolean>(true);
 
   constructor(
@@ -95,9 +96,10 @@ export class DashboardComponent implements OnInit {
       }
     });
 
-    this.reportService.getTeamActivitySummary(todayStr, todayStr).subscribe({
+    this.reportService.getModeratorPkBattle().subscribe({
       next: (res) => {
-        this.teamActivity.set(res || []);
+        this.pkBattleResult.set(res);
+        this.teamActivity.set(res?.currentBattle || []);
       },
       error: (err) => console.error(err)
     });

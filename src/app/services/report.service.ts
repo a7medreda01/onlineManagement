@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { DashboardSummary, FinancialSummary, ProductPerformance, TeamActivitySummary } from '../models/models';
+import { DashboardSummary, FinancialSummary, ProductPerformance, TeamActivitySummary, ModeratorPkBattleResult } from '../models/models';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -50,6 +50,10 @@ export class ReportService {
     if (toDate) params = params.set('toDate', toDate);
 
     return this.http.get<TeamActivitySummary[]>(`${this.apiUrl}/team-activity`, { params });
+  }
+
+  getModeratorPkBattle(): Observable<ModeratorPkBattleResult> {
+    return this.http.get<ModeratorPkBattleResult>(`${this.apiUrl}/moderator-pk-battle`);
   }
 
   getDashboardSummary(): Observable<DashboardSummary> {

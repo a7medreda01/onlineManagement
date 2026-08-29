@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TeamActivitySummary } from '../../../models/models';
+import { TeamActivitySummary, ModeratorPkBattleResult, ModeratorPkWinner } from '../../../models/models';
 
 @Component({
   selector: 'app-moderator-pk-banner',
@@ -10,10 +10,23 @@ import { TeamActivitySummary } from '../../../models/models';
 })
 export class ModeratorPkBannerComponent {
   @Input() teamActivity: TeamActivitySummary[] = [];
+  @Input() pkBattleResult: ModeratorPkBattleResult | null = null;
+
+  get currentBattleData(): TeamActivitySummary[] {
+    if (this.pkBattleResult && this.pkBattleResult.currentBattle) {
+      return this.pkBattleResult.currentBattle;
+    }
+    return this.teamActivity || [];
+  }
+
+  get previousWinner(): ModeratorPkWinner | null | undefined {
+    return this.pkBattleResult?.previousWinner;
+  }
 
   get moderatorsOnly(): TeamActivitySummary[] {
-    if (!this.teamActivity) return [];
-    return this.teamActivity.filter(t => {
+    const list = this.currentBattleData;
+    if (!list) return [];
+    return list.filter(t => {
       if (!t.userRole) return false;
       const role = t.userRole.toLowerCase();
       return role === 'moderator' || role.includes('مودريتور') || role.includes('mod');

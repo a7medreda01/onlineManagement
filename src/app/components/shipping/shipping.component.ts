@@ -22,7 +22,7 @@ export class ShippingComponent implements OnInit, OnDestroy {
   governorates = signal<Governorate[]>([]);
 
   // Webhook official endpoint for Bosta
-  readonly webhookEndpoint = 'https://www.besnesy.com/api/bosta/webhook';
+  readonly webhookEndpoint = 'https://besnesy.runasp.net/api/bosta/webhook';
 
   // Identify Bosta company
   bostaCompany = computed(() => {

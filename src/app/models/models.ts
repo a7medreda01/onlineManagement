@@ -412,6 +412,19 @@ export interface TeamActivitySummary {
   ordersConfirmedCount: number;
 }
 
+export interface ModeratorPkWinner {
+  userId: number;
+  userName: string;
+  avatarUrl?: string;
+  ordersCount: number;
+  shiftDate: string;
+}
+
+export interface ModeratorPkBattleResult {
+  currentBattle: TeamActivitySummary[];
+  previousWinner?: ModeratorPkWinner;
+}
+
 export interface Plan {
   id: number;
   name: string;
