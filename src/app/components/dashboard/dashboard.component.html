@@ -11,7 +11,9 @@
   </div>
 
   <!-- Standalone Moderator PK Battle Banner Component -->
-  <app-moderator-pk-banner *ngIf="!loading()" [teamActivity]="teamActivity()"></app-moderator-pk-banner>
+  <div class="mt-4 mb-2">
+    <app-moderator-pk-banner *ngIf="!loading()" [teamActivity]="teamActivity()"></app-moderator-pk-banner>
+  </div>
 
   <!-- Loading Skeleton Shimmer Grid -->
   <div *ngIf="loading()" class="grid grid-cols-1 md:grid-cols-3 gap-5">
