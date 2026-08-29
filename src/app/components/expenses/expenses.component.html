@@ -1,0 +1,220 @@
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-black text-slate-100 flex items-center gap-2">
+        <i class="fa-solid fa-receipt text-rose-400"></i>
+        إدارة المصروفات اليومية
+      </h1>
+      <p class="text-xs text-slate-400 mt-1">تتبع تسجيل وتصنيف المصروفات (إعلانات، رواتب، مرتجعات شحن، إلخ) وحساب تأثيرها على صافي الأرباح</p>
+    </div>
+
+    <button (click)="openAddModal()" class="btn btn-primary flex items-center gap-2">
+      <i class="fa-solid fa-plus"></i>
+      إضافة مصروف جديد
+    </button>
+  </div>
+
+  <!-- Expense Category Summary Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4" *ngIf="summary()">
+    <div class="glass-card p-4 border-l-4 border-rose-500 flex flex-col justify-between">
+      <div class="flex items-center justify-between text-xs text-slate-400">
+        <span>إجمالي المصروفات</span>
+        <i class="fa-solid fa-calculator text-rose-400 text-base"></i>
+      </div>
+      <div class="text-xl font-black text-slate-100 mt-2">{{ summary()?.totalExpenses | number:'1.0-2' }} ج.م</div>
+      <div class="text-[10px] text-slate-400 mt-1">جميع المصروفات في المسجلة</div>
+    </div>
+
+    <div class="glass-card p-4 border-l-4 border-amber-500 flex flex-col justify-between">
+      <div class="flex items-center justify-between text-xs text-slate-400">
+        <span>إعلانات وتسويق</span>
+        <i class="fa-solid fa-bullhorn text-amber-400 text-base"></i>
+      </div>
+      <div class="text-xl font-black text-amber-400 mt-2">{{ summary()?.adsExpenses | number:'1.0-2' }} ج.م</div>
+      <div class="text-[10px] text-slate-400 mt-1">حملات الماركتنج والسبونسر</div>
+    </div>
+
+    <div class="glass-card p-4 border-l-4 border-blue-500 flex flex-col justify-between">
+      <div class="flex items-center justify-between text-xs text-slate-400">
+        <span>رواتب ومكافآت</span>
+        <i class="fa-solid fa-user-tie text-blue-400 text-base"></i>
+      </div>
+      <div class="text-xl font-black text-blue-400 mt-2">{{ summary()?.salariesExpenses | number:'1.0-2' }} ج.م</div>
+      <div class="text-[10px] text-slate-400 mt-1">أجور وتأطير الفريق</div>
+    </div>
+
+    <div class="glass-card p-4 border-l-4 border-emerald-500 flex flex-col justify-between">
+      <div class="flex items-center justify-between text-xs text-slate-400">
+        <span>شراء وتوريد منتجات</span>
+        <i class="fa-solid fa-boxes-packing text-emerald-400 text-base"></i>
+      </div>
+      <div class="text-xl font-black text-emerald-400 mt-2">{{ summary()?.productsExpenses | number:'1.0-2' }} ج.م</div>
+      <div class="text-[10px] text-slate-400 mt-1">تكلفة الشراء والبضاعة</div>
+    </div>
+
+    <div class="glass-card p-4 border-l-4 border-purple-500 flex flex-col justify-between">
+      <div class="flex items-center justify-between text-xs text-slate-400">
+        <span>مرتجعات الشحن</span>
+        <i class="fa-solid fa-truck-ramp-box text-purple-400 text-base"></i>
+      </div>
+      <div class="text-xl font-black text-purple-400 mt-2">{{ summary()?.shippingReturnExpenses | number:'1.0-2' }} ج.م</div>
+      <div class="text-[10px] text-slate-400 mt-1">تكاليف مرتجعات شركات الشحن</div>
+    </div>
+  </div>
+
+  <!-- Filters Bar -->
+  <div class="glass-card p-4 flex flex-wrap items-center gap-4 relative z-30 overflow-visible">
+    <div class="flex-1 min-w-[200px]">
+      <label class="block text-xs font-semibold text-slate-300 mb-1">الفئة</label>
+      <select [(ngModel)]="filterCategory" (change)="loadExpenses()" class="form-select text-xs w-full">
+        <option value="">جميع الفئات</option>
+        <option [value]="ExpenseCategory.Ads">إعلانات وتسويق</option>
+        <option [value]="ExpenseCategory.Salaries">رواتب ومكافآت</option>
+        <option [value]="ExpenseCategory.Products">شراء/استيراد منتجات</option>
+        <option [value]="ExpenseCategory.ShippingReturns">مصاريف مرتجعات الشحن</option>
+        <option [value]="ExpenseCategory.Operations">مصاريف تشغيلية</option>
+        <option [value]="ExpenseCategory.Other">مصاريف أخرى</option>
+      </select>
+    </div>
+
+    <div class="w-full sm:w-48">
+      <app-custom-date-picker 
+        label="من تاريخ" 
+        [(value)]="filterStartDate" 
+        (valueChange)="loadExpenses()"
+      ></app-custom-date-picker>
+    </div>
+
+    <div class="w-full sm:w-48">
+      <app-custom-date-picker 
+        label="إلى تاريخ" 
+        [(value)]="filterEndDate" 
+        (valueChange)="loadExpenses()"
+      ></app-custom-date-picker>
+    </div>
+
+    <div class="flex items-end pt-5">
+      <button (click)="resetFilters()" class="btn btn-secondary btn-sm text-xs">
+        <i class="fa-solid fa-rotate-left"></i> إعادة ضبط
+      </button>
+    </div>
+  </div>
+
+  <!-- Expenses Table -->
+  <div class="glass-card overflow-hidden relative z-10">
+    <div *ngIf="loading()" class="p-8 text-center text-slate-400">
+      <i class="fa-solid fa-circle-notch fa-spin text-2xl text-rose-500 mb-2"></i>
+      <div>جاري تحميل قائمة المصروفات...</div>
+    </div>
+
+    <div *ngIf="!loading()" class="table-responsive">
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>البيان / الوصف</th>
+            <th>الفئة</th>
+            <th>المبلغ</th>
+            <th>تاريخ المصروف</th>
+            <th>الملاحظات</th>
+            <th>المضيف</th>
+            <th class="text-center">إجراءات</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of expenses()">
+            <td class="font-bold text-slate-100">{{ item.title }}</td>
+            <td>
+              <span class="badge" [ngClass]="getCategoryBadgeClass(item.category)">
+                {{ item.categoryName }}
+              </span>
+            </td>
+            <td class="font-black text-rose-400 text-base">{{ item.amount | number:'1.0-2' }} ج.م</td>
+            <td class="text-slate-300 text-xs">{{ item.expenseDate | date:'yyyy/MM/dd' }}</td>
+            <td class="text-slate-400 text-xs truncate max-w-xs">{{ item.notes || '-' }}</td>
+            <td class="text-slate-400 text-xs">{{ item.createdByName }}</td>
+            <td class="text-center">
+              <div class="flex items-center justify-center gap-2">
+                <button (click)="openEditModal(item)" class="btn btn-secondary btn-sm text-indigo-400" title="تعديل">
+                  <i class="fa-solid fa-pen"></i>
+                </button>
+                <button (click)="deleteExpense(item)" class="btn btn-secondary btn-sm text-rose-400" title="حذف">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="expenses().length === 0">
+            <td colspan="7" class="text-center py-12 text-slate-400">
+              <i class="fa-solid fa-receipt text-4xl mb-3 text-slate-600"></i>
+              <div>لا توجد مصروفات مسجلة بهذه الفلاتر</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Form (Add/Edit) -->
+<div *ngIf="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
+  <div class="glass-card w-full max-w-lg overflow-visible relative border-slate-700 shadow-2xl">
+    <div class="flex items-center justify-between p-4 border-b border-slate-800 bg-slate-900/60 rounded-t-2xl">
+      <h3 class="font-bold text-slate-100 flex items-center gap-2">
+        <i class="fa-solid fa-wallet text-rose-400"></i>
+        {{ isEditMode ? 'تعديل المصروف' : 'إضافة مصروف جديد' }}
+      </h3>
+      <button (click)="closeModal()" class="text-slate-400 hover:text-white text-lg">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <form (ngSubmit)="saveExpense()" class="p-5 space-y-4">
+      <div>
+        <label class="block text-xs font-semibold text-slate-300 mb-1">بيان/عنوان المصروف *</label>
+        <input type="text" [(ngModel)]="formData.title" name="title" required placeholder="مثال: إعلانات فيسبوك شهر 8، راتب محاسب..." class="form-control text-xs w-full" />
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">الفئة *</label>
+          <select [(ngModel)]="formData.category" name="category" required class="form-select text-xs w-full">
+            <option [value]="ExpenseCategory.Ads">إعلانات وتسويق</option>
+            <option [value]="ExpenseCategory.Salaries">رواتب ومكافآت</option>
+            <option [value]="ExpenseCategory.Products">شراء/استيراد منتجات</option>
+            <option [value]="ExpenseCategory.ShippingReturns">مصاريف مرتجعات الشحن</option>
+            <option [value]="ExpenseCategory.Operations">مصاريف تشغيلية</option>
+            <option [value]="ExpenseCategory.Other">مصاريف أخرى</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">المبلغ (ج.م) *</label>
+          <input type="number" step="0.01" [(ngModel)]="formData.amount" name="amount" required min="0.01" class="form-control text-xs w-full font-bold text-rose-400" />
+        </div>
+      </div>
+
+      <div>
+        <app-custom-date-picker 
+          label="تاريخ المصروف" 
+          [(value)]="formData.expenseDate"
+          [openUpward]="true"
+        ></app-custom-date-picker>
+      </div>
+
+      <div>
+        <label class="block text-xs font-semibold text-slate-300 mb-1">ملاحظات إضافية</label>
+        <textarea [(ngModel)]="formData.notes" name="notes" rows="3" placeholder="تفاصيل أكثر عن المصروف..." class="form-textarea text-xs w-full"></textarea>
+      </div>
+
+      <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
+        <button type="button" (click)="closeModal()" class="btn btn-secondary text-xs">إلغاء</button>
+        <button type="submit" [disabled]="saving" class="btn btn-primary text-xs flex items-center gap-2">
+          <i *ngIf="saving" class="fa-solid fa-spinner fa-spin"></i>
+          {{ isEditMode ? 'تحديث' : 'حفظ المصروف' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

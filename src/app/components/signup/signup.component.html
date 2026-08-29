@@ -1,0 +1,219 @@
+<div class="auth-page-bg font-cairo min-h-screen relative overflow-hidden flex flex-col justify-between" dir="rtl">
+  <!-- Ambient Glow Orbs -->
+  <div class="absolute top-1/4 -right-32 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute bottom-1/4 -left-32 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+  <!-- Top Navigation & Theme Switcher -->
+  <div class="p-4 sm:p-6 flex items-center justify-between z-20">
+    <a routerLink="/" class="text-xs font-bold text-slate-400 hover:text-sky-400 flex items-center gap-1.5 transition">
+      <i class="bi bi-arrow-right"></i>
+      <span>العودة للرئيسية</span>
+    </a>
+
+    <button (click)="toggleTheme()" class="btn btn-secondary btn-sm rounded-xl py-1.5 px-3 text-xs shadow-sm border-slate-700">
+      <i class="bi" [ngClass]="isDarkMode ? 'bi-sun-fill text-amber-400' : 'bi-moon-stars-fill text-indigo-400'"></i>
+      <span>{{ isDarkMode ? 'مظهر فاتح' : 'مظهر داكن' }}</span>
+    </button>
+  </div>
+
+  <!-- Main Container -->
+  <div class="flex-1 flex items-center justify-center p-4">
+    <div class="auth-card w-full max-w-xl p-6 sm:p-8 fade-in relative z-10 my-4 shadow-2xl border-slate-700/80">
+      
+      <!-- 1. REGISTRATION FORM VIEW -->
+      <div *ngIf="!registered">
+        <div class="text-center mb-6">
+          <div class="w-14 h-14 bg-gradient-to-tr from-sky-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-3 font-black text-white text-2xl shadow-lg shadow-sky-950/50">
+            <i class="bi bi-shop"></i>
+          </div>
+          <h2 class="text-2xl font-black text-slate-100 mb-1">تسجيل متجر جديد على منصة Besnesy</h2>
+          <p class="text-xs text-slate-400">انضم لأقوى منصة إدارة تجارة إلكترونية متكاملة في مصر</p>
+        </div>
+
+        <div *ngIf="errorMessage" class="bg-rose-500/10 border border-rose-500/30 text-rose-400 p-3 rounded-xl text-xs mb-6 flex items-center gap-2">
+          <i class="bi bi-exclamation-octagon-fill text-sm"></i>
+          <span>{{ errorMessage }}</span>
+        </div>
+
+        <form (ngSubmit)="onSubmit()" class="space-y-4">
+          
+          <!-- Plan Selection Carousel / Grid -->
+          <div class="space-y-2">
+            <label class="block text-xs font-bold text-slate-300">اختر باقة الاشتراك المناسبة لمتجرك:</label>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <div *ngFor="let plan of plans()" 
+                   (click)="selectPlan(plan)"
+                   [ngClass]="selectedPlanId === plan.id ? 'border-sky-500 bg-sky-500/10 ring-2 ring-sky-500/30' : 'border-slate-700/80 bg-slate-900/60 hover:border-slate-600'"
+                   class="p-3 rounded-xl border cursor-pointer transition-all flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="font-bold text-xs text-slate-100">{{ plan.name }}</span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-sky-400 font-bold">{{ plan.badge }}</span>
+                  </div>
+                  <div class="text-xs text-slate-400 line-clamp-1">{{ plan.description }}</div>
+                </div>
+                
+                <div class="mt-2 pt-2 border-t border-slate-800/80 flex items-baseline justify-between">
+                  <span class="text-[11px] text-slate-400">السعر السنوي:</span>
+                  <span class="font-black text-xs" [ngClass]="plan.annualOfferPrice === 0 ? 'text-emerald-400' : 'text-sky-400'">
+                    {{ plan.annualOfferPrice === 0 ? '0 ج.م (مجاناً)' : plan.annualOfferPrice + ' ج.م' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="form-group mb-0">
+              <label class="form-label">اسم صاحب المتجر بالكامل</label>
+              <input type="text" [(ngModel)]="ownerName" name="ownerName" class="form-control" placeholder="اسمك بالكامل" required />
+            </div>
+            <div class="form-group mb-0">
+              <label class="form-label">اسم المتجر (Store Name)</label>
+              <input type="text" [(ngModel)]="storeName" name="storeName" class="form-control" placeholder="مثال: متجر الهواتف" required />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="form-group mb-0">
+              <label class="form-label">البريد الإلكتروني</label>
+              <input type="email" [(ngModel)]="email" name="email" class="form-control font-mono text-xs" placeholder="name@domain.com" required />
+            </div>
+            <div class="form-group mb-0">
+              <label class="form-label">رقم الهاتف الأساسي</label>
+              <input type="text" [(ngModel)]="phone" name="phone" class="form-control font-mono text-xs" placeholder="01xxxxxxxxx" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">كلمة المرور (8 أحرف على الأقل)</label>
+            <input type="password" [(ngModel)]="password" name="password" class="form-control" placeholder="أدخل كلمة مرور قوية" required />
+          </div>
+
+          <button type="submit" [disabled]="loading" class="btn btn-primary w-full py-3.5 text-sm font-bold shadow-lg shadow-sky-950/40 mt-2 flex items-center justify-center gap-2">
+            <i *ngIf="loading" class="bi bi-arrow-repeat animate-spin"></i>
+            <span *ngIf="!loading"><i class="bi bi-rocket-takeoff-fill"></i> إنشاء المتجر ومتابعة التفعيل</span>
+          </button>
+        </form>
+
+        <div class="mt-6 text-center text-xs text-slate-400">
+          لديك حساب متجر بالفعل؟ <a routerLink="/login" class="text-sky-400 font-bold hover:underline">تسجيل الدخول</a>
+        </div>
+      </div>
+
+      <!-- 2. INSTAPAY PAYMENT TRANSFER STEP (FOR PAID PLANS) -->
+      <div *ngIf="registered && showPaymentStep" class="space-y-6">
+        
+        <div *ngIf="!paymentSubmitted" class="space-y-4">
+          <div class="text-center">
+            <div class="w-16 h-16 rounded-2xl bg-indigo-500/15 border border-indigo-500/30 text-indigo-400 flex items-center justify-center mx-auto mb-3 text-3xl">
+              <i class="bi bi-credit-card-2-front-fill"></i>
+            </div>
+            <h2 class="text-xl font-black text-slate-100">تحويل رسوم الاشتراك السنوي</h2>
+            <p class="text-xs text-slate-400 mt-1">لقد اخترت <strong class="text-sky-400">{{ selectedPlan?.name }}</strong> بقيمة <strong class="text-emerald-400">{{ selectedPlan?.annualOfferPrice }} ج.م</strong> سنوياً</p>
+          </div>
+
+          <!-- InstaPay Account Box -->
+          <div class="p-4 rounded-xl bg-gradient-to-r from-slate-900 to-indigo-950/60 border border-indigo-500/40 space-y-3">
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-slate-300 font-bold flex items-center gap-1.5">
+                <i class="bi bi-lightning-charge-fill text-amber-400"></i>
+                <span>رقم إنستاباي InstaPay المعتمد للتحويل:</span>
+              </span>
+              <span class="badge bg-emerald-500/20 text-emerald-400 text-[10px]">فوري ومباشر</span>
+            </div>
+
+            <div class="flex items-center justify-between bg-slate-950 p-3 rounded-lg border border-slate-800 font-mono">
+              <span class="text-lg font-black text-emerald-400 tracking-wider">01148472670</span>
+              <span class="text-xs text-slate-400">InstaPay / Vodafone Cash</span>
+            </div>
+
+            <p class="text-[11px] text-slate-400 leading-relaxed">
+              يرجى تحويل مبلغ <strong class="text-slate-200">{{ selectedPlan?.annualOfferPrice }} ج.م</strong> على الرقم أعلاه، ثم ملء بيانات التحويل أدناه لتفعيل حساب متجرك فوراً:
+            </p>
+          </div>
+
+          <!-- Submit Transfer Form -->
+          <form (ngSubmit)="onSubmitInstaPay()" class="space-y-3">
+            <div class="form-group mb-0">
+              <label class="form-label">رقم الهاتف أو الحساب المحول منه</label>
+              <input type="text" [(ngModel)]="paymentForm.senderPhone" name="senderPhone" class="form-control font-mono text-xs" placeholder="01xxxxxxxxx" required />
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="form-group mb-0">
+                <label class="form-label">المبلغ المحول (ج.م)</label>
+                <input type="number" [(ngModel)]="paymentForm.amount" name="amount" class="form-control font-bold text-emerald-400 text-sm" required />
+              </div>
+              <div class="form-group mb-0">
+                <label class="form-label">الرقم المرجعي للعملية (اختياري)</label>
+                <input type="text" [(ngModel)]="paymentForm.referenceNumber" name="referenceNumber" class="form-control text-xs" placeholder="Ref Number" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">ملاحظات إضافية</label>
+              <input type="text" [(ngModel)]="paymentForm.notes" name="notes" class="form-control text-xs" placeholder="أي تفاصيل أخرى..." />
+            </div>
+
+            <button type="submit" [disabled]="submittingPayment()" class="btn btn-primary w-full py-3 text-sm font-bold flex items-center justify-center gap-2">
+              <i *ngIf="submittingPayment()" class="bi bi-arrow-repeat animate-spin"></i>
+              <span *ngIf="!submittingPayment()"><i class="bi bi-check-circle-fill"></i> تأكيد وإرسال بيانات التحويل</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Success Payment Submission Message -->
+        <div *ngIf="paymentSubmitted" class="text-center space-y-4 py-4">
+          <div class="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto text-3xl border border-emerald-500/40">
+            <i class="bi bi-check-lg"></i>
+          </div>
+          <h3 class="text-lg font-black text-slate-100">تم استلام بيانات التحويل بنجاح!</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            سيقوم فريق الدعم الفني بمراجعة عملية التحويل وتفعيل اشتراك متجرك بالكامل خلال دقائق معدودة.<br />
+            يمكنك دائماً التواصل معنا مباشرة عبر واتساب: <a href="https://wa.me/201080225502" target="_blank" class="text-emerald-400 font-bold">01080225502</a>
+          </p>
+
+          <a routerLink="/login" class="btn btn-secondary btn-sm py-2 px-6 inline-flex items-center gap-2 border-slate-700">
+            <i class="bi bi-box-arrow-in-left"></i>
+            <span>الانتقال لصفحة الدخول</span>
+          </a>
+        </div>
+
+      </div>
+
+      <!-- 3. FREE PLAN ACTIVATION VIEW -->
+      <div *ngIf="registered && !showPaymentStep" class="text-center space-y-6">
+        <div class="w-20 h-20 bg-sky-500/15 border border-sky-500/30 text-sky-400 rounded-full flex items-center justify-center mx-auto text-3xl">
+          <i class="bi bi-envelope-check-fill"></i>
+        </div>
+
+        <h2 class="text-2xl font-black text-slate-100">بانتظار تفعيل حساب متجرك</h2>
+        
+        <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
+          تم إرسال رابط التفعيل إلى بريدك الإلكتروني: <strong class="text-sky-400">{{ email }}</strong>.<br />
+          يرجى فتح صندوق الوارد والضغط على رابط التفعيل لبدء تشغيل متجرك فوراً.
+        </p>
+
+        <!-- Dev Helper Action -->
+        <div class="p-4 bg-slate-800/80 rounded-xl border border-slate-700 text-xs text-slate-300 space-y-3">
+          <div class="font-bold text-amber-400">رابط تفعيل المتجر المباشر:</div>
+          <a [routerLink]="['/activate-account']" [queryParams]="{ token: activationToken }" class="btn btn-primary btn-sm w-full font-bold">
+            <i class="bi bi-check-circle"></i> الضغط لتفعيل حساب المتجر الآن
+          </a>
+        </div>
+
+        <div class="pt-2">
+          <button (click)="resendToken()" [disabled]="resending" class="btn btn-secondary btn-sm border-slate-700 text-xs">
+            <i class="bi bi-arrow-clockwise"></i> إعادة إرسال رابط التفعيل
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="p-4 text-center text-xs text-slate-500">
+    © 2026 Besnesy. جميع الحقوق محفوظة.
+  </div>
+</div>

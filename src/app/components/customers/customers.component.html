@@ -1,0 +1,218 @@
+<div class="space-y-6 fade-in font-cairo">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-extrabold text-slate-100 flex items-center gap-2">
+        <span>دليل العملاء</span>
+        <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+          {{ totalCount() }} عميل
+        </span>
+      </h1>
+      <p class="text-slate-400 text-sm">إدارة بيانات العملاء، العناوين، المحافظات، والقائمة السوداء</p>
+    </div>
+    <button (click)="openAddModal()" class="btn btn-primary">
+      <i class="fa-solid fa-user-plus"></i>
+      <span>إضافة عميل جديد</span>
+    </button>
+  </div>
+
+  <!-- Search & Filters Toolbar -->
+  <div class="glass-card p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+    <div class="flex flex-1 flex-col sm:flex-row items-center gap-3 w-full">
+      <!-- Search Input -->
+      <div class="relative w-full sm:w-80">
+        <i class="fa-solid fa-magnifying-glass absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+        <input 
+          type="text" 
+          [(ngModel)]="searchTerm" 
+          (ngModelChange)="onSearchChange()"
+          placeholder="بحث بالاسم، رقم الهاتف، أو العنوان..." 
+          class="form-control pr-9 text-xs" 
+        />
+      </div>
+
+      <!-- Blacklist Filter Dropdown -->
+      <div class="w-full sm:w-48">
+        <select [(ngModel)]="filterBlacklist" (ngModelChange)="onFilterChange()" class="form-select text-xs">
+          <option [ngValue]="null">جميع العملاء</option>
+          <option [ngValue]="false">عملاء منتظمين فقط</option>
+          <option [ngValue]="true">القائمة السوداء (Blacklist)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="glass-card p-12 text-center text-slate-400 space-y-3">
+    <i class="fa-solid fa-circle-notch fa-spin text-3xl text-indigo-400"></i>
+    <p class="text-sm font-semibold">جاري تحميل قائمة العملاء...</p>
+  </div>
+
+  <!-- Desktop Customers Table View -->
+  <div *ngIf="!loading()" class="hidden md:block glass-card overflow-hidden">
+    <div class="table-responsive">
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>اسم العميل</th>
+            <th>رقم الهاتف</th>
+            <th>هاتف بديل</th>
+            <th>المحافظة والعنوان</th>
+            <th>الحالة / القائمة السوداء</th>
+            <th>تاريخ التسجيل</th>
+            <th class="text-center">إجراءات</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let cust of customers()">
+            <td class="font-bold text-slate-100">{{ cust.name }}</td>
+            <td class="text-indigo-400 font-semibold dir-ltr text-right">{{ cust.phone }}</td>
+            <td class="text-slate-400 dir-ltr text-right">{{ cust.secondaryPhone || '-' }}</td>
+            <td>
+              <div class="font-semibold text-slate-200">{{ cust.governorateName }}</div>
+              <div class="text-xs text-slate-400 truncate max-w-xs">{{ cust.address }}</div>
+            </td>
+            <td>
+              <span class="badge" [class.badge-cancelled]="cust.isBlacklisted" [class.badge-delivered]="!cust.isBlacklisted">
+                {{ cust.isBlacklisted ? 'في القائمة السوداء' : 'عميل منتظم' }}
+              </span>
+            </td>
+            <td class="text-xs text-slate-400">{{ cust.createdAt | date:'shortDate' }}</td>
+            <td class="text-center">
+              <div class="flex items-center justify-center gap-2">
+                <button (click)="toggleBlacklist(cust)" class="btn btn-secondary btn-sm" [class.text-rose-400]="!cust.isBlacklisted" [class.text-emerald-400]="cust.isBlacklisted" [title]="cust.isBlacklisted ? 'إلغاء الحظر' : 'إضافة للقائمة السوداء'">
+                  <i class="fa-solid fa-ban"></i>
+                </button>
+                <button (click)="openEditModal(cust)" class="btn btn-secondary btn-sm text-indigo-400" title="تعديل البيانات">
+                  <i class="fa-solid fa-pen"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="customers().length === 0">
+            <td colspan="7" class="text-center py-12 text-slate-400">لا يوجد عملاء مطبقين لنتائج البحث</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Mobile Customers Compact Cards View -->
+  <div *ngIf="!loading()" class="block md:hidden space-y-3">
+    <div *ngFor="let cust of customers()" class="glass-card p-4 space-y-3 border-slate-700/80">
+      <div class="flex items-center justify-between border-b border-slate-700/60 pb-2">
+        <div class="font-bold text-slate-100 text-base">{{ cust.name }}</div>
+        <span class="badge" [class.badge-cancelled]="cust.isBlacklisted" [class.badge-delivered]="!cust.isBlacklisted">
+          {{ cust.isBlacklisted ? 'قائمة سوداء' : 'عميل منتظم' }}
+        </span>
+      </div>
+
+      <div class="space-y-1.5 text-xs bg-slate-800/40 p-2.5 rounded-lg border border-slate-700/50">
+        <div class="flex items-center justify-between">
+          <span class="text-slate-400">الهاتف الأساسي:</span>
+          <a [href]="'tel:' + cust.phone" class="font-bold text-sky-400 hover:underline dir-ltr">{{ cust.phone }}</a>
+        </div>
+        <div *ngIf="cust.secondaryPhone" class="flex items-center justify-between">
+          <span class="text-slate-400">هاتف بديل:</span>
+          <span class="text-slate-300 font-semibold dir-ltr">{{ cust.secondaryPhone }}</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-slate-400">المحافظة والعنوان:</span>
+          <span class="text-slate-200 font-semibold truncate max-w-[200px]">{{ cust.governorateName }} - {{ cust.address }}</span>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-1 border-t border-slate-700/60">
+        <button (click)="toggleBlacklist(cust)" class="btn btn-secondary btn-sm py-1.5 px-3 text-xs" [class.text-rose-400]="!cust.isBlacklisted" [class.text-emerald-400]="cust.isBlacklisted">
+          <i class="fa-solid fa-ban"></i> {{ cust.isBlacklisted ? 'إلغاء الحظر' : 'حظر العميل' }}
+        </button>
+        <button (click)="openEditModal(cust)" class="btn btn-secondary btn-sm py-1.5 px-3 text-xs text-indigo-400">
+          <i class="fa-solid fa-pen"></i> تعديل
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="customers().length === 0" class="glass-card p-8 text-center text-slate-400">
+      لا يوجد عملاء مطبقين لنتائج البحث
+    </div>
+  </div>
+
+  <!-- Pagination Controls Footer -->
+  <div *ngIf="!loading() && totalPages() > 1" class="glass-card p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="text-xs text-slate-400">
+      عرض الصفحة <span class="font-bold text-white">{{ pageNumber() }}</span> من <span class="font-bold text-white">{{ totalPages() }}</span> (إجمالي {{ totalCount() }} عميل)
+    </div>
+
+    <div class="flex items-center gap-2">
+      <button 
+        (click)="previousPage()" 
+        [disabled]="!hasPreviousPage()" 
+        class="btn btn-secondary btn-sm disabled:opacity-40 disabled:cursor-not-allowed"
+      >
+        <i class="fa-solid fa-chevron-right"></i>
+        <span>السابق</span>
+      </button>
+
+      <button 
+        (click)="nextPage()" 
+        [disabled]="!hasNextPage()" 
+        class="btn btn-secondary btn-sm disabled:opacity-40 disabled:cursor-not-allowed"
+      >
+        <span>التالي</span>
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Add/Edit Customer Modal -->
+  <div *ngIf="showModal" class="app-modal-overlay">
+    <div class="glass-card w-full max-w-lg p-6 fade-in my-auto max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-700">
+      <div class="flex items-center justify-between border-b border-slate-700 pb-4 mb-4">
+        <h3 class="font-bold text-lg text-slate-100">{{ isEditMode ? 'تعديل بيانات العميل' : 'إضافة عميل جديد' }}</h3>
+        <button (click)="closeModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+
+      <form (ngSubmit)="saveCustomer()">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="form-group">
+            <label class="form-label">الاسم بالكامل</label>
+            <input type="text" [(ngModel)]="currentCustomer.name" name="name" class="form-control" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">رقم الهاتف الرئيسي</label>
+            <input type="text" [(ngModel)]="currentCustomer.phone" name="phone" class="form-control" required />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="form-group">
+            <label class="form-label">رقم هاتف بديل</label>
+            <input type="text" [(ngModel)]="currentCustomer.secondaryPhone" name="secondaryPhone" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">المحافظة</label>
+            <select [(ngModel)]="currentCustomer.governorateId" name="governorateId" class="form-select" required>
+              <option *ngFor="let g of governorates()" [ngValue]="g.id">{{ g.name }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">العنوان التفصيلي</label>
+          <textarea [(ngModel)]="currentCustomer.address" name="address" class="form-textarea" rows="2" required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">ملاحظات عن العميل</label>
+          <input type="text" [(ngModel)]="currentCustomer.notes" name="notes" class="form-control" placeholder="ملاحظات تظهر عند عمل أوردر له" />
+        </div>
+
+        <div class="flex justify-end gap-3 mt-6">
+          <button type="button" (click)="closeModal()" class="btn btn-secondary">إلغاء</button>
+          <button type="submit" class="btn btn-primary">حفظ البيانات</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

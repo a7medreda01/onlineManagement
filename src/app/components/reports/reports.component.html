@@ -1,0 +1,328 @@
+<div class="space-y-6 fade-in font-cairo pb-12">
+  <!-- Header & Date Filter Bar -->
+  <div class="space-y-3">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div>
+        <h1 class="text-xl sm:text-2xl font-black text-slate-100 mb-1 flex items-center gap-2">
+          <i class="fa-solid fa-chart-pie text-emerald-400"></i>
+          <span>تقارير المبيعات والأرباح</span>
+        </h1>
+        <p class="text-xs text-slate-400">تحليل مالي ومقارنات للمبيعات والأرباح وأداء الفريق والمنتجات</p>
+      </div>
+    </div>
+
+    <!-- Date Range Presets & Custom Filter -->
+    <div class="glass-card p-3 md:p-4 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 border-slate-700/80">
+      <!-- Preset Buttons -->
+      <div class="flex items-center gap-1 bg-slate-800/80 p-1 rounded-xl border border-slate-700 overflow-x-auto scrollbar-none">
+        <button (click)="setPreset('today')" [class.btn-primary]="selectedPreset === 'today'" [class.btn-secondary]="selectedPreset !== 'today'" class="btn btn-xs sm:btn-sm text-xs py-1 px-2.5 whitespace-nowrap">
+          اليوم
+        </button>
+        <button (click)="setPreset('week')" [class.btn-primary]="selectedPreset === 'week'" [class.btn-secondary]="selectedPreset !== 'week'" class="btn btn-xs sm:btn-sm text-xs py-1 px-2.5 whitespace-nowrap">
+          آخر 7 أيام
+        </button>
+        <button (click)="setPreset('month')" [class.btn-primary]="selectedPreset === 'month'" [class.btn-secondary]="selectedPreset !== 'month'" class="btn btn-xs sm:btn-sm text-xs py-1 px-2.5 whitespace-nowrap">
+          هذا الشهر
+        </button>
+        <button (click)="setPreset('last_month')" [class.btn-primary]="selectedPreset === 'last_month'" [class.btn-secondary]="selectedPreset !== 'last_month'" class="btn btn-xs sm:btn-sm text-xs py-1 px-2.5 whitespace-nowrap">
+          الشهر الماضي
+        </button>
+        <button (click)="setPreset('all')" [class.btn-primary]="selectedPreset === 'all'" [class.btn-secondary]="selectedPreset !== 'all'" class="btn btn-xs sm:btn-sm text-xs py-1 px-2.5 whitespace-nowrap">
+          الكل
+        </button>
+      </div>
+
+      <!-- Custom Date Inputs -->
+      <div class="flex flex-wrap sm:flex-nowrap items-center justify-between sm:justify-end gap-2">
+        <div class="flex items-center gap-1.5 flex-1 sm:flex-none">
+          <span class="text-xs text-slate-400 font-semibold">من:</span>
+          <input type="date" [(ngModel)]="fromDate" (change)="selectedPreset = 'custom'" class="form-control text-xs py-1 px-2 w-full sm:w-32 bg-slate-800 border-slate-700" />
+        </div>
+        <div class="flex items-center gap-1.5 flex-1 sm:flex-none">
+          <span class="text-xs text-slate-400 font-semibold">إلى:</span>
+          <input type="date" [(ngModel)]="toDate" (change)="selectedPreset = 'custom'" class="form-control text-xs py-1 px-2 w-full sm:w-32 bg-slate-800 border-slate-700" />
+        </div>
+        <button (click)="loadReports()" class="btn btn-primary btn-sm py-1 px-3 text-xs w-full sm:w-auto">
+          <i class="fa-solid fa-filter"></i> تطبيق
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Skeleton Shimmer Grid -->
+  <div *ngIf="loading()" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+    <div *ngFor="let item of [1, 2]" class="glass-card p-5 animate-pulse space-y-4">
+      <div class="h-5 bg-slate-700/60 rounded w-1/3"></div>
+      <div class="h-10 bg-slate-800/80 rounded w-1/2"></div>
+      <div class="grid grid-cols-3 gap-2 pt-4">
+        <div class="h-8 bg-slate-700/60 rounded"></div>
+        <div class="h-8 bg-slate-700/60 rounded"></div>
+        <div class="h-8 bg-slate-700/60 rounded"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reference Style Top Cards Grid: Sales & Profit Breakdown -->
+  <div *ngIf="!loading()" class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+    
+    <!-- Left Side Card 1: المبيعات (Sales Breakdown) -->
+    <div class="glass-card p-5 space-y-4 border-indigo-500/30">
+      <div class="flex items-center justify-between border-b border-slate-700/60 pb-3">
+        <h3 class="font-bold text-slate-100 text-base flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full bg-purple-500/15 border border-purple-500/30 text-purple-400 flex items-center justify-center">
+            <i class="fa-solid fa-cart-shopping text-sm"></i>
+          </div>
+          <span>إجمالي المبيعات</span>
+        </h3>
+        <span class="text-xs text-purple-300 font-semibold bg-purple-500/10 px-2 py-0.5 rounded-lg border border-purple-500/20">الفترة المحددة</span>
+      </div>
+
+      <!-- Main Sales Amount -->
+      <div class="space-y-1">
+        <span class="text-xs text-slate-400 font-bold block">مبيعات الشهر الحالي:</span>
+        <div class="text-3xl font-black text-purple-400">
+          {{ summary()?.totalRevenue || 0 | currency:'EGP ':'symbol':'1.0-0' }}
+        </div>
+        <span class="text-[11px] text-slate-400 bg-slate-800/60 px-2 py-0.5 rounded border border-slate-700 inline-block mt-1">
+          الشهر الماضي: 0.00 ج.م
+        </span>
+      </div>
+
+      <!-- Sub-breakdown Row -->
+      <div class="grid grid-cols-3 gap-2 pt-3 border-t border-slate-700/60 text-center text-xs">
+        <div class="bg-slate-800/40 p-2 rounded-xl border border-slate-700/50">
+          <span class="text-slate-400 text-[10px] block">مبيعات اليوم</span>
+          <span class="font-bold text-slate-100 text-sm block my-0.5">{{ summary()?.totalRevenue || 0 | currency:'EGP ':'symbol':'1.0-0' }}</span>
+          <span class="text-[10px] text-slate-500 block">الأمس: 0.00</span>
+        </div>
+        <div class="bg-slate-800/40 p-2 rounded-xl border border-slate-700/50">
+          <span class="text-slate-400 text-[10px] block">مبيعات الأسبوع</span>
+          <span class="font-bold text-slate-100 text-sm block my-0.5">{{ summary()?.totalRevenue || 0 | currency:'EGP ':'symbol':'1.0-0' }}</span>
+          <span class="text-[10px] text-slate-500 block">الماضي: 0.00</span>
+        </div>
+        <div class="bg-slate-800/40 p-2 rounded-xl border border-slate-700/50">
+          <span class="text-slate-400 text-[10px] block">كل المبيعات</span>
+          <span class="font-bold text-slate-100 text-sm block my-0.5">{{ summary()?.totalRevenue || 0 | currency:'EGP ':'symbol':'1.0-0' }}</span>
+          <span class="text-[10px] text-slate-500 block">هذا العام: 0.00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side Card 2: الأرباح والمصروفات الصافية (Profit & Expenses Breakdown) -->
+    <div class="glass-card p-5 space-y-4 border-emerald-500/30">
+      <div class="flex items-center justify-between border-b border-slate-700/60 pb-3">
+        <h3 class="font-bold text-slate-100 text-base flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center">
+            <i class="fa-solid fa-calculator text-sm"></i>
+          </div>
+          <span>صافي الأرباح والمصروفات</span>
+        </h3>
+        <span class="text-xs text-emerald-300 font-semibold bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20">الفترة المحددة</span>
+      </div>
+
+      <!-- Main Net Profit Amount -->
+      <div class="flex items-center justify-between bg-slate-950/60 p-3.5 rounded-2xl border border-emerald-500/30">
+        <div>
+          <span class="text-xs text-slate-400 font-bold block mb-1">صافي الربح النهائي (Net Profit):</span>
+          <div class="text-3xl font-black" [class.text-emerald-400]="(summary()?.netProfit || 0) >= 0" [class.text-rose-400]="(summary()?.netProfit || 0) < 0">
+            {{ summary()?.netProfit || 0 | currency:'EGP ':'symbol':'1.0-0' }}
+          </div>
+        </div>
+        <div class="text-left text-xs space-y-1 text-slate-300">
+          <div>أرباح المبيعات: <span class="text-emerald-400 font-bold">+{{ summary()?.totalProfits || 0 | number:'1.0-0' }}</span></div>
+          <div>المصروفات: <span class="text-rose-400 font-bold">-{{ summary()?.totalExpenses || 0 | number:'1.0-0' }}</span></div>
+          <div>خسائر المرتجعات: <span class="text-rose-400 font-bold">-{{ summary()?.totalLosses || 0 | number:'1.0-0' }}</span></div>
+        </div>
+      </div>
+
+      <!-- Expenses Breakdown Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-2 border-t border-slate-700/60 text-xs">
+        <div class="bg-slate-800/40 p-2 rounded-xl border border-slate-700/50">
+          <span class="text-slate-400 text-[10px] block">📢 إعلانات وتسويق</span>
+          <span class="font-bold text-amber-400 text-sm block my-0.5">{{ summary()?.adsExpenses || 0 | currency:'EGP ':'symbol':'1.0-0' }}</span>
+        </div>
+        <div class="bg-slate-800/40 p-2 rounded-xl border border-slate-700/50">
+          <span class="text-slate-400 text-[10px] block">👨‍💼 رواتب ومكافآت</span>
+          <span class="font-bold text-blue-400 text-sm block my-0.5">{{ summary()?.salariesExpenses || 0 | currency:'EGP ':'symbol':'1.0-0' }}</span>
+        </div>
+        <div class="bg-slate-800/40 p-2 rounded-xl border border-slate-700/50">
+          <span class="text-slate-400 text-[10px] block">📦 شراء منتجات</span>
+          <span class="font-bold text-emerald-400 text-sm block my-0.5">{{ summary()?.productsExpenses || 0 | currency:'EGP ':'symbol':'1.0-0' }}</span>
+        </div>
+        <div class="bg-slate-800/40 p-2 rounded-xl border border-slate-700/50">
+          <span class="text-slate-400 text-[10px] block">🚚 مرتجعات الشحن</span>
+          <span class="font-bold text-purple-400 text-sm block my-0.5">{{ summary()?.shippingReturnExpenses || 0 | currency:'EGP ':'symbol':'1.0-0' }}</span>
+        </div>
+        <div class="bg-slate-800/40 p-2 rounded-xl border border-slate-700/50">
+          <span class="text-slate-400 text-[10px] block">🛠️ مصاريف تشغيلية</span>
+          <span class="font-bold text-sky-400 text-sm block my-0.5">{{ summary()?.operationsExpenses || 0 | currency:'EGP ':'symbol':'1.0-0' }}</span>
+        </div>
+        <div class="bg-slate-800/40 p-2 rounded-xl border border-slate-700/50">
+          <span class="text-slate-400 text-[10px] block">🏷️ مصاريف أخرى</span>
+          <span class="font-bold text-slate-300 text-sm block my-0.5">{{ summary()?.otherExpenses || 0 | currency:'EGP ':'symbol':'1.0-0' }}</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Pastel Circle Icon Badges & Donut Gauges Row -->
+  <div *ngIf="!loading()" class="grid grid-cols-1 md:grid-cols-3 gap-5">
+    
+    <!-- Circle Badges Grid (Span 2) -->
+    <div class="glass-card p-5 md:col-span-2 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-700/60 pb-3">
+        <h3 class="font-bold text-slate-100 text-sm sm:text-base flex items-center gap-2">
+          <i class="fa-solid fa-chart-simple text-sky-400"></i>
+          <span>معدلات الأوردرات والتوصيل</span>
+        </h3>
+        <span class="text-xs text-slate-400">ملخص الفترة</span>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <!-- Total Orders Badge -->
+        <div class="bg-slate-800/40 p-3.5 rounded-2xl border border-slate-700/60 flex items-center justify-between">
+          <div>
+            <span class="text-[11px] font-bold text-slate-400 block">إجمالي الطلبات</span>
+            <span class="text-xl font-black text-sky-400">{{ summary()?.totalOrders || 0 }}</span>
+          </div>
+          <div class="w-10 h-10 rounded-full bg-sky-500/15 border border-sky-500/30 text-sky-400 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-box"></i>
+          </div>
+        </div>
+
+        <!-- Delivered Orders Badge -->
+        <div class="bg-slate-800/40 p-3.5 rounded-2xl border border-slate-700/60 flex items-center justify-between">
+          <div>
+            <span class="text-[11px] font-bold text-slate-400 block">الطلبات المكتملة</span>
+            <span class="text-xl font-black text-emerald-400">{{ summary()?.deliveredOrders || 0 }}</span>
+          </div>
+          <div class="w-10 h-10 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+        </div>
+
+        <!-- Returned Orders Badge -->
+        <div class="bg-slate-800/40 p-3.5 rounded-2xl border border-slate-700/60 flex items-center justify-between">
+          <div>
+            <span class="text-[11px] font-bold text-slate-400 block">الطلبات المرتجعة</span>
+            <span class="text-xl font-black text-rose-400">{{ summary()?.returnedOrders || 0 }}</span>
+          </div>
+          <div class="w-10 h-10 rounded-full bg-rose-500/15 border border-rose-500/30 text-rose-400 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-xmark"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Donut Percentage Gauges Card -->
+    <div class="glass-card p-5 space-y-4 flex flex-col justify-between">
+      <div class="flex items-center justify-between border-b border-slate-700/60 pb-3">
+        <h3 class="font-bold text-slate-100 text-sm flex items-center gap-2">
+          <i class="fa-solid fa-pie-chart text-amber-400"></i>
+          <span>نسب النجاح والإرجاع</span>
+        </h3>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 text-center my-auto">
+        <div class="flex flex-col items-center">
+          <div class="relative w-16 h-16 flex items-center justify-center mb-1">
+            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+              <path class="text-slate-800" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              <path class="text-emerald-400" [attr.stroke-dasharray]="(summary()?.deliveryRatePercentage || 0) + ', 100'" stroke-width="3.5" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+            </svg>
+            <span class="absolute text-xs font-black text-emerald-400">{{ summary()?.deliveryRatePercentage || 0 }}%</span>
+          </div>
+          <span class="text-xs text-slate-300 font-bold">معدل التوصيل</span>
+        </div>
+
+        <div class="flex flex-col items-center">
+          <div class="relative w-16 h-16 flex items-center justify-center mb-1">
+            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+              <path class="text-slate-800" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              <path class="text-rose-400" [attr.stroke-dasharray]="(summary()?.returnRatePercentage || 0) + ', 100'" stroke-width="3.5" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+            </svg>
+            <span class="absolute text-xs font-black text-rose-400">{{ summary()?.returnRatePercentage || 0 }}%</span>
+          </div>
+          <span class="text-xs text-slate-300 font-bold">معدل المرتجع</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Team Activity Breakdown Table -->
+  <div *ngIf="!loading()" class="glass-card p-5 space-y-4 border-amber-500/30">
+    <div class="flex items-center justify-between border-b border-slate-700/60 pb-3">
+      <h3 class="font-bold text-base text-slate-100 flex items-center gap-2">
+        <i class="fa-solid fa-users-gear text-amber-400"></i>
+        <span>ملخص نشاط فريق العمل</span>
+      </h3>
+      <span class="text-xs text-slate-400">إنشاء وتأكيد الأوردرات</span>
+    </div>
+
+    <div class="table-responsive overflow-x-auto">
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>عضو الفريق</th>
+            <th>الدور</th>
+            <th>الأوردرات التي أنشأها</th>
+            <th>الأوردرات التي قامت بتأكيدها</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let member of teamActivity()">
+            <td class="font-bold text-slate-100">{{ member.userName }}</td>
+            <td>
+              <span class="badge" [class.badge-delivered]="member.userRole === 'Admin'" [class.badge-confirmed]="member.userRole === 'Moderator'">
+                {{ member.userRole }}
+              </span>
+            </td>
+            <td class="font-bold text-indigo-400 text-sm">{{ member.ordersCreatedCount }} أوردر</td>
+            <td class="font-bold text-emerald-400 text-sm">{{ member.ordersConfirmedCount }} أوردر</td>
+          </tr>
+          <tr *ngIf="teamActivity().length === 0">
+            <td colspan="4" class="text-center py-6 text-slate-400">لا يوجد سجل نشاط للفريق حتى الآن</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Product Performance Table -->
+  <div *ngIf="!loading()" class="glass-card overflow-hidden">
+    <div class="p-4 border-b border-slate-700/80">
+      <h3 class="font-bold text-base text-slate-100 flex items-center gap-2">
+        <i class="fa-solid fa-box-open text-indigo-400"></i>
+        <span>أداء المنتجات والأرباح المحققة</span>
+      </h3>
+    </div>
+
+    <div class="table-responsive overflow-x-auto">
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>كود المنتج</th>
+            <th>اسم المنتج</th>
+            <th>الكمية المباعة (المسلّمة)</th>
+            <th>الكمية المرتجعة</th>
+            <th>إجمالي الربح المولّد</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of productsPerformance()">
+            <td class="font-mono text-xs text-indigo-300 font-bold">{{ p.code }}</td>
+            <td class="font-bold text-slate-100">{{ p.productName }}</td>
+            <td class="font-bold text-emerald-400">{{ p.totalQuantitySold }} قطعة</td>
+            <td class="text-rose-400">{{ p.totalQuantityReturned }} قطعة</td>
+            <td class="font-bold text-indigo-400">{{ p.totalGeneratedProfit | currency:'EGP ':'symbol':'1.0-0' }}</td>
+          </tr>
+          <tr *ngIf="productsPerformance().length === 0">
+            <td colspan="5" class="text-center py-12 text-slate-400">لا توجد مبيعات منتجات في الفترة المحددة</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

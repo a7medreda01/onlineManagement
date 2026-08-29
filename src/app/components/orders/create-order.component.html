@@ -1,0 +1,606 @@
+<div class="max-w-3xl mx-auto space-y-3.5 fade-in font-cairo pb-14 px-2 sm:px-4">
+  
+  <!-- Clean Sleek Header Bar -->
+  <div class="flex items-center justify-between pb-0.5">
+    <div class="flex items-center gap-2.5">
+      <a routerLink="/orders" class="w-8 h-8 rounded-xl bg-slate-800/50 border border-slate-700/60 text-slate-300 flex items-center justify-center text-xs shrink-0 hover:bg-slate-700/60 transition-colors" title="رجوع للأوردرات">
+        <i class="fa-solid fa-arrow-right"></i>
+      </a>
+      <div>
+        <h1 class="text-base sm:text-lg font-black text-slate-100 flex items-center gap-1.5">
+          <i class="fa-solid fa-cart-plus text-indigo-400 text-sm"></i>
+          <span>إنشاء أوردر جديد</span>
+        </h1>
+        <p class="text-[10px] sm:text-xs text-slate-400 font-medium">الخطوة {{ currentStep }} من 4: {{ getStepTitle(currentStep) }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sleek Multi-Step Stepper Tabs -->
+  <div class="glass-card p-2 sm:p-3 space-y-2 border-slate-700/80 shadow-md">
+    <!-- Progress Bar -->
+    <div class="relative w-full bg-slate-800/80 h-1.5 rounded-full overflow-hidden">
+      <div class="bg-gradient-to-r from-indigo-500 via-sky-400 to-emerald-400 h-full transition-all duration-300 rounded-full"
+           [style.width.%]="getProgressPercentage()"></div>
+    </div>
+
+    <!-- 4 Clean Step Tabs -->
+    <div class="grid grid-cols-4 gap-1 text-center">
+      <button type="button" (click)="goToStep(1)" [disabled]="currentStep < 1"
+              class="py-1.5 px-1 rounded-xl transition-all text-[11px] font-bold flex items-center justify-center gap-1"
+              [ngClass]="currentStep === 1 ? 'btn-primary shadow-xs' : (currentStep > 1 ? 'btn-secondary text-indigo-400 font-bold' : 'btn-secondary text-slate-400 opacity-60')">
+        <i class="fa-solid fa-user text-[10px]"></i>
+        <span>العميل</span>
+      </button>
+
+      <button type="button" (click)="goToStep(2)" [disabled]="currentStep < 2"
+              class="py-1.5 px-1 rounded-xl transition-all text-[11px] font-bold flex items-center justify-center gap-1"
+              [ngClass]="currentStep === 2 ? 'btn-primary shadow-xs' : (currentStep > 2 ? 'btn-secondary text-indigo-400 font-bold' : 'btn-secondary text-slate-400 opacity-60')">
+        <i class="fa-solid fa-boxes-stacked text-[10px]"></i>
+        <span>المنتجات</span>
+      </button>
+
+      <button type="button" (click)="goToStep(3)" [disabled]="currentStep < 3"
+              class="py-1.5 px-1 rounded-xl transition-all text-[11px] font-bold flex items-center justify-center gap-1"
+              [ngClass]="currentStep === 3 ? 'btn-primary shadow-xs' : (currentStep > 3 ? 'btn-secondary text-indigo-400 font-bold' : 'btn-secondary text-slate-400 opacity-60')">
+        <i class="fa-solid fa-truck-fast text-[10px]"></i>
+        <span>الشحن</span>
+      </button>
+
+      <button type="button" (click)="goToStep(4)" [disabled]="currentStep < 4"
+              class="py-1.5 px-1 rounded-xl transition-all text-[11px] font-bold flex items-center justify-center gap-1"
+              [ngClass]="currentStep === 4 ? 'btn-primary bg-emerald-600 shadow-xs' : 'btn-secondary text-slate-400 opacity-60'">
+        <i class="fa-solid fa-check text-[10px]"></i>
+        <span>التأكيد</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN FORM CONTAINER -->
+  <form (ngSubmit)="submitOrder()">
+
+    <!-- STEP 1: CUSTOMER & DELIVERY INFO -->
+    <div *ngIf="currentStep === 1" class="glass-card p-3.5 sm:p-5 space-y-3 border-slate-700/80 shadow-md fade-in">
+      <h3 class="font-bold text-xs sm:text-sm text-slate-100 flex items-center gap-1.5 border-b border-slate-700/60 pb-2">
+        <i class="fa-solid fa-user text-indigo-400 text-xs"></i>
+        <span>1. بيانات العميل والتوصيل</span>
+      </h3>
+
+      <!-- Segmented Toggle Row for Customer Mode -->
+      <div class="grid grid-cols-2 gap-1 p-1 bg-slate-800/40 rounded-xl border border-slate-700/60">
+        <button type="button" (click)="setCustomerMode(true)" [class.btn-primary]="isNewCustomer" [class.btn-secondary]="!isNewCustomer" class="btn btn-xs py-1.5 text-xs font-bold justify-center rounded-lg flex items-center gap-1">
+          <i class="fa-solid fa-user-plus text-[10px]"></i>
+          <span>إدخال عميل جديد</span>
+        </button>
+        <button type="button" (click)="setCustomerMode(false)" [class.btn-primary]="!isNewCustomer" [class.btn-secondary]="isNewCustomer" class="btn btn-xs py-1.5 text-xs font-bold justify-center rounded-lg flex items-center gap-1">
+          <i class="fa-solid fa-user-check text-[10px]"></i>
+          <span>اختيار عميل مسجل</span>
+        </button>
+      </div>
+
+      <!-- Mode A: Inline Create New Customer (DEFAULT) -->
+      <div *ngIf="isNewCustomer" class="space-y-2.5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <div class="form-group mb-0">
+            <label class="form-label text-[11px] mb-1">اسم العميل بالكامل</label>
+            <input type="text" [(ngModel)]="newCustomer.name" name="custName" class="form-control text-xs py-1.5 px-3" placeholder="اسم العميل الرباعي" required />
+          </div>
+          <div class="form-group mb-0">
+            <label class="form-label text-[11px] mb-1">رقم الهاتف الأساسي</label>
+            <input type="text" [(ngModel)]="newCustomer.phone" (input)="onNewCustomerPhoneInput(newCustomer.phone)" name="custPhone" class="form-control text-xs py-1.5 px-3" placeholder="01xxxxxxxxx" required />
+          </div>
+        </div>
+
+        <!-- Existing Customer Alert Box if phone matches -->
+        <div *ngIf="existingPhoneMatch" class="p-3 rounded-xl bg-amber-500/15 border border-amber-500/40 text-amber-200 space-y-2 fade-in">
+          <div class="flex items-center gap-1.5 font-bold text-[11px] text-amber-300">
+            <i class="fa-solid fa-triangle-exclamation text-amber-400 text-xs"></i>
+            <span>تنبيه: العميل "{{ existingPhoneMatch.name }}" مسجل بالفعل بنسبة تسليم {{ existingPhoneMatch.deliverySuccessRate }}%!</span>
+          </div>
+          <div class="flex flex-wrap items-center gap-1.5 pt-0.5 text-[11px]">
+            <button type="button" (click)="useExistingCustomerMatch(existingPhoneMatch)" class="btn btn-primary btn-xs py-1 px-2.5 font-bold bg-amber-500 border-none text-slate-950">
+              <i class="fa-solid fa-bolt text-[9px]"></i>
+              <span>استخدام العميل</span>
+            </button>
+            <button type="button" (click)="openCustomerHistoryModal(existingPhoneMatch.id)" class="btn btn-secondary btn-xs py-1 px-2.5 text-sky-300 font-bold border-sky-500/30">
+              <i class="fa-solid fa-clock-rotate-left text-[9px]"></i>
+              <span>سجل الطلبات السابقة ({{ existingPhoneMatch.totalOrders }})</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <div class="form-group mb-0">
+            <label class="form-label text-[11px] mb-1">رقم هاتف بديل (اختياري)</label>
+            <input type="text" [(ngModel)]="newCustomer.secondaryPhone" name="custSecPhone" class="form-control text-xs py-1.5 px-3" placeholder="رقم آخر إن وجد" />
+          </div>
+          <div class="form-group mb-0">
+            <label class="form-label text-[11px] mb-1">المحافظة</label>
+            <select [(ngModel)]="newCustomer.governorateId" (ngModelChange)="onGovernorateChange()" name="custGov" class="form-select text-xs py-1.5 px-3" required>
+              <option [ngValue]="0" disabled>-- اختر المحافظة --</option>
+              <option *ngFor="let gov of governorates()" [ngValue]="gov.id">{{ gov.name }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group mb-0">
+          <label class="form-label text-[11px] mb-1">العنوان التفصيلي للشحن</label>
+          <textarea [(ngModel)]="newCustomer.address" name="custAddress" class="form-textarea text-xs py-1.5 px-3" rows="2" placeholder="الشارع، رقم العمارة، الشقة، العلامة المميزة" required></textarea>
+        </div>
+      </div>
+
+      <!-- Mode B: Search / Select Existing Customer -->
+      <div *ngIf="!isNewCustomer" class="space-y-3">
+        <div class="form-group relative mb-0">
+          <label class="form-label text-[11px] font-bold flex items-center justify-between mb-1">
+            <span>بحث بالاسم أو رقم الموبايل</span>
+            <span *ngIf="selectedCustomerSearchDto" class="text-[10px] text-emerald-400 font-bold">✓ تم الاختيار</span>
+          </label>
+          
+          <div class="relative">
+            <input type="text" [(ngModel)]="searchQuery" (input)="onCustomerSearchInput(searchQuery)" name="customerSearch" class="form-control text-xs pr-8 py-1.5 px-3" placeholder="اكتب اسم العميل أو الموبايل للبحث الفوري..." />
+            <i class="fa-solid fa-magnifying-glass absolute right-2.5 top-2.5 text-slate-400 text-xs"></i>
+            <button *ngIf="searchQuery" type="button" (click)="clearCustomerSearch()" class="absolute left-2 top-1 text-[10px] btn btn-secondary py-0.5 px-1.5">تفريغ</button>
+          </div>
+
+          <!-- Autocomplete Results Dropdown -->
+          <div *ngIf="searchResults().length > 0" class="absolute z-50 left-0 right-0 top-full mt-1 bg-white text-slate-800 rounded-xl shadow-2xl border border-slate-200 overflow-hidden divide-y divide-slate-100 max-h-56 overflow-y-auto">
+            <div *ngFor="let res of searchResults()" (click)="selectCustomerFromSearch(res)" class="p-2 hover:bg-sky-50 cursor-pointer flex items-center justify-between transition-colors">
+              <div>
+                <div class="font-bold text-slate-900 text-xs flex items-center gap-1">
+                  <span>{{ res.name }}</span>
+                  <span *ngIf="res.isBlacklisted" class="badge badge-cancelled text-[8px]">قائمة سوداء</span>
+                </div>
+                <div class="text-[10px] text-slate-500 flex items-center gap-1 mt-0.5">
+                  <span class="font-mono text-indigo-600 font-bold">{{ res.phone }}</span>
+                  <span>• {{ res.governorateName }}</span>
+                </div>
+              </div>
+              
+              <div class="text-left">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold"
+                      [ngClass]="res.deliverySuccessRate >= 80 ? 'bg-emerald-100 text-emerald-800' : (res.deliverySuccessRate >= 50 ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-800')">
+                  {{ res.deliverySuccessRate }}% تسليم
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Static Select Fallback -->
+        <div class="form-group mb-0">
+          <label class="form-label text-[10px] text-slate-400 mb-1">أو اختر مباشرة من قائمة العملاء:</label>
+          <select [(ngModel)]="selectedCustomerId" (ngModelChange)="onCustomerChange()" name="selectedCustomerId" class="form-select text-xs py-1.5 px-3">
+            <option [ngValue]="null">-- اختر عميل من القائمة --</option>
+            <option *ngFor="let cust of customers()" [ngValue]="cust.id">
+              {{ cust.name }} - {{ cust.phone }} ({{ cust.governorateName }})
+            </option>
+          </select>
+        </div>
+
+        <!-- Selected Customer Info & Stats Card -->
+        <div *ngIf="selectedCustomerSearchDto" class="p-3 rounded-xl bg-slate-800/40 border border-slate-700/60 space-y-2 fade-in">
+          <div class="flex items-center justify-between gap-2 border-b border-slate-700/50 pb-2">
+            <div class="flex items-center gap-2 truncate">
+              <div class="w-7 h-7 rounded-lg bg-indigo-500/20 text-indigo-300 flex items-center justify-center font-bold text-xs shrink-0">
+                <i class="fa-solid fa-user-check"></i>
+              </div>
+              <div class="truncate">
+                <h4 class="font-extrabold text-xs text-slate-100 truncate">{{ selectedCustomerSearchDto.name }}</h4>
+                <p class="text-[10px] text-slate-400 truncate">{{ selectedCustomerSearchDto.phone }} | {{ selectedCustomerSearchDto.governorateName }} - {{ selectedCustomerSearchDto.address }}</p>
+              </div>
+            </div>
+
+            <button type="button" (click)="openCustomerHistoryModal(selectedCustomerSearchDto.id)" class="btn btn-secondary btn-xs py-1 px-2.5 text-sky-400 font-bold border-sky-500/30 shrink-0 text-[10px]">
+              <i class="fa-solid fa-clock-rotate-left text-[9px]"></i>
+              <span>السجل ({{ selectedCustomerSearchDto.totalOrders }})</span>
+            </button>
+          </div>
+
+          <!-- Quick Stats Pills -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+            <div class="bg-slate-900/60 p-2 rounded-lg border border-slate-800 text-center">
+              <span class="text-slate-400 text-[9px] block">إجمالي الطلبات</span>
+              <span class="font-bold text-slate-100 text-xs">{{ selectedCustomerSearchDto.totalOrders }}</span>
+            </div>
+            <div class="bg-emerald-500/10 p-2 rounded-lg border border-emerald-500/30 text-center">
+              <span class="text-emerald-400 text-[9px] block">مسلمة</span>
+              <span class="font-bold text-emerald-400 text-xs">{{ selectedCustomerSearchDto.deliveredOrders }}</span>
+            </div>
+            <div class="bg-rose-500/10 p-2 rounded-lg border border-rose-500/30 text-center">
+              <span class="text-rose-400 text-[9px] block">ملغاة / مرتجعة</span>
+              <span class="font-bold text-rose-400 text-xs">{{ selectedCustomerSearchDto.cancelledOrders + selectedCustomerSearchDto.returnedOrders }}</span>
+            </div>
+            <div class="bg-sky-500/10 p-2 rounded-lg border border-sky-500/30 text-center">
+              <span class="text-sky-400 text-[9px] block">نسبة التسليم</span>
+              <span class="font-black text-sky-300 text-xs">{{ selectedCustomerSearchDto.deliverySuccessRate }}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 1 Navigation Button -->
+      <div class="flex justify-end pt-2 border-t border-slate-700/50">
+        <button type="button" (click)="nextStep()" class="btn btn-primary py-2 px-5 font-bold text-xs flex items-center gap-1.5 shadow-xs">
+          <span>الخطوة التالية</span>
+          <i class="fa-solid fa-arrow-left text-[10px]"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 2: PRODUCTS & PRICES -->
+    <div *ngIf="currentStep === 2" class="glass-card p-3.5 sm:p-5 space-y-3 border-slate-700/80 shadow-md fade-in">
+      <div class="flex items-center justify-between border-b border-slate-700/60 pb-2">
+        <h3 class="font-bold text-xs sm:text-sm text-slate-100 flex items-center gap-1.5">
+          <i class="fa-solid fa-boxes-stacked text-amber-400 text-xs"></i>
+          <span>2. المنتجات والأسعار بالأوردر</span>
+        </h3>
+        <button type="button" (click)="addItemRow()" class="btn btn-secondary btn-xs py-1 px-2.5 text-indigo-400 font-bold flex items-center gap-1 text-[11px]">
+          <i class="fa-solid fa-plus text-[9px]"></i>
+          <span>إضافة منتج</span>
+        </button>
+      </div>
+
+      <div class="space-y-2.5">
+        <div *ngFor="let item of selectedItems; let i = index" class="flex flex-col sm:flex-row items-end sm:items-center gap-2 bg-slate-800/40 p-3 rounded-xl border border-slate-700/60">
+          <div class="flex-1 w-full">
+            <label class="text-[10px] text-slate-400 mb-1 block">اختر المنتج</label>
+            <select [(ngModel)]="item.productId" (ngModelChange)="onProductSelect(i)" [name]="'prod_' + i" class="form-select text-xs py-1.5 px-3" required>
+              <option [ngValue]="0" disabled>-- اختر المنتج --</option>
+              <option *ngFor="let p of products()" [ngValue]="p.id" [disabled]="p.stockQuantity <= 0">
+                {{ p.name }} (كود: {{ p.code }}) - سعر البيع: {{ p.sellingPrice }} ج.م | المتاح: {{ p.stockQuantity }}
+              </option>
+            </select>
+          </div>
+
+          <div class="w-full sm:w-20">
+            <label class="text-[10px] text-slate-400 mb-1 block">الكمية</label>
+            <input type="number" [(ngModel)]="item.quantity" (ngModelChange)="onItemQuantityOrPriceChange()" [name]="'qty_' + i" min="1" [max]="getMaxStock(item.productId)" class="form-control text-xs py-1.5 text-center font-bold" required />
+          </div>
+
+          <div class="w-full sm:w-28">
+            <label class="text-[10px] text-amber-400 font-bold mb-1 block">سعر القطعة</label>
+            <div class="relative">
+              <input type="number" [(ngModel)]="item.unitPrice" (ngModelChange)="onItemQuantityOrPriceChange()" [name]="'price_' + i" min="0" step="0.5" class="form-control text-xs py-1.5 font-bold text-amber-300 text-center border-amber-500/40" required />
+              <span class="absolute left-2.5 top-2 text-[9px] text-amber-400 font-bold">ج.م</span>
+            </div>
+          </div>
+
+          <div class="w-full sm:w-24 text-left font-black text-emerald-400 text-xs pt-1 sm:pt-0">
+            = {{ getItemSubtotal(item) }} ج.م
+          </div>
+
+          <button type="button" (click)="removeItemRow(i)" [disabled]="selectedItems.length <= 1" class="text-rose-400 hover:text-rose-300 p-1 shrink-0" title="حذف المنتج">
+            <i class="fa-solid fa-trash-can text-xs"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Items Subtotal Summary Bar -->
+      <div class="p-2.5 rounded-xl bg-indigo-500/10 border border-indigo-500/30 flex justify-between items-center text-xs font-bold text-slate-200">
+        <span>مجموع المنتجات الجزئي:</span>
+        <span class="font-black text-indigo-300 text-xs sm:text-sm">{{ calculatedSubTotal }} ج.م</span>
+      </div>
+
+      <!-- Step 2 Navigation Buttons -->
+      <div class="flex justify-between items-center pt-2 border-t border-slate-700/50">
+        <button type="button" (click)="prevStep()" class="btn btn-secondary py-2 px-4 text-xs font-bold">
+          <i class="fa-solid fa-arrow-right text-[10px]"></i>
+          <span>السابق</span>
+        </button>
+
+        <button type="button" (click)="nextStep()" class="btn btn-primary py-2 px-5 font-bold text-xs flex items-center gap-1.5 shadow-xs">
+          <span>الخطوة التالية</span>
+          <i class="fa-solid fa-arrow-left text-[10px]"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 3: SHIPPING COMPANY & SALES PLATFORM -->
+    <div *ngIf="currentStep === 3" class="glass-card p-3.5 sm:p-5 space-y-3 border-slate-700/80 shadow-md fade-in">
+      <div class="flex items-center justify-between border-b border-slate-700/60 pb-2">
+        <h3 class="font-bold text-xs sm:text-sm text-slate-100 flex items-center gap-1.5">
+          <i class="fa-solid fa-truck-fast text-sky-400 text-xs"></i>
+          <span>3. شركة الشحن ومنصة البيع (مصدر الأوردر)</span>
+        </h3>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+        <div class="form-group mb-0">
+          <label class="form-label text-[11px] mb-1">شركة الشحن</label>
+          <select [(ngModel)]="selectedShippingCompanyId" (ngModelChange)="recalculateCosts()" name="shippingCompany" class="form-select text-xs py-1.5 px-3" required>
+            <option [ngValue]="0" disabled>-- اختر شركة الشحن --</option>
+            <option *ngFor="let comp of shippingCompanies()" [ngValue]="comp.id">{{ comp.name }} (هاتف: {{ comp.phone }})</option>
+          </select>
+        </div>
+
+        <div class="form-group mb-0">
+          <div class="flex items-center justify-between mb-1">
+            <label class="form-label text-[11px] mb-0">منصة البيع / الصفحة</label>
+            <button type="button" (click)="showPlatformModal = true" class="text-[10px] text-sky-400 hover:text-sky-300 font-bold flex items-center gap-0.5">
+              <i class="fa-solid fa-circle-plus"></i> إضافة منصة
+            </button>
+          </div>
+          <select [(ngModel)]="selectedSalesPlatformId" name="salesPlatform" class="form-select text-xs py-1.5 px-3" required>
+            <option [ngValue]="0" disabled>-- اختر المنصة أو الصفحة --</option>
+            <option *ngFor="let plat of salesPlatforms()" [ngValue]="plat.id">{{ plat.name }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group mb-0">
+        <label class="form-label text-[11px] mb-1">ملاحظات الأوردر / تفاصيل الشحن (اختياري)</label>
+        <textarea [(ngModel)]="orderNotes" name="notes" class="form-textarea text-xs py-1.5 px-3" rows="2" placeholder="ملاحظات العميل، موعد التسليم المفضل، إلخ..."></textarea>
+      </div>
+
+      <!-- Shipping Rate Quick Notice -->
+      <div *ngIf="calculatedShippingCost > 0" class="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex justify-between items-center text-xs font-bold text-slate-200">
+        <span>تكلفة الشحن لهذه المحافظة والشركة:</span>
+        <span class="font-black text-amber-400 text-xs sm:text-sm">{{ calculatedShippingCost }} ج.م</span>
+      </div>
+
+      <!-- Step 3 Navigation Buttons -->
+      <div class="flex justify-between items-center pt-2 border-t border-slate-700/50">
+        <button type="button" (click)="prevStep()" class="btn btn-secondary py-2 px-4 text-xs font-bold">
+          <i class="fa-solid fa-arrow-right text-[10px]"></i>
+          <span>السابق</span>
+        </button>
+
+        <button type="button" (click)="nextStep()" class="btn btn-primary py-2 px-5 font-bold text-xs flex items-center gap-1.5 shadow-xs">
+          <span>الخطوة التالية</span>
+          <i class="fa-solid fa-arrow-left text-[10px]"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 4: FINANCIAL SUMMARY & FINAL SUBMIT -->
+    <div *ngIf="currentStep === 4" class="glass-card p-3.5 sm:p-5 space-y-3.5 border-slate-700/80 shadow-md fade-in">
+      <div class="flex items-center justify-between border-b border-slate-700/60 pb-2">
+        <h3 class="font-bold text-xs sm:text-sm text-slate-100 flex items-center gap-1.5">
+          <i class="fa-solid fa-calculator text-emerald-400 text-xs"></i>
+          <span>4. مراجعة الحسابات وتأكيد حفظ الأوردر</span>
+        </h3>
+      </div>
+
+      <!-- Full Order Summary Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+        <!-- Customer Summary Box -->
+        <div class="p-2.5 rounded-xl bg-slate-800/40 border border-slate-700/50 space-y-1">
+          <h4 class="font-bold text-sky-300 text-[11px] flex items-center gap-1 border-b border-slate-700/40 pb-1">
+            <i class="fa-solid fa-user text-[9px]"></i> العميل والتوصيل
+          </h4>
+          <p class="text-slate-200"><strong>الاسم:</strong> {{ getSummaryCustomerName() }}</p>
+          <p class="text-slate-300"><strong>الهاتف:</strong> {{ getSummaryCustomerPhone() }}</p>
+          <p class="text-slate-400 truncate"><strong>العنوان:</strong> {{ getSummaryCustomerAddress() }}</p>
+        </div>
+
+        <!-- Shipping & Platform Summary Box -->
+        <div class="p-2.5 rounded-xl bg-slate-800/40 border border-slate-700/50 space-y-1">
+          <h4 class="font-bold text-sky-300 text-[11px] flex items-center gap-1 border-b border-slate-700/40 pb-1">
+            <i class="fa-solid fa-truck text-[9px]"></i> الشحن والمنصة
+          </h4>
+          <p class="text-slate-200"><strong>الشركة:</strong> {{ getSelectedShippingCompanyName() }}</p>
+          <p class="text-slate-300"><strong>المنصة:</strong> {{ getSelectedSalesPlatformName() }}</p>
+          <p *ngIf="orderNotes" class="text-slate-400 truncate"><strong>الملاحظات:</strong> {{ orderNotes }}</p>
+        </div>
+      </div>
+
+      <!-- Financial Breakdown Card -->
+      <div class="p-3 rounded-xl bg-slate-800/40 border border-slate-700/60 space-y-3">
+        <h4 class="font-bold text-xs text-slate-200 border-b border-slate-700/50 pb-1">ملخص الحسابات والعربون</h4>
+
+        <div class="flex justify-between items-center text-xs text-slate-300">
+          <span>إجمالي المنتجات الجزئي ({{ selectedItems.length }} منتجات):</span>
+          <span class="font-bold text-white text-xs sm:text-sm">{{ calculatedSubTotal }} ج.م</span>
+        </div>
+
+        <div class="flex justify-between items-center text-xs text-slate-300">
+          <span>مصاريف الشحن المطلوبة:</span>
+          <span class="font-bold text-amber-400 text-xs sm:text-sm">{{ calculatedShippingCost }} ج.م</span>
+        </div>
+
+        <!-- Editable Total Amount -->
+        <div class="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex flex-col sm:flex-row items-center justify-between gap-2">
+          <div>
+            <label class="font-extrabold text-slate-100 text-xs block">المبلغ الإجمالي للأوردر مع الشحن:</label>
+            <span class="text-[10px] text-emerald-400">تعديل هذا المبلغ يغير سعر القطعة تلقائياً</span>
+          </div>
+          <div class="relative w-full sm:w-40">
+            <input type="number" [(ngModel)]="calculatedTotalAmount" (ngModelChange)="onTotalAmountManualChange()" name="manualTotal" min="0" step="0.5" class="w-full text-lg sm:text-xl font-black text-emerald-400 bg-slate-900/80 border-2 border-emerald-500/60 rounded-xl px-2.5 py-1 text-left focus:outline-none" required />
+            <span class="absolute left-2.5 top-2 text-[10px] text-emerald-400 font-bold">ج.م</span>
+          </div>
+        </div>
+
+        <!-- Deposit & Wallet Selection Box -->
+        <div class="p-3 rounded-xl bg-purple-500/10 border border-purple-500/30 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <h5 class="text-xs font-bold text-purple-300 flex items-center gap-1.5">
+              <i class="fa-solid fa-receipt text-amber-400"></i>
+              <span>العربون والدفع المسبق (اختياري)</span>
+            </h5>
+            <span class="text-[10px] text-slate-400">يُخصم آلياً من قيمة التحصيل COD ويُضاف للخزينة المختارة</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <!-- Deposit Amount -->
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-300 mb-1">مبلغ العربون المستلم (ج.م):</label>
+              <input type="number" [(ngModel)]="depositAmount" name="depositAmount" min="0" [max]="calculatedTotalAmount" placeholder="أدخل مبلغ العربون..." class="form-control text-xs py-1.5 px-2 bg-slate-900 border-slate-700 text-emerald-400 font-bold font-mono" />
+            </div>
+
+            <!-- Receiving Wallet -->
+            <div *ngIf="(depositAmount || 0) > 0">
+              <label class="block text-[11px] font-semibold text-slate-300 mb-1">المحفظة / الخزينة المستلمة:</label>
+              <select [(ngModel)]="selectedPaidToWalletId" name="paidToWallet" class="form-control text-xs py-1.5 px-2 bg-slate-900 border-slate-700 text-slate-100">
+                <option *ngFor="let w of wallets()" [ngValue]="w.id">{{ w.name }} ({{ w.balance | number:'1.0-0' }} ج.م)</option>
+              </select>
+            </div>
+
+            <!-- Deposit Reference -->
+            <div *ngIf="(depositAmount || 0) > 0">
+              <label class="block text-[11px] font-semibold text-slate-300 mb-1">رقم الحوالة / المرجع (اختياري):</label>
+              <input type="text" [(ngModel)]="depositReference" name="depositRef" placeholder="رقم عملية فودافون كاش / إنستاباي" class="form-control text-xs py-1.5 px-2 bg-slate-900 border-slate-700 text-slate-100 font-mono" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Remaining COD Final Box -->
+        <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between">
+          <div>
+            <div class="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+              <i class="fa-solid fa-hand-holding-dollar"></i>
+              <span>المبلغ المتبقي للتحصيل عند التسليم (COD):</span>
+            </div>
+            <div class="text-[10px] text-slate-400">هذا هو المبلغ الذي سيتم تحصيله من العميل عبر شركة الشحن</div>
+          </div>
+          <div class="text-xl sm:text-2xl font-black text-amber-400 font-mono">
+            {{ calculatedRemainingAmount | number:'1.0-0' }} <span class="text-xs font-bold text-slate-400">ج.م</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4 Navigation & Final Submit Buttons -->
+      <div class="flex justify-between items-center pt-2 border-t border-slate-700/50">
+        <button type="button" (click)="prevStep()" class="btn btn-secondary py-2 px-4 text-xs font-bold">
+          <i class="fa-solid fa-arrow-right text-[10px]"></i>
+          <span>السابق</span>
+        </button>
+
+        <button type="submit" [disabled]="submitting" class="btn btn-primary py-2 px-5 text-xs sm:text-sm font-extrabold shadow-sm flex items-center gap-1.5">
+          <i *ngIf="submitting" class="fa-solid fa-circle-notch fa-spin"></i>
+          <span *ngIf="!submitting"><i class="fa-solid fa-check-double text-sm"></i> حفظ وإنشاء الأوردر</span>
+        </button>
+      </div>
+    </div>
+
+  </form>
+
+  <!-- Add New Sales Platform Modal -->
+  <div *ngIf="showPlatformModal" class="app-modal-overlay">
+    <div class="glass-card w-full max-w-md p-6 fade-in my-auto max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-700">
+      <div class="flex items-center justify-between border-b border-slate-700 pb-4 mb-4">
+        <h3 class="font-bold text-lg text-slate-100 flex items-center gap-2">
+          <i class="fa-solid fa-store text-sky-400"></i>
+          <span>إضافة منصة بيع / صفحة جديدة</span>
+        </h3>
+        <button type="button" (click)="showPlatformModal = false" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+
+      <form (ngSubmit)="saveNewPlatform()">
+        <div class="form-group mb-6">
+          <label class="form-label">اسم منصة البيع أو الصفحة / المتجر</label>
+          <input type="text" [(ngModel)]="newPlatformName" name="platformName" class="form-control" placeholder="مثال: صفحة الفيس بوك - أصل الموضة" required />
+        </div>
+
+        <div class="flex justify-end gap-3">
+          <button type="button" (click)="showPlatformModal = false" class="btn btn-secondary">إلغاء</button>
+          <button type="submit" [disabled]="savingPlatform" class="btn btn-primary">
+            <i *ngIf="savingPlatform" class="fa-solid fa-circle-notch fa-spin"></i>
+            <span>حفظ وتحديد المنصة</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Customer Profile & Past Orders Modal -->
+  <div *ngIf="showCustomerHistoryModal" class="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 pt-16 sm:pt-20 overflow-y-auto">
+    <div class="bg-white text-slate-800 rounded-3xl w-full max-w-3xl p-6 fade-in max-h-[85vh] overflow-y-auto shadow-2xl border border-slate-200 space-y-5 my-auto">
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
+            <i class="fa-solid fa-user-check text-lg"></i>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-lg text-slate-900">{{ customerProfile?.name }}</h3>
+            <p class="text-xs text-slate-500">رقم الموبايل: <strong class="text-indigo-600">{{ customerProfile?.phone }}</strong> | المحافظة: {{ customerProfile?.governorateName }}</p>
+          </div>
+        </div>
+        <button type="button" (click)="closeCustomerHistoryModal()" class="text-slate-400 hover:text-slate-700 hover:bg-slate-100 p-2 rounded-full transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
+      </div>
+
+      <!-- Delivery Statistics Bar -->
+      <div *ngIf="customerProfile" class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+        <div class="text-center p-2.5 rounded-xl bg-white border border-slate-200 shadow-xs">
+          <span class="text-[11px] text-slate-500 font-semibold block mb-0.5">إجمالي الطلبات</span>
+          <span class="font-black text-slate-800 text-lg">{{ customerProfile.totalOrders }}</span>
+        </div>
+        <div class="text-center p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 shadow-xs">
+          <span class="text-[11px] text-emerald-700 font-semibold block mb-0.5">الطلبات المسلمة</span>
+          <span class="font-black text-emerald-700 text-lg">{{ customerProfile.deliveredOrders }}</span>
+        </div>
+        <div class="text-center p-2.5 rounded-xl bg-rose-50 border border-rose-200 shadow-xs">
+          <span class="text-[11px] text-rose-700 font-semibold block mb-0.5">الملغاة والمرتجعة</span>
+          <span class="font-black text-rose-700 text-lg">{{ customerProfile.cancelledOrders + customerProfile.returnedOrders }}</span>
+        </div>
+        <div class="text-center p-2.5 rounded-xl bg-sky-50 border border-sky-200 shadow-xs">
+          <span class="text-[11px] text-sky-700 font-semibold block mb-0.5">نسبة نجاح التسليم</span>
+          <span class="font-black text-sky-700 text-lg">{{ customerProfile.deliverySuccessRate }}%</span>
+        </div>
+      </div>
+
+      <!-- Past Orders Table -->
+      <div class="space-y-3">
+        <h4 class="font-extrabold text-sm text-slate-900 flex items-center justify-between">
+          <span class="flex items-center gap-2">
+            <i class="fa-solid fa-receipt text-indigo-600"></i>
+            <span>سجل الطلبات والتسليمات السابقة ({{ customerProfile?.pastOrders?.length || 0 }})</span>
+          </span>
+          <span class="text-xs text-slate-500 font-normal">اضغط على أي طلب لفتحه مباشرة</span>
+        </h4>
+
+        <div *ngIf="customerProfile?.pastOrders?.length === 0" class="p-6 text-center text-slate-400 bg-slate-50 rounded-2xl border border-slate-200">
+          لا توجد طلبات سابقة لهذا العميل.
+        </div>
+
+        <div *ngIf="customerProfile?.pastOrders?.length! > 0" class="overflow-x-auto rounded-2xl border border-slate-200">
+          <table class="w-full text-right text-xs">
+            <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+              <tr>
+                <th class="p-3">رقم الطلب</th>
+                <th class="p-3">التاريخ</th>
+                <th class="p-3">المنتجات</th>
+                <th class="p-3">الإجمالي</th>
+                <th class="p-3 text-center">الحالة</th>
+                <th class="p-3 text-center">فتح الطلب</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr *ngFor="let ord of customerProfile?.pastOrders" (click)="openOrderDetails(ord.id)" class="hover:bg-indigo-50/50 cursor-pointer transition-colors">
+                <td class="p-3 font-mono font-black text-indigo-600">
+                  #{{ ord.orderNumber }}
+                </td>
+                <td class="p-3 text-slate-600 font-medium">{{ ord.createdAt | date:'shortDate' }}</td>
+                <td class="p-3 text-slate-800 font-semibold max-w-xs truncate">{{ ord.productsSummary || 'منتجات الأوردر' }}</td>
+                <td class="p-3 font-black text-slate-900">{{ ord.totalAmount }} ج.م</td>
+                <td class="p-3 text-center">
+                  <span class="px-2.5 py-1 rounded-full text-[11px] font-bold inline-block"
+                        [ngClass]="ord.status === 'Delivered' ? 'bg-emerald-100 text-emerald-800' : (ord.status === 'Cancelled' || ord.status === 'Returned' ? 'bg-rose-100 text-rose-800' : 'bg-indigo-100 text-indigo-800')">
+                    {{ ord.statusArabic }}
+                  </span>
+                </td>
+                <td class="p-3 text-center">
+                  <button type="button" (click)="openOrderDetails(ord.id); $event.stopPropagation()" class="btn btn-secondary btn-xs text-indigo-600 hover:text-indigo-800 bg-white border-indigo-200 font-bold flex items-center justify-center gap-1 mx-auto">
+                    <span>عرض</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Modal Actions -->
+      <div class="flex justify-between items-center pt-3 border-t border-slate-200">
+        <button type="button" (click)="useExistingCustomerMatch(customerProfile!)" class="btn btn-primary text-xs px-5 font-bold">
+          <i class="fa-solid fa-check"></i>
+          <span>استخدام بيانات هذا العميل في الأوردر الحالي</span>
+        </button>
+        <button type="button" (click)="closeCustomerHistoryModal()" class="btn btn-secondary text-xs">إغلاق</button>
+      </div>
+    </div>
+  </div>
+
+</div>

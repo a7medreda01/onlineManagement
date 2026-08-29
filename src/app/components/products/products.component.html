@@ -1,0 +1,290 @@
+<div class="space-y-6">
+  <!-- Top Bar -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-100 flex items-center gap-2">
+        <i class="bi bi-box-seam text-sky-400"></i>
+        <span>إدارة المنتجات والمخزون</span>
+      </h1>
+      <p class="text-xs sm:text-sm text-slate-400">عرض وإضافة المنتجات، تعديل الأسعار، ومراقبة المخزون</p>
+    </div>
+    <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+      <button (click)="openAddModal()" class="btn btn-primary btn-sm flex items-center gap-2 flex-1 sm:flex-none justify-center">
+        <i class="bi bi-plus-lg"></i>
+        <span>إضافة منتج جديد</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Search & Filters -->
+  <div class="glass-card p-4">
+    <div class="flex flex-col sm:flex-row gap-3">
+      <div class="relative flex-1">
+        <i class="bi bi-search absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+        <input type="text" [(ngModel)]="searchTerm" (input)="applyFilter()" class="input-glass w-full pr-10 text-sm" placeholder="البحث باسم المنتج أو الكود..." />
+      </div>
+
+      <button (click)="toggleLowStockFilter()" [class.bg-rose-500]="showLowStockOnly" [class.text-white]="showLowStockOnly" class="btn btn-secondary btn-sm flex items-center gap-2 justify-center border-slate-700">
+        <i class="bi bi-exclamation-triangle-fill text-amber-400"></i>
+        <span>المنتجات قريبة النفاد فقط</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Desktop Products Table View -->
+  <div *ngIf="!loading()" class="hidden md:block glass-card overflow-hidden">
+    <div class="table-responsive">
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>كود المنتج</th>
+            <th>الصورة والاسم</th>
+            <th>سعر الجملة</th>
+            <th>سعر البيع</th>
+            <th>الكمية بالمخزون</th>
+            <th>حد التنبيه</th>
+            <th>الحالة</th>
+            <th class="text-center">إجراءات</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let product of filteredProducts()">
+            <td class="font-bold text-sky-400">{{ product.code }}</td>
+            <td>
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-slate-800 border border-slate-700 overflow-hidden flex items-center justify-center shrink-0">
+                  <img *ngIf="product.imageUrl" [src]="getImageUrl(product.imageUrl)" class="w-full h-full object-cover" />
+                  <i *ngIf="!product.imageUrl" class="bi bi-image text-slate-500 text-lg"></i>
+                </div>
+                <div>
+                  <div class="font-bold text-slate-100">{{ product.name }}</div>
+                  <div class="text-xs text-slate-400 truncate max-w-xs">{{ cleanDescription(product.description) }}</div>
+                </div>
+              </div>
+            </td>
+            <td class="text-slate-300 font-semibold">{{ product.wholesalePrice }} ج.م</td>
+            <td class="text-emerald-400 font-bold">{{ product.sellingPrice }} ج.م</td>
+            <td>
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-base" [class.text-rose-400]="product.isLowStock" [class.text-slate-100]="!product.isLowStock">
+                  {{ product.stockQuantity }}
+                </span>
+                <span *ngIf="product.isLowStock" class="badge badge-cancelled text-xs">منخفض!</span>
+              </div>
+            </td>
+            <td class="text-slate-400">{{ product.lowStockThreshold }}</td>
+            <td>
+              <span class="badge" [class.badge-delivered]="product.isActive" [class.badge-cancelled]="!product.isActive">
+                {{ product.isActive ? 'مفعل' : 'معطل' }}
+              </span>
+            </td>
+            <td class="text-center">
+              <div class="flex items-center justify-center gap-2">
+                <button (click)="openStockModal(product)" class="btn btn-secondary btn-sm text-amber-400" title="تعديل الكمية">
+                  <i class="bi bi-box-arrow-in-down"></i>
+                </button>
+                <button (click)="openEditModal(product)" class="btn btn-secondary btn-sm text-sky-400" title="تعديل المنتج">
+                  <i class="bi bi-pencil-square"></i>
+                </button>
+                <button (click)="deleteProduct(product)" class="btn btn-secondary btn-sm text-rose-400" title="حذف المنتج">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="filteredProducts().length === 0">
+            <td colspan="8" class="text-center py-12 text-slate-400">
+              <i class="bi bi-box-seam text-4xl mb-3 text-slate-600 block"></i>
+              <div>لا توجد منتجات مطابقة للبحث</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Mobile Products Compact Cards View -->
+  <div *ngIf="!loading()" class="block md:hidden space-y-3">
+    <div *ngFor="let product of filteredProducts()" class="glass-card p-4 space-y-3 border-slate-700/80">
+      <div class="flex items-center justify-between border-b border-slate-700/60 pb-2">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-slate-800 border border-slate-700 overflow-hidden flex items-center justify-center shrink-0">
+            <img *ngIf="product.imageUrl" [src]="getImageUrl(product.imageUrl)" class="w-full h-full object-cover" />
+            <i *ngIf="!product.imageUrl" class="bi bi-image text-slate-500 text-lg"></i>
+          </div>
+          <div>
+            <div class="font-bold text-slate-100 text-sm">{{ product.name }}</div>
+            <div class="font-mono text-xs text-sky-400 font-bold">كود: {{ product.code }}</div>
+          </div>
+        </div>
+        <span class="badge" [class.badge-delivered]="product.isActive" [class.badge-cancelled]="!product.isActive">
+          {{ product.isActive ? 'مفعل' : 'معطل' }}
+        </span>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 text-xs bg-slate-800/40 p-2.5 rounded-lg border border-slate-700/50">
+        <div>
+          <span class="text-slate-400 block">سعر البيع:</span>
+          <span class="font-bold text-emerald-400 text-sm">{{ product.sellingPrice }} ج.م</span>
+        </div>
+        <div>
+          <span class="text-slate-400 block">سعر الجملة:</span>
+          <span class="font-semibold text-slate-200 text-sm">{{ product.wholesalePrice }} ج.م</span>
+        </div>
+        <div>
+          <span class="text-slate-400 block">المخزون المتاح:</span>
+          <span class="font-bold text-sm" [class.text-rose-400]="product.isLowStock" [class.text-slate-100]="!product.isLowStock">
+            {{ product.stockQuantity }} قطعة
+          </span>
+        </div>
+        <div>
+          <span class="text-slate-400 block">تنبيه النفاد:</span>
+          <span class="text-slate-300">{{ product.lowStockThreshold }}</span>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-1 border-t border-slate-700/60">
+        <button (click)="openStockModal(product)" class="btn btn-secondary btn-sm py-1.5 px-3 text-xs text-amber-400 flex items-center gap-1">
+          <i class="bi bi-box-arrow-in-down"></i> المخزون
+        </button>
+        <button (click)="openEditModal(product)" class="btn btn-secondary btn-sm py-1.5 px-3 text-xs text-sky-400 flex items-center gap-1">
+          <i class="bi bi-pencil-square"></i> تعديل
+        </button>
+        <button (click)="deleteProduct(product)" class="btn btn-secondary btn-sm py-1.5 px-2 text-xs text-rose-400">
+          <i class="bi bi-trash"></i>
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="filteredProducts().length === 0" class="glass-card p-8 text-center text-slate-400">
+      <i class="bi bi-box-seam text-4xl mb-3 text-slate-600 block"></i>
+      <div>لا توجد منتجات مطابقة للبحث</div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Product Modal -->
+  <div *ngIf="showModal" class="app-modal-overlay">
+    <div class="glass-card w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto fade-in shadow-2xl border-slate-700">
+      <div class="flex items-center justify-between border-b border-slate-700 pb-4 mb-4">
+        <h3 class="font-bold text-lg text-slate-100 flex items-center gap-2">
+          <i class="bi bi-box-seam text-sky-400"></i>
+          <span>{{ isEditMode ? 'تعديل بيانات المنتج' : 'إضافة منتج جديد' }}</span>
+        </h3>
+        <button (click)="closeModal()" class="text-slate-400 hover:text-white"><i class="bi bi-x-lg text-lg"></i></button>
+      </div>
+
+      <form (ngSubmit)="saveProduct()" class="space-y-4">
+        
+        <!-- Product Image Upload Widget -->
+        <div class="form-group">
+          <label class="form-label mb-2 block">صورة المنتج</label>
+          
+          <div class="flex items-center gap-4">
+            <div class="w-20 h-20 rounded-xl bg-slate-800/80 border-2 border-dashed border-slate-600 flex items-center justify-center overflow-hidden relative group">
+              <img *ngIf="currentProduct.imageUrl" [src]="getImageUrl(currentProduct.imageUrl)" class="w-full h-full object-cover" />
+              <i *ngIf="!currentProduct.imageUrl && !uploadingImage()" class="bi bi-image text-slate-500 text-2xl"></i>
+              <i *ngIf="uploadingImage()" class="bi bi-arrow-repeat animate-spin text-sky-400 text-2xl"></i>
+            </div>
+
+            <div class="flex-1 space-y-2">
+              <label class="btn btn-secondary btn-sm py-2 px-4 cursor-pointer inline-flex items-center gap-2 border-slate-700">
+                <i class="bi bi-cloud-arrow-up text-sky-400"></i>
+                <span>{{ currentProduct.imageUrl ? 'تغيير صورة المنتج' : 'رفع صورة من جهازك' }}</span>
+                <input type="file" (change)="onProductImageSelected($event)" accept="image/*" class="hidden" />
+              </label>
+
+              <button *ngIf="currentProduct.imageUrl" type="button" (click)="removeProductImage()" class="btn bg-rose-500/15 hover:bg-rose-500/25 text-rose-400 btn-sm py-2 px-3 flex items-center gap-1 border border-rose-500/30">
+                <i class="bi bi-trash"></i>
+                <span>حذف الصورة</span>
+              </button>
+
+              <p class="text-[11px] text-slate-500">الصيغ المدعومة: JPG, PNG, WEBP (الحجم الأقصى: 5 ميجابايت)</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="form-group">
+            <label class="form-label">كود المنتج الفريد</label>
+            <input type="text" [(ngModel)]="currentProduct.code" name="code" class="form-control" placeholder="مثال: PRD-001" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">اسم المنتج</label>
+            <input type="text" [(ngModel)]="currentProduct.name" name="name" class="form-control" placeholder="اسم المنتج" required />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="form-group">
+            <label class="form-label">سعر الجملة (التكلفة)</label>
+            <input type="number" [(ngModel)]="currentProduct.wholesalePrice" name="wholesalePrice" class="form-control" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">سعر البيع للعميل</label>
+            <input type="number" [(ngModel)]="currentProduct.sellingPrice" name="sellingPrice" class="form-control" required />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="form-group">
+            <label class="form-label">الكمية بالمخزون</label>
+            <input type="number" [(ngModel)]="currentProduct.stockQuantity" name="stockQuantity" class="form-control" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">حد تنبيه النفاد</label>
+            <input type="number" [(ngModel)]="currentProduct.lowStockThreshold" name="lowStockThreshold" class="form-control" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">الوصف والملاحظات</label>
+          <textarea [(ngModel)]="currentProduct.description" name="description" class="form-textarea" rows="2" placeholder="وصف تفصيلي للمنتج..."></textarea>
+        </div>
+
+        <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-slate-700">
+          <button type="button" (click)="closeModal()" class="btn btn-secondary">إلغاء</button>
+          <button type="submit" [disabled]="uploadingImage()" class="btn btn-primary flex items-center gap-2">
+            <i class="bi bi-check-lg"></i>
+            <span>حفظ البيانات</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Adjust Stock Modal -->
+  <div *ngIf="showStockModal" class="app-modal-overlay">
+    <div class="glass-card w-full max-w-md p-6 fade-in my-auto max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-700">
+      <div class="flex items-center justify-between border-b border-slate-700 pb-4 mb-4">
+        <h3 class="font-bold text-lg text-slate-100 flex items-center gap-2">
+          <i class="bi bi-box-arrow-in-down text-amber-400"></i>
+          <span>تعديل كمية المخزون</span>
+        </h3>
+        <button (click)="closeStockModal()" class="text-slate-400 hover:text-white"><i class="bi bi-x-lg text-lg"></i></button>
+      </div>
+
+      <form (ngSubmit)="saveStockAdjustment()" class="space-y-4">
+        <div class="p-3 bg-slate-800/60 rounded-xl border border-slate-700/60 text-sm text-slate-300">
+          المنتج: <strong class="text-sky-400">{{ selectedProductForStock?.name }}</strong> 
+          (المتاح حالياً: <span class="font-bold text-emerald-400">{{ selectedProductForStock?.stockQuantity }}</span>)
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">مقدار التغيير (موجب للإضافة، سالب للخصم)</label>
+          <input type="number" [(ngModel)]="stockChangeAmount" name="stockChangeAmount" class="form-control text-left" placeholder="مثال: 10 أو -5" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">سبب التعديل</label>
+          <input type="text" [(ngModel)]="stockChangeReason" name="stockChangeReason" class="form-control" placeholder="مثال: وصول شحنة، تسوية عجز، تالف..." required />
+        </div>
+
+        <div class="flex justify-end gap-3 pt-4 border-t border-slate-700">
+          <button type="button" (click)="closeStockModal()" class="btn btn-secondary">إلغاء</button>
+          <button type="submit" class="btn btn-primary">تأكيد التعديل</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

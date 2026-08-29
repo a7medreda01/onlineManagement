@@ -1,0 +1,683 @@
+<div class="space-y-6 fade-in font-cairo pb-16">
+  <!-- Header Title & Action Toolbar -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-black text-slate-100 mb-0 flex items-center gap-2.5">
+        <i class="bi bi-wallet2 text-amber-400"></i>
+        <span>الخزائن والمحافظ</span>
+      </h1>
+    </div>
+
+    <!-- Quick Action Buttons -->
+    <div class="flex flex-wrap items-center gap-2">
+      <button (click)="openDepositModal()" class="btn btn-emerald btn-sm sm:btn-md py-2 px-3.5 sm:px-4 shadow-lg shadow-emerald-900/30 flex items-center gap-1.5">
+        <i class="bi bi-receipt"></i>
+        <span>تسجيل عربون</span>
+      </button>
+
+      <button (click)="openTransferModal()" class="btn btn-secondary btn-sm sm:btn-md py-2 px-3.5 sm:px-4 border-slate-700 hover:border-slate-600 flex items-center gap-1.5">
+        <i class="bi bi-arrow-left-right text-indigo-400"></i>
+        <span>تحويل بين الخزائن</span>
+      </button>
+
+      <button (click)="openAdjustModal()" class="btn btn-secondary btn-sm sm:btn-md py-2 px-3 sm:px-3.5 border-slate-700 flex items-center gap-1.5" title="تسوية رصيد يدوي">
+        <i class="bi bi-sliders text-amber-400"></i>
+        <span>تسوية</span>
+      </button>
+
+      <button (click)="openCreateWallet()" class="btn btn-primary btn-sm sm:btn-md py-2 px-3.5 sm:px-4 shadow-lg shadow-sky-900/30 flex items-center gap-1.5">
+        <i class="bi bi-plus-lg"></i>
+        <span>إضافة محفظة</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Summary Metric Stats -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+    <!-- Total Liquid -->
+    <div class="glass-card p-4 relative overflow-hidden group hover:border-amber-500/40 transition-all border-slate-700/80">
+      <div class="absolute -left-6 -bottom-6 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-xs font-bold text-slate-400">إجمالي السيولة المتاحة</span>
+        <div class="w-8 h-8 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400">
+          <i class="bi bi-safe text-sm"></i>
+        </div>
+      </div>
+      <div class="text-xl sm:text-2xl font-black text-amber-400 font-mono tracking-tight">
+        {{ summary()?.totalLiquidBalance || 0 | number:'1.2-2' }} <span class="text-xs font-bold text-slate-400">ج.م</span>
+      </div>
+      <div class="text-[11px] text-slate-400 mt-1 flex items-center gap-1">
+        <i class="bi bi-check-circle-fill text-emerald-400 text-[10px]"></i>
+        <span>{{ summary()?.activeWalletsCount || 0 }} خزينة ومحفظة نشطة</span>
+      </div>
+    </div>
+
+    <!-- Deposits Today -->
+    <div class="glass-card p-4 relative overflow-hidden group hover:border-emerald-500/40 transition-all border-slate-700/80">
+      <div class="absolute -left-6 -bottom-6 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-xs font-bold text-slate-400">عربونات اليوم</span>
+        <div class="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+          <i class="bi bi-calendar2-check text-sm"></i>
+        </div>
+      </div>
+      <div class="text-xl sm:text-2xl font-black text-emerald-400 font-mono tracking-tight">
+        {{ summary()?.totalDepositsToday || 0 | number:'1.2-2' }} <span class="text-xs font-bold text-slate-400">ج.م</span>
+      </div>
+    </div>
+
+    <!-- Deposits This Month -->
+    <div class="glass-card p-4 relative overflow-hidden group hover:border-purple-500/40 transition-all border-slate-700/80">
+      <div class="absolute -left-6 -bottom-6 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl pointer-events-none"></div>
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-xs font-bold text-slate-400">عربونات هذا الشهر</span>
+        <div class="w-8 h-8 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-400">
+          <i class="bi bi-calendar3 text-sm"></i>
+        </div>
+      </div>
+      <div class="text-xl sm:text-2xl font-black text-purple-400 font-mono tracking-tight">
+        {{ summary()?.totalDepositsThisMonth || 0 | number:'1.2-2' }} <span class="text-xs font-bold text-slate-400">ج.م</span>
+      </div>
+    </div>
+
+    <!-- Quick Deposit Action Card -->
+    <div class="glass-card p-4 border-slate-700/80 flex flex-col justify-between bg-gradient-to-br from-slate-800/90 to-slate-900/90">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+          <i class="bi bi-lightning-charge-fill text-amber-400"></i>
+          <span>استلام عربون سريع</span>
+        </span>
+      </div>
+      <button (click)="openDepositModal()" class="btn btn-secondary btn-sm text-xs font-bold text-sky-400 hover:text-sky-300 flex items-center justify-between py-2 px-3 border-slate-700">
+        <span>تسجيل عربون لأوردر</span>
+        <i class="bi bi-arrow-left"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Wallets Cards Grid -->
+  <div>
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-base sm:text-lg font-bold text-slate-200 flex items-center gap-2">
+        <i class="bi bi-credit-card-2-front text-sky-400"></i>
+        <span>أرصدة الخزائن والمحافظ</span>
+      </h2>
+      <button (click)="loadData()" class="text-xs text-slate-400 hover:text-slate-200 flex items-center gap-1">
+        <i class="bi bi-arrow-clockwise text-[12px]"></i>
+        <span>تحديث الأرصدة</span>
+      </button>
+    </div>
+
+    <!-- Loading Skeleton -->
+    <div *ngIf="loading()" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div *ngFor="let i of [1,2,3,4]" class="glass-card p-5 animate-pulse border-slate-800 h-44">
+        <div class="h-4 bg-slate-800 rounded w-1/2 mb-4"></div>
+        <div class="h-8 bg-slate-800 rounded w-3/4 mb-4"></div>
+        <div class="h-4 bg-slate-800 rounded w-1/3"></div>
+      </div>
+    </div>
+
+    <!-- Wallets Cards List -->
+    <div *ngIf="!loading()" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div *ngFor="let w of wallets()" 
+           class="glass-card p-5 relative overflow-hidden group hover:shadow-xl transition-all duration-300 border bg-gradient-to-b {{ getWalletGradient(w.type) }}">
+        
+        <!-- Background Glow -->
+        <div class="absolute -right-8 -top-8 w-28 h-28 bg-white/5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500"></div>
+
+        <!-- Card Header -->
+        <div class="flex items-start justify-between relative z-10 mb-3">
+          <div class="flex items-center gap-2.5">
+            <div class="w-10 h-10 rounded-xl bg-slate-900/80 border border-white/10 flex items-center justify-center text-lg shadow-inner">
+              <i class="bi {{ getWalletIcon(w.type) }}"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-slate-100 text-sm leading-tight">{{ w.name }}</h3>
+              <span class="text-[11px] text-slate-400 font-mono">{{ w.typeName }}</span>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex items-center gap-1">
+            <button (click)="openEditWallet(w)" class="p-1.5 text-slate-400 hover:text-slate-100 rounded-lg hover:bg-slate-800/60 transition-colors" title="تعديل">
+              <i class="bi bi-pencil-square text-xs"></i>
+            </button>
+            <button (click)="deleteWallet(w)" class="p-1.5 text-slate-400 hover:text-rose-400 rounded-lg hover:bg-rose-950/40 transition-colors" title="حذف">
+              <i class="bi bi-trash3 text-xs"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Account Number / Info -->
+        <div class="text-xs text-slate-400 mb-3 truncate flex items-center gap-1.5 relative z-10">
+          <i class="bi bi-hash text-[11px] opacity-60"></i>
+          <span class="font-mono text-slate-300 font-semibold">{{ w.accountNumber || 'رئيسي' }}</span>
+        </div>
+
+        <!-- Current Balance -->
+        <div class="bg-slate-950/60 rounded-xl p-3 border border-white/5 mb-3 relative z-10">
+          <div class="text-[10px] text-slate-400 font-semibold mb-0.5">الرصيد المالي الحالي:</div>
+          <div class="text-xl sm:text-2xl font-black font-mono tracking-tight" [class.text-emerald-400]="w.balance >= 0" [class.text-rose-400]="w.balance < 0">
+            {{ w.balance | number:'1.2-2' }} <span class="text-xs font-bold text-slate-400">ج.م</span>
+          </div>
+        </div>
+
+        <!-- Quick Actions Footer -->
+        <div class="flex items-center gap-1.5 relative z-10 pt-1 border-t border-white/5">
+          <button (click)="openDepositModal(w.id)" class="btn btn-xs flex-1 bg-slate-800 hover:bg-emerald-700/80 hover:text-white text-slate-300 border border-slate-700 text-[11px] py-1 flex items-center justify-center gap-1">
+            <i class="bi bi-receipt text-[10px] text-emerald-400"></i>
+            <span>عربون</span>
+          </button>
+          <button (click)="openTransferModal(w.id)" class="btn btn-xs flex-1 bg-slate-800 hover:bg-indigo-700/80 hover:text-white text-slate-300 border border-slate-700 text-[11px] py-1 flex items-center justify-center gap-1">
+            <i class="bi bi-arrow-left-right text-[10px] text-indigo-400"></i>
+            <span>تحويل</span>
+          </button>
+          <button (click)="openAdjustModal(w.id)" class="btn btn-xs bg-slate-800 hover:bg-slate-700 text-slate-400 border border-slate-700 text-[11px] py-1 px-2" title="تسوية رصيد">
+            <i class="bi bi-sliders text-[10px]"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transactions Log & Filter Section -->
+  <div class="glass-card p-4 sm:p-5 border-slate-700/80">
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-4 pb-4 border-b border-slate-800">
+      <div>
+        <h2 class="text-base sm:text-lg font-bold text-slate-100 flex items-center gap-2 mb-0">
+          <i class="bi bi-clock-history text-indigo-400"></i>
+          <span>سجل حركات الخزائن</span>
+        </h2>
+      </div>
+
+      <!-- Filters Bar -->
+      <div class="flex flex-wrap items-center gap-2">
+        <!-- Wallet Filter -->
+        <select [(ngModel)]="selectedWalletFilter" (change)="loadTransactions()" class="form-control text-xs py-1.5 px-2 bg-slate-800 border-slate-700 text-slate-200">
+          <option [ngValue]="null">كل الخزائن والمحافظ</option>
+          <option *ngFor="let w of wallets()" [ngValue]="w.id">{{ w.name }} ({{ w.balance | number:'1.0-0' }} ج.م)</option>
+        </select>
+
+        <!-- Transaction Type Filter -->
+        <select [(ngModel)]="selectedTypeFilter" (change)="loadTransactions()" class="form-control text-xs py-1.5 px-2 bg-slate-800 border-slate-700 text-slate-200">
+          <option [ngValue]="null">كل أنواع الحركات</option>
+          <option [ngValue]="WalletTxTypeEnum.DepositReceipt">عربون أوردر</option>
+          <option [ngValue]="WalletTxTypeEnum.TransferIn">تحويل وارد</option>
+          <option [ngValue]="WalletTxTypeEnum.TransferOut">تحويل صادر</option>
+          <option [ngValue]="WalletTxTypeEnum.ManualDeposit">إيداع يدوي</option>
+          <option [ngValue]="WalletTxTypeEnum.ManualWithdraw">سحب يدوي</option>
+        </select>
+
+        <!-- Date Range -->
+        <input type="date" [(ngModel)]="filterFromDate" (change)="loadTransactions()" class="form-control text-xs py-1.5 px-2 bg-slate-800 border-slate-700 text-slate-200 w-32" />
+        <span class="text-xs text-slate-500">إلى</span>
+        <input type="date" [(ngModel)]="filterToDate" (change)="loadTransactions()" class="form-control text-xs py-1.5 px-2 bg-slate-800 border-slate-700 text-slate-200 w-32" />
+
+        <button (click)="loadTransactions()" class="btn btn-secondary btn-sm text-xs py-1.5 px-3 flex items-center gap-1">
+          <i class="bi bi-funnel text-sky-400"></i>
+          <span>فلترة</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Transactions Table -->
+    <div class="overflow-x-auto">
+      <table class="table-custom w-full text-xs">
+        <thead>
+          <tr class="text-slate-400 border-b border-slate-800 text-right">
+            <th class="py-2.5 px-3">التاريخ والوقت</th>
+            <th class="py-2.5 px-3">نوع الحركة</th>
+            <th class="py-2.5 px-3">المحفظة / الخزينة</th>
+            <th class="py-2.5 px-3 text-center">المبلغ</th>
+            <th class="py-2.5 px-3">الأوردر / العميل</th>
+            <th class="py-2.5 px-3">المرجع والملاحظات</th>
+            <th class="py-2.5 px-3">المستخدم</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-800/60">
+          <tr *ngIf="loadingTx()">
+            <td colspan="7" class="py-8 text-center text-slate-400">
+              <i class="bi bi-arrow-repeat animate-spin text-xl text-sky-400 mb-2 inline-block"></i>
+              <div>جاري تحميل الحركات المالية...</div>
+            </td>
+          </tr>
+
+          <tr *ngIf="!loadingTx() && transactions().length === 0">
+            <td colspan="7" class="py-8 text-center text-slate-400">
+              <i class="bi bi-receipt text-3xl text-slate-600 mb-2 inline-block"></i>
+              <div>لا توجد حركات مسجلة</div>
+            </td>
+          </tr>
+
+          <tr *ngFor="let tx of transactions()" class="hover:bg-slate-800/40 transition-colors">
+            <!-- Date -->
+            <td class="py-3 px-3 whitespace-nowrap text-slate-300 font-mono text-[11px]">
+              <div>{{ tx.createdAt | date:'yyyy/MM/dd' }}</div>
+              <div class="text-[10px] text-slate-500">{{ tx.createdAt | date:'hh:mm a' }}</div>
+            </td>
+
+            <!-- Type -->
+            <td class="py-3 px-3 whitespace-nowrap">
+              <span *ngIf="tx.type === WalletTxTypeEnum.DepositReceipt" class="badge bg-emerald-500/20 text-emerald-300 border-emerald-500/40 flex items-center gap-1 w-fit">
+                <i class="bi bi-arrow-down-left text-[10px]"></i>
+                <span>عربون أوردر</span>
+              </span>
+              <span *ngIf="tx.type === WalletTxTypeEnum.TransferIn" class="badge bg-indigo-500/20 text-indigo-300 border-indigo-500/40 flex items-center gap-1 w-fit">
+                <i class="bi bi-arrow-down-right text-[10px]"></i>
+                <span>تحويل وارد</span>
+              </span>
+              <span *ngIf="tx.type === WalletTxTypeEnum.TransferOut" class="badge bg-rose-500/20 text-rose-300 border-rose-500/40 flex items-center gap-1 w-fit">
+                <i class="bi bi-arrow-up-left text-[10px]"></i>
+                <span>تحويل صادر</span>
+              </span>
+              <span *ngIf="tx.type === WalletTxTypeEnum.ManualDeposit" class="badge bg-teal-500/20 text-teal-300 border-teal-500/40 flex items-center gap-1 w-fit">
+                <i class="bi bi-plus-circle text-[10px]"></i>
+                <span>إيداع يدوي</span>
+              </span>
+              <span *ngIf="tx.type === WalletTxTypeEnum.ManualWithdraw" class="badge bg-amber-500/20 text-amber-300 border-amber-500/40 flex items-center gap-1 w-fit">
+                <i class="bi bi-dash-circle text-[10px]"></i>
+                <span>سحب يدوي</span>
+              </span>
+              <span *ngIf="tx.type === WalletTxTypeEnum.DepositRefund" class="badge bg-orange-500/20 text-orange-300 border-orange-500/40 flex items-center gap-1 w-fit">
+                <i class="bi bi-arrow-counterclockwise text-[10px]"></i>
+                <span>استرداد عربون</span>
+              </span>
+            </td>
+
+            <!-- Wallet -->
+            <td class="py-3 px-3 whitespace-nowrap">
+              <div class="font-semibold text-slate-200 flex items-center gap-1.5">
+                <i class="bi {{ getWalletIcon(tx.walletType) }} text-xs opacity-70"></i>
+                <span>{{ tx.walletName }}</span>
+              </div>
+              <div *ngIf="tx.relatedWalletName" class="text-[10px] text-slate-400">
+                (مع: {{ tx.relatedWalletName }})
+              </div>
+            </td>
+
+            <!-- Amount -->
+            <td class="py-3 px-3 whitespace-nowrap text-center">
+              <div class="font-mono font-black text-sm" [class.text-emerald-400]="tx.isCredit" [class.text-rose-400]="!tx.isCredit">
+                <span *ngIf="tx.isCredit">+</span><span *ngIf="!tx.isCredit">-</span>{{ tx.amount | number:'1.2-2' }}
+                <span class="text-[10px] font-bold text-slate-400 font-sans">ج.م</span>
+              </div>
+            </td>
+
+            <!-- Order / Customer -->
+            <td class="py-3 px-3 whitespace-nowrap">
+              <div *ngIf="tx.orderNumber" class="flex items-center gap-1.5">
+                <a [href]="'/orders/' + tx.orderId" class="font-mono font-bold text-sky-400 hover:underline">
+                  {{ tx.orderNumber }}
+                </a>
+                <span *ngIf="tx.customerName" class="text-slate-300 text-xs">({{ tx.customerName }})</span>
+              </div>
+              <div *ngIf="tx.customerPhone" class="text-[10px] text-slate-400 font-mono" dir="ltr">
+                {{ tx.customerPhone }}
+              </div>
+              <div *ngIf="!tx.orderNumber" class="text-slate-500 text-[11px]">—</div>
+            </td>
+
+            <!-- Reference & Notes -->
+            <td class="py-3 px-3 max-w-xs truncate text-slate-300">
+              <div *ngIf="tx.referenceNumber" class="text-[10px] text-amber-300 font-mono">
+                مرجع: {{ tx.referenceNumber }}
+              </div>
+              <div class="truncate text-[11px]">{{ tx.notes || '—' }}</div>
+            </td>
+
+            <!-- User -->
+            <td class="py-3 px-3 whitespace-nowrap text-slate-400 text-[11px]">
+              {{ tx.createdByUserName }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- MODAL 1: RECORD ORDER DEPOSIT (تسجيل عربون) -->
+<!-- ========================================== -->
+<div *ngIf="showDepositModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in" (click)="showDepositModal = false">
+  <div class="glass-card w-full max-w-lg overflow-y-auto max-h-[92vh] relative border-slate-700 bg-slate-900 shadow-2xl rounded-2xl p-5 sm:p-6" (click)="$event.stopPropagation()">
+    <!-- Header -->
+    <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
+      <h3 class="text-lg font-black text-slate-100 flex items-center gap-2">
+        <i class="bi bi-receipt text-emerald-400"></i>
+        <span>تسجيل استلام عربون</span>
+      </h3>
+      <button (click)="showDepositModal = false" class="text-slate-400 hover:text-slate-100">
+        <i class="bi bi-x-lg text-base"></i>
+      </button>
+    </div>
+
+    <!-- Order Search Input -->
+    <div class="space-y-4">
+      <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">رقم الأوردر أو الهاتف:</label>
+        <div class="flex items-center gap-2">
+          <input type="text" [(ngModel)]="depositForm.orderNumber" (keyup.enter)="searchOrder()" 
+                 placeholder="مثال: 12 أو 01080225502..." class="form-control text-xs py-2 bg-slate-800 border-slate-700 text-slate-100 flex-1" />
+          <button (click)="searchOrder()" [disabled]="searchingOrder" class="btn btn-secondary btn-sm py-2 px-3 flex items-center gap-1.5">
+            <i *ngIf="searchingOrder" class="bi bi-arrow-repeat animate-spin text-xs"></i>
+            <i *ngIf="!searchingOrder" class="bi bi-search text-xs text-sky-400"></i>
+            <span>بحث</span>
+          </button>
+        </div>
+        <div *ngIf="orderSearchError" class="text-xs text-rose-400 mt-1 flex items-center gap-1">
+          <i class="bi bi-exclamation-circle"></i>
+          <span>{{ orderSearchError }}</span>
+        </div>
+      </div>
+
+      <!-- Found Order Card Preview -->
+      <div *ngIf="foundOrder" class="bg-slate-950/80 rounded-xl p-3.5 border border-emerald-500/30 space-y-2 fade-in">
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-bold text-emerald-400">الأوردر: {{ foundOrder.orderNumber }}</span>
+          <span class="text-slate-300">{{ foundOrder.customerName }}</span>
+        </div>
+        <div class="grid grid-cols-3 gap-2 text-center pt-2 border-t border-slate-800 text-[11px]">
+          <div class="bg-slate-900 p-1.5 rounded-lg">
+            <div class="text-slate-400 text-[10px]">إجمالي الأوردر:</div>
+            <div class="font-bold text-slate-100 font-mono">{{ foundOrder.totalAmount | number:'1.0-0' }} ج.م</div>
+          </div>
+          <div class="bg-slate-900 p-1.5 rounded-lg">
+            <div class="text-slate-400 text-[10px]">العربون السابق:</div>
+            <div class="font-bold text-purple-400 font-mono">{{ (foundOrder.depositAmount || 0) | number:'1.0-0' }} ج.م</div>
+          </div>
+          <div class="bg-slate-900 p-1.5 rounded-lg">
+            <div class="text-slate-400 text-[10px]">المتبقي COD:</div>
+            <div class="font-bold text-amber-400 font-mono">{{ (foundOrder.totalAmount - (foundOrder.depositAmount || 0)) | number:'1.0-0' }} ج.م</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Deposit Amount -->
+      <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">مبلغ العربون (ج.م):</label>
+        <input type="number" [(ngModel)]="depositForm.amount" min="1" placeholder="أدخل مبلغ العربون..." class="form-control text-sm font-mono font-bold text-emerald-400 bg-slate-800 border-slate-700 py-2" />
+      </div>
+
+      <!-- Receiving Wallet Selector -->
+      <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">المحفظة / الخزينة المستلمة:</label>
+        <select [(ngModel)]="depositForm.walletId" class="form-control text-xs py-2 bg-slate-800 border-slate-700 text-slate-100">
+          <option [ngValue]="0" disabled>-- اختر المحفظة --</option>
+          <option *ngFor="let w of wallets()" [ngValue]="w.id">
+            {{ w.name }} ({{ w.balance | number:'1.0-0' }} ج.م)
+          </option>
+        </select>
+      </div>
+
+      <!-- Reference Number & Notes -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">رقم العملية / الحوالة (اختياري):</label>
+          <input type="text" [(ngModel)]="depositForm.referenceNumber" placeholder="رقم العملية" class="form-control text-xs py-2 bg-slate-800 border-slate-700 text-slate-100" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">ملاحظات:</label>
+          <input type="text" [(ngModel)]="depositForm.notes" placeholder="ملاحظة إضافية" class="form-control text-xs py-2 bg-slate-800 border-slate-700 text-slate-100" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex items-center justify-end gap-2 mt-6 pt-3 border-t border-slate-800">
+      <button (click)="showDepositModal = false" class="btn btn-secondary btn-sm py-2 px-4">إلغاء</button>
+      <button (click)="submitDeposit()" [disabled]="submitting || !depositForm.amount || depositForm.amount <= 0 || !depositForm.walletId" class="btn btn-emerald btn-sm py-2 px-5 flex items-center gap-2">
+        <i *ngIf="submitting" class="bi bi-arrow-repeat animate-spin text-xs"></i>
+        <i *ngIf="!submitting" class="bi bi-check2-circle text-xs"></i>
+        <span>تأكيد استلام العربون</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- MODAL 2: TRANSFER FUNDS (تحويل بين الخزائن) -->
+<!-- ========================================== -->
+<div *ngIf="showTransferModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in" (click)="showTransferModal = false">
+  <div class="glass-card w-full max-w-md overflow-y-auto max-h-[92vh] relative border-slate-700 bg-slate-900 shadow-2xl rounded-2xl p-5 sm:p-6" (click)="$event.stopPropagation()">
+    <!-- Header -->
+    <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
+      <h3 class="text-lg font-black text-slate-100 flex items-center gap-2">
+        <i class="bi bi-arrow-left-right text-indigo-400"></i>
+        <span>تحويل رصيد بين الخزائن</span>
+      </h3>
+      <button (click)="showTransferModal = false" class="text-slate-400 hover:text-slate-100">
+        <i class="bi bi-x-lg text-base"></i>
+      </button>
+    </div>
+
+    <div class="space-y-4">
+      <!-- From Wallet -->
+      <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">من محفظة:</label>
+        <select [(ngModel)]="transferForm.fromWalletId" class="form-control text-xs py-2 bg-slate-800 border-slate-700 text-slate-100">
+          <option *ngFor="let w of wallets()" [ngValue]="w.id" [disabled]="!w.isActive || w.balance <= 0">
+            {{ w.name }} (المتاح: {{ w.balance | number:'1.2-2' }} ج.م)
+          </option>
+        </select>
+      </div>
+
+      <!-- To Wallet -->
+      <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">إلى محفظة:</label>
+        <select [(ngModel)]="transferForm.toWalletId" class="form-control text-xs py-2 bg-slate-800 border-slate-700 text-slate-100">
+          <option *ngFor="let w of wallets()" [ngValue]="w.id" [disabled]="w.id === transferForm.fromWalletId || !w.isActive">
+            {{ w.name }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Amount -->
+      <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">مبلغ التحويل (ج.م):</label>
+        <input type="number" [(ngModel)]="transferForm.amount" min="1" placeholder="أدخل مبلغ التحويل..." class="form-control text-sm font-mono font-bold text-indigo-400 bg-slate-800 border-slate-700 py-2" />
+        <div class="text-[11px] text-slate-400 mt-1">
+          الرصيد المتاح: <span class="font-mono text-slate-200 font-bold">{{ getSelectedWalletBalance(transferForm.fromWalletId) | number:'1.2-2' }} ج.م</span>
+        </div>
+      </div>
+
+      <!-- Reference & Notes -->
+      <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">رقم مرجع / ملاحظة:</label>
+        <input type="text" [(ngModel)]="transferForm.referenceNumber" placeholder="رقم التحويل أو الملاحظة" class="form-control text-xs py-2 bg-slate-800 border-slate-700 text-slate-100" />
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex items-center justify-end gap-2 mt-6 pt-3 border-t border-slate-800">
+      <button (click)="showTransferModal = false" class="btn btn-secondary btn-sm py-2 px-4">إلغاء</button>
+      <button (click)="submitTransfer()" [disabled]="submitting || !transferForm.amount || transferForm.amount <= 0 || transferForm.fromWalletId === transferForm.toWalletId" class="btn btn-primary btn-sm py-2 px-5 flex items-center gap-2">
+        <i *ngIf="submitting" class="bi bi-arrow-repeat animate-spin text-xs"></i>
+        <i *ngIf="!submitting" class="bi bi-arrow-left-right text-xs"></i>
+        <span>تنفيذ التحويل</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- MODAL 3: ADJUST BALANCE (تسوية رصيد يدوي) -->
+<!-- ========================================== -->
+<div *ngIf="showAdjustModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in" (click)="showAdjustModal = false">
+  <div class="glass-card w-full max-w-md overflow-y-auto max-h-[92vh] relative border-slate-700 bg-slate-900 shadow-2xl rounded-2xl p-5 sm:p-6" (click)="$event.stopPropagation()">
+    <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
+      <h3 class="text-lg font-black text-slate-100 flex items-center gap-2">
+        <i class="bi bi-sliders text-amber-400"></i>
+        <span>تسوية رصيد يدوي</span>
+      </h3>
+      <button (click)="showAdjustModal = false" class="text-slate-400 hover:text-slate-100">
+        <i class="bi bi-x-lg text-base"></i>
+      </button>
+    </div>
+
+    <div class="space-y-4">
+      <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">المحفظة / الخزينة:</label>
+        <select [(ngModel)]="adjustForm.walletId" class="form-control text-xs py-2 bg-slate-800 border-slate-700 text-slate-100">
+          <option *ngFor="let w of wallets()" [ngValue]="w.id">
+            {{ w.name }} (الرصيد: {{ w.balance | number:'1.2-2' }} ج.م)
+          </option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">نوع الحركة:</label>
+        <div class="grid grid-cols-2 gap-2">
+          <button type="button" (click)="adjustForm.type = WalletTxTypeEnum.ManualDeposit" 
+                  [class.btn-emerald]="adjustForm.type === WalletTxTypeEnum.ManualDeposit"
+                  [class.btn-secondary]="adjustForm.type !== WalletTxTypeEnum.ManualDeposit" 
+                  class="btn btn-sm text-xs py-2 flex items-center justify-center gap-1.5">
+            <i class="bi bi-plus-lg text-xs"></i>
+            <span>إيداع / زيادة</span>
+          </button>
+          <button type="button" (click)="adjustForm.type = WalletTxTypeEnum.ManualWithdraw" 
+                  [class.btn-rose]="adjustForm.type === WalletTxTypeEnum.ManualWithdraw"
+                  [class.btn-secondary]="adjustForm.type !== WalletTxTypeEnum.ManualWithdraw" 
+                  class="btn btn-sm text-xs py-2 flex items-center justify-center gap-1.5">
+            <i class="bi bi-dash-lg text-xs"></i>
+            <span>سحب / تخفيض</span>
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">المبلغ (ج.م):</label>
+        <input type="number" [(ngModel)]="adjustForm.amount" min="1" placeholder="أدخل مبلغ التسوية..." class="form-control text-sm font-mono font-bold text-slate-100 bg-slate-800 border-slate-700 py-2" />
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">سبب التسوية / الملاحظة:</label>
+        <input type="text" [(ngModel)]="adjustForm.notes" placeholder="ملاحظة حول التسوية" class="form-control text-xs py-2 bg-slate-800 border-slate-700 text-slate-100" />
+      </div>
+    </div>
+
+    <div class="flex items-center justify-end gap-2 mt-6 pt-3 border-t border-slate-800">
+      <button (click)="showAdjustModal = false" class="btn btn-secondary btn-sm py-2 px-4">إلغاء</button>
+      <button (click)="submitAdjust()" [disabled]="submitting || !adjustForm.amount || adjustForm.amount <= 0" class="btn btn-primary btn-sm py-2 px-5 flex items-center gap-2">
+        <i *ngIf="submitting" class="bi bi-arrow-repeat animate-spin text-xs"></i>
+        <span>تأكيد التسوية</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- MODAL 4: CREATE WALLET (إضافة محفظة جديدة) -->
+<!-- ========================================== -->
+<div *ngIf="showCreateWalletModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in" (click)="showCreateWalletModal = false">
+  <div class="glass-card w-full max-w-md overflow-y-auto max-h-[92vh] relative border-slate-700 bg-slate-900 shadow-2xl rounded-2xl p-5 sm:p-6" (click)="$event.stopPropagation()">
+    <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
+      <h3 class="text-lg font-black text-slate-100 flex items-center gap-2">
+        <i class="bi bi-plus-lg text-sky-400"></i>
+        <span>إضافة محفظة جديدة</span>
+      </h3>
+      <button (click)="showCreateWalletModal = false" class="text-slate-400 hover:text-slate-100">
+        <i class="bi bi-x-lg text-base"></i>
+      </button>
+    </div>
+
+    <div class="space-y-3.5">
+      <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">اسم الخزينة / المحفظة:</label>
+        <input type="text" [(ngModel)]="newWallet.name" placeholder="مثال: فودافون كاش - مبيعات" class="form-control text-xs py-2 bg-slate-800 border-slate-700 text-slate-100" />
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">نوع المحفظة:</label>
+        <select [(ngModel)]="newWallet.type" class="form-control text-xs py-2 bg-slate-800 border-slate-700 text-slate-100">
+          <option [ngValue]="WalletTypeEnum.VodafoneCash">فودافون كاش / محفظة هاتف</option>
+          <option [ngValue]="WalletTypeEnum.InstaPay">إنستاباي - InstaPay</option>
+          <option [ngValue]="WalletTypeEnum.CashDrawer">خزينة نقدية (كاش)</option>
+          <option [ngValue]="WalletTypeEnum.BankAccount">حساب بنكي</option>
+          <option [ngValue]="WalletTypeEnum.Other">أخرى</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">رقم المحفظة / الحساب:</label>
+        <input type="text" [(ngModel)]="newWallet.accountNumber" placeholder="مثال: 01080225502" class="form-control text-xs py-2 bg-slate-800 border-slate-700 text-slate-100 font-mono" />
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">الرصيد الافتتاحي (ج.م):</label>
+        <input type="number" [(ngModel)]="newWallet.initialBalance" min="0" placeholder="0.00" class="form-control text-xs py-2 bg-slate-800 border-slate-700 text-slate-100 font-mono" />
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">ملاحظات:</label>
+        <input type="text" [(ngModel)]="newWallet.notes" placeholder="ملاحظات اختيارية" class="form-control text-xs py-2 bg-slate-800 border-slate-700 text-slate-100" />
+      </div>
+    </div>
+
+    <div class="flex items-center justify-end gap-2 mt-6 pt-3 border-t border-slate-800">
+      <button (click)="showCreateWalletModal = false" class="btn btn-secondary btn-sm py-2 px-4">إلغاء</button>
+      <button (click)="saveNewWallet()" [disabled]="submitting || !newWallet.name.trim()" class="btn btn-primary btn-sm py-2 px-5 flex items-center gap-2">
+        <i *ngIf="submitting" class="bi bi-arrow-repeat animate-spin text-xs"></i>
+        <span>حفظ وإنشاء</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- MODAL 5: EDIT WALLET (تعديل محفظة)         -->
+<!-- ========================================== -->
+<div *ngIf="showEditWalletModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in" (click)="showEditWalletModal = false">
+  <div class="glass-card w-full max-w-md overflow-y-auto max-h-[92vh] relative border-slate-700 bg-slate-900 shadow-2xl rounded-2xl p-5 sm:p-6" (click)="$event.stopPropagation()">
+    <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
+      <h3 class="text-lg font-black text-slate-100 flex items-center gap-2">
+        <i class="bi bi-pencil-square text-sky-400"></i>
+        <span>تعديل بيانات المحفظة</span>
+      </h3>
+      <button (click)="showEditWalletModal = false" class="text-slate-400 hover:text-slate-100">
+        <i class="bi bi-x-lg text-base"></i>
+      </button>
+    </div>
+
+    <div class="space-y-3.5">
+      <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">اسم الخزينة / المحفظة:</label>
+        <input type="text" [(ngModel)]="editWallet.name" class="form-control text-xs py-2 bg-slate-800 border-slate-700 text-slate-100" />
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">نوع المحفظة:</label>
+        <select [(ngModel)]="editWallet.type" class="form-control text-xs py-2 bg-slate-800 border-slate-700 text-slate-100">
+          <option [ngValue]="WalletTypeEnum.VodafoneCash">فودافون كاش / محفظة هاتف</option>
+          <option [ngValue]="WalletTypeEnum.InstaPay">إنستاباي - InstaPay</option>
+          <option [ngValue]="WalletTypeEnum.CashDrawer">خزينة نقدية (كاش)</option>
+          <option [ngValue]="WalletTypeEnum.BankAccount">حساب بنكي</option>
+          <option [ngValue]="WalletTypeEnum.Other">أخرى</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">رقم المحفظة / الحساب:</label>
+        <input type="text" [(ngModel)]="editWallet.accountNumber" class="form-control text-xs py-2 bg-slate-800 border-slate-700 text-slate-100 font-mono" />
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">ملاحظات:</label>
+        <input type="text" [(ngModel)]="editWallet.notes" class="form-control text-xs py-2 bg-slate-800 border-slate-700 text-slate-100" />
+      </div>
+
+      <div class="flex items-center gap-2 pt-1">
+        <input type="checkbox" [(ngModel)]="editWallet.isActive" id="editActiveCheck" class="rounded bg-slate-800 border-slate-700 text-sky-500 w-4 h-4" />
+        <label for="editActiveCheck" class="text-xs font-semibold text-slate-300 cursor-pointer">محفظة نشطة وتستقبل تحصيلات</label>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-end gap-2 mt-6 pt-3 border-t border-slate-800">
+      <button (click)="showEditWalletModal = false" class="btn btn-secondary btn-sm py-2 px-4">إلغاء</button>
+      <button (click)="saveEditWallet()" [disabled]="submitting || !editWallet.name.trim()" class="btn btn-primary btn-sm py-2 px-5 flex items-center gap-2">
+        <i *ngIf="submitting" class="bi bi-arrow-repeat animate-spin text-xs"></i>
+        <span>حفظ التعديلات</span>
+      </button>
+    </div>
+  </div>
+</div>

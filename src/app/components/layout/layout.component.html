@@ -1,0 +1,459 @@
+<div class="min-h-screen w-full bg-slate-900 text-slate-100 flex flex-col md:flex-row font-cairo pb-32 md:pb-0">
+  
+  <!-- Mobile Top Bar (RTL: buttons right-to-left) -->
+  <div class="md:hidden mobile-top-bar flex items-center justify-between px-3.5 py-2.5 bg-slate-800/95 border-b border-slate-700/80 sticky top-0 z-30 backdrop-blur-md w-full shadow-sm">
+    <!-- Right Section (First in RTL): Menu first, then profile, then theme -->
+    <div class="flex items-center gap-2">
+      <!-- More Menu / Toolbar Button — FIRST on the right (RTL) -->
+      <button (click)="toggleMoreMenu()" class="w-9 h-9 rounded-xl bg-slate-700/70 border border-slate-600/70 text-slate-200 flex items-center justify-center text-base active:scale-95 transition shadow-xs" title="القائمة والخدمات">
+        <i class="bi bi-three-dots-vertical"></i>
+      </button>
+
+      <!-- Profile Button -->
+      <a routerLink="/profile" class="w-9 h-9 rounded-xl bg-sky-500/20 border border-sky-500/40 text-sky-400 flex items-center justify-center text-base active:scale-95 transition shadow-xs" title="ملفي الشخصي">
+        <i class="bi bi-person-fill"></i>
+      </a>
+
+      <!-- Mobile Theme Toggle Button -->
+      <button (click)="toggleTheme()" class="w-9 h-9 rounded-xl bg-slate-700/70 border border-slate-600/70 text-amber-400 flex items-center justify-center text-lg active:scale-95 transition shadow-xs" title="تغيير المظهر">
+        <i class="bi" [class.bi-sun-fill]="isDarkMode()" [class.bi-moon-stars-fill]="!isDarkMode()"></i>
+      </button>
+    </div>
+
+    <!-- Left Section (Second in RTL): Store Icon THEN Name -->
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-sky-600 to-indigo-600 text-white flex items-center justify-center font-bold text-sm shadow-sm border border-sky-500/30">
+        <i class="bi bi-shop"></i>
+      </div>
+      <h1 class="font-black text-xs text-white leading-tight truncate max-w-[130px]">{{ user?.storeName || 'Besnesy' }}</h1>
+    </div>
+  </div>
+
+
+  <!-- Desktop Sidebar (Fixed Sidebar at right-0) -->
+  <aside class="hidden md:flex flex-col w-60 h-screen fixed top-0 right-0 z-50 bg-slate-800/95 border-l border-slate-700/80 shadow-2xl shrink-0">
+    <!-- Logo Header -->
+    <div class="p-3 border-b border-slate-700/60 flex items-center gap-2.5 shrink-0">
+      <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-sky-600 to-indigo-600 flex items-center justify-center text-white text-base shadow-sm border border-sky-500/30">
+        <i class="bi bi-shop"></i>
+      </div>
+      <div class="overflow-hidden">
+        <h1 class="font-black text-xs text-white leading-tight truncate">{{ user?.storeName || 'متجري أونلاين' }}</h1>
+        <span class="text-[10px] text-slate-400 font-semibold block">لوحة تحكم المتجر</span>
+      </div>
+    </div>
+
+    <!-- Navigation Links Container (Scrollable, Compact, Sleek) -->
+    <nav class="flex-1 p-2 space-y-0.5 overflow-y-auto text-xs">
+      <a routerLink="/dashboard" routerLinkActive="bg-sky-600/25 text-sky-300 font-bold border-r-4 border-sky-500" class="flex items-center gap-2.5 px-3 py-2 text-slate-300 rounded-lg hover:bg-slate-700/60 transition">
+        <i class="bi bi-grid-1x2-fill text-sm w-5 text-sky-400"></i>
+        <span>الرئيسية (Dashboard)</span>
+      </a>
+
+      <a routerLink="/orders" routerLinkActive="bg-sky-600/25 text-sky-300 font-bold border-r-4 border-sky-500" class="flex items-center gap-2.5 px-3 py-2 text-slate-300 rounded-lg hover:bg-slate-700/60 transition">
+        <i class="bi bi-box-seam-fill text-sm w-5 text-indigo-400"></i>
+        <span>إدارة الأوردرات</span>
+      </a>
+
+      <a routerLink="/orders/create" routerLinkActive="bg-sky-600/25 text-sky-300 font-bold border-r-4 border-sky-500" class="flex items-center gap-2.5 px-3 py-2 text-emerald-400 rounded-lg hover:bg-slate-700/60 transition">
+        <i class="bi bi-plus-circle-fill text-sm w-5 text-emerald-400"></i>
+        <span class="font-bold">إنشاء أوردر جديد</span>
+      </a>
+
+      <a routerLink="/products" routerLinkActive="bg-sky-600/25 text-sky-300 font-bold border-r-4 border-sky-500" class="flex items-center gap-2.5 px-3 py-2 text-slate-300 rounded-lg hover:bg-slate-700/60 transition">
+        <i class="bi bi-tags-fill text-sm w-5 text-amber-400"></i>
+        <span>المنتجات والمخزون</span>
+      </a>
+
+      <a routerLink="/customers" routerLinkActive="bg-sky-600/25 text-sky-300 font-bold border-r-4 border-sky-500" class="flex items-center gap-2.5 px-3 py-2 text-slate-300 rounded-lg hover:bg-slate-700/60 transition">
+        <i class="bi bi-people-fill text-sm w-5 text-purple-400"></i>
+        <span>دليل العملاء</span>
+      </a>
+
+      <a *ngIf="isManager()" routerLink="/shipping" routerLinkActive="bg-sky-600/25 text-sky-300 font-bold border-r-4 border-sky-500" class="flex items-center gap-2.5 px-3 py-2 text-slate-300 rounded-lg hover:bg-slate-700/60 transition">
+        <i class="bi bi-truck text-sm w-5 text-blue-400"></i>
+        <span>شركات الشحن والأسعار</span>
+      </a>
+
+      <a *ngIf="isFinancial()" routerLink="/wallets" routerLinkActive="bg-sky-600/25 text-sky-300 font-bold border-r-4 border-sky-500" class="flex items-center gap-2.5 px-3 py-2 text-slate-300 rounded-lg hover:bg-slate-700/60 transition">
+        <i class="bi bi-wallet2 text-sm w-5 text-amber-400"></i>
+        <span>الخزائن والمحافظ والعربونات</span>
+      </a>
+
+      <a *ngIf="isFinancial()" routerLink="/expenses" routerLinkActive="bg-sky-600/25 text-sky-300 font-bold border-r-4 border-sky-500" class="flex items-center gap-2.5 px-3 py-2 text-slate-300 rounded-lg hover:bg-slate-700/60 transition">
+        <i class="bi bi-receipt text-sm w-5 text-rose-400"></i>
+        <span>المصروفات اليومية</span>
+      </a>
+
+      <!-- Purchases Management Menu -->
+      <div *ngIf="isFinancial()" class="space-y-0.5 pt-1 border-t border-slate-700/50">
+        <button (click)="purchasesOpen.set(!purchasesOpen())" type="button" class="w-full flex items-center justify-between px-3 py-2 text-slate-300 rounded-lg hover:bg-slate-700/60 transition text-xs font-semibold">
+          <div class="flex items-center gap-2.5">
+            <i class="bi bi-boxes text-sm w-5 text-amber-400"></i>
+            <span>إدارة المشتريات</span>
+          </div>
+          <i class="bi text-[10px] text-slate-400" [class.bi-chevron-down]="!purchasesOpen()" [class.bi-chevron-up]="purchasesOpen()"></i>
+        </button>
+
+        <div *ngIf="purchasesOpen()" class="pr-5 space-y-0.5 text-xs fade-in">
+          <a routerLink="/purchases/create" routerLinkActive="bg-amber-500/20 text-amber-300 font-bold" class="flex items-center gap-2 px-2.5 py-1.5 text-slate-300 rounded-md hover:bg-slate-700/50 transition">
+            <i class="bi bi-file-earmark-plus text-amber-400 text-xs w-4"></i>
+            <span>إنشاء فاتورة مشتريات</span>
+          </a>
+          <a routerLink="/purchases/invoices" routerLinkActive="bg-amber-500/20 text-amber-300 font-bold" class="flex items-center gap-2 px-2.5 py-1.5 text-slate-300 rounded-md hover:bg-slate-700/50 transition">
+            <i class="bi bi-file-earmark-text text-amber-400 text-xs w-4"></i>
+            <span>فواتير المشتريات</span>
+          </a>
+          <a routerLink="/purchases/suppliers" routerLinkActive="bg-amber-500/20 text-amber-300 font-bold" class="flex items-center gap-2 px-2.5 py-1.5 text-slate-300 rounded-md hover:bg-slate-700/50 transition">
+            <i class="bi bi-person-lines-fill text-amber-400 text-xs w-4"></i>
+            <span>إدارة الموردين</span>
+          </a>
+        </div>
+      </div>
+
+      <a *ngIf="isFinancial()" routerLink="/reports" routerLinkActive="bg-sky-600/25 text-sky-300 font-bold border-r-4 border-sky-500" class="flex items-center gap-2.5 px-3 py-2 text-slate-300 rounded-lg hover:bg-slate-700/60 transition">
+        <i class="bi bi-file-earmark-bar-graph-fill text-sm w-5 text-indigo-400"></i>
+        <span>تقارير الأرباح والمالية</span>
+      </a>
+
+      <a *ngIf="isManager()" routerLink="/users" routerLinkActive="bg-sky-600/25 text-sky-300 font-bold border-r-4 border-sky-500" class="flex items-center gap-2.5 px-3 py-2 text-slate-300 rounded-lg hover:bg-slate-700/60 transition">
+        <i class="bi bi-people-fill text-sm w-5 text-amber-400"></i>
+        <span>فريق العمل والمرتبات</span>
+      </a>
+
+      <!-- Profile Link in Main Nav -->
+      <a routerLink="/profile" routerLinkActive="bg-sky-600/25 text-sky-300 font-bold border-r-4 border-sky-500" class="flex items-center gap-2.5 px-3 py-2 text-slate-300 rounded-lg hover:bg-slate-700/60 transition">
+        <i class="bi bi-person-circle text-sm w-5 text-sky-400"></i>
+        <span>ملفي الشخصي والمالي</span>
+      </a>
+    </nav>
+
+    <!-- Fixed Bottom Section (Subscription + Role + Logout) -->
+    <div class="p-3 border-t border-slate-700/80 bg-slate-900/80 space-y-2.5 shrink-0 mt-auto">
+      <!-- Subscription Details Button -->
+      <button (click)="openSubscriptionDetails()" class="w-full flex items-center justify-between px-3 py-2 text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 rounded-lg transition text-xs font-bold">
+        <div class="flex items-center gap-2">
+          <i class="bi bi-award-fill text-amber-400 text-sm"></i>
+          <span>اشتراك المتجر</span>
+        </div>
+        <span class="text-[10px] text-amber-400 font-mono">متبقي {{ user?.daysRemainingInSubscription ?? 365 }} يوم</span>
+      </button>
+
+      <!-- User Role & Logout Bar -->
+      <div class="flex items-center justify-between pt-1">
+        <a routerLink="/profile" class="flex items-center gap-2 overflow-hidden group cursor-pointer">
+          <div class="w-7.5 h-7.5 rounded-full bg-sky-600/30 border border-sky-500/50 text-sky-300 flex items-center justify-center text-xs font-bold shrink-0 group-hover:border-sky-400 transition">
+            {{ user?.fullName?.charAt(0) || 'U' }}
+          </div>
+          <div class="overflow-hidden text-right">
+            <div class="text-xs font-bold text-slate-100 truncate group-hover:text-sky-400 transition">{{ user?.fullName }}</div>
+            <div class="text-[10px] text-slate-400 flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full" [class.bg-emerald-400]="isAdmin()" [class.bg-amber-400]="!isAdmin()"></span>
+              <span>{{ user?.role }}</span>
+            </div>
+          </div>
+        </a>
+
+        <button (click)="logout()" class="btn btn-secondary btn-xs text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 p-2 rounded-lg border-rose-500/30" title="تسجيل الخروج">
+          <i class="bi bi-box-arrow-right text-xs"></i>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="flex-1 flex flex-col min-w-0 w-full md:pr-60 relative">
+    <!-- Top Desktop Navbar (Fixed Toolbar at top-0 right-60 left-0) -->
+    <header class="bg-slate-800/95 border-b border-slate-700/60 px-6 py-3 hidden md:flex items-center justify-between backdrop-blur-md fixed top-0 right-60 left-0 z-40 h-14 shadow-md">
+      <div class="flex items-center gap-3">
+        <h2 class="text-sm font-black text-slate-100">{{ user?.storeName }} — لوحة التحكم</h2>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <!-- User Country Realtime Clock Widget -->
+        <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/60 border border-slate-700/80 text-xs font-mono text-sky-300 shadow-xs">
+          <i class="bi bi-clock-fill text-sky-400"></i>
+          <span class="font-bold text-slate-100 text-xs">{{ currentLocalTime() }}</span>
+          <span class="text-[10px] text-slate-400 font-cairo bg-slate-800/80 px-2 py-0.5 rounded border border-slate-700 flex items-center gap-1">
+            <i class="bi bi-globe2 text-[9px] text-sky-400"></i> {{ currentLocalCountry() }}
+          </span>
+        </div>
+
+        <!-- Profile Quick Action -->
+        <a routerLink="/profile" class="btn btn-secondary btn-sm py-1.5 px-3 text-xs flex items-center gap-1.5 border-slate-700" title="ملفي الشخصي">
+          <i class="bi bi-person-circle text-sky-400"></i>
+          <span>ملفي الشخصي</span>
+        </a>
+
+        <!-- Subscription Info Pill -->
+        <button (click)="openSubscriptionDetails()" class="px-3 py-1.5 rounded-full text-xs font-bold bg-amber-500/10 text-amber-300 border border-amber-500/30 hover:bg-amber-500/20 transition flex items-center gap-1.5">
+          <i class="bi bi-award-fill text-amber-400"></i>
+          <span>متبقي {{ user?.daysRemainingInSubscription ?? 365 }} يوم</span>
+        </button>
+
+        <!-- Theme Toggle Button -->
+        <button (click)="toggleTheme()" class="btn btn-secondary btn-sm py-1.5 px-3 text-xs border-slate-700">
+          <i class="bi text-amber-400" [class.bi-sun-fill]="isDarkMode()" [class.bi-moon-stars-fill]="!isDarkMode()"></i>
+          <span>{{ isDarkMode() ? 'فاتح' : 'داكن' }}</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Top Subscription Expiration Warning Banner if <= 30 Days -->
+    <div *ngIf="user?.daysRemainingInSubscription !== undefined && user!.daysRemainingInSubscription! <= 30" class="mt-14 bg-amber-500/15 border-b border-amber-500/40 text-amber-300 px-6 py-2 text-xs font-bold flex items-center justify-between w-full">
+      <div class="flex items-center gap-2">
+        <i class="bi bi-exclamation-triangle-fill text-amber-400 text-sm"></i>
+        <span>تنبيه الاشتراك: متبقي على انتهاء اشتراك متجرك السنوي {{ user?.daysRemainingInSubscription }} يوم فقط.</span>
+      </div>
+      <button (click)="openSubscriptionDetails()" class="underline hover:text-white">تفاصيل الاشتراك ←</button>
+    </div>
+
+    <!-- Page Content View -->
+    <div class="p-3 md:p-8 pt-18 md:pt-20 flex-1 w-full">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>
+
+<!-- ========================================================= -->
+<!-- SUBSCRIPTION DETAILS MODAL FOR STORE ADMIN                -->
+<!-- ========================================================= -->
+<div *ngIf="showSubscriptionModal" class="app-modal-overlay overflow-y-auto py-10">
+  <div class="glass-card w-full max-w-4xl p-6 sm:p-8 fade-in relative border border-amber-500/40 shadow-2xl my-auto">
+    <button (click)="showSubscriptionModal = false" class="absolute top-4 left-4 text-slate-400 hover:text-white p-2 text-xl">
+      <i class="bi bi-x-lg"></i>
+    </button>
+
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center justify-center text-2xl shadow-lg">
+        <i class="bi bi-award-fill"></i>
+      </div>
+      <div>
+        <h3 class="text-xl font-black text-white">تفاصيل اشتراك المتجر والباقات المتاحة</h3>
+        <p class="text-slate-400 text-xs">بيانات خطتك الحالية ومميزات باقات النظام</p>
+      </div>
+    </div>
+
+    <div *ngIf="loadingSubscription" class="text-center py-8">
+      <i class="bi bi-arrow-repeat animate-spin text-3xl text-amber-400 mb-2"></i>
+      <p class="text-slate-400 text-xs">جاري تحميل تفاصيل الاشتراك والخطط...</p>
+    </div>
+
+    <div *ngIf="!loadingSubscription && subscriptionData" class="space-y-6">
+      <!-- Main Active Plan Summary Card -->
+      <div class="p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-indigo-600/15 to-sky-500/15 border border-amber-500/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="space-y-1 text-center sm:text-right">
+          <span class="text-[11px] font-bold text-amber-400 uppercase tracking-wider block">خطتك الحالية المفعلة:</span>
+          <h4 class="text-lg font-black text-white flex items-center gap-2 justify-center sm:justify-start">
+            <span>{{ subscriptionData.planName }}</span>
+            <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+              {{ subscriptionData.status === 'Active' ? 'نشط (Active)' : subscriptionData.status }}
+            </span>
+          </h4>
+          <p class="text-xs text-slate-300">متبقي في اشتراكك: <strong class="text-emerald-400 font-mono">{{ subscriptionData.daysRemaining }} يوم</strong> (ينتهي في {{ subscriptionData.endDate | date:'dd/MM/yyyy' }})</p>
+        </div>
+        <div class="w-full sm:w-48 bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/60 text-xs text-center">
+          <span class="text-slate-400 text-[10px] block">اسم المتجر:</span>
+          <span class="font-bold text-white block truncate">{{ subscriptionData.storeName }}</span>
+        </div>
+      </div>
+
+      <!-- Subscription Plans Features Comparison Grid -->
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+          <i class="bi bi-layers-fill text-sky-400"></i>
+          <span>مقارنة مميزات باقات النظام:</span>
+        </h4>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div *ngFor="let plan of availablePlans()"
+               class="glass-card p-4 rounded-2xl border transition flex flex-col justify-between relative overflow-hidden"
+               [class.border-amber-500]="subscriptionData.planId === plan.id || subscriptionData.planName.includes(plan.name)"
+               [class.border-slate-700\/80]="subscriptionData.planId !== plan.id && !subscriptionData.planName.includes(plan.name)">
+
+            <!-- Active Plan Ribbon -->
+            <div *ngIf="subscriptionData.planId === plan.id || subscriptionData.planName.includes(plan.name)" class="absolute top-0 right-0 bg-amber-500 text-slate-950 font-black text-[9px] px-3 py-0.5 rounded-bl-lg uppercase">
+              باقتك الحالية ✔️
+            </div>
+
+            <div class="space-y-3 pt-2">
+              <div class="space-y-1">
+                <span *ngIf="plan.badge" class="inline-block text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                  {{ plan.badge }}
+                </span>
+                <h5 class="text-base font-black text-white">{{ plan.name }}</h5>
+                <p class="text-[11px] text-slate-400 leading-tight">{{ plan.description }}</p>
+              </div>
+
+              <!-- Price Tag with Strikethrough Original Price -->
+              <div class="py-2 border-y border-slate-700/60">
+                <div class="flex items-baseline gap-2">
+                  <span class="text-2xl font-black text-emerald-400">
+                    {{ plan.annualOfferPrice === 0 ? 'مجاناً' : (plan.annualOfferPrice | number:'1.0-0') + ' ج.م' }}
+                  </span>
+                  <span class="text-xs text-slate-400">/ سنوياً</span>
+                </div>
+                <div *ngIf="plan.originalPrice > plan.annualOfferPrice" class="text-xs text-rose-400/80 font-bold line-through">
+                  بدل {{ plan.originalPrice | number:'1.0-0' }} ج.م/سنة
+                </div>
+              </div>
+
+              <!-- Feature Checklist -->
+              <ul class="space-y-2 text-xs text-slate-300">
+                <li class="flex items-center gap-2">
+                  <i class="bi bi-check-circle-fill text-emerald-400 text-xs"></i>
+                  <span>المستخدمين: <strong>{{ plan.maxModerators >= 100 ? 'بلا حدود' : plan.maxModerators + ' مستخدم' }}</strong></span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <i class="bi bi-check-circle-fill text-emerald-400 text-xs"></i>
+                  <span>المنتجات: <strong>{{ plan.maxProducts ? plan.maxProducts + ' منتج' : 'بلا حدود' }}</strong></span>
+                </li>
+                <li class="flex items-center gap-2" [class.opacity-40]="!plan.allowWalletsAndDeposits">
+                  <i class="bi" [class.bi-check-circle-fill]="plan.allowWalletsAndDeposits" [class.text-emerald-400]="plan.allowWalletsAndDeposits" [class.bi-x-circle-fill]="!plan.allowWalletsAndDeposits" [class.text-slate-500]="!plan.allowWalletsAndDeposits"></i>
+                  <span>الخزائن والعربونات</span>
+                </li>
+                <li class="flex items-center gap-2" [class.opacity-40]="!plan.allowBostaIntegration">
+                  <i class="bi" [class.bi-check-circle-fill]="plan.allowBostaIntegration" [class.text-emerald-400]="plan.allowBostaIntegration" [class.bi-x-circle-fill]="!plan.allowBostaIntegration" [class.text-slate-500]="!plan.allowBostaIntegration"></i>
+                  <span>ربط آلي بوسطة Bosta API</span>
+                </li>
+                <li class="flex items-center gap-2" [class.opacity-40]="!plan.allowExpensesTracking">
+                  <i class="bi" [class.bi-check-circle-fill]="plan.allowExpensesTracking" [class.text-emerald-400]="plan.allowExpensesTracking" [class.bi-x-circle-fill]="!plan.allowExpensesTracking" [class.text-slate-500]="!plan.allowExpensesTracking"></i>
+                  <span>إدارة المصروفات اليومية</span>
+                </li>
+                <li class="flex items-center gap-2" [class.opacity-40]="!plan.allowFinancialReports">
+                  <i class="bi" [class.bi-check-circle-fill]="plan.allowFinancialReports" [class.text-emerald-400]="plan.allowFinancialReports" [class.bi-x-circle-fill]="!plan.allowFinancialReports" [class.text-slate-500]="!plan.allowFinancialReports"></i>
+                  <span>تقارير الأرباح والمالية P&L</span>
+                </li>
+                <li class="flex items-center gap-2" [class.opacity-40]="!plan.allowPayrollAndShifts">
+                  <i class="bi" [class.bi-check-circle-fill]="plan.allowPayrollAndShifts" [class.text-emerald-400]="plan.allowPayrollAndShifts" [class.bi-x-circle-fill]="!plan.allowPayrollAndShifts" [class.text-slate-500]="!plan.allowPayrollAndShifts"></i>
+                  <span>المرتبات والسلف والشيفتات</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="pt-4">
+              <button *ngIf="subscriptionData.planId === plan.id || subscriptionData.planName.includes(plan.name)" disabled class="w-full btn btn-secondary btn-sm opacity-80 cursor-default text-emerald-400 font-bold">
+                الباقة الحالية المفعلة ✔️
+              </button>
+              <button *ngIf="subscriptionData.planId !== plan.id && !subscriptionData.planName.includes(plan.name)" (click)="contactSalesForPlan(plan)" class="w-full btn btn-primary btn-sm font-bold flex items-center justify-center gap-1.5">
+                <i class="bi bi-whatsapp"></i>
+                <span>طلب الترقية للباقة ←</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="pt-3 flex gap-2">
+        <button (click)="showSubscriptionModal = false" class="btn btn-secondary w-full py-2.5 text-xs font-bold border-slate-700">
+          إغلاق
+        </button>
+        <a href="https://wa.me/201080225502" target="_blank" class="btn bg-emerald-600 hover:bg-emerald-500 text-white w-full py-2.5 text-xs font-bold flex items-center justify-center gap-1.5">
+          <i class="bi bi-whatsapp"></i>
+          <span>تواصل مع الدعم الفني</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- MOBILE BOTTOM NAVIGATION BAR                              -->
+<!-- ========================================================= -->
+<nav class="md:hidden mobile-bottom-nav fixed bottom-0 left-0 right-0 w-full z-50 bg-slate-900/95 border-t border-slate-800 backdrop-blur-xl px-1 py-1.5 grid grid-cols-5 items-center justify-items-center text-center shadow-2xl">
+  <a routerLink="/dashboard" routerLinkActive="text-sky-400 font-bold" class="flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-200 py-1 w-full">
+    <i class="bi bi-grid-1x2-fill text-lg"></i>
+    <span class="text-[10px]">الرئيسية</span>
+  </a>
+
+  <a routerLink="/orders" routerLinkActive="text-sky-400 font-bold" class="flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-200 py-1 w-full">
+    <i class="bi bi-box-seam-fill text-lg"></i>
+    <span class="text-[10px]">الأوردرات</span>
+  </a>
+
+  <a routerLink="/orders/create" class="flex flex-col items-center justify-center -mt-4 bg-emerald-600 text-white w-12 h-12 rounded-full shadow-lg shadow-emerald-950/60 border-2 border-slate-900 active:scale-95 transition">
+    <i class="bi bi-plus-lg text-xl font-bold"></i>
+  </a>
+
+  <a routerLink="/products" routerLinkActive="text-sky-400 font-bold" class="flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-200 py-1 w-full">
+    <i class="bi bi-tags-fill text-lg"></i>
+    <span class="text-[10px]">المنتجات</span>
+  </a>
+
+  <button (click)="toggleMoreMenu()" class="flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-200 py-1 w-full">
+    <i class="bi bi-grid-3x3-gap-fill text-lg"></i>
+    <span class="text-[10px]">المزيد</span>
+  </button>
+</nav>
+
+<!-- Mobile More Slide Menu (RTL: opens from Right side) -->
+<div *ngIf="isMoreMenuOpen()" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm md:hidden flex justify-start" (click)="closeMoreMenu()">
+  <div class="w-4/5 max-w-xs h-full bg-slate-900 border-l border-slate-800 p-4 flex flex-col justify-between space-y-4 overflow-y-auto" (click)="$event.stopPropagation()">
+    
+    <div class="space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="font-bold text-sm text-slate-100">القائمة والخدمات</h3>
+        <button (click)="closeMoreMenu()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center"><i class="bi bi-x-lg"></i></button>
+      </div>
+
+      <div class="space-y-1 text-xs">
+        <a (click)="closeMoreMenu()" routerLink="/customers" class="flex items-center gap-3 p-2.5 rounded-xl text-slate-300 hover:bg-slate-800 transition-colors">
+          <div class="w-8 h-8 rounded-lg bg-purple-500/15 flex items-center justify-center shrink-0">
+            <i class="bi bi-people-fill text-purple-400 text-sm"></i>
+          </div>
+          <span class="font-semibold">دليل العملاء</span>
+        </a>
+        <a (click)="closeMoreMenu()" routerLink="/shipping" class="flex items-center gap-3 p-2.5 rounded-xl text-slate-300 hover:bg-slate-800 transition-colors">
+          <div class="w-8 h-8 rounded-lg bg-blue-500/15 flex items-center justify-center shrink-0">
+            <i class="bi bi-truck text-blue-400 text-sm"></i>
+          </div>
+          <span class="font-semibold">شركات الشحن</span>
+        </a>
+        <a *ngIf="isFinancial()" (click)="closeMoreMenu()" routerLink="/wallets" class="flex items-center gap-3 p-2.5 rounded-xl text-slate-300 hover:bg-slate-800 transition-colors">
+          <div class="w-8 h-8 rounded-lg bg-amber-500/15 flex items-center justify-center shrink-0">
+            <i class="bi bi-wallet2 text-amber-400 text-sm"></i>
+          </div>
+          <span class="font-semibold">الخزائن والمحافظ والعربونات</span>
+        </a>
+        <a *ngIf="isFinancial()" (click)="closeMoreMenu()" routerLink="/expenses" class="flex items-center gap-3 p-2.5 rounded-xl text-slate-300 hover:bg-slate-800 transition-colors">
+          <div class="w-8 h-8 rounded-lg bg-rose-500/15 flex items-center justify-center shrink-0">
+            <i class="bi bi-receipt text-rose-400 text-sm"></i>
+          </div>
+          <span class="font-semibold">المصروفات اليومية</span>
+        </a>
+        <a *ngIf="isFinancial()" (click)="closeMoreMenu()" routerLink="/purchases/invoices" class="flex items-center gap-3 p-2.5 rounded-xl text-slate-300 hover:bg-slate-800 transition-colors">
+          <div class="w-8 h-8 rounded-lg bg-amber-500/15 flex items-center justify-center shrink-0">
+            <i class="bi bi-file-earmark-text text-amber-400 text-sm"></i>
+          </div>
+          <span class="font-semibold">فواتير المشتريات</span>
+        </a>
+        <a *ngIf="isFinancial()" (click)="closeMoreMenu()" routerLink="/reports" class="flex items-center gap-3 p-2.5 rounded-xl text-slate-300 hover:bg-slate-800 transition-colors">
+          <div class="w-8 h-8 rounded-lg bg-indigo-500/15 flex items-center justify-center shrink-0">
+            <i class="bi bi-file-earmark-bar-graph-fill text-indigo-400 text-sm"></i>
+          </div>
+          <span class="font-semibold">التقارير المالية والأرباح</span>
+        </a>
+        <a *ngIf="isManager()" (click)="closeMoreMenu()" routerLink="/users" class="flex items-center gap-3 p-2.5 rounded-xl text-slate-300 hover:bg-slate-800 transition-colors">
+          <div class="w-8 h-8 rounded-lg bg-amber-500/15 flex items-center justify-center shrink-0">
+            <i class="bi bi-people-fill text-amber-400 text-sm"></i>
+          </div>
+          <span class="font-semibold">فريق العمل والمرتبات</span>
+        </a>
+        <a (click)="closeMoreMenu()" routerLink="/profile" class="flex items-center gap-3 p-2.5 rounded-xl text-slate-300 hover:bg-slate-800 transition-colors">
+          <div class="w-8 h-8 rounded-lg bg-sky-500/15 flex items-center justify-center shrink-0">
+            <i class="bi bi-person-circle text-sky-400 text-sm"></i>
+          </div>
+          <span class="font-semibold">ملفي الشخصي</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="border-t border-slate-800 pt-3 space-y-2">
+      <button (click)="logout()" class="btn bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 w-full py-2 text-xs flex items-center justify-center gap-2">
+        <i class="bi bi-box-arrow-right"></i>
+        <span>تسجيل الخروج</span>
+      </button>
+    </div>
+  </div>
+</div>

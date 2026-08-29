@@ -1,0 +1,203 @@
+<div class="space-y-6 fade-in font-cairo">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-extrabold text-slate-100 flex items-center gap-2">
+        <span>إدارة الموردين</span>
+        <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+          {{ totalCount() }} مورد
+        </span>
+      </h1>
+      <p class="text-slate-400 text-sm">سجل شركات وموردي البضائع، بيانات التواصل والمديونيات</p>
+    </div>
+    <button (click)="openAddModal()" class="btn btn-primary bg-amber-600 hover:bg-amber-500 border-none">
+      <i class="fa-solid fa-truck-field-un"></i>
+      <span>إضافة مورد جديد</span>
+    </button>
+  </div>
+
+  <!-- Search Toolbar -->
+  <div class="glass-card p-4 flex items-center justify-between gap-4">
+    <div class="relative w-full sm:w-80">
+      <i class="fa-solid fa-magnifying-glass absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+      <input 
+        type="text" 
+        [(ngModel)]="searchTerm" 
+        (ngModelChange)="onSearchChange()"
+        placeholder="بحث باسم المورد، الهاتف، أو الشركة..." 
+        class="form-control pr-9 text-xs" 
+      />
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="glass-card p-12 text-center text-slate-400 space-y-3">
+    <i class="fa-solid fa-circle-notch fa-spin text-3xl text-amber-400"></i>
+    <p class="text-sm font-semibold">جاري تحميل قائمة الموردين...</p>
+  </div>
+
+  <!-- Desktop Suppliers Table View -->
+  <div *ngIf="!loading()" class="hidden md:block glass-card overflow-hidden border-slate-700">
+    <div class="table-responsive">
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>اسم المورد / الشركة</th>
+            <th>رقم الهاتف</th>
+            <th>البريد الإلكتروني</th>
+            <th>العنوان</th>
+            <th>الرصيد / المستحق له</th>
+            <th>ملاحظات</th>
+            <th class="text-center">إجراءات</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let sup of suppliers()">
+            <td class="font-bold text-slate-100">
+              <div>{{ sup.name }}</div>
+              <div *ngIf="sup.company" class="text-xs text-amber-400 font-semibold">{{ sup.company }}</div>
+            </td>
+            <td class="text-indigo-300 font-semibold dir-ltr text-right">{{ sup.phone }}</td>
+            <td class="text-slate-400 text-xs dir-ltr text-right">{{ sup.email || '-' }}</td>
+            <td class="text-xs text-slate-300">{{ sup.address || '-' }}</td>
+            <td>
+              <span class="font-bold text-sm" [class.text-rose-400]="sup.balance > 0" [class.text-emerald-400]="sup.balance <= 0">
+                {{ sup.balance | number:'1.2-2' }} ج.م
+              </span>
+            </td>
+            <td class="text-xs text-slate-400 max-w-xs truncate">{{ sup.notes || '-' }}</td>
+            <td class="text-center">
+              <div class="flex items-center justify-center gap-2">
+                <button (click)="openEditModal(sup)" class="btn btn-secondary btn-sm text-indigo-400" title="تعديل">
+                  <i class="fa-solid fa-pen"></i>
+                </button>
+                <button (click)="deleteSupplier(sup)" class="btn btn-secondary btn-sm text-rose-400" title="حذف">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="suppliers().length === 0">
+            <td colspan="7" class="text-center py-12 text-slate-400">لا يوجد موردين مسجلين بعد</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Mobile Suppliers Cards View -->
+  <div *ngIf="!loading()" class="block md:hidden space-y-3">
+    <div *ngFor="let sup of suppliers()" class="glass-card p-4 space-y-3 border-slate-700">
+      <div class="flex items-center justify-between border-b border-slate-700/60 pb-2">
+        <div>
+          <div class="font-bold text-slate-100 text-base">{{ sup.name }}</div>
+          <div *ngIf="sup.company" class="text-xs text-amber-400">{{ sup.company }}</div>
+        </div>
+        <span class="font-bold text-sm" [class.text-rose-400]="sup.balance > 0" [class.text-emerald-400]="sup.balance <= 0">
+          {{ sup.balance | number:'1.0-0' }} ج.م
+        </span>
+      </div>
+
+      <div class="space-y-1.5 text-xs bg-slate-800/40 p-2.5 rounded-lg border border-slate-700/50">
+        <div class="flex items-center justify-between">
+          <span class="text-slate-400">رقم الهاتف:</span>
+          <a [href]="'tel:' + sup.phone" class="font-bold text-sky-400 hover:underline dir-ltr">{{ sup.phone }}</a>
+        </div>
+        <div *ngIf="sup.address" class="flex items-center justify-between">
+          <span class="text-slate-400">العنوان:</span>
+          <span class="text-slate-200">{{ sup.address }}</span>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-1 border-t border-slate-700/60">
+        <button (click)="openEditModal(sup)" class="btn btn-secondary btn-sm py-1.5 px-3 text-xs text-indigo-400">
+          <i class="fa-solid fa-pen"></i> تعديل
+        </button>
+        <button (click)="deleteSupplier(sup)" class="btn btn-secondary btn-sm py-1.5 px-3 text-xs text-rose-400">
+          <i class="fa-solid fa-trash-can"></i> حذف
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="suppliers().length === 0" class="glass-card p-8 text-center text-slate-400">
+      لا يوجد موردين مسجلين بعد
+    </div>
+  </div>
+
+  <!-- Pagination Controls Footer -->
+  <div *ngIf="!loading() && totalPages() > 1" class="glass-card p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="text-xs text-slate-400">
+      صفحة <span class="font-bold text-white">{{ pageNumber() }}</span> من <span class="font-bold text-white">{{ totalPages() }}</span> (إجمالي {{ totalCount() }} مورد)
+    </div>
+
+    <div class="flex items-center gap-2">
+      <button 
+        (click)="previousPage()" 
+        [disabled]="!hasPreviousPage()" 
+        class="btn btn-secondary btn-sm disabled:opacity-40 disabled:cursor-not-allowed"
+      >
+        <i class="fa-solid fa-chevron-right"></i>
+        <span>السابق</span>
+      </button>
+
+      <button 
+        (click)="nextPage()" 
+        [disabled]="!hasNextPage()" 
+        class="btn btn-secondary btn-sm disabled:opacity-40 disabled:cursor-not-allowed"
+      >
+        <span>التالي</span>
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Add/Edit Supplier Modal -->
+  <div *ngIf="showModal" class="app-modal-overlay">
+    <div class="glass-card w-full max-w-lg p-6 fade-in my-auto max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-700">
+      <div class="flex items-center justify-between border-b border-slate-700 pb-4 mb-4">
+        <h3 class="font-bold text-lg text-slate-100">{{ isEditMode ? 'تعديل بيانات المورد' : 'إضافة مورد جديد' }}</h3>
+        <button (click)="closeModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+
+      <form (ngSubmit)="saveSupplier()">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="form-group">
+            <label class="form-label">اسم المورد (مطلوب)</label>
+            <input type="text" [(ngModel)]="currentSupplier.name" name="name" class="form-control" placeholder="مثال: شركة النور للتوريدات" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">رقم الهاتف (مطلوب)</label>
+            <input type="text" [(ngModel)]="currentSupplier.phone" name="phone" class="form-control" placeholder="01000000000" required />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="form-group">
+            <label class="form-label">اسم الشركة / المصنع</label>
+            <input type="text" [(ngModel)]="currentSupplier.company" name="company" class="form-control" placeholder="اختياري" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">البريد الإلكتروني</label>
+            <input type="email" [(ngModel)]="currentSupplier.email" name="email" class="form-control" placeholder="supplier@company.com" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">العنوان</label>
+          <input type="text" [(ngModel)]="currentSupplier.address" name="address" class="form-control" placeholder="عنوان المقر الرئيسي للمورد" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">ملاحظات إضافية</label>
+          <textarea [(ngModel)]="currentSupplier.notes" name="notes" class="form-textarea" rows="2" placeholder="ملاحظات حول طريقة السداد، شروط التوريد، إلخ"></textarea>
+        </div>
+
+        <div class="flex justify-end gap-3 mt-6">
+          <button type="button" (click)="closeModal()" class="btn btn-secondary">إلغاء</button>
+          <button type="submit" class="btn btn-primary bg-amber-600 hover:bg-amber-500 border-none">حفظ البيانات</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

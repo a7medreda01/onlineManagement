@@ -1,0 +1,264 @@
+<div class="space-y-6 fade-in font-cairo pb-12 w-full">
+  <!-- Welcome Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <div>
+      <h1 class="text-lg sm:text-2xl font-black text-slate-100 mb-1 flex items-center gap-2">
+        <i class="fa-solid fa-chart-line text-indigo-400"></i>
+        <span>لوحة الإحصائيات والأداء اليومي</span>
+      </h1>
+      <p class="text-xs text-slate-400">متابعة دقيقة للأوردرات والأرباح ونسب التوصيل والمخزون</p>
+    </div>
+
+  </div>
+
+  <!-- Loading Skeleton Shimmer Grid -->
+  <div *ngIf="loading()" class="grid grid-cols-1 md:grid-cols-3 gap-5">
+    <div *ngFor="let item of [1, 2, 3]" class="glass-card p-5 animate-pulse space-y-4">
+      <div class="flex justify-between items-center">
+        <div class="h-4 bg-slate-700/60 rounded w-1/2"></div>
+        <div class="w-12 h-12 rounded-full bg-slate-800"></div>
+      </div>
+      <div class="h-8 bg-slate-700/60 rounded w-2/3"></div>
+      <div class="h-3 bg-slate-800/80 rounded w-full"></div>
+    </div>
+  </div>
+
+  <!-- Top Summary Section with Pastel Circle Badges & DYNAMIC Backend Percentages -->
+  <div *ngIf="!loading()" class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+    
+    <!-- Box 1: Orders Status Overview with Circular Icon Badges -->
+    <div class="glass-card p-5 lg:col-span-2 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-700/60 pb-3">
+        <h3 class="font-extrabold text-slate-100 text-sm sm:text-base flex items-center gap-2">
+          <i class="fa-solid fa-box-archive text-sky-400"></i>
+          <span>الطلبات وحالات الشحن اليوم</span>
+        </h3>
+        <span class="text-xs text-indigo-300 font-semibold bg-indigo-500/10 px-2.5 py-1 rounded-lg border border-indigo-500/20">اليوم</span>
+      </div>
+
+      <!-- Circular Badges Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <!-- New Orders -->
+        <div class="bg-slate-800/40 p-3.5 rounded-2xl border border-slate-700/60 flex items-center justify-between">
+          <div>
+            <span class="text-[11px] font-bold text-slate-400 block mb-0.5">الطلبات الجديدة</span>
+            <span class="text-xl font-black text-sky-400">{{ summary()?.todayNewOrders || 0 }}</span>
+          </div>
+          <div class="w-10 h-10 rounded-full bg-sky-500/15 border border-sky-500/30 text-sky-400 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-basket-shopping"></i>
+          </div>
+        </div>
+
+        <!-- Confirmed Orders -->
+        <div class="bg-slate-800/40 p-3.5 rounded-2xl border border-slate-700/60 flex items-center justify-between">
+          <div>
+            <span class="text-[11px] font-bold text-slate-400 block mb-0.5">الطلبات المؤكدة</span>
+            <span class="text-xl font-black text-indigo-400">{{ summary()?.todayConfirmedOrders || 0 }}</span>
+          </div>
+          <div class="w-10 h-10 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-400 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-boxes-packing"></i>
+          </div>
+        </div>
+
+        <!-- Delivered Orders -->
+        <div class="bg-slate-800/40 p-3.5 rounded-2xl border border-slate-700/60 flex items-center justify-between">
+          <div>
+            <span class="text-[11px] font-bold text-slate-400 block mb-0.5">تم تسليمها</span>
+            <span class="text-xl font-black text-emerald-400">{{ summary()?.todayDeliveredOrders || 0 }}</span>
+          </div>
+          <div class="w-10 h-10 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+        </div>
+
+        <!-- Returns -->
+        <div class="bg-slate-800/40 p-3.5 rounded-2xl border border-slate-700/60 flex items-center justify-between">
+          <div>
+            <span class="text-[11px] font-bold text-slate-400 block mb-0.5">المرتجعات</span>
+            <span class="text-xl font-black text-rose-400">{{ summary()?.todayReturnsCount || 0 }}</span>
+          </div>
+          <div class="w-10 h-10 rounded-full bg-rose-500/15 border border-rose-500/30 text-rose-400 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-rotate-left"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- DYNAMIC Circular Donut Percentage Gauges from Real Backend Data -->
+      <div class="pt-3 border-t border-slate-700/60 grid grid-cols-3 gap-2 text-center">
+        <div class="flex flex-col items-center">
+          <div class="relative w-14 h-14 flex items-center justify-center mb-1">
+            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+              <path class="text-slate-800" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              <path class="text-emerald-400" [attr.stroke-dasharray]="(summary()?.completedPercentage || 0) + ', 100'" stroke-width="3.5" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+            </svg>
+            <span class="absolute text-[11px] font-black text-emerald-400">{{ (summary()?.completedPercentage || 0) | number:'1.0-1' }}%</span>
+          </div>
+          <span class="text-[11px] text-slate-400 font-bold">المكتملة</span>
+        </div>
+
+        <div class="flex flex-col items-center">
+          <div class="relative w-14 h-14 flex items-center justify-center mb-1">
+            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+              <path class="text-slate-800" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              <path class="text-sky-400" [attr.stroke-dasharray]="(summary()?.inProgressPercentage || 0) + ', 100'" stroke-width="3.5" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+            </svg>
+            <span class="absolute text-[11px] font-black text-sky-400">{{ (summary()?.inProgressPercentage || 0) | number:'1.0-1' }}%</span>
+          </div>
+          <span class="text-[11px] text-slate-400 font-bold">الجارية</span>
+        </div>
+
+        <div class="flex flex-col items-center">
+          <div class="relative w-14 h-14 flex items-center justify-center mb-1">
+            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+              <path class="text-slate-800" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              <path class="text-rose-400" [attr.stroke-dasharray]="(summary()?.returnedPercentage || 0) + ', 100'" stroke-width="3.5" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+            </svg>
+            <span class="absolute text-[11px] font-black text-rose-400">{{ (summary()?.returnedPercentage || 0) | number:'1.0-1' }}%</span>
+          </div>
+          <span class="text-[11px] text-slate-400 font-bold">المرتجعة</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Box 2: Profit & Stock Alerts Side Card -->
+    <div class="space-y-4">
+      <!-- Profit & Net Financial Summary Card (Admin ONLY) -->
+      <div *ngIf="isAdmin()" class="glass-card p-4 border-slate-700 space-y-3">
+        <div class="flex items-center justify-between border-b border-slate-700/60 pb-2">
+          <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+            <i class="fa-solid fa-coins text-emerald-400"></i>
+            ملخص أرباح ومصروفات اليوم
+          </span>
+          <a routerLink="/expenses" class="text-[10px] text-indigo-400 hover:underline font-bold">إدارة المصروفات ←</a>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2 text-xs">
+          <div class="bg-slate-800/60 p-2 rounded-lg border border-slate-700/60 text-center sm:text-right">
+            <span class="text-[10px] text-slate-400 block truncate">أرباح أوردرات اليوم:</span>
+            <span class="font-black text-emerald-400 text-xs sm:text-sm block mt-0.5">{{ summary()?.todayProfits | number:'1.0-2' }} ج.م</span>
+          </div>
+          <div class="bg-slate-800/60 p-2 rounded-lg border border-slate-700/60 text-center sm:text-right">
+            <span class="text-[10px] text-slate-400 block truncate">مصروفات اليوم:</span>
+            <span class="font-black text-rose-400 text-xs sm:text-sm block mt-0.5">{{ summary()?.todayExpenses | number:'1.0-2' }} ج.م</span>
+          </div>
+          <div class="bg-slate-800/60 p-2 rounded-lg border border-slate-700/60 text-center sm:text-right">
+            <span class="text-[10px] text-slate-400 block truncate">خسائر المرتجعات:</span>
+            <span class="font-black text-purple-400 text-xs sm:text-sm block mt-0.5">{{ summary()?.todayReturnLosses | number:'1.0-2' }} ج.م</span>
+          </div>
+        </div>
+
+        <div class="bg-slate-950/70 p-3 rounded-xl border border-indigo-500/30 flex items-center justify-between">
+          <div>
+            <span class="text-[10px] font-bold text-slate-400 block">صافي أرباح اليوم النهائي:</span>
+            <span class="text-lg font-black" [class.text-emerald-400]="(summary()?.todayNetProfit || 0) >= 0" [class.text-rose-400]="(summary()?.todayNetProfit || 0) < 0">
+              {{ summary()?.todayNetProfit | number:'1.0-2' }} ج.م
+            </span>
+          </div>
+          <div class="w-9 h-9 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-sm">
+            <i class="fa-solid fa-calculator"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stock Alert Box -->
+      <div class="glass-card p-4 border-rose-500/30 flex items-center justify-between">
+        <div>
+          <span class="text-xs font-bold text-slate-400 block mb-1">تنبيه النفاد للمنتجات</span>
+          <div class="text-xl font-black text-rose-400 mb-0.5">
+            {{ summary()?.lowStockProductsCount || 0 }} <span class="text-xs font-normal text-slate-400">منتج</span>
+          </div>
+          <a routerLink="/products" class="text-[11px] text-indigo-400 hover:underline font-bold">عرض المخزون ←</a>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-rose-500/15 border border-rose-500/30 text-rose-400 flex items-center justify-center text-lg shrink-0">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Highlights Grid -->
+  <div *ngIf="!loading()" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Best Seller Card -->
+    <div class="glass-card p-5 flex flex-col justify-between border-amber-500/30">
+      <div>
+        <div class="flex items-center gap-2 text-indigo-300 text-xs font-bold mb-3">
+          <div class="w-8 h-8 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-400 flex items-center justify-center">
+            <i class="fa-solid fa-crown text-sm"></i>
+          </div>
+          <span>المنتج الأكثر مبيعاً هذا الشهر</span>
+        </div>
+        <h3 class="text-lg sm:text-xl font-bold text-slate-100 mb-2">{{ summary()?.bestSellerMonth || 'لا مبيعات بعد' }}</h3>
+        <p class="text-xs text-slate-400">بناءً على عناصر الأوردرات التي تمت حالة توصيلها بنجاح هذا الشهر.</p>
+      </div>
+      <div class="mt-6 pt-4 border-t border-slate-700/60">
+        <a routerLink="/products" class="btn btn-secondary btn-sm w-full justify-between text-xs">
+          <span>الانتقال لقائمة المنتجات</span>
+          <i class="fa-solid fa-arrow-left"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Latest Orders List (Span 2) -->
+    <div class="glass-card p-5 lg:col-span-2">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-slate-100 text-sm sm:text-base flex items-center gap-2">
+          <i class="fa-solid fa-clock-rotate-left text-sky-400"></i>
+          <span>أحدث الأوردرات المسجلة</span>
+        </h3>
+        <a routerLink="/orders" class="text-xs text-indigo-400 hover:underline font-bold">عرض الكل ←</a>
+      </div>
+
+      <!-- Desktop Table View -->
+      <div class="hidden sm:block table-responsive">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>رقم الأوردر</th>
+              <th>العميل</th>
+              <th>شركة الشحن</th>
+              <th>الإجمالي</th>
+              <th>الحالة</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let order of recentOrders()" (click)="goToDetail(order.id)" class="cursor-pointer hover:bg-slate-700/50">
+              <td class="font-bold text-indigo-300 font-mono text-xs">#{{ getDisplayOrderNumber(order.orderNumber, order.id) }}</td>
+              <td>{{ order.customerName }}</td>
+              <td>{{ order.shippingCompanyName }}</td>
+              <td class="font-bold text-emerald-400">{{ order.totalAmount }} ج.م</td>
+              <td>
+                <span class="text-xs font-bold" [ngClass]="getStatusTextClass(order.status)">
+                  {{ getStatusArabic(order.status) }}
+                </span>
+              </td>
+            </tr>
+            <tr *ngIf="recentOrders().length === 0">
+              <td colspan="5" class="text-center py-6 text-slate-400">لا توجد أوردرات مسجلة بعد</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile Cards View for Recent Orders -->
+      <div class="block sm:hidden space-y-2">
+        <div *ngFor="let order of recentOrders()" 
+             (click)="goToDetail(order.id)" 
+             class="bg-slate-800/50 p-3 rounded-xl border border-slate-700/60 flex items-center justify-between text-xs cursor-pointer hover:border-indigo-500/50 active:scale-[0.99] transition-all">
+          <div>
+            <div class="font-bold text-indigo-300 font-mono mb-0.5">#{{ getDisplayOrderNumber(order.orderNumber, order.id) }}</div>
+            <div class="text-slate-200 font-semibold">{{ order.customerName }}</div>
+          </div>
+          <div class="text-left">
+            <div class="font-extrabold text-emerald-400 text-sm mb-0.5">{{ order.totalAmount }} ج.م</div>
+            <span class="text-xs font-bold" [ngClass]="getStatusTextClass(order.status)">
+              {{ getStatusArabic(order.status) }}
+            </span>
+          </div>
+        </div>
+        <div *ngIf="recentOrders().length === 0" class="text-center py-6 text-slate-400 text-xs">
+          لا توجد أوردرات مسجلة بعد
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

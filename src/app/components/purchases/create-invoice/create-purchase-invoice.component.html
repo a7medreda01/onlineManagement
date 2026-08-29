@@ -1,0 +1,256 @@
+<div class="space-y-6 fade-in font-cairo">
+  <!-- Header with Save Action -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-card p-6 border-amber-500/30">
+    <div>
+      <h1 class="text-2xl font-extrabold text-slate-100 flex items-center gap-2">
+        <i class="fa-solid fa-file-circle-plus text-amber-400"></i>
+        <span>إنشاء فاتورة مشتريات جديدة</span>
+      </h1>
+      <p class="text-slate-400 text-xs mt-1">أدخل بيانات الفاتورة والأصناف ليتم حفظها وتحديث المخزن وتسجيل المصروف تلقائياً</p>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <a routerLink="/purchases/invoices" class="btn btn-secondary text-xs">
+        <i class="fa-solid fa-xmark"></i> إلغاء
+      </a>
+      <button (click)="saveInvoice()" [disabled]="submitting" class="btn btn-primary bg-gradient-to-r from-amber-600 to-indigo-600 border-none font-bold py-2.5 px-6 shadow-lg">
+        <i *ngIf="submitting" class="fa-solid fa-circle-notch fa-spin"></i>
+        <i *ngIf="!submitting" class="fa-solid fa-floppy-disk"></i>
+        <span>حفظ الفاتورة</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Two Columns Container -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- Left Column: Invoice Items (محتويات الفاتورة) - 7 cols -->
+    <div class="lg:col-span-7 glass-card p-5 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-boxes-stacked text-amber-400 text-lg"></i>
+          <h3 class="font-bold text-slate-100">محتويات الفاتورة</h3>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button (click)="addCustomItemRow()" class="btn btn-secondary btn-sm text-xs">
+            <i class="fa-solid fa-plus text-amber-400"></i> إضافة صنف
+          </button>
+          <button (click)="openInventoryModal()" class="btn btn-secondary btn-sm text-xs text-sky-400 border-sky-500/30">
+            <i class="fa-solid fa-box"></i> إضافة صنف من المخزن
+          </button>
+        </div>
+      </div>
+
+      <!-- Items Table -->
+      <div class="table-responsive bg-slate-800/40 rounded-xl border border-slate-700/80 p-2">
+        <table class="custom-table text-xs">
+          <thead>
+            <tr>
+              <th>اسم الصنف / المنتج</th>
+              <th class="w-24">الكمية</th>
+              <th class="w-28">سعر الوحدة (ج.م)</th>
+              <th class="w-28">الإجمالي</th>
+              <th class="w-12 text-center"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of items; let i = index">
+              <td>
+                <input 
+                  type="text" 
+                  [(ngModel)]="item.itemName" 
+                  placeholder="اسم الصنف المشتري..." 
+                  class="form-control text-xs py-1.5" 
+                />
+              </td>
+              <td>
+                <input 
+                  type="number" 
+                  min="1" 
+                  [(ngModel)]="item.quantity" 
+                  (ngModelChange)="onItemChange(item)"
+                  class="form-control text-xs py-1.5 font-mono font-bold" 
+                />
+              </td>
+              <td>
+                <input 
+                  type="number" 
+                  min="0" 
+                  [(ngModel)]="item.unitPrice" 
+                  (ngModelChange)="onItemChange(item)"
+                  class="form-control text-xs py-1.5 font-mono" 
+                />
+              </td>
+              <td class="font-mono font-bold text-amber-300 text-sm align-middle">
+                {{ (item.quantity * item.unitPrice) | number:'1.2-2' }} ج.م
+              </td>
+              <td class="text-center align-middle">
+                <button (click)="removeItemRow(i)" class="text-rose-400 hover:text-rose-300 text-sm p-1">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Financial Totals Summary Card -->
+      <div class="p-4 rounded-xl bg-slate-800/80 border border-slate-700 space-y-3">
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-slate-400 font-bold">المجموع الجزئي:</span>
+          <span class="font-bold text-slate-100 text-sm font-mono">{{ subTotal | number:'1.2-2' }} جنيه</span>
+        </div>
+
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-slate-400 font-bold">إجمالي الخصم (جنيه):</span>
+          <input 
+            type="number" 
+            min="0" 
+            [(ngModel)]="discount" 
+            class="form-control text-xs w-32 py-1 text-left font-mono" 
+            placeholder="0" 
+          />
+        </div>
+
+        <div class="flex justify-between items-center text-sm font-extrabold text-white pt-2 border-t border-slate-700">
+          <span class="text-slate-200">الإجمالي الصافي:</span>
+          <span class="text-amber-400 text-lg font-mono">{{ totalAmount | number:'1.2-2' }} جنيه</span>
+        </div>
+
+        <div *ngIf="!isPaid" class="flex justify-between items-center text-xs pt-2 border-t border-slate-700/60">
+          <span class="text-slate-400 font-bold">المبلغ المدفوع حتي الآن:</span>
+          <input 
+            type="number" 
+            min="0" 
+            [(ngModel)]="paidAmount" 
+            class="form-control text-xs w-32 py-1 text-left font-mono" 
+            placeholder="0" 
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Invoice Details (بيانات الفاتورة) - 5 cols -->
+    <div class="lg:col-span-5 glass-card p-5 space-y-4">
+      <div class="flex items-center gap-2 border-b border-slate-700 pb-3">
+        <i class="fa-solid fa-file-pen text-amber-400 text-lg"></i>
+        <h3 class="font-bold text-slate-100">بيانات الفاتورة</h3>
+      </div>
+
+      <!-- Supplier Dropdown & Add Button -->
+      <div class="form-group space-y-1">
+        <label class="form-label text-xs font-bold text-slate-300">المورد <span class="text-rose-400">*</span></label>
+        <div class="flex items-center gap-2">
+          <select [(ngModel)]="selectedSupplierId" class="form-select text-xs flex-1" required>
+            <option [ngValue]="null">-- اختر المورد من القائمة --</option>
+            <option *ngFor="let sup of suppliers()" [ngValue]="sup.id">{{ sup.name }} ({{ sup.phone }})</option>
+          </select>
+          <button (click)="openNewSupplierModal()" type="button" class="btn btn-secondary btn-sm text-amber-400 border-amber-500/30" title="إضافة مورد جديد القائمة">
+            <i class="fa-solid fa-plus"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Invoice Title -->
+      <div class="form-group">
+        <label class="form-label text-xs">عنوان الفاتورة (اختياري)</label>
+        <input type="text" [(ngModel)]="title" class="form-control text-xs" placeholder="مثال: شحنة قمصان رجالي صيفي..." />
+      </div>
+
+      <!-- Invoice Date -->
+      <div class="form-group">
+        <label class="form-label text-xs">تاريخ الفاتورة</label>
+        <input type="date" [(ngModel)]="invoiceDate" class="form-control text-xs" />
+      </div>
+
+      <!-- Payment Status Toggle -->
+      <div class="p-3 rounded-xl bg-slate-800/60 border border-slate-700/80 space-y-2">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-cash-register text-amber-400"></i>
+            <span class="text-xs font-bold text-slate-200">حالة الفاتورة (مدفوعة بالكامل)</span>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" [(ngModel)]="isPaid" class="sr-only peer">
+            <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+          </label>
+        </div>
+        <p class="text-[11px] text-slate-400 leading-relaxed">
+          عند تفعيل خيار (مدفوعة)، سيتم خصم كامل قيمة الفاتورة وإدراجها كـ مصروف في تقارير الأرباح والخزينة.
+        </p>
+      </div>
+
+      <!-- Notes -->
+      <div class="form-group">
+        <label class="form-label text-xs">ملاحظات الفاتورة</label>
+        <textarea [(ngModel)]="notes" class="form-textarea text-xs" rows="3" placeholder="ملاحظات حول التوريد أو استلام البضائع..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Select Product from Inventory -->
+  <div *ngIf="showInventoryModal" class="app-modal-overlay">
+    <div class="glass-card w-full max-w-md p-6 fade-in my-auto border border-sky-500/30">
+      <div class="flex items-center justify-between border-b border-slate-700 pb-3 mb-4">
+        <h3 class="font-bold text-slate-100 text-sm">إضافة صنف من منتجات المخزن</h3>
+        <button (click)="showInventoryModal = false" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="space-y-3">
+        <div class="form-group">
+          <label class="form-label text-xs">اختر المنتج</label>
+          <select [(ngModel)]="selectedInventoryProductId" (ngModelChange)="onInventoryProductSelect()" class="form-select text-xs">
+            <option *ngFor="let p of products()" [ngValue]="p.id">{{ p.name }} (كود: {{ p.code }}) - المخزون الحالي: {{ p.stockQuantity }}</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="form-group">
+            <label class="form-label text-xs">الكمية المشتراة</label>
+            <input type="number" min="1" [(ngModel)]="inventoryQuantity" class="form-control text-xs font-mono font-bold" />
+          </div>
+          <div class="form-group">
+            <label class="form-label text-xs">سعر الشراء للقطعة (ج.م)</label>
+            <input type="number" min="0" [(ngModel)]="inventoryUnitPrice" class="form-control text-xs font-mono" />
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-700">
+          <button (click)="showInventoryModal = false" class="btn btn-secondary btn-sm">إلغاء</button>
+          <button (click)="addInventoryItem()" class="btn btn-primary btn-sm bg-sky-600 hover:bg-sky-500 border-none">إضافة للفاتورة</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Add New Supplier -->
+  <div *ngIf="showNewSupplierModal" class="app-modal-overlay">
+    <div class="glass-card w-full max-w-md p-6 fade-in my-auto border border-amber-500/30">
+      <div class="flex items-center justify-between border-b border-slate-700 pb-3 mb-4">
+        <h3 class="font-bold text-slate-100 text-sm">إضافة مورد جديد سريعة</h3>
+        <button (click)="showNewSupplierModal = false" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="space-y-3">
+        <div class="form-group">
+          <label class="form-label text-xs">اسم المورد *</label>
+          <input type="text" [(ngModel)]="newSupplier.name" class="form-control text-xs" placeholder="اسم المورد بالكامل" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label text-xs">رقم الهاتف *</label>
+          <input type="text" [(ngModel)]="newSupplier.phone" class="form-control text-xs" placeholder="01000000000" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label text-xs">اسم الشركة / المصنع</label>
+          <input type="text" [(ngModel)]="newSupplier.company" class="form-control text-xs" placeholder="اختياري" />
+        </div>
+
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-700">
+          <button (click)="showNewSupplierModal = false" class="btn btn-secondary btn-sm">إلغاء</button>
+          <button (click)="saveNewSupplier()" class="btn btn-primary btn-sm bg-amber-600 hover:bg-amber-500 border-none">حفظ المورد</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,254 @@
+<div class="space-y-6 fade-in font-cairo">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-extrabold text-slate-100 flex items-center gap-2">
+        <i class="fa-solid fa-file-invoice-dollar text-amber-400"></i>
+        <span>فواتير المشتريات</span>
+        <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+          {{ totalCount() }} فاتورة
+        </span>
+      </h1>
+      <p class="text-slate-400 text-sm">عرض وإدارة فواتير توريد البضائع والربط بالخزينة والمصروفات</p>
+    </div>
+    <a routerLink="/purchases/create" class="btn btn-primary bg-gradient-to-r from-amber-600 to-indigo-600 border-none shadow-lg">
+      <i class="fa-solid fa-file-circle-plus"></i>
+      <span>إضافة فاتورة جديدة</span>
+    </a>
+  </div>
+
+  <!-- Filter & Search Bar -->
+  <div class="glass-card p-4 space-y-3">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+      <!-- Search Input -->
+      <div class="relative lg:col-span-2">
+        <i class="fa-solid fa-magnifying-glass absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+        <input 
+          type="text" 
+          [(ngModel)]="searchTerm" 
+          (ngModelChange)="onFilterChange()"
+          placeholder="بحث بالرقم التسلسلي أو عنوان الفاتورة..." 
+          class="form-control pr-9 text-xs" 
+        />
+      </div>
+
+      <!-- Supplier Dropdown -->
+      <div>
+        <select [(ngModel)]="selectedSupplierId" (ngModelChange)="onFilterChange()" class="form-select text-xs">
+          <option [ngValue]="null">فلترة حسب المورد (الكل)</option>
+          <option *ngFor="let sup of suppliers()" [ngValue]="sup.id">{{ sup.name }}</option>
+        </select>
+      </div>
+
+      <!-- Date Range (From/To) -->
+      <div>
+        <input type="date" [(ngModel)]="filterFromDate" (ngModelChange)="onFilterChange()" class="form-control text-xs" title="من تاريخ" />
+      </div>
+
+      <!-- Reset / Date To -->
+      <div class="flex items-center gap-2">
+        <input type="date" [(ngModel)]="filterToDate" (ngModelChange)="onFilterChange()" class="form-control text-xs" title="إلى تاريخ" />
+        <button (click)="resetFilters()" class="btn btn-secondary btn-sm text-xs py-2 px-3" title="إعادة ضبط الفلاتر">
+          <i class="fa-solid fa-rotate-left"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="glass-card p-12 text-center text-slate-400 space-y-3">
+    <i class="fa-solid fa-circle-notch fa-spin text-3xl text-amber-400"></i>
+    <p class="text-sm font-semibold">جاري تحميل فواتير المشتريات...</p>
+  </div>
+
+  <!-- Desktop Table View -->
+  <div *ngIf="!loading()" class="hidden md:block glass-card overflow-hidden">
+    <div class="table-responsive">
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>الرقم التسلسلي</th>
+            <th>تاريخ الفاتورة</th>
+            <th>عنوان الفاتورة</th>
+            <th>اسم المورد</th>
+            <th>الإجمالي</th>
+            <th>المدفوع</th>
+            <th>حالة الدفع</th>
+            <th>مرتبط بالمصروفات</th>
+            <th class="text-center">عمليات</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let inv of invoices()">
+            <td class="font-mono font-bold text-amber-400 text-sm">#{{ inv.invoiceNumber }}</td>
+            <td class="text-xs text-slate-300">{{ inv.invoiceDate | date:'mediumDate' }}</td>
+            <td class="font-semibold text-slate-100 max-w-xs truncate">{{ inv.title || '-' }}</td>
+            <td class="text-indigo-300 font-semibold">{{ inv.supplierName }}</td>
+            <td class="font-bold text-slate-100 text-sm">{{ inv.totalAmount | number:'1.2-2' }} ج.م</td>
+            <td class="font-bold text-emerald-400 text-xs">{{ inv.paidAmount | number:'1.2-2' }} ج.م</td>
+            <td>
+              <span class="badge" [class.badge-delivered]="inv.isPaid" [class.badge-cancelled]="!inv.isPaid">
+                {{ inv.isPaid ? 'مدفوعة' : 'غير مدفوعة / جزئي' }}
+              </span>
+            </td>
+            <td>
+              <span *ngIf="inv.expenseId" class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold border border-emerald-500/30">
+                <i class="fa-solid fa-circle-check"></i> مصروف مسجل
+              </span>
+              <span *ngIf="!inv.expenseId" class="text-slate-500 text-xs">-</span>
+            </td>
+            <td class="text-center">
+              <div class="flex items-center justify-center gap-2">
+                <button (click)="openViewModal(inv)" class="btn btn-secondary btn-sm text-indigo-400" title="عرض تفاصيل الفاتورة">
+                  <i class="fa-solid fa-eye"></i>
+                </button>
+                <button (click)="deleteInvoice(inv)" class="btn btn-secondary btn-sm text-rose-400" title="حذف الفاتورة">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="invoices().length === 0">
+            <td colspan="9" class="text-center py-12 text-slate-400">لا تحتوي القائمة على فواتير مشتريات مطابقة</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Mobile Cards View -->
+  <div *ngIf="!loading()" class="block md:hidden space-y-3">
+    <div *ngFor="let inv of invoices()" class="glass-card p-4 space-y-3 border-slate-700">
+      <div class="flex items-center justify-between border-b border-slate-700/60 pb-2">
+        <div>
+          <div class="font-mono font-bold text-amber-400 text-sm">#{{ inv.invoiceNumber }}</div>
+          <div class="text-xs text-slate-400">{{ inv.invoiceDate | date:'shortDate' }}</div>
+        </div>
+        <span class="badge" [class.badge-delivered]="inv.isPaid" [class.badge-cancelled]="!inv.isPaid">
+          {{ inv.isPaid ? 'مدفوعة' : 'آجل / جزئي' }}
+        </span>
+      </div>
+
+      <div class="space-y-1.5 text-xs bg-slate-800/40 p-2.5 rounded-lg border border-slate-700/50">
+        <div class="flex items-center justify-between">
+          <span class="text-slate-400">اسم المورد:</span>
+          <span class="font-bold text-indigo-300">{{ inv.supplierName }}</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-slate-400">إجمالي الفاتورة:</span>
+          <span class="font-bold text-slate-100">{{ inv.totalAmount | number:'1.0-0' }} ج.م</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-slate-400">المبلغ المدفوع:</span>
+          <span class="font-bold text-emerald-400">{{ inv.paidAmount | number:'1.0-0' }} ج.م</span>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-1 border-t border-slate-700/60">
+        <button (click)="openViewModal(inv)" class="btn btn-secondary btn-sm py-1.5 px-3 text-xs text-indigo-400">
+          <i class="fa-solid fa-eye"></i> التفاصيل
+        </button>
+        <button (click)="deleteInvoice(inv)" class="btn btn-secondary btn-sm py-1.5 px-3 text-xs text-rose-400">
+          <i class="fa-solid fa-trash-can"></i> حذف
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="invoices().length === 0" class="glass-card p-8 text-center text-slate-400">
+      لا توجد فواتير مشتريات مسجلة
+    </div>
+  </div>
+
+  <!-- Pagination Controls Footer -->
+  <div *ngIf="!loading() && totalPages() > 1" class="glass-card p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="text-xs text-slate-400">
+      صفحة <span class="font-bold text-white">{{ pageNumber() }}</span> من <span class="font-bold text-white">{{ totalPages() }}</span> (إجمالي {{ totalCount() }} فاتورة)
+    </div>
+
+    <div class="flex items-center gap-2">
+      <button 
+        (click)="previousPage()" 
+        [disabled]="!hasPreviousPage()" 
+        class="btn btn-secondary btn-sm disabled:opacity-40 disabled:cursor-not-allowed"
+      >
+        <i class="fa-solid fa-chevron-right"></i>
+        <span>السابق</span>
+      </button>
+
+      <button 
+        (click)="nextPage()" 
+        [disabled]="!hasNextPage()" 
+        class="btn btn-secondary btn-sm disabled:opacity-40 disabled:cursor-not-allowed"
+      >
+        <span>التالي</span>
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- View Invoice Detail Modal -->
+  <div *ngIf="showViewModal && selectedInvoice" class="app-modal-overlay">
+    <div class="glass-card w-full max-w-2xl p-6 fade-in my-auto max-h-[90vh] overflow-y-auto border border-amber-500/30 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-700 pb-4 mb-4">
+        <div>
+          <h3 class="font-bold text-lg text-slate-100 flex items-center gap-2">
+            <span>تفاصيل فاتورة المشتريات</span>
+            <span class="font-mono text-amber-400 text-sm">#{{ selectedInvoice.invoiceNumber }}</span>
+          </h3>
+          <p class="text-xs text-slate-400">المورد: {{ selectedInvoice.supplierName }} ({{ selectedInvoice.supplierPhone }})</p>
+        </div>
+        <button (click)="closeViewModal()" class="text-slate-400 hover:text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <!-- Items Table -->
+      <div class="space-y-4">
+        <h4 class="font-bold text-sm text-slate-200">بند / اصناف الفاتورة:</h4>
+        <div class="table-responsive bg-slate-800/50 rounded-xl border border-slate-700 p-2">
+          <table class="custom-table text-xs">
+            <thead>
+              <tr>
+                <th>اسم الصنف / المنتج</th>
+                <th>الكمية</th>
+                <th>سعر الوحدة</th>
+                <th>الإجمالي</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of selectedInvoice.items">
+                <td class="font-bold text-slate-100">{{ item.itemName }}</td>
+                <td class="font-mono text-sky-400 font-bold">{{ item.quantity }}</td>
+                <td class="font-mono">{{ item.unitPrice | number:'1.2-2' }} ج.م</td>
+                <td class="font-mono font-bold text-amber-300">{{ item.totalPrice | number:'1.2-2' }} ج.م</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Summary Totals -->
+        <div class="p-4 rounded-xl bg-slate-800/80 border border-slate-700 space-y-2 text-xs">
+          <div class="flex justify-between text-slate-400">
+            <span>المجموع الجزئي:</span>
+            <span class="font-bold text-slate-200">{{ selectedInvoice.subTotal | number:'1.2-2' }} ج.م</span>
+          </div>
+          <div *ngIf="selectedInvoice.discount > 0" class="flex justify-between text-rose-400">
+            <span>الخصم:</span>
+            <span class="font-bold">-{{ selectedInvoice.discount | number:'1.2-2' }} ج.م</span>
+          </div>
+          <div class="flex justify-between text-sm font-extrabold text-white pt-2 border-t border-slate-700">
+            <span>إجمالي الفاتورة:</span>
+            <span class="text-amber-400">{{ selectedInvoice.totalAmount | number:'1.2-2' }} ج.م</span>
+          </div>
+          <div class="flex justify-between text-xs font-bold text-emerald-400">
+            <span>المبلغ المدفوع:</span>
+            <span>{{ selectedInvoice.paidAmount | number:'1.2-2' }} ج.م</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-3 mt-6">
+        <button (click)="closeViewModal()" class="btn btn-secondary">إغلاق</button>
+      </div>
+    </div>
+  </div>
+</div>

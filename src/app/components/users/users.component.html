@@ -1,0 +1,513 @@
+<div class="space-y-6 fade-in font-cairo">
+  
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-black text-slate-100 flex items-center gap-3">
+        <i class="bi bi-people-fill text-sky-400"></i>
+        <span>إدارة فريق العمل، الصلاحيات، والمرتبات</span>
+      </h1>
+      <p class="text-slate-400 text-xs sm:text-sm">إدارة حسابات الموظفين، تحديد الأدوار والصلاحيات، متابعة السلف وصرف المرتبات</p>
+    </div>
+    <div class="flex flex-wrap items-center gap-2">
+      <button (click)="openAddModal()" class="btn btn-primary btn-sm flex items-center gap-2">
+        <i class="bi bi-person-plus-fill"></i>
+        <span>إضافة موظف / مستخدم</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Navigation Tabs -->
+  <div class="flex items-center gap-2 border-b border-slate-700/80 pb-2">
+    <button (click)="setTab('users')" [ngClass]="activeTab === 'users' ? 'bg-sky-500/20 text-sky-400 border-sky-500/50' : 'text-slate-400 hover:text-slate-200 border-transparent'"
+            class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold border transition-all flex items-center gap-2">
+      <i class="bi bi-person-badge"></i>
+      <span>حسابات الفريق والصلاحيات</span>
+    </button>
+    
+    <button (click)="setTab('payroll')" [ngClass]="activeTab === 'payroll' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50' : 'text-slate-400 hover:text-slate-200 border-transparent'"
+            class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold border transition-all flex items-center gap-2">
+      <i class="bi bi-cash-stack"></i>
+      <span>جدول المرتبات والسلف</span>
+    </button>
+
+    <button (click)="setTab('history')" [ngClass]="activeTab === 'history' ? 'bg-indigo-500/20 text-indigo-400 border-indigo-500/50' : 'text-slate-400 hover:text-slate-200 border-transparent'"
+            class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold border transition-all flex items-center gap-2">
+      <i class="bi bi-journal-text"></i>
+      <span>سجل المعاملات المالية للموظفين</span>
+    </button>
+  </div>
+
+  <!-- TAB 1: USERS & ROLES -->
+  <div *ngIf="activeTab === 'users'" class="space-y-4">
+    <div class="hidden md:block glass-card overflow-hidden">
+      <div class="table-responsive">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>الموظف</th>
+              <th>اسم الدخول</th>
+              <th>رقم الهاتف</th>
+              <th>الدور والصلاحية</th>
+              <th>المرتب الأساسي</th>
+              <th>مواعيد الشيفت</th>
+              <th>الحالة</th>
+              <th class="text-center">إجراءات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let u of users()">
+              <td>
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-sky-400 text-xs">
+                    {{ u.fullName.charAt(0) }}
+                  </div>
+                  <div>
+                    <div class="font-bold text-slate-100">{{ u.fullName }}</div>
+                    <div class="text-[11px] text-slate-400">{{ u.email }}</div>
+                  </div>
+                </div>
+              </td>
+              <td class="text-sky-400 font-semibold font-mono text-xs">&#64;{{ u.username }}</td>
+              <td class="text-slate-300 font-mono text-xs">{{ u.phone || '—' }}</td>
+              <td>
+                <span [ngClass]="getRoleBadgeClass(u.role)" class="px-2.5 py-0.5 rounded-full text-xs font-bold border">
+                  {{ u.roleName }}
+                </span>
+              </td>
+              <td class="font-bold text-slate-200">{{ u.baseSalary | number }} ج.م</td>
+              <td class="text-xs text-slate-300 font-mono">
+                {{ u.shiftStartTime || '09:00' }} — {{ u.shiftEndTime || '17:00' }}
+              </td>
+              <td>
+                <span class="badge badge-delivered">نشط</span>
+              </td>
+              <td class="text-center">
+                <div class="flex items-center justify-center gap-2">
+                  <button (click)="openEditModal(u)" class="btn btn-secondary btn-sm text-sky-400" title="تعديل الموظف">
+                    <i class="bi bi-pencil-square"></i>
+                  </button>
+                  <button (click)="deleteUser(u)" class="btn btn-secondary btn-sm text-rose-400" title="حذف الحساب">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Mobile View -->
+    <div class="block md:hidden space-y-3">
+      <div *ngFor="let u of users()" class="glass-card p-4 space-y-3 border-slate-700/80">
+        <div class="flex items-center justify-between border-b border-slate-700/60 pb-2">
+          <div>
+            <div class="font-bold text-slate-100 text-base">{{ u.fullName }}</div>
+            <div class="text-xs text-sky-400 font-mono font-semibold">&#64;{{ u.username }}</div>
+          </div>
+          <span [ngClass]="getRoleBadgeClass(u.role)" class="px-2.5 py-0.5 rounded-full text-xs font-bold border">
+            {{ u.roleName }}
+          </span>
+        </div>
+
+        <div class="space-y-1.5 text-xs bg-slate-800/40 p-2.5 rounded-lg border border-slate-700/50">
+          <div class="flex items-center justify-between">
+            <span class="text-slate-400">المرتب الأساسي:</span>
+            <span class="text-slate-100 font-bold">{{ u.baseSalary | number }} ج.م</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-slate-400">مواعيد الشيفت:</span>
+            <span class="text-slate-300">{{ u.shiftStartTime || '09:00' }} — {{ u.shiftEndTime || '17:00' }}</span>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-1 border-t border-slate-700/60">
+          <button (click)="openEditModal(u)" class="btn btn-secondary btn-sm py-1.5 px-3 text-xs text-sky-400 flex items-center gap-1">
+            <i class="bi bi-pencil-square"></i> تعديل
+          </button>
+          <button (click)="deleteUser(u)" class="btn btn-secondary btn-sm py-1.5 px-3 text-xs text-rose-400 flex items-center gap-1">
+            <i class="bi bi-trash"></i> حذف
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: PAYROLL & ADVANCES -->
+  <div *ngIf="activeTab === 'payroll'" class="space-y-4">
+    <div class="hidden md:block glass-card overflow-hidden">
+      <div class="table-responsive">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>الموظف</th>
+              <th>المرتب الأساسي</th>
+              <th>السلف المسحوبة (رصيد سالب)</th>
+              <th>المكافآت هذا الشهر</th>
+              <th>الخصومات والجزاءات</th>
+              <th>صافي المستحق للصرف</th>
+              <th>تاريخ الاستحقاق</th>
+              <th class="text-center">إجراءات مالية</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of payrollSummaries()">
+              <td>
+                <div class="font-bold text-slate-100">{{ p.fullName }}</div>
+                <div class="text-[11px] text-slate-400">{{ p.roleName }}</div>
+              </td>
+              <td class="font-bold text-slate-200">{{ p.baseSalary | number }} ج.م</td>
+              <td>
+                <span [ngClass]="p.currentAdvanceBalance > 0 ? 'text-rose-400 font-bold' : 'text-slate-400'">
+                  - {{ p.currentAdvanceBalance | number }} ج.م
+                </span>
+              </td>
+              <td class="text-emerald-400 font-bold">+{{ p.currentMonthBonuses | number }} ج.م</td>
+              <td class="text-rose-400 font-bold">-{{ p.currentMonthDeductions | number }} ج.م</td>
+              <td>
+                <span class="text-emerald-400 font-black text-sm">
+                  {{ p.netPayableSalary | number:'1.2-2' }} ج.م
+                </span>
+              </td>
+              <td class="text-xs text-slate-300">يوم {{ p.salaryDueDay }} من الشهر</td>
+              <td class="text-center">
+                <div class="flex items-center justify-center gap-1.5">
+                  <button (click)="openDisburseModal(p)" class="btn bg-emerald-600 hover:bg-emerald-500 text-white btn-sm py-1 px-2.5 text-xs flex items-center gap-1" title="صرف المرتب">
+                    <i class="bi bi-cash"></i> صرف
+                  </button>
+                  <button (click)="openAdvanceModal(p)" class="btn bg-amber-600 hover:bg-amber-500 text-white btn-sm py-1 px-2.5 text-xs flex items-center gap-1" title="إعطاء سلفة">
+                    <i class="bi bi-wallet2"></i> سلفة
+                  </button>
+                  <button (click)="openBonusPenaltyModal(p, 1)" class="btn btn-secondary btn-sm py-1 px-2 text-xs text-emerald-400" title="إضافة مكافأة">
+                    <i class="bi bi-plus-circle"></i>
+                  </button>
+                  <button (click)="openBonusPenaltyModal(p, 3)" class="btn btn-secondary btn-sm py-1 px-2 text-xs text-rose-400" title="تسجيل جزاء/خصم">
+                    <i class="bi bi-dash-circle"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Mobile View -->
+    <div class="block md:hidden space-y-3">
+      <div *ngFor="let p of payrollSummaries()" class="glass-card p-4 space-y-3 border-slate-700/80">
+        <div class="flex items-center justify-between border-b border-slate-700/60 pb-2">
+          <div>
+            <div class="font-bold text-slate-100">{{ p.fullName }}</div>
+            <div class="text-xs text-slate-400">{{ p.roleName }}</div>
+          </div>
+          <div class="text-right">
+            <span class="text-xs text-slate-400 block">صافي المستحق:</span>
+            <span class="font-black text-emerald-400 text-sm">{{ p.netPayableSalary | number:'1.2-2' }} ج.م</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 text-xs bg-slate-800/40 p-2.5 rounded-lg border border-slate-700/50">
+          <div>
+            <span class="text-slate-400 block">المرتب الأساسي:</span>
+            <span class="font-bold text-slate-200">{{ p.baseSalary | number }} ج.م</span>
+          </div>
+          <div>
+            <span class="text-slate-400 block">السلف المسحوبة:</span>
+            <span class="font-bold text-rose-400">-{{ p.currentAdvanceBalance | number }} ج.م</span>
+          </div>
+          <div>
+            <span class="text-slate-400 block">المكافآت:</span>
+            <span class="font-bold text-emerald-400">+{{ p.currentMonthBonuses | number }} ج.م</span>
+          </div>
+          <div>
+            <span class="text-slate-400 block">الخصومات:</span>
+            <span class="font-bold text-rose-400">-{{ p.currentMonthDeductions | number }} ج.م</span>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-1 border-t border-slate-700/60">
+          <button (click)="openDisburseModal(p)" class="btn bg-emerald-600 hover:bg-emerald-500 text-white btn-sm py-1.5 px-3 text-xs flex items-center gap-1">
+            <i class="bi bi-cash"></i> صرف المرتب
+          </button>
+          <button (click)="openAdvanceModal(p)" class="btn bg-amber-600 hover:bg-amber-500 text-white btn-sm py-1.5 px-3 text-xs flex items-center gap-1">
+            <i class="bi bi-wallet2"></i> سلفة
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: PAYROLL HISTORY -->
+  <div *ngIf="activeTab === 'history'" class="glass-card overflow-hidden">
+    <div class="table-responsive">
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>التاريخ والوقت</th>
+            <th>الموظف</th>
+            <th>نوع المعاملة</th>
+            <th>المبلغ</th>
+            <th>الخزينة / المحفظة</th>
+            <th>السبب / البيان</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let h of payrollHistory()">
+            <td class="text-xs text-slate-400 font-mono">{{ h.recordDate | date:'yyyy/MM/dd HH:mm' }}</td>
+            <td class="font-bold text-slate-100">{{ h.userName }}</td>
+            <td>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-bold border"
+                    [ngClass]="{
+                      'bg-emerald-500/15 text-emerald-400 border-emerald-500/30': h.type === 'SalaryPayment' || h.type === 'ShiftBonus' || h.type === 'ManualBonus',
+                      'bg-rose-500/15 text-rose-400 border-rose-500/30': h.type === 'PenaltyDeduction',
+                      'bg-amber-500/15 text-amber-400 border-amber-500/30': h.type === 'AdvanceLoan'
+                    }">
+                {{ h.typeName }}
+              </span>
+            </td>
+            <td class="font-bold font-mono" [ngClass]="h.type === 'PenaltyDeduction' ? 'text-rose-400' : 'text-emerald-400'">
+              {{ h.amount | number:'1.2-2' }} ج.م
+            </td>
+            <td class="text-xs text-slate-300">{{ h.walletName || '—' }}</td>
+            <td class="text-xs text-slate-400">{{ h.reason || '—' }}</td>
+          </tr>
+
+          <tr *ngIf="payrollHistory().length === 0">
+            <td colspan="6" class="text-center py-12 text-slate-400">
+              <i class="bi bi-journal-text text-4xl mb-3 text-slate-600 block"></i>
+              <div>لا توجد سجلات معاملات للموظفين حتى الآن</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Add/Edit User Modal -->
+  <div *ngIf="showModal" class="app-modal-overlay">
+    <div class="glass-card w-full max-w-xl p-6 max-h-[90vh] overflow-y-auto fade-in shadow-2xl border-slate-700">
+      <div class="flex items-center justify-between border-b border-slate-700 pb-4 mb-4">
+        <h3 class="font-bold text-lg text-slate-100 flex items-center gap-2">
+          <i class="bi bi-person-gear text-sky-400"></i>
+          <span>{{ isEditMode ? 'تعديل بيانات وصلاحيات الموظف' : 'إضافة موظف / مستخدم جديد' }}</span>
+        </h3>
+        <button (click)="showModal = false" class="text-slate-400 hover:text-white"><i class="bi bi-x-lg text-lg"></i></button>
+      </div>
+
+      <form (ngSubmit)="saveUser()" class="space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="form-group">
+            <label class="form-label">الاسم بالكامل</label>
+            <input type="text" [(ngModel)]="currentUser.fullName" name="fullName" class="form-control" placeholder="اسم الموظف" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">اسم المستخدم (Username)</label>
+            <input type="text" [(ngModel)]="currentUser.username" name="username" class="form-control font-mono" [disabled]="isEditMode" placeholder="username" required />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="form-group">
+            <label class="form-label">البريد الإلكتروني</label>
+            <input type="email" [(ngModel)]="currentUser.email" name="email" class="form-control" [disabled]="isEditMode" placeholder="email@domain.com" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">رقم الهاتف</label>
+            <input type="text" [(ngModel)]="currentUser.phone" name="phone" class="form-control" placeholder="01xxxxxxxxx" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="form-group">
+            <label class="form-label">{{ isEditMode ? 'كلمة المرور (اتركها فارغة إذا لم ترد التغيير)' : 'كلمة المرور' }}</label>
+            <input type="password" [(ngModel)]="currentUser.password" name="password" class="form-control" [required]="!isEditMode" placeholder="••••••••" />
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">الدور والصلاحية (Role)</label>
+            <select [(ngModel)]="currentUser.role" name="role" class="form-control" required>
+              <option [value]="UserRole.Admin">صاحب المتجر (Admin) — كامل الصلاحيات</option>
+              <option [value]="UserRole.Manager">المدير العام (Manager) — إدارة العمليات والمنتجات والموظفين</option>
+              <option [value]="UserRole.FinancialManager">المدير المالي (Financial Manager) — الخزائن والمصروفات والمرتبات</option>
+              <option [value]="UserRole.Moderator">مودريتور (Moderator) — استقبال وتأكيد الأوردرات</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Financial and Shift Details -->
+        <div class="p-4 bg-slate-800/60 rounded-xl border border-slate-700/60 space-y-4">
+          <div class="text-xs font-bold text-sky-400 flex items-center gap-1.5">
+            <i class="bi bi-cash-coin"></i>
+            <span>إعدادات المرتب والشيفت والتارجت</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="form-group">
+              <label class="form-label">المرتب الأساسي الشهري (ج.م)</label>
+              <input type="number" [(ngModel)]="currentUser.baseSalary" name="baseSalary" class="form-control" placeholder="0.00" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">يوم استحقاق ونزول المرتب (1 إلى 28)</label>
+              <input type="number" [(ngModel)]="currentUser.salaryDueDay" name="salaryDueDay" min="1" max="28" class="form-control" placeholder="1" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="form-group">
+              <label class="form-label">بداية الشيفت</label>
+              <input type="time" [(ngModel)]="currentUser.shiftStartTime" name="shiftStartTime" class="form-control" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">نهاية الشيفت</label>
+              <input type="time" [(ngModel)]="currentUser.shiftEndTime" name="shiftEndTime" class="form-control" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="form-group">
+              <label class="form-label">تارجت الأوردرات المطلوب بالشيفت</label>
+              <input type="number" [(ngModel)]="currentUser.shiftTargetOrders" name="shiftTargetOrders" class="form-control" placeholder="0" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">قيمة بونص تحقيق التارجت (ج.م)</label>
+              <input type="number" [(ngModel)]="currentUser.shiftBonusAmount" name="shiftBonusAmount" class="form-control" placeholder="0.00" />
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-4 border-t border-slate-700">
+          <button type="button" (click)="showModal = false" class="btn btn-secondary">إلغاء</button>
+          <button type="submit" class="btn btn-primary flex items-center gap-2">
+            <i class="bi bi-check-lg"></i>
+            <span>{{ isEditMode ? 'حفظ التعديلات' : 'إنشاء الحساب' }}</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Disburse Salary Modal -->
+  <div *ngIf="showDisburseModal" class="app-modal-overlay">
+    <div class="glass-card w-full max-w-md p-6 fade-in my-auto max-h-[90vh] overflow-y-auto shadow-2xl border-slate-700">
+      <div class="flex items-center justify-between border-b border-slate-700 pb-4 mb-4">
+        <h3 class="font-bold text-lg text-slate-100 flex items-center gap-2">
+          <i class="bi bi-cash-stack text-emerald-400"></i>
+          <span>صرف مرتب الموظف</span>
+        </h3>
+        <button (click)="showDisburseModal = false" class="text-slate-400 hover:text-white"><i class="bi bi-x-lg text-lg"></i></button>
+      </div>
+
+      <form (ngSubmit)="confirmDisburseSalary()" class="space-y-4">
+        <div class="p-3 bg-slate-800/60 rounded-xl border border-slate-700/60 text-sm text-slate-300">
+          الموظف: <strong class="text-emerald-400">{{ disburseData.userName }}</strong>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">المبلغ الصافي للصرف (ج.م)</label>
+          <input type="number" [(ngModel)]="disburseData.amount" name="amount" class="form-control font-bold text-emerald-400 text-lg" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">الخصم من خزينة / محفظة</label>
+          <select [(ngModel)]="disburseData.walletId" name="walletId" class="form-control" required>
+            <option *ngFor="let w of wallets()" [value]="w.id">
+              {{ w.name }} (الرصيد: {{ w.balance | number }} ج.م)
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">البيان والملاحظات</label>
+          <input type="text" [(ngModel)]="disburseData.notes" name="notes" class="form-control" placeholder="ملاحظات الصرف..." />
+        </div>
+
+        <div class="flex justify-end gap-3 pt-4 border-t border-slate-700">
+          <button type="button" (click)="showDisburseModal = false" class="btn btn-secondary">إلغاء</button>
+          <button type="submit" class="btn bg-emerald-600 hover:bg-emerald-500 text-white">تأكيد الصرف</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Advance Loan Modal -->
+  <div *ngIf="showAdvanceModal" class="app-modal-overlay">
+    <div class="glass-card w-full max-w-md p-6 fade-in my-auto max-h-[90vh] overflow-y-auto shadow-2xl border-slate-700">
+      <div class="flex items-center justify-between border-b border-slate-700 pb-4 mb-4">
+        <h3 class="font-bold text-lg text-slate-100 flex items-center gap-2">
+          <i class="bi bi-wallet2 text-amber-400"></i>
+          <span>تسجيل سلفة نقدية للموظف</span>
+        </h3>
+        <button (click)="showAdvanceModal = false" class="text-slate-400 hover:text-white"><i class="bi bi-x-lg text-lg"></i></button>
+      </div>
+
+      <form (ngSubmit)="confirmRecordAdvance()" class="space-y-4">
+        <div class="p-3 bg-slate-800/60 rounded-xl border border-slate-700/60 text-sm text-slate-300">
+          الموظف: <strong class="text-amber-400">{{ advanceData.userName }}</strong>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">مبلغ السلفة (ج.م)</label>
+          <input type="number" [(ngModel)]="advanceData.amount" name="amount" min="1" class="form-control font-bold text-amber-400 text-lg" placeholder="0.00" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">الصرف من خزينة / محفظة</label>
+          <select [(ngModel)]="advanceData.walletId" name="walletId" class="form-control" required>
+            <option *ngFor="let w of wallets()" [value]="w.id">
+              {{ w.name }} (الرصيد: {{ w.balance | number }} ج.م)
+            </option>
+          </select>
+        </div>
+
+
+        <div class="form-group">
+          <label class="form-label">سبب السلفة</label>
+          <input type="text" [(ngModel)]="advanceData.reason" name="reason" class="form-control" placeholder="سبب السلفة..." />
+        </div>
+
+        <div class="flex justify-end gap-3 pt-4 border-t border-slate-700">
+          <button type="button" (click)="showAdvanceModal = false" class="btn btn-secondary">إلغاء</button>
+          <button type="submit" class="btn bg-amber-600 hover:bg-amber-500 text-white">تسجيل السلفة</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Bonus / Penalty Modal -->
+  <div *ngIf="showBonusPenaltyModal" class="app-modal-overlay">
+    <div class="glass-card w-full max-w-md p-6 fade-in my-auto max-h-[90vh] overflow-y-auto shadow-2xl border-slate-700">
+      <div class="flex items-center justify-between border-b border-slate-700 pb-4 mb-4">
+        <h3 class="font-bold text-lg text-slate-100 flex items-center gap-2">
+          <i class="bi" [ngClass]="bonusPenaltyData.type === 1 ? 'bi-plus-circle-fill text-emerald-400' : 'bi-dash-circle-fill text-rose-400'"></i>
+          <span>{{ bonusPenaltyData.type === 1 ? 'تسجيل مكافأة / بونص' : 'تسجيل خصم / جزاء' }}</span>
+        </h3>
+        <button (click)="showBonusPenaltyModal = false" class="text-slate-400 hover:text-white"><i class="bi bi-x-lg text-lg"></i></button>
+      </div>
+
+      <form (ngSubmit)="confirmRecordBonusPenalty()" class="space-y-4">
+        <div class="p-3 bg-slate-800/60 rounded-xl border border-slate-700/60 text-sm text-slate-300">
+          الموظف: <strong class="text-sky-400">{{ bonusPenaltyData.userName }}</strong>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">المبلغ (ج.م)</label>
+          <input type="number" [(ngModel)]="bonusPenaltyData.amount" name="amount" min="1" class="form-control font-bold text-lg" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">السبب / البيان</label>
+          <input type="text" [(ngModel)]="bonusPenaltyData.reason" name="reason" class="form-control" placeholder="سبب المكافأة أو الخصم..." required />
+        </div>
+
+        <div class="flex justify-end gap-3 pt-4 border-t border-slate-700">
+          <button type="button" (click)="showBonusPenaltyModal = false" class="btn btn-secondary">إلغاء</button>
+          <button type="submit" class="btn" [ngClass]="bonusPenaltyData.type === 1 ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-rose-600 hover:bg-rose-500 text-white'">
+            تأكيد التسجيل
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>

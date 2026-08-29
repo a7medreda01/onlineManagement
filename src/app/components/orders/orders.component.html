@@ -1,0 +1,340 @@
+<div class="space-y-4 fade-in font-cairo pb-8">
+  <!-- Short Clean Header -->
+  <div class="flex items-center justify-between">
+    <h1 class="text-lg sm:text-xl font-extrabold text-slate-100">الأوردرات</h1>
+    
+    <div class="flex items-center gap-2">
+      <button (click)="toggleDateFilter()" [class.btn-primary]="showDateFilter" [class.btn-secondary]="!showDateFilter" class="btn btn-xs sm:btn-sm py-1 px-2.5 text-xs">
+        <i class="fa-solid fa-calendar-days text-xs"></i>
+        <span>{{ (fromDate || toDate) ? 'مفلتر بالتاريخ' : 'التاريخ' }}</span>
+      </button>
+
+      <a routerLink="/orders/create" class="hidden sm:inline-flex btn btn-primary btn-sm py-1.5 px-3 text-xs">
+        <i class="fa-solid fa-plus text-xs"></i>
+        <span>أوردر جديد</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Collapsible Sleek Date Range Filter -->
+  <div *ngIf="showDateFilter" class="glass-card p-3 fade-in border-slate-700/80 bg-slate-900/90 space-y-2">
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2 text-xs flex-1 min-w-[130px]">
+        <span class="text-slate-400 whitespace-nowrap">من:</span>
+        <input type="date" [(ngModel)]="fromDate" (change)="onFilterChange()" class="form-control text-xs py-1 px-2 bg-slate-800 border-slate-700 w-full" />
+      </div>
+      <div class="flex items-center gap-2 text-xs flex-1 min-w-[130px]">
+        <span class="text-slate-400 whitespace-nowrap">إلى:</span>
+        <input type="date" [(ngModel)]="toDate" (change)="onFilterChange()" class="form-control text-xs py-1 px-2 bg-slate-800 border-slate-700 w-full" />
+      </div>
+      <button *ngIf="fromDate || toDate" (click)="clearDates()" class="btn btn-secondary btn-xs py-1 px-2 text-xs text-rose-400">
+        <i class="fa-solid fa-xmark"></i> إلغاء
+      </button>
+    </div>
+  </div>
+
+  <!-- Sleek Status Filter & Bulk Selection Action Bar -->
+  <div class="space-y-3">
+    <!-- Desktop: select dropdown filter -->
+    <div class="hidden md:flex glass-card p-3 border-slate-700/80 bg-slate-900/80 items-center justify-between gap-3 shadow-md">
+      <div class="flex items-center gap-2 text-xs font-bold text-slate-300">
+        <i class="fa-solid fa-filter text-sky-400 text-sm"></i>
+        <span>فلتر الحالات:</span>
+      </div>
+      <div class="flex-1 min-w-[180px] max-w-xs">
+        <select [ngModel]="selectedStatus" (ngModelChange)="selectStatus($event)" class="form-select text-xs py-2 px-3 font-bold bg-slate-800 border-slate-600 rounded-xl cursor-pointer text-sky-300 shadow-sm focus:border-sky-400">
+          <option [ngValue]="null">كل الحالات (إجمالي: {{ totalCount() }})</option>
+          <option *ngFor="let s of statusOptions" [ngValue]="s">
+            {{ getStatusArabic(s) }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Mobile: Scrollable Pill Tabs Filter -->
+    <div class="md:hidden -mx-0.5">
+      <div class="flex items-center gap-2 overflow-x-auto py-1 px-0.5 no-scrollbar">
+        <!-- All pill -->
+        <button (click)="selectStatus(null)"
+          class="shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold border transition-all whitespace-nowrap active:scale-95"
+          [class.bg-indigo-500]="selectedStatus === null"
+          [class.text-white]="selectedStatus === null"
+          [class.border-indigo-400]="selectedStatus === null"
+          [class.shadow-md]="selectedStatus === null"
+          [class.bg-slate-800]="selectedStatus !== null"
+          [class.text-slate-400]="selectedStatus !== null"
+          [class.border-slate-700]="selectedStatus !== null">
+          الكل ({{ totalCount() }})
+        </button>
+
+        <!-- Status Pills -->
+        <button *ngFor="let s of statusOptions" (click)="selectStatus(s)"
+          class="shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold border transition-all whitespace-nowrap active:scale-95"
+          [ngClass]="selectedStatus === s ? getStatusPillActiveClass(s) : 'bg-slate-800 text-slate-400 border-slate-700'">
+          {{ getStatusArabic(s) }}
+        </button>
+      </div>
+    </div>
+
+
+    <!-- Bulk Bosta Actions Bar -->
+    <div *ngIf="selectedOrderIds.size > 0" class="glass-card p-3 bg-gradient-to-r from-emerald-500/15 via-indigo-500/15 to-sky-500/15 border border-emerald-500/40 flex flex-wrap items-center justify-between gap-3 text-xs shadow-lg fade-in">
+      <div class="flex items-center gap-3">
+        <span class="px-3 py-1 rounded-xl bg-emerald-500/20 text-emerald-300 font-extrabold border border-emerald-500/40 shadow-sm">
+          تم تحديد {{ selectedOrderIds.size }} أوردر
+        </span>
+        
+        <label class="flex items-center gap-2 cursor-pointer bg-slate-800/90 py-1.5 px-3 rounded-xl border border-slate-700 hover:border-amber-500/50 transition-colors">
+          <input type="checkbox" [(ngModel)]="bulkIsFulfillment" class="w-4 h-4 rounded text-amber-500 focus:ring-amber-400 bg-slate-900 border-slate-700" />
+          <span class="font-bold text-amber-300 text-xs">شحن من مخزون بوسطة (Fulfillment) 📦</span>
+        </label>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button (click)="sendBulkToBosta()" [disabled]="sendingBulk" class="btn btn-primary btn-sm py-1.5 px-4 font-bold shadow-md shadow-emerald-500/20 flex items-center gap-1.5">
+          <i *ngIf="sendingBulk" class="fa-solid fa-circle-notch fa-spin"></i>
+          <i *ngIf="!sendingBulk" class="fa-solid fa-truck-fast text-emerald-300"></i>
+          <span>إرسال إلى بوسطة وتحديث المتجر 🚚</span>
+        </button>
+        
+        <button (click)="clearSelection()" class="btn btn-secondary btn-xs py-1.5 px-3 text-rose-400 hover:text-rose-300 font-bold">
+          <i class="fa-solid fa-xmark"></i> إلغاء التحديد
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Skeleton Shimmer Box State -->
+  <div *ngIf="loading()" class="space-y-2.5">
+    <div *ngFor="let item of [1, 2, 3, 4, 5]" class="glass-card p-3 px-3.5 animate-pulse flex items-center justify-between border-slate-700/60">
+      <div class="space-y-1.5 flex-1">
+        <div class="flex items-center gap-2">
+          <div class="h-4 bg-indigo-500/20 rounded w-10"></div>
+          <div class="h-4 bg-slate-700/60 rounded w-32"></div>
+        </div>
+        <div class="h-3 bg-slate-800/80 rounded w-40"></div>
+      </div>
+      <div class="space-y-1.5 text-left shrink-0">
+        <div class="h-4 bg-emerald-500/20 rounded w-16"></div>
+        <div class="h-3 bg-slate-700/60 rounded w-12"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Desktop Table View (md & lg screens) -->
+  <div *ngIf="!loading()" class="hidden md:block glass-card overflow-hidden">
+    <div class="table-responsive">
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th class="w-10 text-center">
+              <input type="checkbox" [checked]="isAllSelected()" (change)="toggleSelectAll()" class="w-4 h-4 rounded text-sky-500 focus:ring-sky-400 bg-slate-800 border-slate-600 cursor-pointer" title="تحديد الكل" />
+            </th>
+            <th>رقم الأوردر</th>
+            <th>بيانات العميل والمحافظة</th>
+            <th>شركة الشحن</th>
+            <th>الإجمالي</th>
+            <th>الحالة الحالية</th>
+            <th>تاريخ الأوردر</th>
+            <th class="text-center">إجراءات</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of orders()" [class.bg-slate-800\/40]="selectedOrderIds.has(order.id)">
+            <td class="text-center">
+              <input type="checkbox" [checked]="selectedOrderIds.has(order.id)" (change)="toggleSelectOrder(order.id)" class="w-4 h-4 rounded text-sky-500 focus:ring-sky-400 bg-slate-800 border-slate-600 cursor-pointer" />
+            </td>
+            <td class="font-bold">
+              <a [routerLink]="['/orders', order.id]" class="text-indigo-300 hover:text-sky-400 hover:underline flex items-center gap-1.5 font-mono text-sm">
+                <i class="fa-solid fa-arrow-up-right-from-square text-xs text-sky-400"></i>
+                <span>#{{ getDisplayOrderNumber(order.orderNumber, order.id) }}</span>
+              </a>
+            </td>
+            <td>
+              <div class="font-bold text-slate-100">{{ order.customerName }}</div>
+              <div class="text-xs text-slate-400 flex items-center gap-1.5 mt-0.5">
+                <a [href]="'tel:' + order.customerPhone" class="hover:text-sky-300 font-mono">{{ order.customerPhone }}</a>
+                <button (click)="openWhatsApp(order.customerPhone, order.orderNumber, order.id, order.customerName)" title="تواصل عبر واتساب" class="text-emerald-400 hover:text-emerald-300 transition-colors p-0.5" type="button">
+                  <i class="fa-brands fa-whatsapp text-sm font-bold"></i>
+                </button>
+                <span class="text-slate-600">|</span>
+                <span>{{ order.governorateName }}</span>
+              </div>
+            </td>
+            <td class="text-slate-300 font-semibold">{{ order.shippingCompanyName }}</td>
+            <td class="font-bold">
+              <div class="text-slate-100 font-mono">{{ order.totalAmount | number:'1.0-2' }} ج.م</div>
+              <div *ngIf="(order.depositAmount || 0) > 0" class="text-[10px] text-purple-300 flex items-center gap-1 font-normal">
+                <span>عربون: {{ order.depositAmount | number:'1.0-2' }}</span>
+                <span class="text-amber-400 font-semibold font-mono">(COD: {{ (order.totalAmount - order.depositAmount) | number:'1.0-2' }})</span>
+              </div>
+            </td>
+            <td>
+              <span class="badge" [ngClass]="getBadgeClass(order.status)">
+                {{ getStatusArabic(order.status) }}
+              </span>
+            </td>
+            <td class="text-xs text-slate-400">{{ order.createdAt | date:'short' }}</td>
+            <td class="text-center">
+              <div class="flex items-center justify-center gap-2">
+                <a [routerLink]="['/orders', order.id]" class="btn btn-primary btn-sm" title="فتح تفاصيل الأوردر الكاملة">
+                  <i class="fa-solid fa-eye"></i>
+                  <span>التفاصيل</span>
+                </a>
+                <button (click)="openStatusModal(order)" class="btn btn-secondary btn-sm text-indigo-400" title="تغيير الحالة">
+                  <i class="fa-solid fa-arrows-rotate"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="orders().length === 0">
+            <td colspan="8" class="text-center py-12 text-slate-400">
+              <i class="fa-solid fa-box-open text-4xl mb-3 text-slate-600"></i>
+              <div>لا توجد أوردرات مطابقة للفلترة والتاريخ</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Mobile Selection Header Bar (Select All & Counter) -->
+  <div *ngIf="!loading() && orders().length > 0" class="block md:hidden glass-card p-2.5 px-3 bg-slate-900/90 border-slate-700/80 shadow-sm">
+    <div class="flex items-center justify-between text-xs">
+      <label class="flex items-center gap-2 cursor-pointer select-none font-bold text-slate-200">
+        <input type="checkbox" [checked]="isAllSelected()" (change)="toggleSelectAll()" class="w-4 h-4 rounded text-sky-500 focus:ring-sky-400 bg-slate-800 border-slate-600 cursor-pointer" />
+        <span>تحديد جميع أوردرات الصفحة</span>
+      </label>
+
+      <div *ngIf="selectedOrderIds.size > 0" class="flex items-center gap-2">
+        <span class="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 font-extrabold text-[11px] border border-emerald-500/30">
+          {{ selectedOrderIds.size }} محدد
+        </span>
+        <button (click)="clearSelection()" class="text-rose-400 hover:text-rose-300 text-[11px] font-bold">
+          إلغاء
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Single Ultra-Compact Row Cards View -->
+  <div *ngIf="!loading()" class="block md:hidden space-y-2 pb-28">
+    <div *ngFor="let order of orders()" 
+         class="glass-card p-3 px-3.5 flex items-center justify-between gap-3 border-slate-700/80 hover:border-indigo-500/50 transition-all rounded-xl"
+         [class.border-emerald-500]="selectedOrderIds.has(order.id)"
+         [class.bg-emerald-500\/10]="selectedOrderIds.has(order.id)">
+      
+      <!-- Checkbox Selection (Large Touch Area) -->
+      <div class="shrink-0 flex items-center justify-center p-1 -mr-1">
+        <input type="checkbox" [checked]="selectedOrderIds.has(order.id)" (change)="toggleSelectOrder(order.id)" class="w-5 h-5 rounded text-sky-500 focus:ring-sky-400 bg-slate-800 border-slate-600 cursor-pointer" />
+      </div>
+
+      <!-- Right side: #OrderSeq Customer Name | Phone • Governorate -->
+      <div (click)="goToDetail(order.id)" class="flex flex-col min-w-0 flex-1 cursor-pointer">
+        <div class="flex items-center gap-2 overflow-hidden">
+          <span class="text-indigo-400 font-mono font-black text-sm shrink-0">#{{ getDisplayOrderNumber(order.orderNumber, order.id) }}</span>
+          <span class="font-bold text-slate-100 text-sm truncate">{{ order.customerName }}</span>
+        </div>
+        <div class="text-xs text-slate-400 truncate flex items-center gap-1.5 mt-0.5">
+          <span class="font-mono">{{ order.customerPhone }}</span>
+          <span>•</span>
+          <span class="text-slate-300 font-medium">{{ order.governorateName }}</span>
+        </div>
+      </div>
+
+      <!-- Left side: Total Price & Clean Arabic Status Text -->
+      <div (click)="goToDetail(order.id)" class="flex flex-col items-end shrink-0 cursor-pointer">
+        <div class="font-black text-emerald-400 text-sm sm:text-base mb-0.5">{{ order.totalAmount | number:'1.0-2' }} ج.م</div>
+        <span class="text-xs font-bold" [ngClass]="getStatusTextClass(order.status)">
+          {{ getStatusArabic(order.status) }}
+        </span>
+      </div>
+    </div>
+
+    <div *ngIf="orders().length === 0" class="glass-card p-8 text-center text-slate-400">
+      <i class="fa-solid fa-box-open text-4xl mb-3 text-slate-600"></i>
+      <div>لا توجد أوردرات مطابقة للفلترة والتاريخ</div>
+    </div>
+  </div>
+
+  <!-- Mobile Floating Bulk Shipping Dock (Positioned above Mobile Bottom Nav) -->
+  <div *ngIf="selectedOrderIds.size > 0" class="md:hidden fixed bottom-20 left-3 right-3 z-40 fade-in">
+    <div class="glass-card p-3.5 bg-slate-900/95 border border-emerald-500/50 shadow-2xl backdrop-blur-xl rounded-2xl space-y-2.5">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-300 flex items-center justify-center font-black text-xs border border-emerald-500/40">
+            {{ selectedOrderIds.size }}
+          </span>
+          <span class="font-bold text-xs text-white">أوردرات محددة للشحن</span>
+        </div>
+
+        <button (click)="clearSelection()" class="text-rose-400 hover:text-rose-300 text-xs font-bold flex items-center gap-1">
+          <i class="fa-solid fa-xmark"></i>
+          <span>إلغاء التحديد</span>
+        </button>
+      </div>
+
+      <!-- Fulfillment Checkbox -->
+      <label class="flex items-center gap-2 cursor-pointer bg-slate-800/80 p-2 rounded-xl border border-slate-700/80 text-xs">
+        <input type="checkbox" [(ngModel)]="bulkIsFulfillment" class="w-4 h-4 rounded text-amber-500 focus:ring-amber-400 bg-slate-900 border-slate-700" />
+        <span class="font-bold text-amber-300 text-xs">شحن من مخزون بوسطة (Fulfillment) 📦</span>
+      </label>
+
+      <!-- Big Primary Ship Button -->
+      <button (click)="sendBulkToBosta()" [disabled]="sendingBulk" class="w-full btn btn-primary py-2.5 text-xs font-black shadow-lg shadow-emerald-500/30 flex items-center justify-center gap-2">
+        <i *ngIf="sendingBulk" class="fa-solid fa-circle-notch fa-spin text-sm"></i>
+        <i *ngIf="!sendingBulk" class="fa-solid fa-truck-fast text-emerald-300 text-sm"></i>
+        <span>إرسال وشحن {{ selectedOrderIds.size }} أوردر إلى بوسطة 🚚</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Modern Pagination Bar -->
+  <div *ngIf="!loading() && totalCount() > 0" class="glass-card p-2.5 px-3 flex items-center justify-between gap-2 border-slate-700/70">
+    <button (click)="previousPage()" [disabled]="!hasPreviousPage()" class="btn btn-secondary btn-xs py-1 px-2.5 text-xs disabled:opacity-40 disabled:cursor-not-allowed">
+      <i class="fa-solid fa-chevron-right"></i>
+      <span>السابق</span>
+    </button>
+
+    <div class="text-xs text-slate-300 font-medium text-center">
+      صفحة <strong class="text-indigo-300">{{ pageNumber() }}</strong> من <strong class="text-indigo-300">{{ totalPages() }}</strong>
+      <span class="text-slate-500 mx-1 hidden sm:inline">•</span>
+      <span class="text-slate-400 hidden sm:inline">(إجمالي {{ totalCount() }})</span>
+    </div>
+
+    <button (click)="nextPage()" [disabled]="!hasNextPage()" class="btn btn-secondary btn-xs py-1 px-2.5 text-xs disabled:opacity-40 disabled:cursor-not-allowed">
+      <span>التالي</span>
+      <i class="fa-solid fa-chevron-left"></i>
+    </button>
+  </div>
+
+  <!-- Update Status Modal -->
+  <div *ngIf="showStatusModal" class="app-modal-overlay">
+    <div class="glass-card w-full max-w-md p-6 fade-in my-auto max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-700">
+      <div class="flex items-center justify-between border-b border-slate-700 pb-4 mb-4">
+        <h3 class="font-bold text-lg text-slate-100">تحديث حالة الأوردر: #{{ getDisplayOrderNumber(selectedOrder?.orderNumber, selectedOrder?.id) }}</h3>
+        <button (click)="closeStatusModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+
+      <form (ngSubmit)="saveStatusUpdate()">
+        <div class="form-group">
+          <label class="form-label">اختر الحالة الجديدة</label>
+          <select [(ngModel)]="newStatus" name="newStatus" class="form-select" required>
+            <option *ngFor="let s of statusOptions" [ngValue]="s">{{ getStatusArabic(s) }}</option>
+          </select>
+        </div>
+
+        <div class="form-group mb-6">
+          <label class="form-label">ملاحظات التغيير</label>
+          <textarea [(ngModel)]="statusNotes" name="statusNotes" class="form-textarea" rows="2" placeholder="سبب التغيير أو ملاحظة للشحن..."></textarea>
+        </div>
+
+        <div class="flex justify-end gap-3">
+          <button type="button" (click)="closeStatusModal()" class="btn btn-secondary">إلغاء</button>
+          <button type="submit" class="btn btn-primary">تحديث الحالة</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
