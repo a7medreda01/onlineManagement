@@ -19,6 +19,7 @@ export class OrdersComponent implements OnInit {
   selectedStatus: OrderStatus | null = null;
   fromDate: string = '';
   toDate: string = '';
+  searchTerm: string = '';
   showDateFilter = false;
 
   // Pagination Signals
@@ -118,7 +119,8 @@ export class OrdersComponent implements OnInit {
       this.toDate || undefined,
       undefined,
       this.pageNumber(),
-      this.pageSize
+      this.pageSize,
+      this.searchTerm.trim() || undefined
     ).subscribe({
       next: (res: PagedResult<Order>) => {
         this.orders.set(res.items);
@@ -133,6 +135,17 @@ export class OrdersComponent implements OnInit {
         this.loading.set(false);
       }
     });
+  }
+
+  onSearchChange(): void {
+    this.pageNumber.set(1);
+    this.loadOrders();
+  }
+
+  clearSearch(): void {
+    this.searchTerm = '';
+    this.pageNumber.set(1);
+    this.loadOrders();
   }
 
   toggleDateFilter(): void {

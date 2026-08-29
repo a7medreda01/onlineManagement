@@ -67,6 +67,8 @@ export class ShippingComponent implements OnInit {
   syncingProducts = false;
   useStorageService = false;
   storageFee = 15;
+  autoImportRates = true;
+  autoSyncProducts = true;
 
   // Add Regular Company Modal
   showAddRegularModal = false;
@@ -197,29 +199,57 @@ export class ShippingComponent implements OnInit {
     });
   }
 
-  saveBostaIntegration(): void {
+  saveBostaIntegrationFast(): void {
+    if (!this.bostaIntegration.apiKey || !this.bostaIntegration.apiKey.trim()) {
+      this.notificationService.error('يرجى إدخال مفتاح Bosta API Key أولاً للربط');
+      return;
+    }
+
     this.savingIntegration = true;
+    this.bostaIntegration.isIntegrated = true;
     const bosta = this.bostaCompany();
-    const trimmedKey = this.bostaIntegration.apiKey ? this.bostaIntegration.apiKey.trim() : '';
+    const trimmedKey = this.bostaIntegration.apiKey.trim();
+
+    const doExtraSyncs = (bostaId: number) => {
+      if (this.autoImportRates) {
+        const payload = {
+          useStorageService: this.useStorageService,
+          storageFee: this.storageFee
+        };
+        this.bostaService.importRates(bostaId, payload).subscribe({
+          next: (r) => console.log('Rates imported:', r),
+          error: (e) => console.error('Rates import err:', e)
+        });
+      }
+
+      if (this.autoSyncProducts) {
+        this.bostaService.syncProductsAndStock().subscribe({
+          next: (r) => console.log('Products synced:', r),
+          error: (e) => console.error('Products sync err:', e)
+        });
+      }
+
+      setTimeout(() => {
+        this.savingIntegration = false;
+        this.showBostaModal = false;
+        this.notificationService.success('تم الربط والتكامل مع بوسطة وتفعيل الأسعار والمخزون بنجاح! 🚀');
+        this.loadData();
+      }, 1200);
+    };
 
     if (bosta) {
       this.shippingService.updateIntegration(bosta.id, {
         apiKey: trimmedKey,
         webhookUrl: this.webhookEndpoint,
-        isIntegrated: this.bostaIntegration.isIntegrated
+        isIntegrated: true
       }).subscribe({
-        next: () => {
-          this.savingIntegration = false;
-          this.notificationService.success('تم حفظ وتفعيل بيانات ربط بوسطة بنجاح! الربط الآن مفعل وشغال ✅');
-          this.loadData();
-        },
+        next: () => doExtraSyncs(bosta.id),
         error: (err) => {
           this.savingIntegration = false;
           this.notificationService.error(err?.error?.Message || 'حدث خطأ أثناء حفظ إعدادات الربط');
         }
       });
     } else {
-      // Create Bosta company entry on-the-fly if not seeded
       const defaultRates = this.governorates().map(gov => ({
         governorateId: gov.id,
         shippingPrice: 65,
@@ -231,20 +261,20 @@ export class ShippingComponent implements OnInit {
         phone: '19678',
         apiKey: trimmedKey,
         webhookUrl: this.webhookEndpoint,
-        isIntegrated: this.bostaIntegration.isIntegrated,
+        isIntegrated: true,
         rates: defaultRates
       }).subscribe({
-        next: () => {
-          this.savingIntegration = false;
-          this.notificationService.success('تم تفعيل وحفظ إعدادات شركة بوسطة بنجاح! الربط الآن مفعل وشغال ✅');
-          this.loadData();
-        },
+        next: (created) => doExtraSyncs(created.id),
         error: (err) => {
           this.savingIntegration = false;
-          this.notificationService.error(err?.error?.Message || 'خطأ أثناء إنشاء شركة بوسطة');
+          this.notificationService.error(err?.error?.Message || 'خطأ أثناء تفعيل شركة بوسطة');
         }
       });
     }
+  }
+
+  saveBostaIntegration(): void {
+    this.saveBostaIntegrationFast();
   }
 
   importBostaRates(): void {

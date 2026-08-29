@@ -33,6 +33,19 @@
     </div>
   </div>
 
+  <!-- Search Bar (Search by Customer Phone, Name, or Order Number) -->
+  <div class="relative">
+    <i class="fa-solid fa-magnifying-glass absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+    <input type="text"
+           [(ngModel)]="searchTerm"
+           (ngModelChange)="onSearchChange()"
+           placeholder="ابحث برقم موبايل العميل، الاسم، أو رقم الأوردر..."
+           class="form-control text-xs py-2.5 pr-10 pl-9 bg-slate-900/90 border-slate-700/80 rounded-xl w-full text-slate-100 placeholder:text-slate-500 focus:border-sky-500 shadow-sm" />
+    <button *ngIf="searchTerm" (click)="clearSearch()" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-400 text-xs p-1">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+
   <!-- Sleek Status Filter & Bulk Selection Action Bar -->
   <div class="space-y-3">
     <!-- Desktop: select dropdown filter -->
@@ -77,8 +90,8 @@
     </div>
 
 
-    <!-- Bulk Bosta Actions Bar -->
-    <div *ngIf="selectedOrderIds.size > 0" class="glass-card p-3 bg-gradient-to-r from-emerald-500/15 via-indigo-500/15 to-sky-500/15 border border-emerald-500/40 flex flex-wrap items-center justify-between gap-3 text-xs shadow-lg fade-in">
+    <!-- Bulk Bosta Actions Bar (Desktop Only - Mobile Uses Bottom Floating Dock) -->
+    <div *ngIf="selectedOrderIds.size > 0" class="hidden md:flex glass-card p-3 bg-gradient-to-r from-emerald-500/15 via-indigo-500/15 to-sky-500/15 border border-emerald-500/40 flex-wrap items-center justify-between gap-3 text-xs shadow-lg fade-in">
       <div class="flex items-center gap-3">
         <span class="px-3 py-1 rounded-xl bg-emerald-500/20 text-emerald-300 font-extrabold border border-emerald-500/40 shadow-sm">
           تم تحديد {{ selectedOrderIds.size }} أوردر
