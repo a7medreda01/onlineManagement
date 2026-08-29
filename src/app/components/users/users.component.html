@@ -286,100 +286,108 @@
 
   <!-- Add/Edit User Modal -->
   <div *ngIf="showModal" class="app-modal-overlay">
-    <div class="glass-card w-full max-w-xl p-6 max-h-[90vh] overflow-y-auto fade-in shadow-2xl border-slate-700">
-      <div class="flex items-center justify-between border-b border-slate-700 pb-4 mb-4">
+    <div class="glass-card w-full max-w-xl max-h-[88vh] flex flex-col p-6 fade-in shadow-2xl border-slate-700 my-auto">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between border-b border-slate-700 pb-4 shrink-0">
         <h3 class="font-bold text-lg text-slate-100 flex items-center gap-2">
           <i class="bi bi-person-gear text-sky-400"></i>
           <span>{{ isEditMode ? 'تعديل بيانات وصلاحيات الموظف' : 'إضافة موظف / مستخدم جديد' }}</span>
         </h3>
-        <button (click)="showModal = false" class="text-slate-400 hover:text-white"><i class="bi bi-x-lg text-lg"></i></button>
+        <button (click)="showModal = false" class="text-slate-400 hover:text-white p-1"><i class="bi bi-x-lg text-lg"></i></button>
       </div>
 
-      <form (ngSubmit)="saveUser()" class="space-y-4">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="form-group">
-            <label class="form-label">الاسم بالكامل</label>
-            <input type="text" [(ngModel)]="currentUser.fullName" name="fullName" class="form-control" placeholder="اسم الموظف" required />
-          </div>
-          <div class="form-group">
-            <label class="form-label">اسم المستخدم (Username)</label>
-            <input type="text" [(ngModel)]="currentUser.username" name="username" class="form-control font-mono" [disabled]="isEditMode" placeholder="username" required />
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="form-group">
-            <label class="form-label">البريد الإلكتروني</label>
-            <input type="email" [(ngModel)]="currentUser.email" name="email" class="form-control" [disabled]="isEditMode" placeholder="email@domain.com" required />
-          </div>
-          <div class="form-group">
-            <label class="form-label">رقم الهاتف</label>
-            <input type="text" [(ngModel)]="currentUser.phone" name="phone" class="form-control" placeholder="01xxxxxxxxx" />
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="form-group">
-            <label class="form-label">{{ isEditMode ? 'كلمة المرور (اتركها فارغة إذا لم ترد التغيير)' : 'كلمة المرور' }}</label>
-            <input type="password" [(ngModel)]="currentUser.password" name="password" class="form-control" [required]="!isEditMode" placeholder="••••••••" />
-          </div>
+      <!-- Modal Form Body -->
+      <form (ngSubmit)="saveUser()" class="flex flex-col flex-1 overflow-hidden min-h-0">
+        <div class="overflow-y-auto flex-1 py-4 pr-1 space-y-4">
           
-          <div class="form-group">
-            <label class="form-label">الدور والصلاحية (Role)</label>
-            <select [(ngModel)]="currentUser.role" name="role" class="form-control" required>
-              <option [value]="UserRole.Admin">صاحب المتجر (Admin) — كامل الصلاحيات</option>
-              <option [value]="UserRole.Manager">المدير العام (Manager) — إدارة العمليات والمنتجات والموظفين</option>
-              <option [value]="UserRole.FinancialManager">المدير المالي (Financial Manager) — الخزائن والمصروفات والمرتبات</option>
-              <option [value]="UserRole.Moderator">مودريتور (Moderator) — استقبال وتأكيد الأوردرات</option>
-            </select>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="form-group mb-0">
+              <label class="form-label text-xs">الاسم بالكامل <span class="text-rose-400">*</span></label>
+              <input type="text" [(ngModel)]="currentUser.fullName" name="fullName" class="form-control text-xs" placeholder="اسم الموظف" required />
+            </div>
+            <div class="form-group mb-0">
+              <label class="form-label text-xs">اسم المستخدم (Username) <span class="text-rose-400">*</span></label>
+              <input type="text" [(ngModel)]="currentUser.username" name="username" class="form-control text-xs font-mono" [disabled]="isEditMode" placeholder="username" required />
+            </div>
           </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="form-group mb-0">
+              <label class="form-label text-xs">البريد الإلكتروني <span class="text-rose-400">*</span></label>
+              <input type="email" [(ngModel)]="currentUser.email" name="email" class="form-control text-xs" [disabled]="isEditMode" placeholder="email@domain.com" required />
+            </div>
+            <div class="form-group mb-0">
+              <label class="form-label text-xs">رقم الهاتف</label>
+              <input type="text" [(ngModel)]="currentUser.phone" name="phone" class="form-control text-xs" placeholder="01xxxxxxxxx" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="form-group mb-0">
+              <label class="form-label text-xs">{{ isEditMode ? 'كلمة المرور (اتركها فارغة للتخطي)' : 'كلمة المرور *' }}</label>
+              <input type="password" [(ngModel)]="currentUser.password" name="password" class="form-control text-xs" [required]="!isEditMode" placeholder="••••••••" />
+            </div>
+            
+            <div class="form-group mb-0">
+              <label class="form-label text-xs">الدور والصلاحية (Role) <span class="text-rose-400">*</span></label>
+              <select [(ngModel)]="currentUser.role" name="role" class="form-control text-xs font-bold text-sky-300" required>
+                <option [value]="UserRole.Admin">صاحب المتجر (Admin) — كامل الصلاحيات</option>
+                <option [value]="UserRole.Manager">المدير العام (Manager) — إدارة العمليات والمنتجات والموظفين</option>
+                <option [value]="UserRole.FinancialManager">المدير المالي (Financial Manager) — الخزائن والمصروفات والمرتبات</option>
+                <option [value]="UserRole.Moderator">مودريتور (Moderator) — استقبال وتأكيد الأوردرات</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Financial and Shift Details -->
+          <div class="p-4 bg-slate-800/60 rounded-xl border border-slate-700/60 space-y-4">
+            <div class="text-xs font-bold text-sky-400 flex items-center gap-1.5 border-b border-slate-700/60 pb-2">
+              <i class="bi bi-cash-coin"></i>
+              <span>إعدادات المرتب والشيفت والتارجت (اختياري)</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="form-group mb-0">
+                <label class="form-label text-xs">المرتب الأساسي الشهري (ج.م)</label>
+                <input type="number" [(ngModel)]="currentUser.baseSalary" name="baseSalary" class="form-control text-xs" placeholder="0.00" />
+              </div>
+              <div class="form-group mb-0">
+                <label class="form-label text-xs">يوم استحقاق ونزول المرتب (1 إلى 28)</label>
+                <input type="number" [(ngModel)]="currentUser.salaryDueDay" name="salaryDueDay" min="1" max="28" class="form-control text-xs" placeholder="1" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="form-group mb-0">
+                <label class="form-label text-xs">بداية الشيفت</label>
+                <input type="time" [(ngModel)]="currentUser.shiftStartTime" name="shiftStartTime" class="form-control text-xs" />
+              </div>
+              <div class="form-group mb-0">
+                <label class="form-label text-xs">نهاية الشيفت</label>
+                <input type="time" [(ngModel)]="currentUser.shiftEndTime" name="shiftEndTime" class="form-control text-xs" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="form-group mb-0">
+                <label class="form-label text-xs">تارجت الأوردرات المطلوب بالشيفت</label>
+                <input type="number" [(ngModel)]="currentUser.shiftTargetOrders" name="shiftTargetOrders" class="form-control text-xs" placeholder="0" />
+              </div>
+              <div class="form-group mb-0">
+                <label class="form-label text-xs">قيمة بونص تحقيق التارجت (ج.م)</label>
+                <input type="number" [(ngModel)]="currentUser.shiftBonusAmount" name="shiftBonusAmount" class="form-control text-xs" placeholder="0.00" />
+              </div>
+            </div>
+          </div>
+
         </div>
 
-        <!-- Financial and Shift Details -->
-        <div class="p-4 bg-slate-800/60 rounded-xl border border-slate-700/60 space-y-4">
-          <div class="text-xs font-bold text-sky-400 flex items-center gap-1.5">
-            <i class="bi bi-cash-coin"></i>
-            <span>إعدادات المرتب والشيفت والتارجت</span>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="form-group">
-              <label class="form-label">المرتب الأساسي الشهري (ج.م)</label>
-              <input type="number" [(ngModel)]="currentUser.baseSalary" name="baseSalary" class="form-control" placeholder="0.00" />
-            </div>
-            <div class="form-group">
-              <label class="form-label">يوم استحقاق ونزول المرتب (1 إلى 28)</label>
-              <input type="number" [(ngModel)]="currentUser.salaryDueDay" name="salaryDueDay" min="1" max="28" class="form-control" placeholder="1" />
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="form-group">
-              <label class="form-label">بداية الشيفت</label>
-              <input type="time" [(ngModel)]="currentUser.shiftStartTime" name="shiftStartTime" class="form-control" />
-            </div>
-            <div class="form-group">
-              <label class="form-label">نهاية الشيفت</label>
-              <input type="time" [(ngModel)]="currentUser.shiftEndTime" name="shiftEndTime" class="form-control" />
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="form-group">
-              <label class="form-label">تارجت الأوردرات المطلوب بالشيفت</label>
-              <input type="number" [(ngModel)]="currentUser.shiftTargetOrders" name="shiftTargetOrders" class="form-control" placeholder="0" />
-            </div>
-            <div class="form-group">
-              <label class="form-label">قيمة بونص تحقيق التارجت (ج.م)</label>
-              <input type="number" [(ngModel)]="currentUser.shiftBonusAmount" name="shiftBonusAmount" class="form-control" placeholder="0.00" />
-            </div>
-          </div>
-        </div>
-
-        <div class="flex justify-end gap-3 pt-4 border-t border-slate-700">
-          <button type="button" (click)="showModal = false" class="btn btn-secondary">إلغاء</button>
-          <button type="submit" class="btn btn-primary flex items-center gap-2">
-            <i class="bi bi-check-lg"></i>
+        <!-- Modal Footer Actions (Fixed at Bottom) -->
+        <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-700 shrink-0">
+          <button type="button" (click)="showModal = false" class="btn btn-secondary text-xs py-2.5 px-5 font-bold">إلغاء</button>
+          <button type="submit" class="btn btn-primary text-xs py-2.5 px-6 font-extrabold flex items-center gap-2 shadow-md shadow-sky-500/20">
+            <i class="bi bi-check-lg text-sm"></i>
             <span>{{ isEditMode ? 'حفظ التعديلات' : 'إنشاء الحساب' }}</span>
           </button>
         </div>
