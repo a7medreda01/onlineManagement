@@ -13,6 +13,7 @@ import { AuthService } from '../../services/auth.service';
 export class LoginComponent implements OnInit {
   username = '';
   password = '';
+  rememberMe = false;
   loading = false;
   errorMessage = '';
   requiresActivation = false;
@@ -28,6 +29,13 @@ export class LoginComponent implements OnInit {
     } else {
       this.isDarkMode = true;
       document.body.classList.remove('light-mode');
+    }
+
+    // Restore saved username if remember me was previously checked
+    const savedUsername = localStorage.getItem('saved_username');
+    if (savedUsername) {
+      this.username = savedUsername;
+      this.rememberMe = true;
     }
   }
 
@@ -52,7 +60,14 @@ export class LoginComponent implements OnInit {
     this.errorMessage = '';
     this.requiresActivation = false;
 
-    this.authService.login({ username: this.username, password: this.password }).subscribe({
+    // Save username if remember me is checked
+    if (this.rememberMe) {
+      localStorage.setItem('saved_username', this.username);
+    } else {
+      localStorage.removeItem('saved_username');
+    }
+
+    this.authService.login({ username: this.username, password: this.password }, this.rememberMe).subscribe({
       next: () => {
         this.loading = false;
         this.router.navigate(['/dashboard']);
@@ -61,7 +76,7 @@ export class LoginComponent implements OnInit {
         this.loading = false;
         const msg = err?.error?.Message || 'فشل تسجيل الدخول. اسم المستخدم أو كلمة المرور غير صحيحة.';
         this.errorMessage = msg;
-        
+
         if (msg.includes('تفعيل') || msg.includes('تأكيد')) {
           this.requiresActivation = true;
           setTimeout(() => {

@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard, adminGuard, managerGuard, financialGuard } from './guards/auth.guard';
+import { authGuard, adminGuard, managerGuard, financialGuard, loginGuard } from './guards/auth.guard';
 import { superAdminGuard } from './guards/super-admin.guard';
 import { LoginComponent } from './components/login/login.component';
 import { ForgotPasswordComponent } from './components/auth/forgot-password.component';
@@ -31,7 +31,7 @@ export const routes: Routes = [
   { path: '', component: LandingComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'activate-account', component: ActivateComponent },
-  { path: 'login', component: LoginComponent },
+  { path: 'login', component: LoginComponent, canActivate: [loginGuard] },
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'super-admin/login', component: SuperAdminLoginComponent },

@@ -3,7 +3,20 @@ import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { UserRole } from '../models/models';
 
-export const authGuard: CanActivateFn = (route, state) => {
+// Redirects already-logged-in users away from /login to /dashboard
+export const loginGuard: CanActivateFn = () => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  if (authService.isLoggedIn()) {
+    router.navigate(['/dashboard']);
+    return false;
+  }
+
+  return true;
+};
+
+export const authGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
@@ -15,7 +28,7 @@ export const authGuard: CanActivateFn = (route, state) => {
   return false;
 };
 
-export const adminGuard: CanActivateFn = (route, state) => {
+export const adminGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
@@ -27,7 +40,7 @@ export const adminGuard: CanActivateFn = (route, state) => {
   return false;
 };
 
-export const managerGuard: CanActivateFn = (route, state) => {
+export const managerGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
@@ -39,7 +52,7 @@ export const managerGuard: CanActivateFn = (route, state) => {
   return false;
 };
 
-export const financialGuard: CanActivateFn = (route, state) => {
+export const financialGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
