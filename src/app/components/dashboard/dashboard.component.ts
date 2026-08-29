@@ -4,7 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { ReportService } from '../../services/report.service';
 import { OrderService } from '../../services/order.service';
 import { AuthService } from '../../services/auth.service';
-import { DashboardSummary, Order, OrderStatus } from '../../models/models';
+import { DashboardSummary, Order, OrderStatus, TeamActivitySummary } from '../../models/models';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,6 +15,7 @@ import { DashboardSummary, Order, OrderStatus } from '../../models/models';
 export class DashboardComponent implements OnInit {
   summary = signal<DashboardSummary | null>(null);
   recentOrders = signal<Order[]>([]);
+  teamActivity = signal<TeamActivitySummary[]>([]);
   loading = signal<boolean>(true);
 
   constructor(
@@ -32,6 +33,41 @@ export class DashboardComponent implements OnInit {
     return this.authService.isAdmin();
   }
 
+  get topModerators(): TeamActivitySummary[] {
+    return [...this.teamActivity()]
+      .sort((a, b) => (b.ordersCreatedCount + b.ordersConfirmedCount) - (a.ordersCreatedCount + a.ordersConfirmedCount));
+  }
+
+  get modA(): TeamActivitySummary | null {
+    return this.topModerators.length > 0 ? this.topModerators[0] : null;
+  }
+
+  get modB(): TeamActivitySummary | null {
+    return this.topModerators.length > 1 ? this.topModerators[1] : null;
+  }
+
+  get modAScore(): number {
+    const a = this.modA;
+    return a ? (a.ordersCreatedCount + a.ordersConfirmedCount) : 0;
+  }
+
+  get modBScore(): number {
+    const b = this.modB;
+    return b ? (b.ordersCreatedCount + b.ordersConfirmedCount) : 0;
+  }
+
+  get modAPercent(): number {
+    const total = this.modAScore + this.modBScore;
+    if (total === 0) return 50;
+    return Math.round((this.modAScore / total) * 100);
+  }
+
+  get modBPercent(): number {
+    const total = this.modAScore + this.modBScore;
+    if (total === 0) return 50;
+    return 100 - this.modAPercent;
+  }
+
   goToDetail(orderId: number): void {
     this.router.navigate(['/orders', orderId]);
   }
@@ -45,6 +81,8 @@ export class DashboardComponent implements OnInit {
 
   loadData(): void {
     this.loading.set(true);
+    const todayStr = new Date().toISOString().split('T')[0];
+
     this.reportService.getDashboardSummary().subscribe({
       next: (res) => {
         this.summary.set(res);
@@ -54,6 +92,13 @@ export class DashboardComponent implements OnInit {
         console.error(err);
         this.loading.set(false);
       }
+    });
+
+    this.reportService.getTeamActivitySummary(todayStr, todayStr).subscribe({
+      next: (res) => {
+        this.teamActivity.set(res || []);
+      },
+      error: (err) => console.error(err)
     });
 
     this.orderService.getAll(undefined, undefined, undefined, undefined, 1, 5).subscribe({
