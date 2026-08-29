@@ -165,7 +165,10 @@ export class UsersComponent implements OnInit {
           this.loadUsers();
           this.loadPayrollSummaries();
         },
-        error: (err) => this.notificationService.error(err?.error?.Message || 'خطأ أثناء التعديل')
+        error: (err) => {
+          const msg = err?.error?.Message || err?.error?.message || (typeof err?.error === 'string' ? err.error : null) || 'خطأ أثناء التعديل';
+          this.notificationService.error(msg);
+        }
       });
     } else {
       this.userService.create(this.currentUser).subscribe({
@@ -175,7 +178,10 @@ export class UsersComponent implements OnInit {
           this.loadUsers();
           this.loadPayrollSummaries();
         },
-        error: (err) => this.notificationService.error(err?.error?.Message || 'خطأ أثناء إنشاء حساب المستخدم')
+        error: (err) => {
+          const msg = err?.error?.Message || err?.error?.message || (typeof err?.error === 'string' ? err.error : null) || 'خطأ أثناء إنشاء حساب المستخدم';
+          this.notificationService.error(msg);
+        }
       });
     }
   }
