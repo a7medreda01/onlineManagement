@@ -90,7 +90,8 @@ export class BostaService {
   }
 
   getAwbPdfUrl(trackingNumber: string): string {
-    return `${this.apiUrl}/shipments/${trackingNumber}/awb`;
+    const safeUrl = this.apiUrl.replace('http://', 'https://');
+    return `${safeUrl}/shipments/${trackingNumber}/awb`;
   }
 
   getAwbPdfBlob(trackingNumber: string): Observable<Blob> {
