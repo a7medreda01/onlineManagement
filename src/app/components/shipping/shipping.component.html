@@ -373,36 +373,44 @@
           </div>
         </div>
 
-        <!-- 3. One-Click Smart Automation Checkboxes -->
+        <!-- 3. Independent Action Buttons for Rates & Stock Sync -->
         <div class="glass-card p-3.5 sm:p-4 space-y-3 border-slate-700/80 bg-slate-800/60">
-          <h4 class="font-bold text-xs text-slate-200 border-b border-slate-700/60 pb-2 flex items-center gap-2">
-            <i class="fa-solid fa-sliders text-sky-400"></i> 3. خيارات التفعيل والمزامنة التلقائية:
+          <h4 class="font-bold text-xs text-slate-200 border-b border-slate-700/60 pb-2 flex items-center justify-between">
+            <span class="flex items-center gap-2"><i class="fa-solid fa-cloud-arrow-down text-sky-400"></i> 3. أدوات سحب البيانات المباشرة من بوسطة:</span>
           </h4>
 
-          <div class="space-y-2.5">
-            <label class="flex items-start sm:items-center gap-3 cursor-pointer bg-slate-900/80 p-2.5 rounded-xl border border-slate-700/60 hover:border-emerald-500/40 transition">
-              <input type="checkbox" [(ngModel)]="autoImportRates" class="w-4 h-4 mt-0.5 sm:mt-0 rounded text-emerald-500 focus:ring-emerald-400 bg-slate-800 border-slate-600 shrink-0" />
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            
+            <!-- Dedicated Button 1: Pull Shipping Rates -->
+            <div class="bg-slate-900/90 p-3 rounded-xl border border-emerald-500/30 flex flex-col justify-between gap-2.5">
               <div>
-                <span class="font-extrabold text-emerald-300 text-xs block">استيراد وحساب أسعار الشحن والتعاقد فوراً ⚡</span>
-                <span class="text-[10px] text-slate-400 block leading-tight">سحب أسعار الـ 27 محافظة التلقائية وفقاً لتعاقدك في بوسطة (+14% VAT)</span>
+                <div class="font-extrabold text-emerald-300 text-xs flex items-center gap-1.5 mb-1">
+                  <i class="fa-solid fa-bolt text-emerald-400"></i> سحب وحساب أسعار الشحن
+                </div>
+                <p class="text-[10px] text-slate-400 leading-tight">سحب أسعار الـ 27 محافظة التلقائية وفقاً لتعاقدك المباشر في بوسطة (+14% VAT)</p>
               </div>
-            </label>
+              <button type="button" (click)="importBostaRates()" [disabled]="importingRates" class="btn bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-200 border border-emerald-500/40 text-xs py-2 px-3 font-bold flex items-center justify-center gap-1.5 transition w-full">
+                <i *ngIf="importingRates" class="fa-solid fa-circle-notch fa-spin"></i>
+                <i *ngIf="!importingRates" class="fa-solid fa-file-invoice-dollar"></i>
+                <span>سحب الأسعار الآن ⚡</span>
+              </button>
+            </div>
 
-            <label class="flex items-start sm:items-center gap-3 cursor-pointer bg-slate-900/80 p-2.5 rounded-xl border border-slate-700/60 hover:border-indigo-500/40 transition">
-              <input type="checkbox" [(ngModel)]="autoSyncProducts" class="w-4 h-4 mt-0.5 sm:mt-0 rounded text-indigo-500 focus:ring-indigo-400 bg-slate-800 border-slate-600 shrink-0" />
+            <!-- Dedicated Button 2: Sync Products & Stock -->
+            <div class="bg-slate-900/90 p-3 rounded-xl border border-indigo-500/30 flex flex-col justify-between gap-2.5">
               <div>
-                <span class="font-extrabold text-indigo-300 text-xs block">مزامنة المنتجات والمخزون مع بوسطة (Product & Stock Sync) 📦</span>
-                <span class="text-[10px] text-slate-400 block leading-tight">ربط كود الـ SKU الخاص بالمنتجات مع حسابك في بوسطة</span>
+                <div class="font-extrabold text-indigo-300 text-xs flex items-center gap-1.5 mb-1">
+                  <i class="fa-solid fa-boxes-stacked text-indigo-400"></i> مزامنة وسحب المنتجات والمخزون
+                </div>
+                <p class="text-[10px] text-slate-400 leading-tight">سحب المنتجات والمخزون الحالي المسجل في مستودعات بوسطة (Bosta Fulfillment)</p>
               </div>
-            </label>
+              <button type="button" (click)="syncBostaProducts()" [disabled]="syncingProducts" class="btn bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-200 border border-indigo-500/40 text-xs py-2 px-3 font-bold flex items-center justify-center gap-1.5 transition w-full">
+                <i *ngIf="syncingProducts" class="fa-solid fa-circle-notch fa-spin"></i>
+                <i *ngIf="!syncingProducts" class="fa-solid fa-boxes-packing"></i>
+                <span>سحب المنتجات والمخزون 📦</span>
+              </button>
+            </div>
 
-            <label class="flex items-start sm:items-center gap-3 cursor-pointer bg-slate-900/80 p-2.5 rounded-xl border border-slate-700/60 hover:border-amber-500/40 transition">
-              <input type="checkbox" [(ngModel)]="useStorageService" class="w-4 h-4 mt-0.5 sm:mt-0 rounded text-amber-500 focus:ring-amber-400 bg-slate-800 border-slate-600 shrink-0" />
-              <div>
-                <span class="font-extrabold text-amber-300 text-xs block">تفعيل أسعار الشحن والتخزين من مخزن بوسطة (Fulfillment Warehousing) 🏢</span>
-                <span class="text-[10px] text-slate-400 block leading-tight">إضافة رسم خدمة التخزين التلقائي للشحنات المجهزة من مستودعات بوسطة</span>
-              </div>
-            </label>
           </div>
         </div>
 
