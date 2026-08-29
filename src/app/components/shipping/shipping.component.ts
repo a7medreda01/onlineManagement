@@ -5,6 +5,8 @@ import { ShippingService } from '../../services/shipping.service';
 import { CustomerService } from '../../services/customer.service';
 import { NotificationService } from '../../services/notification.service';
 import { BostaService } from '../../services/bosta.service';
+import { Observable, forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { Governorate, ShippingCompany, ShippingRate } from '../../models/models';
 
 export type BostaTab = 'instructions' | 'api' | 'rates' | 'fulfillment' | 'stock';
@@ -216,32 +218,68 @@ export class ShippingComponent implements OnInit, OnDestroy {
     const bosta = this.bostaCompany();
     const trimmedKey = this.bostaIntegration.apiKey.trim();
 
-    const doExtraSyncs = (bostaId: number) => {
+    const doSyncTasks = (targetCompanyId: number) => {
+      const syncTasks$: Observable<any>[] = [];
+
       if (this.autoImportRates) {
         const payload = {
           useStorageService: this.useStorageService,
           storageFee: this.storageFee
         };
-        this.bostaService.importRates(bostaId, payload).subscribe({
-          next: (r) => console.log('Rates imported:', r),
-          error: (e) => console.error('Rates import err:', e)
-        });
+        syncTasks$.push(
+          this.bostaService.importRates(targetCompanyId, payload).pipe(
+            catchError(err => of({ success: false, message: err?.error?.Message || 'فشل سحب الأسعار', ratesUpdatedCount: 0 }))
+          )
+        );
       }
 
       if (this.autoSyncProducts) {
-        this.bostaService.syncProductsAndStock().subscribe({
-          next: (r) => console.log('Products synced:', r),
-          error: (e) => console.error('Products sync err:', e)
-        });
+        syncTasks$.push(
+          this.bostaService.syncProductsAndStock().pipe(
+            catchError(err => of({ success: false, message: err?.error?.Message || 'فشل مزامنة المخزون', productsImportedCount: 0, stockUpdatedCount: 0 }))
+          )
+        );
       }
 
-      setTimeout(() => {
+      if (syncTasks$.length > 0) {
+        forkJoin(syncTasks$).subscribe({
+          next: (results) => {
+            this.savingIntegration = false;
+            this.showBostaModal = false;
+            document.body.style.overflow = '';
+
+            let ratesCount = 0;
+            let productsCount = 0;
+            let stockCount = 0;
+
+            results.forEach(res => {
+              if (res && res.ratesUpdatedCount !== undefined) ratesCount = res.ratesUpdatedCount;
+              if (res && res.productsImportedCount !== undefined) productsCount = res.productsImportedCount;
+              if (res && res.stockUpdatedCount !== undefined) stockCount = res.stockUpdatedCount;
+            });
+
+            let msgParts: string[] = ['تم حفظ وتأكيد الربط مع بوسطة بنجاح! 🚀'];
+            if (ratesCount > 0) msgParts.push(`تم سحب أسعار الـ ${ratesCount} محافظة تلقائياً ⚡`);
+            if (stockCount > 0 || productsCount > 0) msgParts.push(`تمت مزامنة المخزون مع بوسطة بنجاح 📦`);
+
+            this.notificationService.success(msgParts.join(' '));
+            this.loadData();
+          },
+          error: () => {
+            this.savingIntegration = false;
+            this.showBostaModal = false;
+            document.body.style.overflow = '';
+            this.notificationService.success('تم حفظ وتأكيد الربط مع بوسطة بنجاح! 🚀');
+            this.loadData();
+          }
+        });
+      } else {
         this.savingIntegration = false;
         this.showBostaModal = false;
         document.body.style.overflow = '';
-        this.notificationService.success('تم الربط والتكامل مع بوسطة وتفعيل الأسعار والمخزون بنجاح! 🚀');
+        this.notificationService.success('تم حفظ وتأكيد الربط مع بوسطة بنجاح! 🚀');
         this.loadData();
-      }, 1200);
+      }
     };
 
     if (bosta) {
@@ -250,7 +288,7 @@ export class ShippingComponent implements OnInit, OnDestroy {
         webhookUrl: this.webhookEndpoint,
         isIntegrated: true
       }).subscribe({
-        next: () => doExtraSyncs(bosta.id),
+        next: () => doSyncTasks(bosta.id),
         error: (err) => {
           this.savingIntegration = false;
           this.notificationService.error(err?.error?.Message || 'حدث خطأ أثناء حفظ إعدادات الربط');
@@ -264,14 +302,14 @@ export class ShippingComponent implements OnInit, OnDestroy {
       }));
 
       this.shippingService.create({
-        name: 'بوسطة (Bosta Express)',
-        phone: '19678',
+        name: 'شركة بوسطة (Bosta)',
+        phone: '19043',
         apiKey: trimmedKey,
         webhookUrl: this.webhookEndpoint,
         isIntegrated: true,
         rates: defaultRates
       }).subscribe({
-        next: (created) => doExtraSyncs(created.id),
+        next: (created) => doSyncTasks(created.id),
         error: (err) => {
           this.savingIntegration = false;
           this.notificationService.error(err?.error?.Message || 'خطأ أثناء تفعيل شركة بوسطة');
