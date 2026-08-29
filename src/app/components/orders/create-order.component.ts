@@ -129,11 +129,14 @@ export class CreateOrderComponent implements OnInit {
 
   loadLookups(): void {
     this.customerService.getAll(undefined, undefined, 1, 1000).subscribe(res => this.customers.set(res.items));
-    this.productService.getAll().subscribe(res => this.products.set(res));
+    this.productService.getAll().subscribe(res => {
+      this.products.set(res);
+      this.autoSelectShippingAndFulfillment();
+    });
     this.customerService.getGovernorates().subscribe(res => this.governorates.set(res));
     this.shippingService.getAll().subscribe(res => {
       this.shippingCompanies.set(res);
-      if (res.length > 0) this.selectedShippingCompanyId = res[0].id;
+      this.autoSelectShippingAndFulfillment();
     });
     this.orderService.getSalesPlatforms().subscribe(res => {
       this.salesPlatforms.set(res);
@@ -147,18 +150,51 @@ export class CreateOrderComponent implements OnInit {
     });
   }
 
+  autoSelectShippingAndFulfillment(): void {
+    const companies = this.shippingCompanies();
+    if (companies.length === 0) return;
+
+    const bostaComp = companies.find(c => c.isIntegrated && (c.name.toLowerCase().includes('bosta') || c.name.includes('بوسطة')));
+    if (bostaComp) {
+      this.selectedShippingCompanyId = bostaComp.id;
+      const hasFulfillmentProds = this.products().some(p => p.isFulfillment || p.code?.startsWith('BO-') || p.code?.startsWith('BST-'));
+      if (hasFulfillmentProds) {
+        this.isBostaFulfillmentOrder = true;
+      }
+    } else {
+      if (this.selectedShippingCompanyId <= 0) {
+        this.selectedShippingCompanyId = companies[0].id;
+      }
+      this.isBostaFulfillmentOrder = false;
+    }
+    this.recalculateCosts();
+  }
+
+  onShippingCompanyChange(): void {
+    const selectedComp = this.shippingCompanies().find(c => c.id === this.selectedShippingCompanyId);
+    const isBosta = selectedComp && (selectedComp.name.toLowerCase().includes('bosta') || selectedComp.name.includes('بوسطة'));
+    if (isBosta) {
+      const hasFulfillmentProds = this.products().some(p => p.isFulfillment || p.code?.startsWith('BO-') || p.code?.startsWith('BST-'));
+      if (hasFulfillmentProds) {
+        this.isBostaFulfillmentOrder = true;
+      }
+    } else {
+      this.isBostaFulfillmentOrder = false;
+    }
+    this.recalculateCosts();
+  }
+
   getStepTitle(step: number): string {
     switch (step) {
       case 1: return 'بيانات العميل والتوصيل';
-      case 2: return 'اختيار المنتجات والكميات';
-      case 3: return 'شركة الشحن ومنصة البيع';
-      case 4: return 'مراجعة الحسابات وتأكيد الأوردر';
+      case 2: return 'شركة الشحن والمنتجات';
+      case 3: return 'الحسابات والتأكيد';
       default: return '';
     }
   }
 
   getProgressPercentage(): number {
-    return Math.round(((this.currentStep - 1) / 3) * 100);
+    return Math.round(((this.currentStep - 1) / 2) * 100);
   }
 
   goToStep(step: number): void {
@@ -168,7 +204,6 @@ export class CreateOrderComponent implements OnInit {
     }
     if (step === 2 && !this.validateStep1()) return;
     if (step === 3 && (!this.validateStep1() || !this.validateStep2())) return;
-    if (step === 4 && (!this.validateStep1() || !this.validateStep2() || !this.validateStep3())) return;
 
     this.currentStep = step;
   }
@@ -189,20 +224,16 @@ export class CreateOrderComponent implements OnInit {
   }
 
   validateStep2(): boolean {
-    if (this.selectedItems.length === 0 || this.selectedItems.some(i => i.productId <= 0 || i.quantity <= 0)) {
-      this.notificationService.warning('رجاء اختيار منتج واحد على الأقل وتحديد الكمية بشكل صحيح');
-      return false;
-    }
-    return true;
-  }
-
-  validateStep3(): boolean {
     if (this.selectedShippingCompanyId <= 0) {
       this.notificationService.warning('رجاء اختيار شركة الشحن');
       return false;
     }
     if (this.selectedSalesPlatformId <= 0) {
       this.notificationService.warning('رجاء اختيار منصة/مصدر البيع');
+      return false;
+    }
+    if (this.selectedItems.length === 0 || this.selectedItems.some(i => i.productId <= 0 || i.quantity <= 0)) {
+      this.notificationService.warning('رجاء اختيار منتج واحد على الأقل وتحديد الكمية بشكل صحيح');
       return false;
     }
     return true;
@@ -213,11 +244,9 @@ export class CreateOrderComponent implements OnInit {
       if (!this.validateStep1()) return;
     } else if (this.currentStep === 2) {
       if (!this.validateStep2()) return;
-    } else if (this.currentStep === 3) {
-      if (!this.validateStep3()) return;
     }
 
-    if (this.currentStep < 4) {
+    if (this.currentStep < 3) {
       this.currentStep++;
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -477,7 +506,7 @@ export class CreateOrderComponent implements OnInit {
   }
 
   submitOrder(): void {
-    if (!this.validateStep1() || !this.validateStep2() || !this.validateStep3()) {
+    if (!this.validateStep1() || !this.validateStep2()) {
       return;
     }
 

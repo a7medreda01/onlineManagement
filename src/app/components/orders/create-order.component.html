@@ -11,12 +11,7 @@
           <i class="fa-solid fa-cart-plus text-indigo-400 text-sm"></i>
           <span>إنشاء أوردر جديد</span>
         </h1>
-        <p class="text-[10px] sm:text-xs text-slate-400 font-medium">الخطوة {{ currentStep }} من 4: {{ getStepTitle(currentStep) }}</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Sleek Multi-Step Stepper Tabs -->
+        <p class="text-[10px] sm:text-xs text-slate-400 font-medium">الخطوة {{ currentStep }} من 3: {{ getStepTitle(currentStep) }}</p>  <!-- Sleek Multi-Step Stepper Tabs -->
   <div class="glass-card p-2 sm:p-3 space-y-2 border-slate-700/80 shadow-md">
     <!-- Progress Bar -->
     <div class="relative w-full bg-slate-800/80 h-1.5 rounded-full overflow-hidden">
@@ -24,34 +19,27 @@
            [style.width.%]="getProgressPercentage()"></div>
     </div>
 
-    <!-- 4 Clean Step Tabs -->
-    <div class="grid grid-cols-4 gap-1 text-center">
+    <!-- 3 Clean Step Tabs -->
+    <div class="grid grid-cols-3 gap-1 text-center">
       <button type="button" (click)="goToStep(1)" [disabled]="currentStep < 1"
               class="py-1.5 px-1 rounded-xl transition-all text-[11px] font-bold flex items-center justify-center gap-1"
               [ngClass]="currentStep === 1 ? 'btn-primary shadow-xs' : (currentStep > 1 ? 'btn-secondary text-indigo-400 font-bold' : 'btn-secondary text-slate-400 opacity-60')">
         <i class="fa-solid fa-user text-[10px]"></i>
-        <span>العميل</span>
+        <span>1. العميل والتوصيل</span>
       </button>
 
       <button type="button" (click)="goToStep(2)" [disabled]="currentStep < 2"
               class="py-1.5 px-1 rounded-xl transition-all text-[11px] font-bold flex items-center justify-center gap-1"
               [ngClass]="currentStep === 2 ? 'btn-primary shadow-xs' : (currentStep > 2 ? 'btn-secondary text-indigo-400 font-bold' : 'btn-secondary text-slate-400 opacity-60')">
-        <i class="fa-solid fa-boxes-stacked text-[10px]"></i>
-        <span>المنتجات</span>
+        <i class="fa-solid fa-truck-fast text-[10px]"></i>
+        <span>2. الشحن والمنتجات</span>
       </button>
 
       <button type="button" (click)="goToStep(3)" [disabled]="currentStep < 3"
               class="py-1.5 px-1 rounded-xl transition-all text-[11px] font-bold flex items-center justify-center gap-1"
-              [ngClass]="currentStep === 3 ? 'btn-primary shadow-xs' : (currentStep > 3 ? 'btn-secondary text-indigo-400 font-bold' : 'btn-secondary text-slate-400 opacity-60')">
-        <i class="fa-solid fa-truck-fast text-[10px]"></i>
-        <span>الشحن</span>
-      </button>
-
-      <button type="button" (click)="goToStep(4)" [disabled]="currentStep < 4"
-              class="py-1.5 px-1 rounded-xl transition-all text-[11px] font-bold flex items-center justify-center gap-1"
-              [ngClass]="currentStep === 4 ? 'btn-primary bg-emerald-600 shadow-xs' : 'btn-secondary text-slate-400 opacity-60'">
+              [ngClass]="currentStep === 3 ? 'btn-primary bg-emerald-600 shadow-xs' : 'btn-secondary text-slate-400 opacity-60'">
         <i class="fa-solid fa-check text-[10px]"></i>
-        <span>التأكيد</span>
+        <span>3. التأكيد</span>
       </button>
     </div>
   </div>
@@ -228,17 +216,41 @@
       </div>
     </div>
 
-    <!-- STEP 2: PRODUCTS & PRICES -->
-    <div *ngIf="currentStep === 2" class="glass-card p-3.5 sm:p-5 space-y-3 border-slate-700/80 shadow-md fade-in">
+    <!-- STEP 2: SHIPPING COMPANY & PRODUCTS -->
+    <div *ngIf="currentStep === 2" class="glass-card p-3.5 sm:p-5 space-y-3.5 border-slate-700/80 shadow-md fade-in">
       <div class="flex items-center justify-between border-b border-slate-700/60 pb-2">
         <h3 class="font-bold text-xs sm:text-sm text-slate-100 flex items-center gap-1.5">
-          <i class="fa-solid fa-boxes-stacked text-amber-400 text-xs"></i>
-          <span>2. المنتجات والأسعار بالأوردر</span>
+          <i class="fa-solid fa-truck-fast text-sky-400 text-xs"></i>
+          <span>2. شركة الشحن والمنتجات</span>
         </h3>
         <button type="button" (click)="addItemRow()" class="btn btn-secondary btn-xs py-1 px-2.5 text-indigo-400 font-bold flex items-center gap-1 text-[11px]">
           <i class="fa-solid fa-plus text-[9px]"></i>
           <span>إضافة منتج</span>
         </button>
+      </div>
+
+      <!-- Shipping Company & Sales Platform Compact Grid Row -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+        <div class="form-group mb-0">
+          <label class="form-label text-[11px] mb-1">شركة الشحن</label>
+          <select [(ngModel)]="selectedShippingCompanyId" (ngModelChange)="onShippingCompanyChange()" name="shippingCompany" class="form-select text-xs py-1.5 px-3" required>
+            <option [ngValue]="0" disabled>-- اختر شركة الشحن --</option>
+            <option *ngFor="let comp of shippingCompanies()" [ngValue]="comp.id">{{ comp.name }} (هاتف: {{ comp.phone }})</option>
+          </select>
+        </div>
+
+        <div class="form-group mb-0">
+          <div class="flex items-center justify-between mb-1">
+            <label class="form-label text-[11px] mb-0">منصة البيع / الصفحة</label>
+            <button type="button" (click)="showPlatformModal = true" class="text-[10px] text-sky-400 hover:text-sky-300 font-bold flex items-center gap-0.5">
+              <i class="fa-solid fa-circle-plus"></i> إضافة منصة
+            </button>
+          </div>
+          <select [(ngModel)]="selectedSalesPlatformId" name="salesPlatform" class="form-select text-xs py-1.5 px-3" required>
+            <option [ngValue]="0" disabled>-- اختر المنصة أو الصفحة --</option>
+            <option *ngFor="let plat of salesPlatforms()" [ngValue]="plat.id">{{ plat.name }}</option>
+          </select>
+        </div>
       </div>
 
       <!-- Warehouse Origin Filter Segmented Control (ONLY shown if store has active Bosta integration) -->
@@ -270,6 +282,7 @@
         </div>
       </div>
 
+      <!-- Selected Products List -->
       <div class="space-y-2.5">
         <div *ngFor="let item of selectedItems; let i = index" class="flex flex-col sm:flex-row items-end sm:items-center gap-2 bg-slate-800/40 p-3 rounded-xl border border-slate-700/60">
           <div class="flex-1 w-full">
@@ -305,10 +318,21 @@
         </div>
       </div>
 
-      <!-- Items Subtotal Summary Bar -->
-      <div class="p-2.5 rounded-xl bg-indigo-500/10 border border-indigo-500/30 flex justify-between items-center text-xs font-bold text-slate-200">
-        <span>مجموع المنتجات الجزئي:</span>
-        <span class="font-black text-indigo-300 text-xs sm:text-sm">{{ calculatedSubTotal }} ج.م</span>
+      <div class="form-group mb-0">
+        <label class="form-label text-[11px] mb-1">ملاحظات الأوردر / تفاصيل الشحن (اختياري)</label>
+        <textarea [(ngModel)]="orderNotes" name="notes" class="form-textarea text-xs py-1.5 px-3" rows="2" placeholder="ملاحظات العميل، موعد التسليم المفضل، إلخ..."></textarea>
+      </div>
+
+      <!-- Items Subtotal & Shipping Cost Summary Bar -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-bold text-slate-200">
+        <div class="p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/30 flex justify-between items-center">
+          <span>المجموع الجزئي للمنتجات:</span>
+          <span class="font-black text-indigo-300 text-xs sm:text-sm">{{ calculatedSubTotal }} ج.م</span>
+        </div>
+        <div class="p-2 rounded-xl bg-amber-500/10 border border-amber-500/30 flex justify-between items-center">
+          <span>مصاريف الشحن:</span>
+          <span class="font-black text-amber-400 text-xs sm:text-sm">{{ calculatedShippingCost }} ج.م</span>
+        </div>
       </div>
 
       <!-- Step 2 Navigation Buttons -->
@@ -325,69 +349,12 @@
       </div>
     </div>
 
-    <!-- STEP 3: SHIPPING COMPANY & SALES PLATFORM -->
-    <div *ngIf="currentStep === 3" class="glass-card p-3.5 sm:p-5 space-y-3 border-slate-700/80 shadow-md fade-in">
-      <div class="flex items-center justify-between border-b border-slate-700/60 pb-2">
-        <h3 class="font-bold text-xs sm:text-sm text-slate-100 flex items-center gap-1.5">
-          <i class="fa-solid fa-truck-fast text-sky-400 text-xs"></i>
-          <span>3. شركة الشحن ومنصة البيع (مصدر الأوردر)</span>
-        </h3>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-        <div class="form-group mb-0">
-          <label class="form-label text-[11px] mb-1">شركة الشحن</label>
-          <select [(ngModel)]="selectedShippingCompanyId" (ngModelChange)="recalculateCosts()" name="shippingCompany" class="form-select text-xs py-1.5 px-3" required>
-            <option [ngValue]="0" disabled>-- اختر شركة الشحن --</option>
-            <option *ngFor="let comp of shippingCompanies()" [ngValue]="comp.id">{{ comp.name }} (هاتف: {{ comp.phone }})</option>
-          </select>
-        </div>
-
-        <div class="form-group mb-0">
-          <div class="flex items-center justify-between mb-1">
-            <label class="form-label text-[11px] mb-0">منصة البيع / الصفحة</label>
-            <button type="button" (click)="showPlatformModal = true" class="text-[10px] text-sky-400 hover:text-sky-300 font-bold flex items-center gap-0.5">
-              <i class="fa-solid fa-circle-plus"></i> إضافة منصة
-            </button>
-          </div>
-          <select [(ngModel)]="selectedSalesPlatformId" name="salesPlatform" class="form-select text-xs py-1.5 px-3" required>
-            <option [ngValue]="0" disabled>-- اختر المنصة أو الصفحة --</option>
-            <option *ngFor="let plat of salesPlatforms()" [ngValue]="plat.id">{{ plat.name }}</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="form-group mb-0">
-        <label class="form-label text-[11px] mb-1">ملاحظات الأوردر / تفاصيل الشحن (اختياري)</label>
-        <textarea [(ngModel)]="orderNotes" name="notes" class="form-textarea text-xs py-1.5 px-3" rows="2" placeholder="ملاحظات العميل، موعد التسليم المفضل، إلخ..."></textarea>
-      </div>
-
-      <!-- Shipping Rate Quick Notice -->
-      <div *ngIf="calculatedShippingCost > 0" class="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex justify-between items-center text-xs font-bold text-slate-200">
-        <span>تكلفة الشحن لهذه المحافظة والشركة:</span>
-        <span class="font-black text-amber-400 text-xs sm:text-sm">{{ calculatedShippingCost }} ج.م</span>
-      </div>
-
-      <!-- Step 3 Navigation Buttons -->
-      <div class="flex justify-between items-center pt-2 border-t border-slate-700/50">
-        <button type="button" (click)="prevStep()" class="btn btn-secondary py-2 px-4 text-xs font-bold">
-          <i class="fa-solid fa-arrow-right text-[10px]"></i>
-          <span>السابق</span>
-        </button>
-
-        <button type="button" (click)="nextStep()" class="btn btn-primary py-2 px-5 font-bold text-xs flex items-center gap-1.5 shadow-xs">
-          <span>الخطوة التالية</span>
-          <i class="fa-solid fa-arrow-left text-[10px]"></i>
-        </button>
-      </div>
-    </div>
-
-    <!-- STEP 4: FINANCIAL SUMMARY & FINAL SUBMIT -->
-    <div *ngIf="currentStep === 4" class="glass-card p-3.5 sm:p-5 space-y-3.5 border-slate-700/80 shadow-md fade-in">
+    <!-- STEP 3: FINANCIAL SUMMARY & FINAL SUBMIT -->
+    <div *ngIf="currentStep === 3" class="glass-card p-3.5 sm:p-5 space-y-3.5 border-slate-700/80 shadow-md fade-in">
       <div class="flex items-center justify-between border-b border-slate-700/60 pb-2">
         <h3 class="font-bold text-xs sm:text-sm text-slate-100 flex items-center gap-1.5">
           <i class="fa-solid fa-calculator text-emerald-400 text-xs"></i>
-          <span>4. مراجعة الحسابات وتأكيد حفظ الأوردر</span>
+          <span>3. مراجعة الحسابات وتأكيد حفظ الأوردر</span>
         </h3>
       </div>
 
