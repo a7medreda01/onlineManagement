@@ -1,17 +1,22 @@
-<div class="max-w-3xl mx-auto space-y-3.5 fade-in font-cairo pb-14 px-2 sm:px-4">
+<div class="max-w-4xl mx-auto space-y-3.5 fade-in font-cairo pb-14 px-2 sm:px-4">
   
   <!-- Clean Sleek Header Bar -->
-  <div class="flex items-center justify-between pb-0.5">
+  <div class="glass-card p-3 flex items-center justify-between border-slate-700/80 shadow-md">
     <div class="flex items-center gap-2.5">
-      <a routerLink="/orders" class="w-8 h-8 rounded-xl bg-slate-800/50 border border-slate-700/60 text-slate-300 flex items-center justify-center text-xs shrink-0 hover:bg-slate-700/60 transition-colors" title="رجوع للأوردرات">
+      <a routerLink="/orders" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 text-slate-200 flex items-center justify-center text-xs shrink-0 hover:bg-slate-700 transition-colors" title="رجوع للأوردرات">
         <i class="fa-solid fa-arrow-right"></i>
       </a>
       <div>
-        <h1 class="text-base sm:text-lg font-black text-slate-100 flex items-center gap-1.5">
-          <i class="fa-solid fa-cart-plus text-indigo-400 text-sm"></i>
+        <h1 class="text-sm sm:text-base font-black text-slate-100 flex items-center gap-1.5">
+          <i class="fa-solid fa-cart-plus text-indigo-400 text-xs sm:text-sm"></i>
           <span>إنشاء أوردر جديد</span>
         </h1>
-        <p class="text-[10px] sm:text-xs text-slate-400 font-medium">الخطوة {{ currentStep }} من 3: {{ getStepTitle(currentStep) }}</p>  <!-- Sleek Multi-Step Stepper Tabs -->
+        <p class="text-[10px] sm:text-xs text-slate-400 font-medium">الخطوة {{ currentStep }} من 3: {{ getStepTitle(currentStep) }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sleek Multi-Step Stepper Tabs -->
   <div class="glass-card p-2 sm:p-3 space-y-2 border-slate-700/80 shadow-md">
     <!-- Progress Bar -->
     <div class="relative w-full bg-slate-800/80 h-1.5 rounded-full overflow-hidden">
@@ -22,24 +27,27 @@
     <!-- 3 Clean Step Tabs -->
     <div class="grid grid-cols-3 gap-1 text-center">
       <button type="button" (click)="goToStep(1)" [disabled]="currentStep < 1"
-              class="py-1.5 px-1 rounded-xl transition-all text-[11px] font-bold flex items-center justify-center gap-1"
+              class="py-1.5 px-1 rounded-lg transition-all text-[11px] font-bold flex items-center justify-center gap-1"
               [ngClass]="currentStep === 1 ? 'btn-primary shadow-xs' : (currentStep > 1 ? 'btn-secondary text-indigo-400 font-bold' : 'btn-secondary text-slate-400 opacity-60')">
         <i class="fa-solid fa-user text-[10px]"></i>
-        <span>1. العميل والتوصيل</span>
+        <span class="hidden sm:inline">1. العميل والتوصيل</span>
+        <span class="inline sm:hidden">1. العميل</span>
       </button>
 
       <button type="button" (click)="goToStep(2)" [disabled]="currentStep < 2"
-              class="py-1.5 px-1 rounded-xl transition-all text-[11px] font-bold flex items-center justify-center gap-1"
+              class="py-1.5 px-1 rounded-lg transition-all text-[11px] font-bold flex items-center justify-center gap-1"
               [ngClass]="currentStep === 2 ? 'btn-primary shadow-xs' : (currentStep > 2 ? 'btn-secondary text-indigo-400 font-bold' : 'btn-secondary text-slate-400 opacity-60')">
         <i class="fa-solid fa-truck-fast text-[10px]"></i>
-        <span>2. الشحن والمنتجات</span>
+        <span class="hidden sm:inline">2. الشحن والمنتجات</span>
+        <span class="inline sm:hidden">2. المنتجات</span>
       </button>
 
       <button type="button" (click)="goToStep(3)" [disabled]="currentStep < 3"
-              class="py-1.5 px-1 rounded-xl transition-all text-[11px] font-bold flex items-center justify-center gap-1"
+              class="py-1.5 px-1 rounded-lg transition-all text-[11px] font-bold flex items-center justify-center gap-1"
               [ngClass]="currentStep === 3 ? 'btn-primary bg-emerald-600 shadow-xs' : 'btn-secondary text-slate-400 opacity-60'">
         <i class="fa-solid fa-check text-[10px]"></i>
-        <span>3. التأكيد</span>
+        <span class="hidden sm:inline">3. التأكيد</span>
+        <span class="inline sm:hidden">3. التأكيد</span>
       </button>
     </div>
   </div>
@@ -58,11 +66,11 @@
       <div class="grid grid-cols-2 gap-1 p-1 bg-slate-800/40 rounded-xl border border-slate-700/60">
         <button type="button" (click)="setCustomerMode(true)" [class.btn-primary]="isNewCustomer" [class.btn-secondary]="!isNewCustomer" class="btn btn-xs py-1.5 text-xs font-bold justify-center rounded-lg flex items-center gap-1">
           <i class="fa-solid fa-user-plus text-[10px]"></i>
-          <span>إدخال عميل جديد</span>
+          <span>عميل جديد</span>
         </button>
         <button type="button" (click)="setCustomerMode(false)" [class.btn-primary]="!isNewCustomer" [class.btn-secondary]="isNewCustomer" class="btn btn-xs py-1.5 text-xs font-bold justify-center rounded-lg flex items-center gap-1">
           <i class="fa-solid fa-user-check text-[10px]"></i>
-          <span>اختيار عميل مسجل</span>
+          <span>عميل مسجل</span>
         </button>
       </div>
 
