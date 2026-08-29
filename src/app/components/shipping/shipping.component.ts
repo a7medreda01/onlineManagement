@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ShippingService } from '../../services/shipping.service';
@@ -15,7 +15,7 @@ export type BostaTab = 'instructions' | 'api' | 'rates' | 'fulfillment' | 'stock
   imports: [CommonModule, FormsModule],
   templateUrl: './shipping.component.html'
 })
-export class ShippingComponent implements OnInit {
+export class ShippingComponent implements OnInit, OnDestroy {
   companies = signal<ShippingCompany[]>([]);
   governorates = signal<Governorate[]>([]);
 
@@ -107,6 +107,10 @@ export class ShippingComponent implements OnInit {
     this.loadData();
   }
 
+  ngOnDestroy(): void {
+    document.body.style.overflow = '';
+  }
+
   loadData(): void {
     this.customerService.getGovernorates().subscribe(govs => {
       this.governorates.set(govs);
@@ -158,10 +162,12 @@ export class ShippingComponent implements OnInit {
   openBostaModal(tab: BostaTab = 'instructions'): void {
     this.activeBostaTab = tab;
     this.showBostaModal = true;
+    document.body.style.overflow = 'hidden';
   }
 
   closeBostaModal(): void {
     this.showBostaModal = false;
+    document.body.style.overflow = '';
   }
 
   setBostaTab(tab: BostaTab): void {
@@ -232,6 +238,7 @@ export class ShippingComponent implements OnInit {
       setTimeout(() => {
         this.savingIntegration = false;
         this.showBostaModal = false;
+        document.body.style.overflow = '';
         this.notificationService.success('تم الربط والتكامل مع بوسطة وتفعيل الأسعار والمخزون بنجاح! 🚀');
         this.loadData();
       }, 1200);
