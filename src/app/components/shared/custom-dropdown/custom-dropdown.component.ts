@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, ElementRef, HostListener, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { environment } from '../../../../environments/environment';
 
 export interface DropdownOption {
   value: any;
@@ -23,13 +24,13 @@ export class CustomDropdownComponent {
   @Input() options: DropdownOption[] = [];
   @Input() value: any = null;
   @Input() searchable: boolean = true;
-  @Input() icon: string = 'fa-solid fa-list-ul';
+  @Input() icon: string = 'fa-solid fa-box';
 
   @Output() valueChange = new EventEmitter<any>();
 
   isOpen = signal<boolean>(false);
   searchTerm = signal<string>('');
-  popoverStyle = signal<{ top?: string, right?: string, width?: string }>({});
+  failedImages = signal<Set<any>>(new Set());
 
   constructor(private elementRef: ElementRef) {}
 
@@ -40,31 +41,10 @@ export class CustomDropdownComponent {
     }
   }
 
-  @HostListener('window:scroll')
-  @HostListener('window:resize')
-  onWindowChange(): void {
-    if (this.isOpen()) {
-      this.calculatePosition();
-    }
-  }
-
   toggleOpen(): void {
     this.isOpen.update(v => !v);
     if (this.isOpen()) {
-      this.calculatePosition();
       this.searchTerm.set('');
-    }
-  }
-
-  calculatePosition(): void {
-    const triggerEl = this.elementRef.nativeElement.querySelector('.dropdown-trigger');
-    if (triggerEl) {
-      const rect = triggerEl.getBoundingClientRect();
-      this.popoverStyle.set({
-        top: `${rect.bottom + 6}px`,
-        right: `${window.innerWidth - rect.right}px`,
-        width: `${Math.max(rect.width, 220)}px`
-      });
     }
   }
 
@@ -81,7 +61,11 @@ export class CustomDropdownComponent {
     );
   }
 
-  selectOption(opt: DropdownOption): void {
+  selectOption(opt: DropdownOption, event?: MouseEvent): void {
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
     this.value = opt.value;
     this.valueChange.emit(this.value);
     this.isOpen.set(false);
@@ -89,7 +73,27 @@ export class CustomDropdownComponent {
 
   clearSelection(event: MouseEvent): void {
     event.stopPropagation();
+    event.preventDefault();
     this.value = null;
     this.valueChange.emit(null);
+  }
+
+  handleImageError(optValue: any): void {
+    this.failedImages.update(set => {
+      const updated = new Set(set);
+      updated.add(optValue);
+      return updated;
+    });
+  }
+
+  hasImageFailed(optValue: any): boolean {
+    return this.failedImages().has(optValue);
+  }
+
+  formatImageUrl(url?: string): string | undefined {
+    if (!url || url === 'null' || url === 'undefined') return undefined;
+    if (url.startsWith('http://') || url.startsWith('https://')) return url;
+    const baseUrl = environment.apiBaseUrl || 'https://besnesy.runasp.net';
+    return `${baseUrl}/${url.replace(/^\//, '')}`;
   }
 }

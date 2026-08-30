@@ -14,10 +14,21 @@
   >
     <div class="flex items-center gap-2 overflow-hidden min-w-0">
       <!-- Product Image or Icon -->
-      <img *ngIf="selectedOption?.imageUrl" [src]="selectedOption?.imageUrl" class="w-7 h-7 rounded-lg object-cover border border-slate-700 shrink-0" alt="" (error)="$event.target.style.display='none'" />
-      <div *ngIf="!selectedOption?.imageUrl && selectedOption?.icon" class="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center text-xs shrink-0">
-        <i [class]="selectedOption?.icon"></i>
-      </div>
+      <ng-container *ngIf="selectedOption">
+        <img 
+          *ngIf="selectedOption.imageUrl && !hasImageFailed(selectedOption.value)" 
+          [src]="formatImageUrl(selectedOption.imageUrl)" 
+          (error)="handleImageError(selectedOption.value)"
+          class="w-7 h-7 rounded-lg object-cover border border-slate-700 shrink-0" 
+          alt="" 
+        />
+        <div 
+          *ngIf="!selectedOption.imageUrl || hasImageFailed(selectedOption.value)" 
+          class="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center text-xs shrink-0"
+        >
+          <i [class]="selectedOption.icon || icon"></i>
+        </div>
+      </ng-container>
 
       <div class="overflow-hidden min-w-0">
         <div *ngIf="selectedOption" class="text-xs font-bold text-slate-100 truncate flex items-center gap-2">
@@ -35,7 +46,7 @@
 
     <div class="flex items-center gap-1.5 shrink-0 mr-1">
       <button 
-        *ngIf="value !== null && value !== undefined" 
+        *ngIf="value !== null && value !== undefined && value !== 0" 
         type="button"
         (click)="clearSelection($event)" 
         class="text-slate-400 hover:text-rose-400 text-xs p-1"
@@ -59,6 +70,7 @@
         type="text" 
         [ngModel]="searchTerm()"
         (ngModelChange)="searchTerm.set($event)"
+        (click)="$event.stopPropagation()"
         placeholder="بحث باسم المنتج..." 
         class="w-full pr-8 pl-3 py-1.5 bg-slate-800/80 border border-slate-700 rounded-lg text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500"
       />
@@ -68,7 +80,7 @@
     <div class="overflow-y-auto space-y-1 max-h-48 p-0.5 custom-scrollbar">
       <div 
         *ngFor="let opt of filteredOptions"
-        (click)="selectOption(opt)"
+        (click)="selectOption(opt, $event)"
         class="flex items-center justify-between p-2 rounded-xl cursor-pointer text-xs font-semibold transition hover:bg-amber-500/15 hover:text-amber-300"
         [class.bg-amber-500\/20]="opt.value === value"
         [class.text-amber-300]="opt.value === value"
@@ -76,8 +88,20 @@
         [class.text-slate-200]="opt.value !== value"
       >
         <div class="flex items-center gap-2.5 overflow-hidden min-w-0">
-          <img *ngIf="opt.imageUrl" [src]="opt.imageUrl" class="w-8 h-8 rounded-lg object-cover border border-slate-700 shrink-0" alt="" (error)="$event.target.style.display='none'" />
-          <i *ngIf="!opt.imageUrl && opt.icon" [class]="opt.icon + ' text-amber-400 text-xs shrink-0'"></i>
+          <img 
+            *ngIf="opt.imageUrl && !hasImageFailed(opt.value)" 
+            [src]="formatImageUrl(opt.imageUrl)" 
+            (error)="handleImageError(opt.value)"
+            class="w-8 h-8 rounded-lg object-cover border border-slate-700 shrink-0" 
+            alt="" 
+          />
+          <div 
+            *ngIf="!opt.imageUrl || hasImageFailed(opt.value)" 
+            class="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center text-xs shrink-0"
+          >
+            <i [class]="opt.icon || icon"></i>
+          </div>
+
           <div class="overflow-hidden min-w-0">
             <div class="truncate font-bold text-xs">{{ opt.label }}</div>
             <div *ngIf="opt.sublabel" class="text-[10px] text-slate-400 truncate">{{ opt.sublabel }}</div>
