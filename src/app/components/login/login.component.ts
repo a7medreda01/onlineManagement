@@ -82,9 +82,13 @@ export class LoginComponent implements OnInit {
     }
 
     this.authService.login({ username: normalizedUsername, password: normalizedPassword }, this.rememberMe).subscribe({
-      next: () => {
+      next: (res) => {
         this.loading = false;
-        this.router.navigate(['/dashboard']);
+        if (res?.isSuperAdmin) {
+          this.router.navigate(['/super-admin']);
+        } else {
+          this.router.navigate(['/dashboard']);
+        }
       },
       error: (err) => {
         this.loading = false;
