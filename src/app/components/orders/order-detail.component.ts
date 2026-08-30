@@ -563,6 +563,12 @@ export class OrderDetailComponent implements OnInit {
     return `https://bosta.co/en-eg/tracking-shipments?shipment-number=${trackingNumOrUrl}`;
   }
 
+  makePhoneCall(phone?: string): void {
+    if (!phone) return;
+    const cleanPhone = phone.replace(/[^0-9+]/g, '');
+    window.location.href = `tel:${cleanPhone}`;
+  }
+
   openWhatsApp(phone?: string): void {
     if (!phone) return;
     let cleanPhone = phone.replace(/[^0-9]/g, '');

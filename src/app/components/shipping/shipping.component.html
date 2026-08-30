@@ -360,19 +360,42 @@
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             
-            <!-- Dedicated Button 1: Pull Shipping Rates -->
+            <!-- Dedicated Button 1: Pull Shipping Rates & Storage Fee Option -->
             <div class="bg-slate-900/90 p-3 rounded-xl border border-emerald-500/30 flex flex-col justify-between gap-2.5">
               <div>
                 <div class="font-extrabold text-emerald-300 text-xs flex items-center gap-1.5 mb-1">
                   <i class="fa-solid fa-bolt text-emerald-400"></i> سحب وحساب أسعار الشحن
                 </div>
-                <p class="text-[10px] text-slate-400 leading-tight">سحب أسعار الـ 27 محافظة التلقائية وفقاً لتعاقدك المباشر في بوسطة (+14% VAT)</p>
+                <p class="text-[10px] text-slate-400 leading-tight mb-2">سحب أسعار الـ 27 محافظة التلقائية وفقاً لتعاقدك المباشر في بوسطة (+14% VAT)</p>
+
+                <!-- Storage Fee Option Checkbox & Amount -->
+                <div class="p-2 rounded-xl bg-slate-950/80 border border-slate-700/60 space-y-1.5 text-xs">
+                  <label class="flex items-center gap-2 cursor-pointer font-bold text-amber-300">
+                    <input type="checkbox" [(ngModel)]="useStorageService" class="w-3.5 h-3.5 rounded text-amber-500 bg-slate-900 border-slate-700" />
+                    <span>إضافة رسوم التخزين / الفولفيلمنت 📦</span>
+                  </label>
+                  <div *ngIf="useStorageService" class="flex items-center gap-2 pr-5">
+                    <span class="text-slate-400 text-[10px]">رسوم التخزين للشحنة:</span>
+                    <div class="relative max-w-[90px]">
+                      <input type="number" [(ngModel)]="storageFee" min="0" step="1" class="form-control text-xs py-0.5 px-2 text-center font-bold text-amber-400 bg-slate-900 border-slate-700" />
+                      <span class="absolute left-1.5 top-0.5 text-[9px] text-slate-500">ج.م</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <button type="button" (click)="importBostaRates()" [disabled]="importingRates" class="btn bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-200 border border-emerald-500/40 text-xs py-2 px-3 font-bold flex items-center justify-center gap-1.5 transition w-full">
-                <i *ngIf="importingRates" class="fa-solid fa-circle-notch fa-spin"></i>
-                <i *ngIf="!importingRates" class="fa-solid fa-file-invoice-dollar"></i>
-                <span>سحب الأسعار الآن ⚡</span>
-              </button>
+
+              <div class="space-y-1.5">
+                <button type="button" (click)="importBostaRates()" [disabled]="importingRates" class="btn bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-200 border border-emerald-500/40 text-xs py-2 px-3 font-bold flex items-center justify-center gap-1.5 transition w-full">
+                  <i *ngIf="importingRates" class="fa-solid fa-circle-notch fa-spin"></i>
+                  <i *ngIf="!importingRates" class="fa-solid fa-file-invoice-dollar"></i>
+                  <span>سحب الأسعار الآن ⚡</span>
+                </button>
+
+                <button type="button" (click)="openBostaRatesModal()" class="btn btn-secondary btn-xs py-1.5 px-3 text-sky-300 border-sky-500/30 hover:bg-sky-500/10 font-bold flex items-center justify-center gap-1.5 w-full">
+                  <i class="fa-solid fa-list-check text-sky-400"></i>
+                  <span>عرض وتعديل أسعار الـ 27 محافظة 📝</span>
+                </button>
+              </div>
             </div>
 
             <!-- Dedicated Button 2: Sync Products & Stock -->
@@ -465,6 +488,83 @@
           </button>
         </div>
       </form>
+
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- VIEW & EDIT BOSTA GOVERNORATES RATES MODAL (27 GOVERNORATES)               -->
+  <!-- ========================================================================= -->
+  <div *ngIf="showBostaRatesModal" class="app-modal-overlay">
+    <div class="glass-card w-full max-w-2xl p-5 fade-in space-y-4 my-auto border border-emerald-500/40 shadow-2xl bg-slate-900 max-h-[90vh] flex flex-col">
+
+      <!-- Header -->
+      <div class="flex items-center justify-between border-b border-slate-700/70 pb-3 shrink-0">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center font-bold">
+            <i class="fa-solid fa-truck-fast"></i>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-base text-slate-100">أسعار شحن بوسطة لكافة المحافظات (27 محافظة)</h3>
+            <p class="text-[11px] text-slate-400">عرض وتعديل أسعار الشحن والمرتجع المعتمدة لبوسطة</p>
+          </div>
+        </div>
+        <button (click)="closeBostaRatesModal()" class="text-slate-400 hover:text-white p-1">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="flex items-center justify-between gap-3 shrink-0">
+        <div class="relative flex-1 max-w-xs">
+          <input type="text" [(ngModel)]="bostaSearchQuery" placeholder="بحث باسم المحافظة..." class="form-control text-xs py-1.5 pr-8 pl-3 bg-slate-950 border-slate-700 text-slate-200" />
+          <i class="fa-solid fa-magnifying-glass absolute right-2.5 top-2.5 text-slate-500 text-xs"></i>
+        </div>
+        <span class="text-[11px] text-slate-400">المحافظات: <strong class="text-emerald-400 font-bold">{{ filteredBostaRates.length }}</strong></span>
+      </div>
+
+      <!-- Table -->
+      <div class="table-responsive flex-1 overflow-y-auto rounded-xl border border-slate-800">
+        <table class="custom-table">
+          <thead class="sticky top-0 bg-slate-950 backdrop-blur z-10">
+            <tr>
+              <th class="py-2.5">المحافظة</th>
+              <th class="py-2.5 text-center">سعر الشحن والتوصيل (ج.م)</th>
+              <th class="py-2.5 text-center">سعر المرتجع للراسل (ج.م)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let rate of filteredBostaRates" class="hover:bg-slate-800/40 transition">
+              <td class="font-extrabold text-slate-200 text-xs py-2">
+                <i class="fa-solid fa-location-dot text-emerald-400 ml-1.5 text-[11px]"></i>
+                {{ rate.governorateName }}
+              </td>
+              <td class="text-center py-2">
+                <div class="relative max-w-[130px] mx-auto">
+                  <input type="number" [(ngModel)]="rate.shippingPrice" min="0" step="5" class="form-control text-xs py-1 text-center font-extrabold text-emerald-400 bg-slate-950 border-slate-700 focus:border-emerald-500" />
+                  <span class="absolute left-2 top-1 text-[10px] text-slate-500">ج.م</span>
+                </div>
+              </td>
+              <td class="text-center py-2">
+                <div class="relative max-w-[130px] mx-auto">
+                  <input type="number" [(ngModel)]="rate.returnPrice" min="0" step="5" class="form-control text-xs py-1 text-center font-extrabold text-amber-400 bg-slate-950 border-slate-700 focus:border-amber-500" />
+                  <span class="absolute left-2 top-1 text-[10px] text-slate-500">ج.م</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Footer Buttons -->
+      <div class="flex justify-end gap-2.5 pt-3 border-t border-slate-800 shrink-0">
+        <button type="button" (click)="closeBostaRatesModal()" class="btn btn-secondary text-xs py-2 px-4">إلغاء</button>
+        <button type="button" (click)="saveBostaRates()" [disabled]="savingBostaRates" class="btn btn-primary text-xs font-extrabold px-6 py-2 shadow-md shadow-emerald-500/20 flex items-center gap-1.5">
+          <i *ngIf="savingBostaRates" class="fa-solid fa-circle-notch fa-spin"></i>
+          <i *ngIf="!savingBostaRates" class="fa-solid fa-floppy-disk"></i>
+          <span>حفظ التعديلات 💾</span>
+        </button>
+      </div>
 
     </div>
   </div>

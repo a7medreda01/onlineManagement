@@ -166,10 +166,16 @@
               </div>
             </div>
             <div class="flex items-center gap-1 shrink-0">
-              <button (click)="openWhatsApp(order()!.customerPhone)" title="واتساب" class="btn btn-secondary btn-xs p-1.5 text-emerald-400 rounded-lg border border-emerald-500/30">
+              <!-- Direct Instant Phone Call Button -->
+              <button (click)="makePhoneCall(order()!.customerPhone)" title="اتصال تلفوني مباشر" class="btn btn-secondary btn-xs p-1.5 text-sky-400 hover:text-sky-300 rounded-lg border border-sky-500/30 bg-sky-500/10">
+                <i class="fa-solid fa-phone-flip text-xs"></i>
+              </button>
+              <!-- WhatsApp Button -->
+              <button (click)="openWhatsApp(order()!.customerPhone)" title="مراسلة واتساب" class="btn btn-secondary btn-xs p-1.5 text-emerald-400 hover:text-emerald-300 rounded-lg border border-emerald-500/30 bg-emerald-500/10">
                 <i class="fa-brands fa-whatsapp text-xs"></i>
               </button>
-              <button (click)="copyToClipboard(order()!.customerPhone)" title="نسخ الرقم" class="btn btn-secondary btn-xs p-1.5 text-sky-400 rounded-lg">
+              <!-- Copy Number Button -->
+              <button (click)="copyToClipboard(order()!.customerPhone)" title="نسخ الرقم" class="btn btn-secondary btn-xs p-1.5 text-slate-400 hover:text-slate-200 rounded-lg">
                 <i class="fa-regular fa-copy text-xs"></i>
               </button>
             </div>

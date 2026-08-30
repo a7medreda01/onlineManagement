@@ -71,6 +71,22 @@ export class ShippingComponent implements OnInit, OnDestroy {
   storageFee = 15;
   autoImportRates = true;
   autoSyncProducts = true;
+  showBostaRatesModal = false;
+  bostaSearchQuery = '';
+
+  openBostaRatesModal(): void {
+    this.showBostaRatesModal = true;
+  }
+
+  closeBostaRatesModal(): void {
+    this.showBostaRatesModal = false;
+  }
+
+  get filteredBostaRates() {
+    const q = this.bostaSearchQuery.trim().toLowerCase();
+    if (!q) return this.editedBostaRates;
+    return this.editedBostaRates.filter(r => r.governorateName.toLowerCase().includes(q));
+  }
 
   // Add Regular Company Modal
   showAddRegularModal = false;
@@ -366,6 +382,7 @@ export class ShippingComponent implements OnInit, OnDestroy {
     this.shippingService.updateRates(bosta.id, payload).subscribe({
       next: () => {
         this.savingBostaRates = false;
+        this.showBostaRatesModal = false;
         this.notificationService.success('تم حفظ أسعار بوسطة لجميع المحافظات بنجاح!');
         this.loadData();
       },
