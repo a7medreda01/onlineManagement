@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable, catchError, shareReplay, tap, throwError } from 'rxjs';
 import { AuthResponse, SubscriptionDetails, UserRole, Plan } from '../models/models';
 import { environment } from '../../environments/environment';
 
@@ -10,6 +10,7 @@ import { environment } from '../../environments/environment';
 export class AuthService {
   private readonly apiUrl = `${environment.apiUrl}/auth`;
   public currentUser = signal<AuthResponse | null>(this.getStoredUser());
+  private refreshTokenSubject: Observable<AuthResponse> | null = null;
 
   constructor(private http: HttpClient) {}
 
@@ -22,13 +23,31 @@ export class AuthService {
   }
 
   refreshToken(): Observable<AuthResponse> {
+    if (this.refreshTokenSubject) {
+      return this.refreshTokenSubject;
+    }
+
     const refreshTok = this.getRefreshToken();
+    if (!refreshTok) {
+      this.logout();
+      return throwError(() => new Error('رمز التحديث غير موجود'));
+    }
+
     const rememberMe = this.isRemembered();
-    return this.http.post<AuthResponse>(`${this.apiUrl}/refresh-token`, { refreshToken: refreshTok }).pipe(
+    this.refreshTokenSubject = this.http.post<AuthResponse>(`${this.apiUrl}/refresh-token`, { refreshToken: refreshTok }).pipe(
       tap((res) => {
         this.storeAuthSession(res, rememberMe);
-      })
+        this.refreshTokenSubject = null;
+      }),
+      catchError((err) => {
+        this.refreshTokenSubject = null;
+        this.logout();
+        return throwError(() => err);
+      }),
+      shareReplay(1)
     );
+
+    return this.refreshTokenSubject;
   }
 
   logout(): void {
@@ -63,15 +82,26 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    return localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
+    const isRemembered = localStorage.getItem('remember_me') === 'true';
+    if (isRemembered) {
+      return localStorage.getItem('auth_token');
+    }
+    return sessionStorage.getItem('auth_token') || localStorage.getItem('auth_token');
   }
 
   getRefreshToken(): string | null {
-    return localStorage.getItem('refresh_token') || sessionStorage.getItem('refresh_token');
+    const isRemembered = localStorage.getItem('remember_me') === 'true';
+    if (isRemembered) {
+      return localStorage.getItem('refresh_token');
+    }
+    return sessionStorage.getItem('refresh_token') || localStorage.getItem('refresh_token');
   }
 
   isLoggedIn(): boolean {
-    return !!this.getToken();
+    const token = this.getToken();
+    if (!token) return false;
+    if (!this.isTokenExpired(token)) return true;
+    return !!this.getRefreshToken();
   }
 
   isRemembered(): boolean {
@@ -98,20 +128,45 @@ export class AuthService {
     return !!user?.role && roles.includes(user.role);
   }
 
+  public parseJwt(token: string): any {
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .join('')
+      );
+      return JSON.parse(jsonPayload);
+    } catch {
+      return null;
+    }
+  }
+
+  public isTokenExpired(token?: string | null): boolean {
+    const t = token || this.getToken();
+    if (!t) return true;
+    const payload = this.parseJwt(t);
+    if (!payload || !payload.exp) return true;
+    const currentTime = Math.floor(Date.now() / 1000);
+    return payload.exp < currentTime;
+  }
+
   private storeAuthSession(res: AuthResponse, rememberMe: boolean): void {
+    // Clear both storages first to ensure no leftover mixed keys
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('user_data');
+    localStorage.removeItem('remember_me');
+    sessionStorage.removeItem('auth_token');
+    sessionStorage.removeItem('refresh_token');
+    sessionStorage.removeItem('user_data');
+
     const storage = rememberMe ? localStorage : sessionStorage;
 
-    // Clear opposite storage to avoid conflicts
     if (rememberMe) {
-      sessionStorage.removeItem('auth_token');
-      sessionStorage.removeItem('refresh_token');
-      sessionStorage.removeItem('user_data');
       localStorage.setItem('remember_me', 'true');
-    } else {
-      localStorage.removeItem('auth_token');
-      localStorage.removeItem('refresh_token');
-      localStorage.removeItem('user_data');
-      localStorage.removeItem('remember_me');
     }
 
     if (res.token) storage.setItem('auth_token', res.token);
@@ -121,7 +176,17 @@ export class AuthService {
   }
 
   private getStoredUser(): AuthResponse | null {
-    const data = localStorage.getItem('user_data') || sessionStorage.getItem('user_data');
-    return data ? JSON.parse(data) : null;
+    const token = this.getToken();
+    if (!token || this.isTokenExpired(token)) {
+      return null;
+    }
+    const isRemembered = this.isRemembered();
+    const data = isRemembered ? localStorage.getItem('user_data') : (sessionStorage.getItem('user_data') || localStorage.getItem('user_data'));
+    if (!data) return null;
+    try {
+      return JSON.parse(data) as AuthResponse;
+    } catch {
+      return null;
+    }
   }
 }
