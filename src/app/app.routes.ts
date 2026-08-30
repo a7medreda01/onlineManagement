@@ -27,6 +27,8 @@ import { WalletsComponent } from './components/wallets/wallets.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { UnauthorizedComponent } from './components/shared/unauthorized/unauthorized.component';
 
+import { StoreSettingsComponent } from './components/store-settings/store-settings.component';
+
 export const routes: Routes = [
   { path: '', component: LandingComponent },
   { path: 'signup', component: SignupComponent },
@@ -48,6 +50,7 @@ export const routes: Routes = [
       { path: 'products', component: ProductsComponent },
       { path: 'customers', component: CustomersComponent },
       { path: 'shipping', component: ShippingComponent },
+      { path: 'store-settings', component: StoreSettingsComponent },
       { path: 'wallets', component: WalletsComponent, canActivate: [financialGuard] },
       { path: 'expenses', component: ExpensesComponent, canActivate: [financialGuard] },
       { path: 'purchases/invoices', component: PurchaseInvoicesComponent, canActivate: [financialGuard] },

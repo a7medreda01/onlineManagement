@@ -60,6 +60,8 @@ export interface User {
   shiftEndTime?: string;
   shiftTargetOrders?: number;
   shiftBonusAmount?: number;
+  assignedSalesPlatforms?: SalesPlatform[];
+  assignedSalesPlatformIds?: number[];
 }
 
 
@@ -532,6 +534,8 @@ export interface UserProfile {
   shiftEndTime?: string;
   shiftTargetOrders: number;
   shiftBonusAmount: number;
+  assignedSalesPlatforms?: SalesPlatform[];
+  assignedSalesPlatformIds?: number[];
 }
 
 

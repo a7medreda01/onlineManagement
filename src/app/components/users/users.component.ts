@@ -5,7 +5,8 @@ import { UserService } from '../../services/user.service';
 import { PayrollService } from '../../services/payroll.service';
 import { WalletService } from '../../services/wallet.service';
 import { NotificationService } from '../../services/notification.service';
-import { User, UserRole, StaffMemberPayrollSummary, StaffPayrollRecord, Wallet } from '../../models/models';
+import { OrderService } from '../../services/order.service';
+import { User, UserRole, StaffMemberPayrollSummary, StaffPayrollRecord, Wallet, SalesPlatform } from '../../models/models';
 
 @Component({
   selector: 'app-users',
@@ -18,6 +19,7 @@ export class UsersComponent implements OnInit {
   payrollSummaries = signal<StaffMemberPayrollSummary[]>([]);
   payrollHistory = signal<StaffPayrollRecord[]>([]);
   wallets = signal<Wallet[]>([]);
+  salesPlatforms = signal<SalesPlatform[]>([]);
   UserRole = UserRole;
 
   activeTab: 'users' | 'payroll' | 'history' = 'users';
@@ -37,7 +39,8 @@ export class UsersComponent implements OnInit {
     shiftStartTime: '09:00',
     shiftEndTime: '17:00',
     shiftTargetOrders: 0,
-    shiftBonusAmount: 0
+    shiftBonusAmount: 0,
+    assignedSalesPlatformIds: []
   };
 
   // Salary Disbursement Modal
@@ -74,6 +77,7 @@ export class UsersComponent implements OnInit {
     private userService: UserService,
     private payrollService: PayrollService,
     private walletService: WalletService,
+    private orderService: OrderService,
     private notificationService: NotificationService
   ) {}
 
@@ -81,6 +85,14 @@ export class UsersComponent implements OnInit {
     this.loadUsers();
     this.loadPayrollSummaries();
     this.loadWallets();
+    this.loadSalesPlatforms();
+  }
+
+  loadSalesPlatforms(): void {
+    this.orderService.getSalesPlatforms().subscribe({
+      next: (res) => this.salesPlatforms.set(res),
+      error: (err) => console.error(err)
+    });
   }
 
   loadUsers(): void {
@@ -131,13 +143,15 @@ export class UsersComponent implements OnInit {
       shiftStartTime: '09:00',
       shiftEndTime: '17:00',
       shiftTargetOrders: 0,
-      shiftBonusAmount: 0
+      shiftBonusAmount: 0,
+      assignedSalesPlatformIds: []
     };
     this.showModal = true;
   }
 
-  openEditModal(u: User): void {
+  openEditModal(u: any): void {
     this.isEditMode = true;
+    const assignedIds = (u.assignedSalesPlatforms || u.assignedSalesPlatformIds || []).map((p: any) => typeof p === 'number' ? p : p.id);
     this.currentUser = {
       id: u.id,
       fullName: u.fullName,
@@ -151,9 +165,26 @@ export class UsersComponent implements OnInit {
       shiftEndTime: u.shiftEndTime || '17:00',
       shiftTargetOrders: u.shiftTargetOrders || 0,
       shiftBonusAmount: u.shiftBonusAmount || 0,
-      isActive: u.isActive
+      isActive: u.isActive,
+      assignedSalesPlatformIds: assignedIds
     };
     this.showModal = true;
+  }
+
+  isPlatformAssigned(platformId: number): boolean {
+    return (this.currentUser.assignedSalesPlatformIds || []).includes(platformId);
+  }
+
+  togglePlatformAssignment(platformId: number): void {
+    if (!this.currentUser.assignedSalesPlatformIds) {
+      this.currentUser.assignedSalesPlatformIds = [];
+    }
+    const idx = this.currentUser.assignedSalesPlatformIds.indexOf(platformId);
+    if (idx > -1) {
+      this.currentUser.assignedSalesPlatformIds.splice(idx, 1);
+    } else {
+      this.currentUser.assignedSalesPlatformIds.push(platformId);
+    }
   }
 
   saveUser(): void {

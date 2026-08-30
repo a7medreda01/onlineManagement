@@ -1,0 +1,128 @@
+<div class="space-y-5 fade-in">
+
+  <!-- Header Banner -->
+  <div class="glass-card p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-slate-700/80 shadow-lg bg-gradient-to-r from-indigo-950/40 via-slate-900 to-slate-900">
+    <div class="flex items-center gap-3">
+      <div class="w-12 h-12 rounded-2xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-black text-xl shadow-inner">
+        <i class="fa-solid fa-sliders"></i>
+      </div>
+      <div>
+        <h1 class="text-lg sm:text-xl font-black text-slate-100 flex items-center gap-2">
+          <span>إعدادات المتجر</span>
+          <span class="badge bg-indigo-500/20 text-indigo-300 border-indigo-500/30 text-xs">إدارة المنصات والشحن</span>
+        </h1>
+        <p class="text-xs text-slate-400 mt-0.5">التحكم في منصات البيع وربطها بالموظفين وتخصيص إعدادات الشحن</p>
+      </div>
+    </div>
+
+    <!-- Quick Action Button -->
+    <button (click)="openAddModal()" class="btn btn-primary text-xs py-2.5 px-4 font-bold shadow-lg shadow-indigo-500/20 flex items-center gap-2">
+      <i class="fa-solid fa-plus-circle text-sm"></i>
+      <span>إضافة منصة بيع جديدة 🛒</span>
+    </button>
+  </div>
+
+  <!-- Tabs Bar -->
+  <div class="flex items-center gap-2 border-b border-slate-800 pb-2">
+    <button (click)="activeTab = 'platforms'" [class.active-tab]="activeTab === 'platforms'" class="btn text-xs font-bold py-2 px-4 rounded-xl transition flex items-center gap-2" [ngClass]="activeTab === 'platforms' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20' : 'bg-slate-800/60 text-slate-400 hover:text-slate-200'">
+      <i class="fa-solid fa-share-nodes text-sm"></i>
+      <span>منصات البيع (Sales Platforms)</span>
+      <span class="px-2 py-0.5 rounded-full text-[10px] bg-slate-950/50 font-mono">{{ platforms().length }}</span>
+    </button>
+
+    <a routerLink="/shipping" class="btn text-xs font-bold py-2 px-4 rounded-xl transition flex items-center gap-2 bg-slate-800/60 text-slate-400 hover:text-slate-200">
+      <i class="fa-solid fa-truck-fast text-sm text-emerald-400"></i>
+      <span>إعدادات الشحن وبوسطة 🚚</span>
+    </a>
+  </div>
+
+  <!-- Tab 1: Sales Platforms Tab -->
+  <div *ngIf="activeTab === 'platforms'" class="space-y-4">
+    
+    <!-- Shimmer loading state -->
+    <div *ngIf="loading()" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+      <div *ngFor="let i of [1,2,3,4]" class="glass-card p-4 h-28 skeleton-shimmer border-slate-800"></div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading() && platforms().length === 0" class="glass-card p-12 text-center text-slate-400 space-y-3">
+      <i class="fa-solid fa-store-slash text-4xl text-slate-600"></i>
+      <div class="font-bold text-slate-300 text-base">لا توجد منصات بيع مسجلة حالياً</div>
+      <p class="text-xs text-slate-500 max-w-sm mx-auto">قم بإضافة منصة جديدة مثل فيسبوك، انستجرام، أو واتساب للبدء في ربط الطلبات والموظفين بها.</p>
+      <button (click)="openAddModal()" class="btn btn-primary text-xs font-bold py-2 px-4 mt-2">إضافة منصة الآن ➕</button>
+    </div>
+
+    <!-- Platforms Cards Grid -->
+    <div *ngIf="!loading() && platforms().length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+      <div *ngFor="let platform of platforms()" class="glass-card p-4 space-y-3 border-slate-800 hover:border-indigo-500/40 transition-all shadow-md group relative">
+        
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-slate-800/80 border border-slate-700/60 flex items-center justify-center text-lg">
+              <i [class]="getPlatformIcon(platform.name)"></i>
+            </div>
+            <div>
+              <h3 class="font-extrabold text-slate-100 text-sm">{{ platform.name }}</h3>
+              <span class="text-[10px] text-emerald-400 font-bold flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                نشطة وجاهزة
+              </span>
+            </div>
+          </div>
+
+          <!-- Delete Button -->
+          <button (click)="deletePlatform(platform)" title="حذف منصة البيع" class="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white border border-rose-500/20 flex items-center justify-center transition-all opacity-80 group-hover:opacity-100">
+            <i class="fa-regular fa-trash-can text-xs"></i>
+          </button>
+        </div>
+
+        <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
+          <span>النوع: منصة مبيعات</span>
+          <span class="font-mono text-indigo-300 font-bold">ID: #{{ platform.id }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ADD NEW SALES PLATFORM MODAL -->
+<div *ngIf="showAddPlatformModal" class="app-modal-overlay">
+  <div class="glass-card w-full max-w-md p-6 fade-in space-y-4 my-auto border border-indigo-500/40 shadow-2xl bg-slate-900">
+    
+    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-bold">
+          <i class="fa-solid fa-plus"></i>
+        </div>
+        <div>
+          <h3 class="font-extrabold text-base text-slate-100">إضافة منصة بيع جديدة</h3>
+          <p class="text-[11px] text-slate-400">أدخل اسم القناة أو الصفحة التي تتلقى منها الأوردرات</p>
+        </div>
+      </div>
+      <button (click)="closeAddModal()" class="text-slate-400 hover:text-white p-1">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+    </div>
+
+    <form (ngSubmit)="savePlatform()" class="space-y-4 text-xs">
+      <div class="form-group mb-0">
+        <label class="form-label text-xs font-bold text-slate-200">
+          <span>اسم منصة البيع</span>
+          <span class="text-rose-400">*</span>
+        </label>
+        <input type="text" [(ngModel)]="newPlatformName" name="name" class="form-control text-xs py-2.5 bg-slate-950 border-slate-700" placeholder="مثال: SnapChat, TikTok, صفحة الفيسبوك 2..." required autofocus />
+      </div>
+
+      <div class="flex justify-end gap-2.5 pt-3 border-t border-slate-800">
+        <button type="button" (click)="closeAddModal()" class="btn btn-secondary text-xs py-2 px-4">إلغاء</button>
+        <button type="submit" [disabled]="savingPlatform" class="btn btn-primary text-xs font-extrabold px-6 py-2 shadow-md shadow-indigo-500/20 flex items-center gap-1.5">
+          <i *ngIf="savingPlatform" class="fa-solid fa-circle-notch fa-spin"></i>
+          <i *ngIf="!savingPlatform" class="fa-solid fa-plus"></i>
+          <span>إضافة المنصة 🚀</span>
+        </button>
+      </div>
+    </form>
+
+  </div>
+</div>

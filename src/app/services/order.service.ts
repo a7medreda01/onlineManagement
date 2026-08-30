@@ -61,8 +61,9 @@ export class OrderService {
     return this.http.get<SalesPlatform[]>(`${environment.apiUrl}/sales-platforms`);
   }
 
-  createSalesPlatform(name: string): Observable<SalesPlatform> {
-    return this.http.post<SalesPlatform>(`${environment.apiUrl}/sales-platforms`, { name });
+  createSalesPlatform(data: string | { name: string }): Observable<SalesPlatform> {
+    const payload = typeof data === 'string' ? { name: data } : data;
+    return this.http.post<SalesPlatform>(`${environment.apiUrl}/sales-platforms`, payload);
   }
 
   deleteSalesPlatform(id: number): Observable<any> {

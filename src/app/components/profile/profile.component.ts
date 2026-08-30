@@ -132,6 +132,27 @@ import { environment } from '../../../environments/environment';
           </div>
         </div>
 
+        <!-- Employee Sales Platforms Card -->
+        <div class="glass-card p-5 border-slate-700/60 bg-slate-900/80 relative overflow-hidden flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-bold text-slate-400">منصات البيع المسندة لي</span>
+            <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center text-base">
+              <i class="bi bi-share-fill"></i>
+            </div>
+          </div>
+          <div>
+            <div *ngIf="!profile()?.assignedSalesPlatforms || profile()?.assignedSalesPlatforms?.length === 0" class="text-xs text-slate-400 italic">
+              جميع المنصات متاحة لك.
+            </div>
+            <div *ngIf="profile()?.assignedSalesPlatforms && profile()!.assignedSalesPlatforms.length > 0" class="flex flex-wrap gap-1.5 pt-1">
+              <span *ngFor="let plat of profile()!.assignedSalesPlatforms" class="px-2.5 py-1 rounded-xl bg-amber-500/15 text-amber-300 border border-amber-500/30 text-xs font-extrabold flex items-center gap-1.5">
+                <i class="bi bi-shop text-[10px]"></i>
+                {{ plat.name }}
+              </span>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <!-- Settings Forms Grid -->

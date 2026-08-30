@@ -121,6 +121,11 @@
         <span>فريق العمل والمرتبات</span>
       </a>
 
+      <a *ngIf="isManager()" routerLink="/store-settings" routerLinkActive="bg-sky-600/25 text-sky-300 font-bold border-r-4 border-sky-500" class="flex items-center gap-2.5 px-3 py-2 text-slate-300 rounded-lg hover:bg-slate-700/60 transition">
+        <i class="bi bi-gear-fill text-sm w-5 text-indigo-400"></i>
+        <span>إعدادات المتجر ومنصات البيع</span>
+      </a>
+
       <!-- Profile Link in Main Nav -->
       <a routerLink="/profile" routerLinkActive="bg-sky-600/25 text-sky-300 font-bold border-r-4 border-sky-500" class="flex items-center gap-2.5 px-3 py-2 text-slate-300 rounded-lg hover:bg-slate-700/60 transition">
         <i class="bi bi-person-circle text-sm w-5 text-sky-400"></i>
