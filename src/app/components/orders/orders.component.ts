@@ -7,6 +7,8 @@ import { NotificationService } from '../../services/notification.service';
 import { BostaService } from '../../services/bosta.service';
 import { Order, OrderStatus, PagedResult } from '../../models/models';
 
+import { ShippingService } from '../../services/shipping.service';
+
 @Component({
   selector: 'app-orders',
   standalone: true,
@@ -21,6 +23,7 @@ export class OrdersComponent implements OnInit {
   toDate: string = '';
   searchTerm: string = '';
   showDateFilter = false;
+  hasBostaIntegration = false;
 
   // Pagination Signals
   pageNumber = signal<number>(1);
@@ -46,11 +49,22 @@ export class OrdersComponent implements OnInit {
     private orderService: OrderService,
     private notificationService: NotificationService,
     private bostaService: BostaService,
+    private shippingService: ShippingService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.loadOrders();
+    this.checkBostaIntegration();
+  }
+
+  checkBostaIntegration(): void {
+    this.shippingService.getAll().subscribe({
+      next: (companies) => {
+        this.hasBostaIntegration = companies.some(c => c.isIntegrated && (c.name.toLowerCase().includes('bosta') || c.name.includes('بوسطة')));
+      },
+      error: () => this.hasBostaIntegration = false
+    });
   }
 
   toggleSelectAll(): void {

@@ -91,16 +91,11 @@
 
 
     <!-- Bulk Bosta Actions Bar (Desktop Only - Mobile Uses Bottom Floating Dock) -->
-    <div *ngIf="selectedOrderIds.size > 0" class="hidden md:flex glass-card p-3 bg-gradient-to-r from-emerald-500/15 via-indigo-500/15 to-sky-500/15 border border-emerald-500/40 flex-wrap items-center justify-between gap-3 text-xs shadow-lg fade-in">
+    <div *ngIf="selectedOrderIds.size > 0 && hasBostaIntegration" class="hidden md:flex glass-card p-3 bg-gradient-to-r from-emerald-500/15 via-indigo-500/15 to-sky-500/15 border border-emerald-500/40 flex-wrap items-center justify-between gap-3 text-xs shadow-lg fade-in">
       <div class="flex items-center gap-3">
         <span class="px-3 py-1 rounded-xl bg-emerald-500/20 text-emerald-300 font-extrabold border border-emerald-500/40 shadow-sm">
           تم تحديد {{ selectedOrderIds.size }} أوردر
         </span>
-        
-        <label class="flex items-center gap-2 cursor-pointer bg-slate-800/90 py-1.5 px-3 rounded-xl border border-slate-700 hover:border-amber-500/50 transition-colors">
-          <input type="checkbox" [(ngModel)]="bulkIsFulfillment" class="w-4 h-4 rounded text-amber-500 focus:ring-amber-400 bg-slate-900 border-slate-700" />
-          <span class="font-bold text-amber-300 text-xs">شحن من مخزون بوسطة (Fulfillment) 📦</span>
-        </label>
       </div>
 
       <div class="flex items-center gap-2">

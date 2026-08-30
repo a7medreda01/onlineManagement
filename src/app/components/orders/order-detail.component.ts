@@ -100,6 +100,16 @@ export class OrderDetailComponent implements OnInit {
     this.loadLookups();
   }
 
+  get hasBostaIntegration(): boolean {
+    return this.shippingCompanies.some(c => c.isIntegrated && (c.name.toLowerCase().includes('bosta') || c.name.includes('بوسطة')));
+  }
+
+  isOrderBostaShipping(): boolean {
+    if (!this.hasBostaIntegration) return false;
+    const compName = this.order()?.shippingCompanyName?.toLowerCase() || '';
+    return compName.includes('bosta') || compName.includes('بوسطة');
+  }
+
   loadLookups(): void {
     this.productService.getAll().subscribe((res: Product[]) => this.availableProducts = res);
     this.shippingService.getAll().subscribe((res: ShippingCompany[]) => {

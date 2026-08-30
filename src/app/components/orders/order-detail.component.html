@@ -399,7 +399,7 @@
             <i class="fa-solid fa-truck-ramp-box text-emerald-400 text-base"></i>
             <span>الشحن ومنصة البيع</span>
           </h3>
-          <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">Bosta Integrated</span>
+          <span *ngIf="isOrderBostaShipping()" class="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">Bosta Integrated</span>
         </div>
 
         <div class="space-y-2.5 text-xs">
@@ -457,8 +457,8 @@
           </button>
         </div>
 
-        <!-- Dispatch to Bosta Button if no shipment exists yet -->
-        <button *ngIf="!bostaShipment" (click)="openBostaModal()" class="w-full btn btn-primary btn-sm py-2.5 text-xs font-bold shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2 mt-3">
+        <!-- Dispatch to Bosta Button if no shipment exists yet AND order shipping company is Bosta -->
+        <button *ngIf="!bostaShipment && isOrderBostaShipping()" (click)="openBostaModal()" class="w-full btn btn-primary btn-sm py-2.5 text-xs font-bold shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2 mt-3">
           <i class="fa-solid fa-truck-fast text-emerald-300"></i>
           <span>إنشاء وتصدير شحنة بوسطة Bosta</span>
         </button>
