@@ -228,7 +228,7 @@ export class OrdersComponent implements OnInit {
     return id ? id.toString() : '1';
   }
 
-  openWhatsApp(phone?: string, orderNumber?: string, id?: number, customerName?: string): void {
+  openWhatsApp(phone?: string, orderNumber?: string, id?: number, customerName?: string, salesPlatformName?: string, orderItems?: any[], totalAmount?: number): void {
     if (!phone) return;
     let cleanPhone = phone.replace(/[^0-9]/g, '');
     if (cleanPhone.startsWith('01') && cleanPhone.length === 11) {
@@ -237,7 +237,18 @@ export class OrdersComponent implements OnInit {
       cleanPhone = '20' + cleanPhone;
     }
     const orderRef = this.getDisplayOrderNumber(orderNumber, id);
-    const msg = encodeURIComponent(`مرحباً ${customerName || ''} 👋\nبخصوص طلبك رقم #${orderRef} من متجرنا:`);
+    const platform = salesPlatformName || 'المتجر';
+    
+    let itemsText = '';
+    if (orderItems && orderItems.length > 0) {
+      itemsText = '\nوعبارة عن:\n' + orderItems.map(item => `• ${item.productName || item.productCode || 'منتج'} (عدد: ${item.quantity})`).join('\n');
+    }
+
+    const totalText = totalAmount ? `\n\n💰 والتوتال: ${totalAmount} ج.م` : '';
+    const messageText = `مرحبا ${customerName || ''} 👋\n` +
+      `بخصوص طلبك رقم #${orderRef} من ${platform}${itemsText}${totalText}`;
+
+    const msg = encodeURIComponent(messageText);
     window.open(`https://wa.me/${cleanPhone}?text=${msg}`, '_blank');
   }
 

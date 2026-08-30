@@ -162,7 +162,7 @@
               <div class="font-bold text-slate-100">{{ order.customerName }}</div>
               <div class="text-xs text-slate-400 flex items-center gap-1.5 mt-0.5">
                 <a [href]="'tel:' + order.customerPhone" class="hover:text-sky-300 font-mono">{{ order.customerPhone }}</a>
-                <button (click)="openWhatsApp(order.customerPhone, order.orderNumber, order.id, order.customerName)" title="تواصل عبر واتساب" class="text-emerald-400 hover:text-emerald-300 transition-colors p-0.5" type="button">
+                <button (click)="openWhatsApp(order.customerPhone, order.orderNumber, order.id, order.customerName, order.salesPlatformName, order.orderItems, order.totalAmount)" title="تواصل عبر واتساب" class="text-emerald-400 hover:text-emerald-300 transition-colors p-0.5" type="button">
                   <i class="fa-brands fa-whatsapp text-sm font-bold"></i>
                 </button>
                 <span class="text-slate-600">|</span>
