@@ -108,6 +108,11 @@ export class AuthService {
     return localStorage.getItem('remember_me') === 'true';
   }
 
+  isSuperAdmin(): boolean {
+    const user = this.currentUser();
+    return !!user?.isSuperAdmin;
+  }
+
   isAdmin(): boolean {
     const user = this.currentUser();
     return user?.role === UserRole.Admin;
@@ -121,6 +126,11 @@ export class AuthService {
   isFinancial(): boolean {
     const user = this.currentUser();
     return user?.role === UserRole.Admin || user?.role === UserRole.Manager || user?.role === UserRole.FinancialManager;
+  }
+
+  isModerator(): boolean {
+    const user = this.currentUser();
+    return user?.role === UserRole.Moderator;
   }
 
   hasRole(...roles: UserRole[]): boolean {
