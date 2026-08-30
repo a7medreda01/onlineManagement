@@ -236,7 +236,6 @@ export class OrdersComponent implements OnInit {
     } else if (!cleanPhone.startsWith('2') && cleanPhone.length === 10) {
       cleanPhone = '20' + cleanPhone;
     }
-    const orderRef = this.getDisplayOrderNumber(orderNumber, id);
     const platform = salesPlatformName || 'المتجر';
     
     let itemsText = '';
@@ -246,7 +245,7 @@ export class OrdersComponent implements OnInit {
 
     const totalText = totalAmount ? `\n\n💰 والتوتال: ${totalAmount} ج.م` : '';
     const messageText = `مرحبا ${customerName || ''} 👋\n` +
-      `بخصوص طلبك رقم #${orderRef} من ${platform}${itemsText}${totalText}`;
+      `بخصوص طلبك من ${platform}${itemsText}${totalText}`;
 
     const msg = encodeURIComponent(messageText);
     window.open(`https://wa.me/${cleanPhone}?text=${msg}`, '_blank');

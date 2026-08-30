@@ -585,11 +585,10 @@ export class OrderDetailComponent implements OnInit {
       .map(item => `• ${item.productName || item.productCode || 'منتج'} (عدد: ${item.quantity})`)
       .join('\n');
 
-    const orderRef = this.getDisplayOrderNumber(currentOrder.orderNumber, currentOrder.id);
     const total = currentOrder.totalAmount || 0;
 
     const messageText = `مرحبا ${currentOrder.customerName || ''} 👋\n` +
-      `بخصوص طلبك رقم #${orderRef} من ${platformName}\n` +
+      `بخصوص طلبك من ${platformName}\n` +
       `وعبارة عن:\n${itemsText}\n\n` +
       `💰 والتوتال: ${total} ج.م`;
 
