@@ -144,8 +144,8 @@ import { environment } from '../../../environments/environment';
             <div *ngIf="!profile()?.assignedSalesPlatforms || profile()?.assignedSalesPlatforms?.length === 0" class="text-xs text-slate-400 italic">
               جميع المنصات متاحة لك.
             </div>
-            <div *ngIf="profile()?.assignedSalesPlatforms && profile()!.assignedSalesPlatforms.length > 0" class="flex flex-wrap gap-1.5 pt-1">
-              <span *ngFor="let plat of profile()!.assignedSalesPlatforms" class="px-2.5 py-1 rounded-xl bg-amber-500/15 text-amber-300 border border-amber-500/30 text-xs font-extrabold flex items-center gap-1.5">
+            <div *ngIf="(profile()?.assignedSalesPlatforms?.length || 0) > 0" class="flex flex-wrap gap-1.5 pt-1">
+              <span *ngFor="let plat of profile()?.assignedSalesPlatforms || []" class="px-2.5 py-1 rounded-xl bg-amber-500/15 text-amber-300 border border-amber-500/30 text-xs font-extrabold flex items-center gap-1.5">
                 <i class="bi bi-shop text-[10px]"></i>
                 {{ plat.name }}
               </span>
