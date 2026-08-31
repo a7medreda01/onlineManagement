@@ -32,7 +32,7 @@ export class ShippingService {
     return this.http.get<ShippingRate>(`${this.apiUrl}/${companyId}/rate/${governorateId}`);
   }
 
-  updateIntegration(companyId: number, data: { apiKey?: string; webhookUrl?: string; isIntegrated?: boolean }): Observable<any> {
+  updateIntegration(companyId: number, data: { apiKey?: string; fulfillmentApiKey?: string; webhookUrl?: string; isIntegrated?: boolean }): Observable<any> {
     return this.http.put(`${this.apiUrl}/${companyId}/integration`, data);
   }
 

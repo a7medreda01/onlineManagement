@@ -170,6 +170,7 @@ export interface ShippingCompany {
   phone: string;
   isActive: boolean;
   apiKey?: string;
+  fulfillmentApiKey?: string;
   webhookUrl?: string;
   isIntegrated?: boolean;
   rates: ShippingRate[];

@@ -160,6 +160,11 @@ export class CreateOrderComponent implements OnInit {
     return this.products().some(p => p.isFulfillment || p.code?.startsWith('BO-') || p.code?.startsWith('BST-'));
   }
 
+  isSelectedCompanyBosta(): boolean {
+    const comp = this.shippingCompanies().find(c => c.id === this.selectedShippingCompanyId);
+    return comp ? (comp.isIntegrated || comp.name.toLowerCase().includes('bosta') || comp.name.includes('بوسطة')) : false;
+  }
+
   loadLookups(): void {
     this.customerService.getAll(undefined, undefined, 1, 1000).subscribe(res => this.customers.set(res.items));
     this.productService.getAll().subscribe(res => {

@@ -262,8 +262,8 @@
         </div>
       </div>
 
-      <!-- Warehouse origin (Bosta) - ONLY SHOWN IF BOSTA INTEGRATION ACTIVE & FULFILLMENT PRODUCTS EXIST -->
-      <div *ngIf="hasBostaIntegration && hasFulfillmentProducts()" class="p-3 rounded-xl bg-slate-900/60 border border-slate-700/70 space-y-2">
+      <!-- Warehouse origin (Bosta) - SHOW WHEN BOSTA INTEGRATION ACTIVE OR BOSTA SELECTED -->
+      <div *ngIf="hasBostaIntegration || isSelectedCompanyBosta()" class="p-3 rounded-xl bg-slate-900/60 border border-slate-700/70 space-y-2">
         <div class="flex items-center justify-between gap-2">
           <span class="font-bold text-xs text-slate-100 flex items-center gap-1.5">
             <i class="fa-solid fa-warehouse text-amber-400 text-xs"></i>

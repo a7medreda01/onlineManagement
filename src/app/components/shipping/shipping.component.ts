@@ -57,6 +57,7 @@ export class ShippingComponent implements OnInit, OnDestroy {
   activeBostaTab: BostaTab = 'instructions';
   bostaIntegration = {
     apiKey: '',
+    fulfillmentApiKey: '',
     webhookUrl: this.webhookEndpoint,
     isIntegrated: false
   };
@@ -145,6 +146,7 @@ export class ShippingComponent implements OnInit, OnDestroy {
         if (bosta) {
           this.bostaIntegration = {
             apiKey: bosta.apiKey || '',
+            fulfillmentApiKey: (bosta as any).fulfillmentApiKey || '',
             webhookUrl: bosta.webhookUrl || this.webhookEndpoint,
             isIntegrated: bosta.isIntegrated || false
           };

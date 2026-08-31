@@ -45,10 +45,20 @@ export class OrdersComponent implements OnInit {
   newStatus: OrderStatus = OrderStatus.New;
   statusNotes = '';
 
+  // Bulk Bosta Result Modal State
+  showBulkResultModal = false;
+  bulkResultData: {
+    success: boolean;
+    message: string;
+    totalProcessed: number;
+    successCount: number;
+    results: { orderId: number; orderNumber: string; success: boolean; trackingNumber?: string; errorMessage?: string }[];
+  } | null = null;
+
   constructor(
     private orderService: OrderService,
     private notificationService: NotificationService,
-    private bostaService: BostaService,
+    public bostaService: BostaService,
     private shippingService: ShippingService,
     private router: Router
   ) {}
@@ -112,10 +122,10 @@ export class OrdersComponent implements OnInit {
     const idsToSend = confirmedOrders.map(o => o.id);
     const sourceText = this.bulkIsFulfillment ? 'مخزن بوسطة (Fulfillment)' : 'المخزن الخاص';
 
-    let confirmMsg = `هل أنت متأكد من إرسال ${confirmedOrders.length} أوردر مؤكد إلى بوسطة (${sourceText}) وتوليد أرقام التتبع تلقائياً؟`;
+    let confirmMsg = `هل أنت متأكد من إرسال ${confirmedOrders.length} أوردر مؤكد إلى بوسطة (${sourceText}) وتوليد أرقام التتبع تلقائياً؟\n\n(ملاحظة: في حال وجود شحنة سابقة لأي من الطلبات المحددة، سيتم إلغاؤها في النظام وتوليد رقم بولصة وتتبع جديد 100% من بوسطة).`;
     if (allSelectedOrders.length > confirmedOrders.length) {
       const skippedCount = allSelectedOrders.length - confirmedOrders.length;
-      confirmMsg = `تنبيه: تم تحديد ${allSelectedOrders.length} طلب، منها ${confirmedOrders.length} طلب مؤكد فقط جاهز للشحن.\n(سيتم تخطي ${skippedCount} طلب غير مؤكد تلقائياً).\n\nهل تريد الشحن لـ ${confirmedOrders.length} أوردر مؤكد فقط؟`;
+      confirmMsg = `تنبيه: تم تحديد ${allSelectedOrders.length} طلب، منها ${confirmedOrders.length} طلب مؤكد فقط جاهز للشحن.\n(سيتم تخطي ${skippedCount} طلب غير مؤكد تلقائياً).\n\nملاحظة: في حال وجود بولصة سابقة لأي طلب، سيتم تجديدها وبدء شحنة جديدة.\n\nهل تريد الشحن لـ ${confirmedOrders.length} أوردر مؤكد الآن؟`;
     }
 
     this.notificationService.confirm(
@@ -129,12 +139,9 @@ export class OrdersComponent implements OnInit {
         next: (res) => {
           this.sendingBulk = false;
           this.clearSelection();
-          if (res.success) {
-            this.notificationService.success(res.message || `تم إرسال ${res.successCount} أوردر مؤكد إلى بوسطة بنجاح واستقبال أرقام التتبع!`);
-            this.loadOrders();
-          } else {
-            this.notificationService.error(res.message || 'حدث خطأ أثناء الإرسال لبوسطة');
-          }
+          this.bulkResultData = res;
+          this.showBulkResultModal = true;
+          this.loadOrders();
         },
         error: (err) => {
           this.sendingBulk = false;
@@ -142,6 +149,29 @@ export class OrdersComponent implements OnInit {
         }
       });
     });
+  }
+
+  closeBulkResultModal(): void {
+    this.showBulkResultModal = false;
+    this.bulkResultData = null;
+  }
+
+  copyTrackingNumber(trackingNumber?: string): void {
+    if (!trackingNumber) return;
+    navigator.clipboard.writeText(trackingNumber);
+    this.notificationService.success(`تم نسخ رقم البولصة: ${trackingNumber}`);
+  }
+
+  copyAllTrackingNumbers(): void {
+    if (!this.bulkResultData || !this.bulkResultData.results) return;
+    const trackingNumbers = this.bulkResultData.results
+      .filter(r => r.success && r.trackingNumber)
+      .map(r => `أوردر #${r.orderNumber}: ${r.trackingNumber}`)
+      .join('\n');
+    if (trackingNumbers) {
+      navigator.clipboard.writeText(trackingNumbers);
+      this.notificationService.success('تم نسخ جميع أرقام البوالص بنجاح! 📋');
+    }
   }
 
   loadOrders(): void {

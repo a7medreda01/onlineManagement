@@ -308,31 +308,59 @@
       <!-- Modal Body (1-Step Clean Form) -->
       <div class="overflow-y-auto flex-1 pr-1 space-y-4 text-xs">
         
-        <!-- 1. API Key Input -->
-        <div class="glass-card p-3.5 sm:p-4 space-y-2.5 border-slate-700/80 bg-slate-800/60">
-          <label class="form-label text-xs font-bold text-amber-300 flex items-center justify-between mb-0">
-            <span class="flex items-center gap-1.5">
-              <i class="fa-solid fa-key text-amber-400"></i> 1. أدخل مفتاح Bosta API Key الخاص بحسابك
+        <!-- 1. API Keys Inputs (Merchant Express vs Bosta Fulfillment) -->
+        <div class="glass-card p-3.5 sm:p-4 space-y-3 border-slate-700/80 bg-slate-800/60">
+          <div class="flex items-center justify-between border-b border-slate-700/60 pb-2">
+            <span class="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+              <i class="fa-solid fa-key text-amber-400"></i> 1. أدخل مفاتيح Bosta API Keys الخاصة بحسابك
             </span>
             <a href="https://business.bosta.co/settings/api-integration" target="_blank" class="text-sky-400 hover:underline font-normal text-[11px] flex items-center gap-1">
-              جلب الكود من بوسطة <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
+              جلب الكود من لوحة بوسطة <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
             </a>
-          </label>
-          <div class="flex flex-col sm:flex-row gap-2">
-            <div class="relative flex-1">
+          </div>
+
+          <!-- Merchant Express API Key -->
+          <div class="space-y-1">
+            <label class="form-label text-[11px] font-bold text-slate-300 flex items-center gap-1.5 mb-0">
+              <span class="px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 font-extrabold border border-sky-500/30">مخزن التاجر</span>
+              <span>مفتاح شحن التاجر (Merchant Express API Key):</span>
+            </label>
+            <div class="flex flex-col sm:flex-row gap-2">
+              <div class="relative flex-1">
+                <input [type]="showApiKey ? 'text' : 'password'"
+                       [(ngModel)]="bostaIntegration.apiKey"
+                       class="form-control text-xs py-2.5 font-mono text-emerald-300 bg-slate-900 border-slate-700 pl-10"
+                       placeholder="مثال: 8e6de16ad50091c655e8a0a815d9..." />
+                <button type="button" (click)="showApiKey = !showApiKey" class="absolute left-3 top-3 text-slate-400 hover:text-white">
+                  <i class="fa-solid" [class.fa-eye]="!showApiKey" [class.fa-eye-slash]="showApiKey"></i>
+                </button>
+              </div>
+              <button type="button" (click)="testBostaConnection()" [disabled]="verifyingKey" class="btn btn-secondary text-xs px-4 py-2.5 font-bold text-amber-300 border-amber-500/30 hover:bg-amber-500/10 flex items-center justify-center gap-1.5 shrink-0">
+                <i *ngIf="verifyingKey" class="fa-solid fa-circle-notch fa-spin"></i>
+                <i *ngIf="!verifyingKey" class="fa-solid fa-vial"></i>
+                <span>اختبار الاتصال 🧪</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Bosta Fulfillment API Key -->
+          <div class="space-y-1 pt-1 border-t border-slate-700/50">
+            <label class="form-label text-[11px] font-bold text-slate-300 flex items-center justify-between mb-0">
+              <span class="flex items-center gap-1.5">
+                <span class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-extrabold border border-purple-500/30">مخزن بوسطة</span>
+                <span>مفتاح مستودع بوسطة (Bosta Fulfillment API Key):</span>
+              </span>
+              <span class="text-[10px] text-slate-400 font-normal">(اخياري - إذا كان لديك رمز منفصل لنظام التخزين)</span>
+            </label>
+            <div class="relative">
               <input [type]="showApiKey ? 'text' : 'password'"
-                     [(ngModel)]="bostaIntegration.apiKey"
-                     class="form-control text-xs py-2.5 font-mono text-emerald-300 bg-slate-900 border-slate-700 pl-10"
-                     placeholder="مثال: bosta_live_apiKey_abc123xyz..." />
+                     [(ngModel)]="bostaIntegration.fulfillmentApiKey"
+                     class="form-control text-xs py-2.5 font-mono text-purple-300 bg-slate-900 border-slate-700 pl-10"
+                     placeholder="مفتاح الـ Fulfillment المخصص (إذا ترك فارغاً سيتم استخدام مفتاح التاجر أعلاه تلقائياً)" />
               <button type="button" (click)="showApiKey = !showApiKey" class="absolute left-3 top-3 text-slate-400 hover:text-white">
                 <i class="fa-solid" [class.fa-eye]="!showApiKey" [class.fa-eye-slash]="showApiKey"></i>
               </button>
             </div>
-            <button type="button" (click)="testBostaConnection()" [disabled]="verifyingKey" class="btn btn-secondary text-xs px-4 py-2.5 font-bold text-amber-300 border-amber-500/30 hover:bg-amber-500/10 flex items-center justify-center gap-1.5 shrink-0">
-              <i *ngIf="verifyingKey" class="fa-solid fa-circle-notch fa-spin"></i>
-              <i *ngIf="!verifyingKey" class="fa-solid fa-vial"></i>
-              <span>اختبار الاتصال 🧪</span>
-            </button>
           </div>
         </div>
 
