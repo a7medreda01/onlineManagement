@@ -351,6 +351,44 @@
     </div>
   </div>
 
+  <!-- Bulk Shipping Progress Overlay -->
+  <div *ngIf="sendingBulk" class="app-modal-overlay z-50">
+    <div class="glass-card w-full max-w-md p-6 fade-in my-auto shadow-2xl border border-sky-500/30 rounded-2xl space-y-4 text-center">
+      
+      <!-- Icon & Title -->
+      <div class="flex flex-col items-center justify-center gap-2">
+        <div class="w-14 h-14 rounded-2xl bg-sky-500/20 text-sky-400 flex items-center justify-center text-2xl animate-pulse">
+          <i class="bi bi-truck"></i>
+        </div>
+        <h3 class="font-bold text-lg text-white">جاري إرسال الطلبات إلى بوسطة</h3>
+        <p class="text-xs text-slate-400 font-medium">{{ bulkStatusMessage }}</p>
+      </div>
+
+      <!-- Progress Bar & Percentage -->
+      <div class="space-y-2 pt-2">
+        <div class="flex justify-between items-center text-xs font-bold font-mono px-1">
+          <span class="text-sky-400 flex items-center gap-1.5">
+            <i class="bi bi-arrow-repeat animate-spin"></i>
+            <span>{{ bulkProcessedCount }} / {{ bulkTotalCount }} أوردر</span>
+          </span>
+          <span class="text-emerald-400 text-sm font-black">{{ bulkProgressPercent }}%</span>
+        </div>
+
+        <div class="w-full h-3.5 bg-slate-900 rounded-full overflow-hidden p-0.5 border border-slate-700/80 shadow-inner">
+          <div class="h-full bg-gradient-to-r from-sky-500 via-indigo-500 to-emerald-400 rounded-full transition-all duration-300 shadow-lg shadow-sky-500/50"
+               [style.width.%]="bulkProgressPercent"></div>
+        </div>
+      </div>
+
+      <!-- Subtitle tip -->
+      <p class="text-[11px] text-slate-500 flex items-center justify-center gap-1 pt-1">
+        <i class="bi bi-info-circle"></i>
+        <span>يرجى الانتظار لحين الانتهاء وتوليد أرقام التتبع لكل أوردر</span>
+      </p>
+
+    </div>
+  </div>
+
   <!-- Bulk Bosta Shipments Summary Result Modal -->
   <div *ngIf="showBulkResultModal && bulkResultData" class="app-modal-overlay">
     <div class="glass-card w-full max-w-lg p-5 md:p-6 fade-in my-auto max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-700/80 rounded-2xl space-y-4">

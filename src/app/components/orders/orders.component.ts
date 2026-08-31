@@ -39,6 +39,10 @@ export class OrdersComponent implements OnInit {
   selectedOrderIds = new Set<number>();
   sendingBulk = false;
   bulkIsFulfillment = false;
+  bulkProgressPercent = 0;
+  bulkProcessedCount = 0;
+  bulkTotalCount = 0;
+  bulkStatusMessage = '';
 
   showStatusModal = false;
   selectedOrder: Order | null = null;
@@ -151,15 +155,37 @@ export class OrdersComponent implements OnInit {
       if (!confirmed) return;
 
       this.sendingBulk = true;
+      this.bulkTotalCount = idsToSend.length;
+      this.bulkProcessedCount = 0;
+      this.bulkProgressPercent = 10;
+      this.bulkStatusMessage = `جاري بدء معالجة وتوليد البوالص لـ ${idsToSend.length} أوردر...`;
+
+      const intervalStep = Math.max(300, Math.floor(4000 / idsToSend.length));
+      const progressTimer = setInterval(() => {
+        if (this.bulkProcessedCount < idsToSend.length - 1) {
+          this.bulkProcessedCount++;
+          this.bulkProgressPercent = Math.min(94, Math.round((this.bulkProcessedCount / idsToSend.length) * 100));
+          this.bulkStatusMessage = `جاري الإرسال لبوسطة والحصول على رقم البولصة... (${this.bulkProcessedCount} من ${this.bulkTotalCount})`;
+        }
+      }, intervalStep);
+
       this.bostaService.createBulkShipments(idsToSend, this.bulkIsFulfillment).subscribe({
         next: (res) => {
-          this.sendingBulk = false;
-          this.clearSelection();
-          this.bulkResultData = res;
-          this.showBulkResultModal = true;
-          this.loadOrders();
+          clearInterval(progressTimer);
+          this.bulkProcessedCount = idsToSend.length;
+          this.bulkProgressPercent = 100;
+          this.bulkStatusMessage = 'اكتمل شحن جميع الطلبات وتوليد البوالص بنجاح!';
+
+          setTimeout(() => {
+            this.sendingBulk = false;
+            this.clearSelection();
+            this.bulkResultData = res;
+            this.showBulkResultModal = true;
+            this.loadOrders();
+          }, 500);
         },
         error: (err) => {
+          clearInterval(progressTimer);
           this.sendingBulk = false;
           this.notificationService.error(err?.error?.Message || err?.error?.message || 'فشل إرسال الشحنات الجماعية لبوسطة');
         }
