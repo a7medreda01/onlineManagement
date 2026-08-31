@@ -336,10 +336,10 @@
                   <i class="fa-solid" [class.fa-eye]="!showApiKey" [class.fa-eye-slash]="showApiKey"></i>
                 </button>
               </div>
-              <button type="button" (click)="testBostaConnection()" [disabled]="verifyingKey" class="btn btn-secondary text-xs px-4 py-2.5 font-bold text-amber-300 border-amber-500/30 hover:bg-amber-500/20 flex items-center justify-center gap-1.5 shrink-0 shadow-lg">
+              <button type="button" (click)="testBostaConnection('merchant')" [disabled]="verifyingKey" class="btn btn-secondary text-xs px-3.5 py-2.5 font-bold text-amber-300 border-amber-500/30 hover:bg-amber-500/20 flex items-center justify-center gap-1.5 shrink-0 shadow-lg">
                 <i *ngIf="verifyingKey" class="fa-solid fa-circle-notch fa-spin"></i>
                 <i *ngIf="!verifyingKey" class="fa-solid fa-vial-circle-check"></i>
-                <span>اختبار والتحقق من الربط 🧪</span>
+                <span>اختبار مفتاح التاجر 🧪</span>
               </button>
             </div>
           </div>
@@ -351,15 +351,22 @@
                 <span class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-extrabold border border-purple-500/30">مخزن بوسطة</span>
                 <span>مفتاح مستودع بوسطة (Bosta Fulfillment API Key):</span>
               </span>
-              <span class="text-[10px] text-slate-400 font-normal">(اخياري - إذا كان لديك رمز منفصل)</span>
+              <span class="text-[10px] text-slate-400 font-normal">(اختياري - إذا كان لديك رمز منفصل)</span>
             </label>
-            <div class="relative">
-              <input [type]="showApiKey ? 'text' : 'password'"
-                     [(ngModel)]="bostaIntegration.fulfillmentApiKey"
-                     class="form-control text-xs py-2.5 font-mono text-purple-300 bg-slate-900 border-slate-700 pl-10"
-                     placeholder="مفتاح الـ Fulfillment المخصص (إذا ترك فارغاً سيتم استخدام مفتاح التاجر اعلاه تلقائياً)" />
-              <button type="button" (click)="showApiKey = !showApiKey" class="absolute left-3 top-3 text-slate-400 hover:text-white">
-                <i class="fa-solid" [class.fa-eye]="!showApiKey" [class.fa-eye-slash]="showApiKey"></i>
+            <div class="flex flex-col sm:flex-row gap-2">
+              <div class="relative flex-1">
+                <input [type]="showApiKey ? 'text' : 'password'"
+                       [(ngModel)]="bostaIntegration.fulfillmentApiKey"
+                       class="form-control text-xs py-2.5 font-mono text-purple-300 bg-slate-900 border-slate-700 pl-10"
+                       placeholder="مفتاح الـ Fulfillment المخصص (إذا ترك فارغاً سيتم استخدام مفتاح التاجر اعلاه تلقائياً)" />
+                <button type="button" (click)="showApiKey = !showApiKey" class="absolute left-3 top-3 text-slate-400 hover:text-white">
+                  <i class="fa-solid" [class.fa-eye]="!showApiKey" [class.fa-eye-slash]="showApiKey"></i>
+                </button>
+              </div>
+              <button type="button" (click)="testBostaConnection('fulfillment')" [disabled]="verifyingKey" class="btn btn-secondary text-xs px-3.5 py-2.5 font-bold text-purple-300 border-purple-500/30 hover:bg-purple-500/20 flex items-center justify-center gap-1.5 shrink-0 shadow-lg">
+                <i *ngIf="verifyingKey" class="fa-solid fa-circle-notch fa-spin"></i>
+                <i *ngIf="!verifyingKey" class="fa-solid fa-vial-circle-check"></i>
+                <span>اختبار مفتاح المستودع 🧪</span>
               </button>
             </div>
           </div>

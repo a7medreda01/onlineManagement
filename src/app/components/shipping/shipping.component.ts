@@ -210,22 +210,32 @@ export class ShippingComponent implements OnInit, OnDestroy {
     });
   }
 
-  testBostaConnection(): void {
-    if (!this.bostaIntegration.apiKey || !this.bostaIntegration.apiKey.trim()) {
-      this.notificationService.error('يرجى إدخال مفتاح Bosta API Key أولاً لاختبار الاتصال');
+  testBostaConnection(type: 'merchant' | 'fulfillment' = 'merchant'): void {
+    const keyToTest = type === 'fulfillment'
+      ? (this.bostaIntegration.fulfillmentApiKey?.trim() || this.bostaIntegration.apiKey?.trim())
+      : (this.bostaIntegration.apiKey?.trim() || this.bostaIntegration.fulfillmentApiKey?.trim());
+
+    if (!keyToTest) {
+      this.notificationService.error(
+        type === 'fulfillment'
+          ? 'يرجى إدخال مفتاح مستودع بوسطة (Fulfillment Key) أولاً لاختبار الربط'
+          : 'يرجى إدخال مفتاح شحن التاجر (Merchant API Key) أولاً لاختبار الربط'
+      );
       return;
     }
 
     this.verifyingKey = true;
     this.bostaConnectionStatus = 'testing';
-    this.bostaConnectionMessage = 'جاري الاتصال واختبار مفاتيح بوسطة...';
+    this.bostaConnectionMessage = type === 'fulfillment'
+      ? 'جاري الاتصال واختبار مفتاح مستودع بوسطة (Fulfillment)...'
+      : 'جاري الاتصال واختبار مفتاح شحن التاجر...';
 
-    this.bostaService.verifyApiKey(this.bostaIntegration.apiKey.trim()).subscribe({
+    this.bostaService.verifyApiKey(keyToTest).subscribe({
       next: (res) => {
         this.verifyingKey = false;
         if (res.success) {
           this.bostaConnectionStatus = 'success';
-          this.bostaConnectionMessage = '✅ تم الاتصال والتحقق من حسابك في بوسطة بنجاح!';
+          this.bostaConnectionMessage = `✅ ${res.message}`;
           this.notificationService.success(res.message);
         } else {
           this.bostaConnectionStatus = 'failed';
@@ -243,15 +253,18 @@ export class ShippingComponent implements OnInit, OnDestroy {
   }
 
   saveBostaIntegrationFast(): void {
-    if (!this.bostaIntegration.apiKey || !this.bostaIntegration.apiKey.trim()) {
-      this.notificationService.error('يرجى إدخال مفتاح Bosta API Key أولاً للربط');
+    const merchantKey = this.bostaIntegration.apiKey?.trim() || '';
+    const fulfillmentKey = this.bostaIntegration.fulfillmentApiKey?.trim() || '';
+    const effectiveKey = merchantKey || fulfillmentKey;
+
+    if (!effectiveKey) {
+      this.notificationService.error('يرجى إدخال أحد مفاتيح Bosta API Keys أولاً للربط');
       return;
     }
 
     this.savingIntegration = true;
     this.bostaIntegration.isIntegrated = true;
     const bosta = this.bostaCompany();
-    const trimmedKey = this.bostaIntegration.apiKey.trim();
 
     const doSyncTasks = (targetCompanyId: number) => {
       const syncTasks$: Observable<any>[] = [];
@@ -319,8 +332,8 @@ export class ShippingComponent implements OnInit, OnDestroy {
 
     if (bosta) {
       this.shippingService.updateIntegration(bosta.id, {
-        apiKey: trimmedKey,
-        fulfillmentApiKey: this.bostaIntegration.fulfillmentApiKey?.trim(),
+        apiKey: effectiveKey,
+        fulfillmentApiKey: fulfillmentKey,
         webhookUrl: this.webhookEndpoint,
         isIntegrated: true
       }).subscribe({
@@ -340,8 +353,8 @@ export class ShippingComponent implements OnInit, OnDestroy {
       this.shippingService.create({
         name: 'شركة بوسطة (Bosta)',
         phone: '19043',
-        apiKey: trimmedKey,
-        fulfillmentApiKey: this.bostaIntegration.fulfillmentApiKey?.trim(),
+        apiKey: effectiveKey,
+        fulfillmentApiKey: fulfillmentKey,
         webhookUrl: this.webhookEndpoint,
         isIntegrated: true,
         rates: defaultRates
