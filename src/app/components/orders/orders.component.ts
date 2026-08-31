@@ -268,10 +268,12 @@ export class OrdersComponent implements OnInit {
   }
 
   getDisplayOrderNumber(orderNumber?: string, id?: number): string {
-    if (orderNumber && orderNumber.startsWith('#')) {
-      return orderNumber.replace('#', '');
+    if (!orderNumber) return id ? id.toString() : '1';
+    let clean = orderNumber.trim();
+    while (clean.startsWith('#')) {
+      clean = clean.substring(1).trim();
     }
-    return id ? id.toString() : '1';
+    return clean || (id ? id.toString() : '1');
   }
 
   openWhatsApp(phone?: string, orderNumber?: string, id?: number, customerName?: string, salesPlatformName?: string, orderItems?: any[], totalAmount?: number): void {

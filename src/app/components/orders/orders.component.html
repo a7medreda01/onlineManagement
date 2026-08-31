@@ -353,77 +353,103 @@
 
   <!-- Bulk Bosta Shipments Summary Result Modal -->
   <div *ngIf="showBulkResultModal && bulkResultData" class="app-modal-overlay">
-    <div class="glass-card w-full max-w-xl p-6 fade-in my-auto max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-700 space-y-4">
+    <div class="glass-card w-full max-w-lg p-5 md:p-6 fade-in my-auto max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-700/80 rounded-2xl space-y-4">
+      
       <!-- Modal Header -->
-      <div class="flex items-center justify-between border-b border-slate-700 pb-3">
-        <div class="flex items-center gap-2">
-          <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg font-black shrink-0">
-            <i class="fa-solid fa-truck-fast"></i>
+      <div class="flex items-center justify-between border-b border-slate-700/70 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg shrink-0">
+            <i class="bi bi-truck"></i>
           </div>
           <div>
-            <h3 class="font-black text-base text-slate-100">نتيجة الشحن والتسليم إلى بوسطة 🚚</h3>
-            <p class="text-xs text-slate-400">ملخص معالجة الطلبات وأرقام البوالص الصادرة</p>
+            <h3 class="font-bold text-base text-white">نتيجة الشحن لبوسطة</h3>
+            <p class="text-[11px] text-slate-400">ملخص معالجة البوالص الحالية</p>
           </div>
         </div>
-        <button (click)="closeBulkResultModal()" class="text-slate-400 hover:text-white p-1">
-          <i class="fa-solid fa-xmark text-lg"></i>
+
+        <button (click)="closeBulkResultModal()" class="w-8 h-8 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 flex items-center justify-center transition-all">
+          <i class="bi bi-x-lg text-sm"></i>
         </button>
       </div>
 
       <!-- Result Banner Stats -->
-      <div class="grid grid-cols-2 gap-3">
-        <div class="p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-center">
-          <div class="text-xs text-emerald-400 font-bold mb-0.5">تم بشحن نجاح ✅</div>
-          <div class="text-xl font-black text-emerald-300 font-mono">{{ bulkResultData.successCount }} أوردر</div>
+      <div class="grid grid-cols-2 gap-2.5">
+        <div class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-between">
+          <div>
+            <div class="text-[11px] font-bold text-emerald-400 flex items-center gap-1">
+              <i class="bi bi-check-circle-fill"></i>
+              <span>تم الشحن</span>
+            </div>
+            <div class="text-lg font-extrabold text-emerald-300 font-mono mt-0.5">
+              {{ bulkResultData.successCount }} طلب
+            </div>
+          </div>
+          <i class="bi bi-box-seam text-2xl text-emerald-500/30"></i>
         </div>
-        <div class="p-3 rounded-xl bg-slate-800/80 border border-slate-700 text-center">
-          <div class="text-xs text-slate-400 font-bold mb-0.5">إجمالي الطلبات</div>
-          <div class="text-xl font-black text-slate-200 font-mono">{{ bulkResultData.totalProcessed }} أوردر</div>
+
+        <div class="p-3 rounded-xl bg-slate-800/60 border border-slate-700/80 flex items-center justify-between">
+          <div>
+            <div class="text-[11px] font-bold text-slate-400 flex items-center gap-1">
+              <i class="bi bi-list-task"></i>
+              <span>إجمالي المحدد</span>
+            </div>
+            <div class="text-lg font-extrabold text-slate-200 font-mono mt-0.5">
+              {{ bulkResultData.totalProcessed }} طلب
+            </div>
+          </div>
+          <i class="bi bi-card-checklist text-2xl text-slate-600/40"></i>
         </div>
       </div>
 
-      <!-- Results Table List -->
-      <div class="space-y-2 max-h-60 overflow-y-auto pr-1">
-        <div *ngFor="let item of bulkResultData.results" class="p-3 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between gap-3 text-xs">
+      <!-- Results List -->
+      <div class="space-y-2 max-h-64 overflow-y-auto custom-scrollbar pe-1">
+        <div *ngFor="let item of bulkResultData.results" class="p-3 rounded-xl bg-slate-900/80 border border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs transition-all hover:border-slate-700">
+          
           <div class="flex items-center gap-2 min-w-0">
-            <span class="font-bold font-mono text-indigo-300">#{{ item.orderNumber }}</span>
-            <span *ngIf="item.success" class="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 font-bold text-[11px] border border-emerald-500/30">
-              ناجح ✅
+            <span class="font-bold font-mono text-indigo-300 px-2 py-0.5 rounded bg-indigo-500/10 border border-indigo-500/20">
+              #{{ getDisplayOrderNumber(item.orderNumber, item.orderId) }}
             </span>
-            <span *ngIf="!item.success" class="px-2 py-0.5 rounded-md bg-rose-500/20 text-rose-300 font-bold text-[11px] border border-rose-500/30">
-              فشل ❌
+
+            <span *ngIf="item.success" class="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 font-bold text-[11px] border border-emerald-500/30 flex items-center gap-1">
+              <i class="bi bi-check-lg"></i> ناجح
+            </span>
+
+            <span *ngIf="!item.success" class="px-2 py-0.5 rounded-md bg-rose-500/20 text-rose-300 font-bold text-[11px] border border-rose-500/30 flex items-center gap-1 shrink-0">
+              <i class="bi bi-x-circle-fill"></i> فشل
             </span>
           </div>
 
           <!-- Successful Tracking Info -->
-          <div *ngIf="item.success && item.trackingNumber" class="flex items-center gap-2 font-mono">
-            <span class="text-sky-300 font-black tracking-wider bg-sky-500/10 px-2 py-1 rounded-lg border border-sky-500/20">
+          <div *ngIf="item.success && item.trackingNumber" class="flex items-center gap-1.5 font-mono self-end sm:self-auto">
+            <span class="text-sky-300 font-bold tracking-wider bg-sky-500/10 px-2.5 py-1 rounded-lg border border-sky-500/20 text-xs">
               {{ item.trackingNumber }}
             </span>
-            <button (click)="copyTrackingNumber(item.trackingNumber)" title="نسخ رقم البولصة" class="btn btn-secondary btn-xs py-1 px-2 text-sky-400 hover:text-white">
-              <i class="fa-solid fa-copy"></i>
+            <button (click)="copyTrackingNumber(item.trackingNumber)" title="نسخ رقم البولصة" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-sky-400 hover:text-white transition-all">
+              <i class="bi bi-clipboard"></i>
             </button>
-            <a [href]="bostaService.getAwbPdfUrl(item.trackingNumber)" target="_blank" title="طباعة البولصة" class="btn btn-secondary btn-xs py-1 px-2 text-amber-400 hover:text-white">
-              <i class="fa-solid fa-print"></i>
+            <a [href]="bostaService.getAwbPdfUrl(item.trackingNumber)" target="_blank" title="طباعة البولصة" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-400 hover:text-white transition-all">
+              <i class="bi bi-printer"></i>
             </a>
           </div>
 
           <!-- Failed Error Msg -->
-          <div *ngIf="!item.success" class="text-rose-400 text-right truncate max-w-[200px]">
-            {{ item.errorMessage }}
+          <div *ngIf="!item.success" class="text-rose-400 text-xs truncate max-w-full sm:max-w-[220px] flex items-center gap-1">
+            <i class="bi bi-exclamation-triangle-fill shrink-0 text-rose-400"></i>
+            <span class="truncate">{{ item.errorMessage }}</span>
           </div>
         </div>
       </div>
 
       <!-- Action Buttons -->
-      <div class="flex items-center justify-between pt-2 border-t border-slate-700">
-        <button (click)="copyAllTrackingNumbers()" class="btn btn-secondary btn-sm py-1.5 px-3 text-xs font-bold text-sky-300 flex items-center gap-1.5">
-          <i class="fa-solid fa-copy text-sky-400"></i>
-          <span>نسخ جميع أرقام البوالص 📋</span>
+      <div class="flex items-center justify-between pt-3 border-t border-slate-700/70 gap-2">
+        <button (click)="copyAllTrackingNumbers()" class="btn btn-secondary btn-sm py-2 px-3 text-xs font-bold text-sky-300 flex items-center gap-1.5 rounded-xl">
+          <i class="bi bi-clipboard-check text-sky-400"></i>
+          <span>نسخ البوالص</span>
         </button>
 
-        <button (click)="closeBulkResultModal()" class="btn btn-primary btn-sm py-1.5 px-4 font-bold">
-          موافق وإغلاق
+        <button (click)="closeBulkResultModal()" class="btn btn-primary btn-sm py-2 px-5 font-bold rounded-xl flex items-center gap-1">
+          <i class="bi bi-check2"></i>
+          <span>موافق وإغلاق</span>
         </button>
       </div>
     </div>
