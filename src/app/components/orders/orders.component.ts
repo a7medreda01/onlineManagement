@@ -105,8 +105,8 @@ export class OrdersComponent implements OnInit {
   }
 
   isBostaOrder(order: Order): boolean {
-    const companyName = order.shippingCompanyName || order.shippingCompany?.name || '';
-    if (!companyName) return true; // Default if no company selected yet
+    const companyName = order.shippingCompanyName || '';
+    if (!companyName) return true; // Default if no company specified yet
     return companyName.toLowerCase().includes('bosta') || companyName.includes('بوسطة');
   }
 
