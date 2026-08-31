@@ -96,10 +96,15 @@
         <span class="px-3 py-1 rounded-xl bg-emerald-500/20 text-emerald-300 font-extrabold border border-emerald-500/40 shadow-sm">
           تم تحديد {{ selectedOrderIds.size }} أوردر
         </span>
+
+        <span *ngIf="hasNonBostaSelected()" class="px-3 py-1 rounded-xl bg-rose-500/20 text-rose-300 font-extrabold border border-rose-500/40 shadow-sm flex items-center gap-1">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <span>بعض الطلبات غير تابعة لشركة بوسطة (حدد طلبات بوسطة فقط)</span>
+        </span>
       </div>
 
       <div class="flex items-center gap-2">
-        <button (click)="sendBulkToBosta()" [disabled]="sendingBulk" class="btn btn-primary btn-sm py-1.5 px-4 font-bold shadow-md shadow-emerald-500/20 flex items-center gap-1.5">
+        <button (click)="sendBulkToBosta()" [disabled]="sendingBulk || hasNonBostaSelected()" class="btn btn-primary btn-sm py-1.5 px-4 font-bold shadow-md shadow-emerald-500/20 flex items-center gap-1.5" [class.opacity-50]="hasNonBostaSelected()">
           <i *ngIf="sendingBulk" class="fa-solid fa-circle-notch fa-spin"></i>
           <i *ngIf="!sendingBulk" class="fa-solid fa-truck-fast text-emerald-300"></i>
           <span>إرسال إلى بوسطة وتحديث المتجر 🚚</span>
@@ -267,7 +272,7 @@
   </div>
 
   <!-- Mobile Floating Bulk Shipping Dock (Positioned above Mobile Bottom Nav) -->
-  <div *ngIf="selectedOrderIds.size > 0" class="md:hidden fixed bottom-20 left-3 right-3 z-40 fade-in">
+  <div *ngIf="selectedOrderIds.size > 0 && hasBostaIntegration" class="md:hidden fixed bottom-20 left-3 right-3 z-40 fade-in">
     <div class="glass-card p-3.5 bg-slate-900/95 border border-emerald-500/50 shadow-2xl backdrop-blur-xl rounded-2xl space-y-2.5">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
@@ -283,14 +288,14 @@
         </button>
       </div>
 
-      <!-- Fulfillment Checkbox -->
-      <label class="flex items-center gap-2 cursor-pointer bg-slate-800/80 p-2 rounded-xl border border-slate-700/80 text-xs">
-        <input type="checkbox" [(ngModel)]="bulkIsFulfillment" class="w-4 h-4 rounded text-amber-500 focus:ring-amber-400 bg-slate-900 border-slate-700" />
-        <span class="font-bold text-amber-300 text-xs">شحن من مخزون بوسطة (Fulfillment) 📦</span>
-      </label>
+      <!-- Warning Badge if non-Bosta selected -->
+      <div *ngIf="hasNonBostaSelected()" class="p-2 rounded-xl bg-rose-500/20 text-rose-300 font-bold text-[11px] border border-rose-500/30 flex items-center gap-1.5">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <span>بعض الطلبات غير تابعة لبوسطة (حدد طلبات بوسطة فقط)</span>
+      </div>
 
       <!-- Big Primary Ship Button -->
-      <button (click)="sendBulkToBosta()" [disabled]="sendingBulk" class="w-full btn btn-primary py-2.5 text-xs font-black shadow-lg shadow-emerald-500/30 flex items-center justify-center gap-2">
+      <button (click)="sendBulkToBosta()" [disabled]="sendingBulk || hasNonBostaSelected()" class="w-full btn btn-primary py-2.5 text-xs font-black shadow-lg shadow-emerald-500/30 flex items-center justify-center gap-2" [class.opacity-50]="hasNonBostaSelected()">
         <i *ngIf="sendingBulk" class="fa-solid fa-circle-notch fa-spin text-sm"></i>
         <i *ngIf="!sendingBulk" class="fa-solid fa-truck-fast text-emerald-300 text-sm"></i>
         <span>إرسال وشحن {{ selectedOrderIds.size }} أوردر إلى بوسطة 🚚</span>

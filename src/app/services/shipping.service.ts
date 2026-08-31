@@ -36,6 +36,11 @@ export class ShippingService {
     return this.http.put(`${this.apiUrl}/${companyId}/integration`, data);
   }
 
+  disconnectIntegration(companyId: number, type?: 'merchant' | 'fulfillment'): Observable<any> {
+    const url = type ? `${this.apiUrl}/${companyId}/disconnect?type=${type}` : `${this.apiUrl}/${companyId}/disconnect`;
+    return this.http.post(url, {});
+  }
+
   delete(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }

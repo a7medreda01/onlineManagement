@@ -54,6 +54,7 @@ export class ShippingComponent implements OnInit, OnDestroy {
 
   // Bosta Integration State & Modal
   showBostaModal = false;
+  bostaTab: 'merchant' | 'fulfillment' | 'webhook' = 'merchant';
   activeBostaTab: BostaTab = 'instructions';
   bostaIntegration = {
     apiKey: '',
@@ -258,23 +259,22 @@ export class ShippingComponent implements OnInit, OnDestroy {
   autoSaveIntegrationOnVerify(): void {
     const merchantKey = this.bostaIntegration.apiKey?.trim() || '';
     const fulfillmentKey = this.bostaIntegration.fulfillmentApiKey?.trim() || '';
-    const effectiveKey = merchantKey || fulfillmentKey;
 
-    if (!effectiveKey) return;
+    if (!merchantKey && !fulfillmentKey) return;
 
     this.bostaIntegration.isIntegrated = true;
     const bosta = this.bostaCompany();
 
     if (bosta) {
       this.shippingService.updateIntegration(bosta.id, {
-        apiKey: effectiveKey,
+        apiKey: merchantKey,
         fulfillmentApiKey: fulfillmentKey,
         webhookUrl: this.webhookEndpoint,
         isIntegrated: true
       }).subscribe({
         next: () => {
           this.loadData();
-          this.notificationService.success('تم حفظ وتوثيق المفاتيح تلقائياً وتأكيد الربط بنجاح! 🚀');
+          this.notificationService.success('تم حفظ وتوثيق المفتاح تلقائياً وتأكيد الربط بنجاح! 🚀');
         }
       });
     } else {
@@ -287,7 +287,7 @@ export class ShippingComponent implements OnInit, OnDestroy {
       this.shippingService.create({
         name: 'شركة بوسطة (Bosta)',
         phone: '19043',
-        apiKey: effectiveKey,
+        apiKey: merchantKey,
         fulfillmentApiKey: fulfillmentKey,
         webhookUrl: this.webhookEndpoint,
         isIntegrated: true,
@@ -295,7 +295,39 @@ export class ShippingComponent implements OnInit, OnDestroy {
       }).subscribe({
         next: () => {
           this.loadData();
-          this.notificationService.success('تم حفظ وتوثيق المفاتيح تلقائياً وتأكيد الربط بنجاح! 🚀');
+          this.notificationService.success('تم حفظ وتوثيق المفتاح تلقائياً وتأكيد الربط بنجاح! 🚀');
+        }
+      });
+    }
+  }
+
+  disconnectBostaIntegration(type?: 'merchant' | 'fulfillment'): void {
+    const bosta = this.bostaCompany();
+    if (!bosta) return;
+
+    const confirmMsg = type === 'merchant'
+      ? 'هل أنت تأكد من إلغاء ربط مفتاح شحن التاجر (Merchant Express)؟'
+      : type === 'fulfillment'
+        ? 'هل أنت تأكد من إلغاء ربط مفتاح مستودع بوسطة (Bosta Fulfillment)؟'
+        : 'هل أنت تأكد من إلغاء ربط حساب بوسطة بالكامل؟';
+
+    if (confirm(confirmMsg)) {
+      this.shippingService.disconnectIntegration(bosta.id, type).subscribe({
+        next: () => {
+          if (type === 'merchant') {
+            this.bostaIntegration.apiKey = '';
+          } else if (type === 'fulfillment') {
+            this.bostaIntegration.fulfillmentApiKey = '';
+          } else {
+            this.bostaIntegration.apiKey = '';
+            this.bostaIntegration.fulfillmentApiKey = '';
+            this.bostaIntegration.isIntegrated = false;
+          }
+          this.loadData();
+          this.notificationService.success('تم إلغاء الربط وتفريغ المفتاح بنجاح 🔴');
+        },
+        error: (err) => {
+          this.notificationService.error(err?.error?.Message || 'فشل إلغاء الربط');
         }
       });
     }
@@ -304,9 +336,8 @@ export class ShippingComponent implements OnInit, OnDestroy {
   saveBostaIntegrationFast(): void {
     const merchantKey = this.bostaIntegration.apiKey?.trim() || '';
     const fulfillmentKey = this.bostaIntegration.fulfillmentApiKey?.trim() || '';
-    const effectiveKey = merchantKey || fulfillmentKey;
 
-    if (!effectiveKey) {
+    if (!merchantKey && !fulfillmentKey) {
       this.notificationService.error('يرجى إدخال أحد مفاتيح Bosta API Keys أولاً للربط');
       return;
     }
@@ -381,7 +412,7 @@ export class ShippingComponent implements OnInit, OnDestroy {
 
     if (bosta) {
       this.shippingService.updateIntegration(bosta.id, {
-        apiKey: effectiveKey,
+        apiKey: merchantKey,
         fulfillmentApiKey: fulfillmentKey,
         webhookUrl: this.webhookEndpoint,
         isIntegrated: true
@@ -402,7 +433,7 @@ export class ShippingComponent implements OnInit, OnDestroy {
       this.shippingService.create({
         name: 'شركة بوسطة (Bosta)',
         phone: '19043',
-        apiKey: effectiveKey,
+        apiKey: merchantKey,
         fulfillmentApiKey: fulfillmentKey,
         webhookUrl: this.webhookEndpoint,
         isIntegrated: true,

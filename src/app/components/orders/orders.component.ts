@@ -104,14 +104,30 @@ export class OrdersComponent implements OnInit {
     this.selectedOrderIds.clear();
   }
 
-  getConfirmedSelectedOrdersCount(): number {
-    return this.orders().filter(o => this.selectedOrderIds.has(o.id) && (o.status === OrderStatus.Confirmed || o.status === OrderStatus.New)).length;
+  isBostaOrder(order: Order): boolean {
+    const companyName = order.shippingCompanyName || order.shippingCompany?.name || '';
+    if (!companyName) return true; // Default if no company selected yet
+    return companyName.toLowerCase().includes('bosta') || companyName.includes('بوسطة');
+  }
+
+  hasNonBostaSelected(): boolean {
+    const selected = this.orders().filter(o => this.selectedOrderIds.has(o.id));
+    if (selected.length === 0) return false;
+    return selected.some(o => !this.isBostaOrder(o));
   }
 
   sendBulkToBosta(): void {
     if (this.selectedOrderIds.size === 0) return;
 
     const allSelectedOrders = this.orders().filter(o => this.selectedOrderIds.has(o.id));
+    
+    // Validate that all selected orders belong to Bosta
+    const nonBosta = allSelectedOrders.filter(o => !this.isBostaOrder(o));
+    if (nonBosta.length > 0) {
+      this.notificationService.error(`تنبيه: يوجد ${nonBosta.length} طلب غير تابع لشركة بوسطة. يرجى تحديد طلبات شركة بوسطة فقط للشحن لبوسطة.`);
+      return;
+    }
+
     const confirmedOrders = allSelectedOrders.filter(o => o.status === OrderStatus.Confirmed || o.status === OrderStatus.New);
 
     if (confirmedOrders.length === 0) {

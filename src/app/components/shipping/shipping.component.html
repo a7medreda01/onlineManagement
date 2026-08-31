@@ -280,23 +280,23 @@
   </div>
 
   <!-- ========================================================================= -->
-  <!-- BOSTA FAST 1-STEP INTEGRATION MODAL                                       -->
+  <!-- BOSTA DUAL-TAB INTEGRATION MODAL                                          -->
   <!-- ========================================================================= -->
   <div *ngIf="showBostaModal" class="app-modal-overlay">
-    <div class="glass-card w-full max-w-2xl max-h-[82vh] mb-16 sm:mb-0 flex flex-col p-5 sm:p-6 fade-in space-y-4 my-auto border border-rose-500/40 shadow-2xl bg-gradient-to-b from-slate-900 via-slate-900 to-rose-950/20">
+    <div class="glass-card w-full max-w-2xl max-h-[85vh] mb-16 sm:mb-0 flex flex-col p-5 sm:p-6 fade-in space-y-4 my-auto border border-rose-500/40 shadow-2xl bg-gradient-to-b from-slate-900 via-slate-900 to-rose-950/20">
 
       <!-- Modal Header -->
-      <div class="flex items-center justify-between border-b border-slate-700/70 pb-3.5 shrink-0">
+      <div class="flex items-center justify-between border-b border-slate-700/70 pb-3 shrink-0">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 to-red-600 text-white flex flex-col items-center justify-center font-black shadow-lg shadow-rose-500/30 shrink-0">
             <span class="text-xs tracking-tighter lowercase leading-none">bosta</span>
           </div>
           <div>
             <div class="flex flex-wrap items-center gap-2">
-              <h3 class="font-black text-sm sm:text-base text-white">دليل ربط وتفعيل حساب بوسطة (Bosta Wizard)</h3>
-              <span class="badge bg-emerald-500/20 text-emerald-300 border-emerald-500/40 text-[9px] py-0.5 px-2 font-bold shrink-0">ربط بخطوات منظمة ⚡</span>
+              <h3 class="font-black text-sm sm:text-base text-white">إعدادات ربط شركة بوسطة (Bosta Integration)</h3>
+              <span class="badge bg-emerald-500/20 text-emerald-300 border-emerald-500/40 text-[9px] py-0.5 px-2 font-bold shrink-0">مستقل 100% ⚡</span>
             </div>
-            <p class="text-[11px] text-slate-400 mt-0.5">اتبع الخطوات الموضحة بالترتيب لإتمام الربط، فحص الحساب، وسحب الأسعار والمخزون</p>
+            <p class="text-[11px] text-slate-400 mt-0.5">افصل بين مفتاح مخزن التاجر ومفتاح مستودع بوسطة وسحب الأسعار والمنتجات بشكل كامل</p>
           </div>
         </div>
 
@@ -305,27 +305,68 @@
         </button>
       </div>
 
-      <!-- Modal Body (Step-by-Step Guided Form) -->
-      <div class="overflow-y-auto flex-1 pr-1 space-y-4 text-xs">
-        
-        <!-- STEP 1: API Keys & Connection Verification -->
-        <div class="glass-card p-3.5 sm:p-4 space-y-3 border-amber-500/30 bg-slate-800/80 relative overflow-hidden">
-          <div class="flex items-center justify-between border-b border-slate-700/60 pb-2">
-            <span class="text-xs font-black text-amber-300 flex items-center gap-2">
-              <span class="w-5 h-5 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center font-black text-[11px]">1</span>
-              <span>أدخل مفاتيح Bosta API Keys الخاصة بحسابك وافحص الاتصال</span>
-            </span>
-            <a href="https://business.bosta.co/settings/api-integration" target="_blank" class="text-sky-400 hover:underline font-normal text-[11px] flex items-center gap-1">
-              جلب المفتاح من لوحة بوسطة <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
-            </a>
-          </div>
+      <!-- NAVIGATION TABS -->
+      <div class="flex items-center gap-2 border-b border-slate-800 pb-2 shrink-0 overflow-x-auto">
+        <button type="button" 
+                (click)="bostaTab = 'merchant'" 
+                [class.bg-sky-500]="bostaTab === 'merchant'"
+                [class.text-slate-950]="bostaTab === 'merchant'"
+                [class.bg-slate-800]="bostaTab !== 'merchant'"
+                [class.text-slate-300]="bostaTab !== 'merchant'"
+                class="px-3.5 py-2 rounded-xl font-extrabold text-xs transition-all flex items-center gap-2 border border-slate-700/60 shadow shrink-0">
+          <i class="fa-solid fa-store" [class.text-sky-400]="bostaTab !== 'merchant'"></i>
+          <span>🏢 مخزن التاجر (Merchant Express)</span>
+          <span *ngIf="bostaIntegration.apiKey" class="w-2 h-2 rounded-full bg-emerald-400 shadow-glow"></span>
+        </button>
 
-          <!-- Merchant Express API Key -->
-          <div class="space-y-1">
-            <label class="form-label text-[11px] font-bold text-slate-300 flex items-center gap-1.5 mb-0">
-              <span class="px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 font-extrabold border border-sky-500/30">مخزن التاجر</span>
-              <span>مفتاح شحن التاجر (Merchant Express API Key):</span>
-            </label>
+        <button type="button" 
+                (click)="bostaTab = 'fulfillment'" 
+                [class.bg-purple-600]="bostaTab === 'fulfillment'"
+                [class.text-white]="bostaTab === 'fulfillment'"
+                [class.bg-slate-800]="bostaTab !== 'fulfillment'"
+                [class.text-slate-300]="bostaTab !== 'fulfillment'"
+                class="px-3.5 py-2 rounded-xl font-extrabold text-xs transition-all flex items-center gap-2 border border-slate-700/60 shadow shrink-0">
+          <i class="fa-solid fa-warehouse" [class.text-purple-400]="bostaTab !== 'fulfillment'"></i>
+          <span>📦 مستودع بوسطة (Bosta Fulfillment)</span>
+          <span *ngIf="bostaIntegration.fulfillmentApiKey" class="w-2 h-2 rounded-full bg-emerald-400 shadow-glow"></span>
+        </button>
+
+        <button type="button" 
+                (click)="bostaTab = 'webhook'" 
+                [class.bg-rose-600]="bostaTab === 'webhook'"
+                [class.text-white]="bostaTab === 'webhook'"
+                [class.bg-slate-800]="bostaTab !== 'webhook'"
+                [class.text-slate-300]="bostaTab !== 'webhook'"
+                class="px-3.5 py-2 rounded-xl font-extrabold text-xs transition-all flex items-center gap-2 border border-slate-700/60 shadow shrink-0 mr-auto">
+          <i class="fa-solid fa-network-wired" [class.text-rose-400]="bostaTab !== 'webhook'"></i>
+          <span>🔗 Webhook</span>
+        </button>
+      </div>
+
+      <!-- MODAL BODY -->
+      <div class="overflow-y-auto flex-1 pr-1 space-y-4 text-xs">
+
+        <!-- =================================================================== -->
+        <!-- TAB 1: MERCHANT STORE (مخزن التاجر)                                -->
+        <!-- =================================================================== -->
+        <div *ngIf="bostaTab === 'merchant'" class="space-y-4 fade-in">
+          
+          <!-- Key Input & Verification Card -->
+          <div class="glass-card p-3.5 sm:p-4 space-y-3 border-sky-500/30 bg-slate-800/80">
+            <div class="flex items-center justify-between border-b border-slate-700/60 pb-2">
+              <span class="text-xs font-black text-sky-300 flex items-center gap-2">
+                <i class="fa-solid fa-key text-sky-400"></i>
+                <span>مفتاح شحن التاجر (Merchant Express API Key)</span>
+              </span>
+              <a href="https://business.bosta.co/settings/api-integration" target="_blank" class="text-sky-400 hover:underline font-normal text-[11px] flex items-center gap-1">
+                جلب المفتاح من لوحة بوسطة <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
+              </a>
+            </div>
+            
+            <p class="text-[11px] text-slate-300">
+              يُستخدم هذا المفتاح لطلبات التوصيل العادية من مقر التاجر وحجز المندوب عبر API بوسطة السريع.
+            </p>
+
             <div class="flex flex-col sm:flex-row gap-2">
               <div class="relative flex-1">
                 <input [type]="showApiKey ? 'text' : 'password'"
@@ -336,29 +377,94 @@
                   <i class="fa-solid" [class.fa-eye]="!showApiKey" [class.fa-eye-slash]="showApiKey"></i>
                 </button>
               </div>
-              <button type="button" (click)="testBostaConnection('merchant')" [disabled]="verifyingKey" class="btn btn-secondary text-xs px-3.5 py-2.5 font-bold text-amber-300 border-amber-500/30 hover:bg-amber-500/20 flex items-center justify-center gap-1.5 shrink-0 shadow-lg">
+              <button type="button" (click)="testBostaConnection('merchant')" [disabled]="verifyingKey" class="btn btn-secondary text-xs px-3.5 py-2.5 font-bold text-sky-300 border-sky-500/30 hover:bg-sky-500/20 flex items-center justify-center gap-1.5 shrink-0 shadow-lg">
                 <i *ngIf="verifyingKey" class="fa-solid fa-circle-notch fa-spin"></i>
                 <i *ngIf="!verifyingKey" class="fa-solid fa-vial-circle-check"></i>
-                <span>اختبار مفتاح التاجر 🧪</span>
+                <span>اختبار وتحقق مفتاح التاجر 🧪</span>
               </button>
             </div>
           </div>
 
-          <!-- Bosta Fulfillment API Key -->
-          <div class="space-y-1 pt-2 border-t border-slate-700/50">
-            <label class="form-label text-[11px] font-bold text-slate-300 flex items-center justify-between mb-0">
-              <span class="flex items-center gap-1.5">
-                <span class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-extrabold border border-purple-500/30">مخزن بوسطة</span>
-                <span>مفتاح مستودع بوسطة (Bosta Fulfillment API Key):</span>
+          <!-- Merchant Rates Card -->
+          <div class="glass-card p-3.5 sm:p-4 space-y-3 border-emerald-500/30 bg-slate-800/80">
+            <div class="flex items-center justify-between border-b border-slate-700/60 pb-2">
+              <span class="text-xs font-black text-emerald-300 flex items-center gap-2">
+                <i class="fa-solid fa-file-invoice-dollar text-emerald-400"></i>
+                <span>أسعار الشحن والتعاقد لحساب التاجر</span>
               </span>
-              <span class="text-[10px] text-slate-400 font-normal">(اختياري - إذا كان لديك رمز منفصل)</span>
-            </label>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-2">
+              <button type="button" (click)="importBostaRates()" [disabled]="importingRates" class="btn bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-200 border border-emerald-500/40 text-xs py-2.5 px-4 font-bold flex items-center justify-center gap-2 transition flex-1 shadow-lg">
+                <i *ngIf="importingRates" class="fa-solid fa-circle-notch fa-spin"></i>
+                <i *ngIf="!importingRates" class="fa-solid fa-bolt text-emerald-400"></i>
+                <span>سحب أسعار تعاقد التاجر من بوسطة ⚡</span>
+              </button>
+
+              <button type="button" (click)="openBostaRatesModal()" class="btn btn-secondary text-xs py-2.5 px-4 text-sky-300 border-sky-500/30 hover:bg-sky-500/20 font-bold flex items-center justify-center gap-2 shrink-0">
+                <i class="fa-solid fa-list-check text-sky-400"></i>
+                <span>تعديل أسعار الـ 27 محافظة 📝</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Merchant Products Sync Card -->
+          <div class="glass-card p-3.5 sm:p-4 space-y-3 border-indigo-500/30 bg-slate-800/80">
+            <div class="flex items-center justify-between border-b border-slate-700/60 pb-2">
+              <span class="text-xs font-black text-indigo-300 flex items-center gap-2">
+                <i class="fa-solid fa-boxes-packing text-indigo-400"></i>
+                <span>مزامنة منتجات مخزن التاجر</span>
+              </span>
+            </div>
+            <button type="button" (click)="syncBostaProducts()" [disabled]="syncingProducts" class="btn bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-200 border border-indigo-500/40 text-xs py-2.5 px-4 font-bold flex items-center justify-center gap-2 transition w-full shadow-lg">
+              <i *ngIf="syncingProducts" class="fa-solid fa-circle-notch fa-spin"></i>
+              <i *ngIf="!syncingProducts" class="fa-solid fa-rotate text-indigo-400"></i>
+              <span>سحب وتحديث منتجات التاجر 📦</span>
+            </button>
+          </div>
+
+          <!-- Tab 1 Action Toolbar -->
+          <div class="pt-2 flex items-center justify-between gap-3 border-t border-slate-800">
+            <button type="button" (click)="disconnectBostaIntegration('merchant')" *ngIf="bostaIntegration.apiKey" class="btn bg-rose-500/20 hover:bg-rose-500/40 text-rose-300 border border-rose-500/40 text-xs py-2 px-3.5 font-bold flex items-center gap-1.5">
+              <i class="fa-solid fa-link-slash"></i>
+              <span>إلغاء ربط التاجر 🔴</span>
+            </button>
+
+            <button type="button" (click)="saveBostaIntegrationFast()" [disabled]="savingIntegration" class="btn bg-sky-600 hover:bg-sky-500 text-white font-extrabold text-xs py-2.5 px-6 rounded-xl shadow-lg flex items-center gap-2 mr-auto">
+              <i *ngIf="savingIntegration" class="fa-solid fa-circle-notch fa-spin"></i>
+              <i *ngIf="!savingIntegration" class="fa-solid fa-floppy-disk"></i>
+              <span>حفظ وتفعيل مفتاح التاجر 💾</span>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- =================================================================== -->
+        <!-- TAB 2: BOSTA FULFILLMENT (مستودع بوسطة)                            -->
+        <!-- =================================================================== -->
+        <div *ngIf="bostaTab === 'fulfillment'" class="space-y-4 fade-in">
+
+          <!-- Key Input & Storage Fee Card -->
+          <div class="glass-card p-3.5 sm:p-4 space-y-3 border-purple-500/30 bg-slate-800/80">
+            <div class="flex items-center justify-between border-b border-slate-700/60 pb-2">
+              <span class="text-xs font-black text-purple-300 flex items-center gap-2">
+                <i class="fa-solid fa-warehouse text-purple-400"></i>
+                <span>مفتاح مستودع بوسطة (Bosta Fulfillment API Key)</span>
+              </span>
+              <a href="https://docs-fulfillment.bosta.co/api-reference/Api/" target="_blank" class="text-purple-400 hover:underline font-normal text-[11px] flex items-center gap-1">
+                توثيق الـ Fulfillment API <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
+              </a>
+            </div>
+
+            <p class="text-[11px] text-slate-300">
+              يُستخدم هذا المفتاح للربط المباشر مع سيرفر الفولفيلمنت (`api-fulfillment.bosta.co/api/v1`) وشحن الطلبات وتجهيزها تلقائياً من مخازن بوسطة.
+            </p>
+
             <div class="flex flex-col sm:flex-row gap-2">
               <div class="relative flex-1">
                 <input [type]="showApiKey ? 'text' : 'password'"
                        [(ngModel)]="bostaIntegration.fulfillmentApiKey"
                        class="form-control text-xs py-2.5 font-mono text-purple-300 bg-slate-900 border-slate-700 pl-10"
-                       placeholder="مفتاح الـ Fulfillment المخصص (إذا ترك فارغاً سيتم استخدام مفتاح التاجر اعلاه تلقائياً)" />
+                       placeholder="مثال: boost_188af21e949b9ae5f5a7416c853a..." />
                 <button type="button" (click)="showApiKey = !showApiKey" class="absolute left-3 top-3 text-slate-400 hover:text-white">
                   <i class="fa-solid" [class.fa-eye]="!showApiKey" [class.fa-eye-slash]="showApiKey"></i>
                 </button>
@@ -369,121 +475,110 @@
                 <span>اختبار مفتاح المستودع 🧪</span>
               </button>
             </div>
-          </div>
 
-          <!-- Status Indicator Badge for Step 1 -->
-          <div *ngIf="bostaConnectionStatus !== 'none'" class="p-2.5 rounded-xl text-xs font-bold transition-all fade-in flex items-center justify-between gap-2"
-               [class.bg-emerald-500\/10]="bostaConnectionStatus === 'success'" [class.text-emerald-300]="bostaConnectionStatus === 'success'" [class.border-emerald-500\/30]="bostaConnectionStatus === 'success'"
-               [class.bg-rose-500\/10]="bostaConnectionStatus === 'failed'" [class.text-rose-300]="bostaConnectionStatus === 'failed'" [class.border-rose-500\/30]="bostaConnectionStatus === 'failed'"
-               [class.bg-amber-500\/10]="bostaConnectionStatus === 'testing'" [class.text-amber-300]="bostaConnectionStatus === 'testing'" [class.border-amber-500\/30]="bostaConnectionStatus === 'testing'"
-               class="border">
-            <span>{{ bostaConnectionMessage }}</span>
-            <span *ngIf="bostaConnectionStatus === 'success'" class="badge bg-emerald-500/20 text-emerald-300 text-[10px]">مربوط ومفعل ✅</span>
-          </div>
-        </div>
-
-        <!-- STEP 2: Pull Account Specific Rates -->
-        <div class="glass-card p-3.5 sm:p-4 space-y-3 border-emerald-500/30 bg-slate-800/80">
-          <div class="flex items-center justify-between border-b border-slate-700/60 pb-2">
-            <span class="text-xs font-black text-emerald-300 flex items-center gap-2">
-              <span class="w-5 h-5 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center font-black text-[11px]">2</span>
-              <span>سحب وتأكيد أسعار الشحن الخاصة بحسابك في بوسطة</span>
-            </span>
-          </div>
-          <p class="text-[11px] text-slate-300 leading-normal">
-            يقوم هذا الزر بالاستعلام المباشر من API حسابك في بوسطة لجلب أسعار الشحن والـ Return الخاصة بتعاقد متجرك لكل المحافظات (+14% VAT).
-          </p>
-
-          <!-- Storage Fee Checkbox -->
-          <div class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-700/70 space-y-2">
-            <label class="flex items-center gap-2 cursor-pointer font-bold text-amber-300 text-xs">
-              <input type="checkbox" [(ngModel)]="useStorageService" class="w-4 h-4 rounded text-amber-500 bg-slate-950 border-slate-700" />
-              <span>إضافة رسوم التخزين / الفولفيلمنت لكل شحنة 📦</span>
-            </label>
-            <div *ngIf="useStorageService" class="flex items-center gap-2 pr-6">
-              <span class="text-slate-400 text-xs">رسوم التخزين المضافة للشحنة:</span>
-              <div class="relative max-w-[100px]">
-                <input type="number" [(ngModel)]="storageFee" min="0" step="1" class="form-control text-xs py-1 px-2 text-center font-bold text-amber-400 bg-slate-950 border-slate-700" />
-                <span class="absolute left-2 top-1 text-[10px] text-slate-500">ج.م</span>
+            <!-- Storage Fee Input -->
+            <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-700/70 space-y-2 mt-2">
+              <label class="flex items-center gap-2 cursor-pointer font-bold text-amber-300 text-xs">
+                <input type="checkbox" [(ngModel)]="useStorageService" class="w-4 h-4 rounded text-amber-500 bg-slate-950 border-slate-700" />
+                <span>إضافة رسوم التخزين / التجهيز (Fulfillment Fee) لكل شحنة 📦</span>
+              </label>
+              <div *ngIf="useStorageService" class="flex items-center gap-2 pr-6">
+                <span class="text-slate-400 text-xs">رسوم التجهيز المضافة للشحنة:</span>
+                <div class="relative max-w-[120px]">
+                  <input type="number" [(ngModel)]="storageFee" min="0" step="1" class="form-control text-xs py-1 px-2 text-center font-bold text-amber-400 bg-slate-950 border-slate-700" />
+                  <span class="absolute left-2 top-1 text-[10px] text-slate-500">ج.م</span>
+                </div>
               </div>
             </div>
           </div>
 
-          <div class="flex flex-col sm:flex-row gap-2 pt-1">
-            <button type="button" (click)="importBostaRates()" [disabled]="importingRates" class="btn bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-200 border border-emerald-500/40 text-xs py-2.5 px-4 font-bold flex items-center justify-center gap-2 transition flex-1 shadow-lg">
-              <i *ngIf="importingRates" class="fa-solid fa-circle-notch fa-spin"></i>
-              <i *ngIf="!importingRates" class="fa-solid fa-file-invoice-dollar text-emerald-400"></i>
-              <span>سحب أسعار حسابي من بوسطة ⚡</span>
-            </button>
+          <!-- Fulfillment Rates Sync -->
+          <div class="glass-card p-3.5 sm:p-4 space-y-3 border-emerald-500/30 bg-slate-800/80">
+            <div class="flex items-center justify-between border-b border-slate-700/60 pb-2">
+              <span class="text-xs font-black text-emerald-300 flex items-center gap-2">
+                <i class="fa-solid fa-calculator text-emerald-400"></i>
+                <span>سحب أسعار حساب الفولفيلمنت</span>
+              </span>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-2">
+              <button type="button" (click)="importBostaRates()" [disabled]="importingRates" class="btn bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 border border-purple-500/40 text-xs py-2.5 px-4 font-bold flex items-center justify-center gap-2 transition flex-1 shadow-lg">
+                <i *ngIf="importingRates" class="fa-solid fa-circle-notch fa-spin"></i>
+                <i *ngIf="!importingRates" class="fa-solid fa-bolt text-purple-400"></i>
+                <span>سحب أسعار حساب المستودع ⚡</span>
+              </button>
 
-            <button type="button" (click)="openBostaRatesModal()" class="btn btn-secondary text-xs py-2.5 px-4 text-sky-300 border-sky-500/30 hover:bg-sky-500/20 font-bold flex items-center justify-center gap-2 shrink-0">
-              <i class="fa-solid fa-list-check text-sky-400"></i>
-              <span>عرض وتعديل أسعار الـ 27 محافظة 📝</span>
+              <button type="button" (click)="openBostaRatesModal()" class="btn btn-secondary text-xs py-2.5 px-4 text-sky-300 border-sky-500/30 hover:bg-sky-500/20 font-bold flex items-center justify-center gap-2 shrink-0">
+                <i class="fa-solid fa-list-check text-sky-400"></i>
+                <span>تعديل أسعار الـ 27 محافظة 📝</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Fulfillment Stock & Products Sync Card -->
+          <div class="glass-card p-3.5 sm:p-4 space-y-3 border-purple-500/30 bg-slate-800/80">
+            <div class="flex items-center justify-between border-b border-slate-700/60 pb-2">
+              <span class="text-xs font-black text-purple-300 flex items-center gap-2">
+                <i class="fa-solid fa-boxes-stacked text-purple-400"></i>
+                <span>سحب منتجات ومخزون Bosta Fulfillment</span>
+              </span>
+            </div>
+            <p class="text-[11px] text-slate-300">
+              سحب وتأكيد أكواد المنتجات (`BO-SKU`) والكميات المتاحة في مستودعات بوسطة وتحديث رصيدها تلقائياً.
+            </p>
+            <button type="button" (click)="syncBostaProducts()" [disabled]="syncingProducts" class="btn bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 border border-purple-500/40 text-xs py-2.5 px-4 font-bold flex items-center justify-center gap-2 transition w-full shadow-lg">
+              <i *ngIf="syncingProducts" class="fa-solid fa-circle-notch fa-spin"></i>
+              <i *ngIf="!syncingProducts" class="fa-solid fa-arrows-rotate text-purple-400"></i>
+              <span>سحب المنتجات والمخزون من بوسطة 📦</span>
             </button>
           </div>
 
-          <!-- Status Indicator Badge for Step 2 -->
-          <div *ngIf="ratesImportStatus !== 'none'" class="p-2.5 rounded-xl text-xs font-bold transition-all fade-in border flex items-center justify-between"
-               [class.bg-emerald-500\/10]="ratesImportStatus === 'success'" [class.text-emerald-300]="ratesImportStatus === 'success'" [class.border-emerald-500\/30]="ratesImportStatus === 'success'"
-               [class.bg-rose-500\/10]="ratesImportStatus === 'failed'" [class.text-rose-300]="ratesImportStatus === 'failed'" [class.border-rose-500\/30]="ratesImportStatus === 'failed'"
-               [class.bg-amber-500\/10]="ratesImportStatus === 'loading'" [class.text-amber-300]="ratesImportStatus === 'loading'" [class.border-amber-500\/30]="ratesImportStatus === 'loading'">
-            <span>{{ ratesImportMessage }}</span>
+          <!-- Tab 2 Action Toolbar -->
+          <div class="pt-2 flex items-center justify-between gap-3 border-t border-slate-800">
+            <button type="button" (click)="disconnectBostaIntegration('fulfillment')" *ngIf="bostaIntegration.fulfillmentApiKey" class="btn bg-rose-500/20 hover:bg-rose-500/40 text-rose-300 border border-rose-500/40 text-xs py-2 px-3.5 font-bold flex items-center gap-1.5">
+              <i class="fa-solid fa-link-slash"></i>
+              <span>إلغاء ربط المستودع 🔴</span>
+            </button>
+
+            <button type="button" (click)="saveBostaIntegrationFast()" [disabled]="savingIntegration" class="btn bg-purple-600 hover:bg-purple-500 text-white font-extrabold text-xs py-2.5 px-6 rounded-xl shadow-lg flex items-center gap-2 mr-auto">
+              <i *ngIf="savingIntegration" class="fa-solid fa-circle-notch fa-spin"></i>
+              <i *ngIf="!savingIntegration" class="fa-solid fa-floppy-disk"></i>
+              <span>حفظ وتفعيل مفتاح المستودع 💾</span>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- =================================================================== -->
+        <!-- TAB 3: WEBHOOK ENDPOINT (إعدادات الـ Webhook)                       -->
+        <!-- =================================================================== -->
+        <div *ngIf="bostaTab === 'webhook'" class="space-y-4 fade-in">
+          <div class="glass-card p-3.5 sm:p-4 space-y-3 border-rose-500/30 bg-slate-800/80">
+            <div class="flex items-center justify-between border-b border-slate-700/60 pb-2">
+              <span class="text-xs font-black text-rose-300 flex items-center gap-2">
+                <i class="fa-solid fa-network-wired text-rose-400"></i>
+                <span>رابط الـ Webhook المباشر لمزامنة حالات الطلبات</span>
+              </span>
+            </div>
+            <p class="text-[11px] text-slate-300">
+              قم بنسخ هذا الرابط ووضعه في إعدادات Webhooks في لوحة بوسطة لتحديث حالات الأوردرات والإلغاء المباشر أوتوماتيكياً.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-2">
+              <input type="text" [value]="webhookEndpoint" readonly class="form-control text-xs py-2.5 font-mono text-rose-300 bg-slate-950 border-rose-500/30 flex-1 select-all font-bold" />
+              <button type="button" (click)="copyWebhookUrl()" class="btn bg-rose-600/30 hover:bg-rose-600/50 text-rose-200 border border-rose-500/40 text-xs px-4 py-2.5 font-bold flex items-center justify-center gap-1.5 shrink-0 transition">
+                <i class="fa-solid fa-copy"></i>
+                <span>نسخ الرابط 📋</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="pt-2 flex justify-end">
+            <button type="button" (click)="disconnectBostaIntegration()" *ngIf="bostaIntegration.isIntegrated" class="btn bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs py-2.5 px-5 rounded-xl shadow-lg flex items-center gap-2">
+              <i class="fa-solid fa-power-off"></i>
+              <span>إلغاء ربط بوسطة بالكامل 🔴</span>
+            </button>
           </div>
         </div>
 
-        <!-- STEP 3: Sync Bosta Fulfillment Products & Stock -->
-        <div class="glass-card p-3.5 sm:p-4 space-y-3 border-indigo-500/30 bg-slate-800/80">
-          <div class="flex items-center justify-between border-b border-slate-700/60 pb-2">
-            <span class="text-xs font-black text-indigo-300 flex items-center gap-2">
-              <span class="w-5 h-5 rounded-full bg-indigo-500 text-slate-950 flex items-center justify-center font-black text-[11px]">3</span>
-              <span>سحب المنتجات والمخزون المتاح من Bosta Fulfillment</span>
-            </span>
-          </div>
-          <p class="text-[11px] text-slate-300 leading-normal">
-            سحب وتأكيد أكواد المنتجات (`BO-SKU`) والكميات الحالية المتاحة في مستودعات بوسطة الفولفيلمنت لربطها بمنتجات متجرك.
-          </p>
-
-          <button type="button" (click)="syncBostaProducts()" [disabled]="syncingProducts" class="btn bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-200 border border-indigo-500/40 text-xs py-2.5 px-4 font-bold flex items-center justify-center gap-2 transition w-full shadow-lg">
-            <i *ngIf="syncingProducts" class="fa-solid fa-circle-notch fa-spin"></i>
-            <i *ngIf="!syncingProducts" class="fa-solid fa-boxes-packing text-indigo-400"></i>
-            <span>سحب المنتجات والمخزون من بوسطة 📦</span>
-          </button>
-
-          <!-- Status Indicator Badge for Step 3 -->
-          <div *ngIf="stockSyncStatus !== 'none'" class="p-2.5 rounded-xl text-xs font-bold transition-all fade-in border flex items-center justify-between"
-               [class.bg-indigo-500\/10]="stockSyncStatus === 'success'" [class.text-indigo-300]="stockSyncStatus === 'success'" [class.border-indigo-500\/30]="stockSyncStatus === 'success'"
-               [class.bg-rose-500\/10]="stockSyncStatus === 'failed'" [class.text-rose-300]="stockSyncStatus === 'failed'" [class.border-rose-500\/30]="stockSyncStatus === 'failed'"
-               [class.bg-amber-500\/10]="stockSyncStatus === 'loading'" [class.text-amber-300]="stockSyncStatus === 'loading'" [class.border-amber-500\/30]="stockSyncStatus === 'loading'">
-            <span>{{ stockSyncMessage }}</span>
-          </div>
-        </div>
-
-        <!-- STEP 4: Webhook Endpoint -->
-        <div class="glass-card p-3.5 sm:p-4 space-y-2.5 border-rose-500/30 bg-slate-800/80">
-          <label class="form-label text-xs font-black text-rose-300 flex items-center gap-2 mb-0">
-            <span class="w-5 h-5 rounded-full bg-rose-500 text-slate-950 flex items-center justify-center font-black text-[11px]">4</span>
-            <span>انسخ رابط الـ Webhook وضعه في لوحة بوسطة لتسليم التحديثات</span>
-          </label>
-          <div class="flex flex-col sm:flex-row gap-2">
-            <input type="text" [value]="webhookEndpoint" readonly class="form-control text-xs py-2.5 font-mono text-rose-300 bg-slate-950 border-rose-500/30 flex-1 select-all font-bold" />
-            <button (click)="copyWebhookUrl()" class="btn bg-rose-600/30 hover:bg-rose-600/50 text-rose-200 border border-rose-500/40 text-xs px-4 py-2.5 font-bold flex items-center justify-center gap-1.5 shrink-0 transition">
-              <i class="fa-solid fa-copy"></i>
-              <span>نسخ الرابط 📋</span>
-            </button>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Modal Footer Action -->
-      <div class="border-t border-slate-800 pt-3 flex items-center justify-end gap-3 shrink-0">
-        <button (click)="closeBostaModal()" class="btn btn-secondary text-xs px-4 py-2.5 font-bold">إلغاء</button>
-
-        <button (click)="saveBostaIntegrationFast()" [disabled]="savingIntegration" class="btn bg-gradient-to-r from-rose-600 via-red-600 to-emerald-600 hover:from-rose-500 hover:to-emerald-500 text-white font-extrabold text-xs py-2.5 px-5 sm:px-8 rounded-xl shadow-xl shadow-rose-600/20 flex items-center justify-center gap-2 transition-all hover:scale-[1.02]">
-          <i *ngIf="savingIntegration" class="fa-solid fa-circle-notch fa-spin text-sm"></i>
-          <i *ngIf="!savingIntegration" class="fa-solid fa-rocket text-sm"></i>
-          <span>حفظ وتفعيل الربط الفوري مع بوسطة 🚀</span>
-        </button>
       </div>
 
     </div>
