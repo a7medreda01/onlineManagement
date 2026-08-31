@@ -62,6 +62,14 @@ export class ShippingComponent implements OnInit, OnDestroy {
     isIntegrated: false
   };
   editedBostaRates: { governorateId: number; governorateName: string; shippingPrice: number; returnPrice: number }[] = [];
+  // Step-by-step connection status tracking
+  bostaConnectionStatus: 'none' | 'testing' | 'success' | 'failed' = 'none';
+  bostaConnectionMessage = '';
+  ratesImportStatus: 'none' | 'loading' | 'success' | 'failed' = 'none';
+  ratesImportMessage = '';
+  stockSyncStatus: 'none' | 'loading' | 'success' | 'failed' = 'none';
+  stockSyncMessage = '';
+
   showApiKey = false;
   verifyingKey = false;
   savingIntegration = false;
@@ -209,17 +217,26 @@ export class ShippingComponent implements OnInit, OnDestroy {
     }
 
     this.verifyingKey = true;
+    this.bostaConnectionStatus = 'testing';
+    this.bostaConnectionMessage = 'جاري الاتصال واختبار مفاتيح بوسطة...';
+
     this.bostaService.verifyApiKey(this.bostaIntegration.apiKey.trim()).subscribe({
       next: (res) => {
         this.verifyingKey = false;
         if (res.success) {
+          this.bostaConnectionStatus = 'success';
+          this.bostaConnectionMessage = '✅ تم الاتصال والتحقق من حسابك في بوسطة بنجاح!';
           this.notificationService.success(res.message);
         } else {
+          this.bostaConnectionStatus = 'failed';
+          this.bostaConnectionMessage = '❌ فشل التحقق: ' + (res.message || 'المفتاح غير صحيح');
           this.notificationService.error(res.message);
         }
       },
       error: (err) => {
         this.verifyingKey = false;
+        this.bostaConnectionStatus = 'failed';
+        this.bostaConnectionMessage = '❌ تعذر الاتصال بـ API بوسطة. يرجى التأكد من المفتاح.';
         this.notificationService.error(err?.error?.Message || err?.message || 'فشل اختبار الربط مع بوسطة');
       }
     });
@@ -303,6 +320,7 @@ export class ShippingComponent implements OnInit, OnDestroy {
     if (bosta) {
       this.shippingService.updateIntegration(bosta.id, {
         apiKey: trimmedKey,
+        fulfillmentApiKey: this.bostaIntegration.fulfillmentApiKey?.trim(),
         webhookUrl: this.webhookEndpoint,
         isIntegrated: true
       }).subscribe({
@@ -323,6 +341,7 @@ export class ShippingComponent implements OnInit, OnDestroy {
         name: 'شركة بوسطة (Bosta)',
         phone: '19043',
         apiKey: trimmedKey,
+        fulfillmentApiKey: this.bostaIntegration.fulfillmentApiKey?.trim(),
         webhookUrl: this.webhookEndpoint,
         isIntegrated: true,
         rates: defaultRates
@@ -348,6 +367,9 @@ export class ShippingComponent implements OnInit, OnDestroy {
     }
 
     this.importingRates = true;
+    this.ratesImportStatus = 'loading';
+    this.ratesImportMessage = 'جاري استعلام وحساب أسعار تعاقد حسابك المباشر في بوسطة...';
+
     const payload = {
       useStorageService: this.useStorageService,
       storageFee: this.storageFee
@@ -357,14 +379,20 @@ export class ShippingComponent implements OnInit, OnDestroy {
       next: (res) => {
         this.importingRates = false;
         if (res.success) {
+          this.ratesImportStatus = 'success';
+          this.ratesImportMessage = `✅ ${res.message || 'تم سحب أسعار الـ 27 محافظة التابعة لتعاقد حسابك المباشر في بوسطة بنجاح!'}`;
           this.notificationService.success(res.message || 'تم استيراد أسعار تعاقد بوسطة بنجاح!');
           this.loadData();
         } else {
+          this.ratesImportStatus = 'failed';
+          this.ratesImportMessage = '❌ فشل سحب الأسعار: ' + (res.message || 'حدث خطأ أثناء الاستيراد');
           this.notificationService.error(res.message || 'حدث خطأ أثناء استيراد الأسعار من بوسطة');
         }
       },
       error: (err) => {
         this.importingRates = false;
+        this.ratesImportStatus = 'failed';
+        this.ratesImportMessage = '❌ تعذر سحب الأسعار من حساب بوسطة.';
         this.notificationService.error(err?.error?.Message || 'حدث خطأ أثناء استيراد الأسعار من بوسطة');
       }
     });
@@ -397,17 +425,26 @@ export class ShippingComponent implements OnInit, OnDestroy {
 
   syncBostaProducts(): void {
     this.syncingProducts = true;
+    this.stockSyncStatus = 'loading';
+    this.stockSyncMessage = 'جاري سحب قائمة المنتجات والمخزون الحالي من Bosta Fulfillment...';
+
     this.bostaService.syncProductsAndStock().subscribe({
       next: (res) => {
         this.syncingProducts = false;
         if (res.success) {
+          this.stockSyncStatus = 'success';
+          this.stockSyncMessage = `✅ ${res.message || 'تمت مزامنة المنتجات والمخزون المسجل في بوسطة بنجاح!'}`;
           this.notificationService.success(res.message || 'تمت مزامنة المنتجات والمخزون مع بوسطة بنجاح!');
         } else {
+          this.stockSyncStatus = 'failed';
+          this.stockSyncMessage = '❌ فشل السحب: ' + (res.message || 'حدث خطأ أثناء مزامنة المخزون');
           this.notificationService.error(res.message || 'حدث خطأ أثناء مزامنة المخزون مع بوسطة');
         }
       },
       error: (err) => {
         this.syncingProducts = false;
+        this.stockSyncStatus = 'failed';
+        this.stockSyncMessage = '❌ تعذر سحب المنتجات من مستودع بوسطة.';
         this.notificationService.error(err?.error?.Message || 'حدث خطأ أثناء مزامنة المخزون مع بوسطة');
       }
     });
