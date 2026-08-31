@@ -237,6 +237,9 @@ export class ShippingComponent implements OnInit, OnDestroy {
           this.bostaConnectionStatus = 'success';
           this.bostaConnectionMessage = `✅ ${res.message}`;
           this.notificationService.success(res.message);
+
+          // Auto save & connect as requested by user
+          this.autoSaveIntegrationOnVerify();
         } else {
           this.bostaConnectionStatus = 'failed';
           this.bostaConnectionMessage = '❌ فشل التحقق: ' + (res.message || 'المفتاح غير صحيح');
@@ -250,6 +253,52 @@ export class ShippingComponent implements OnInit, OnDestroy {
         this.notificationService.error(err?.error?.Message || err?.message || 'فشل اختبار الربط مع بوسطة');
       }
     });
+  }
+
+  autoSaveIntegrationOnVerify(): void {
+    const merchantKey = this.bostaIntegration.apiKey?.trim() || '';
+    const fulfillmentKey = this.bostaIntegration.fulfillmentApiKey?.trim() || '';
+    const effectiveKey = merchantKey || fulfillmentKey;
+
+    if (!effectiveKey) return;
+
+    this.bostaIntegration.isIntegrated = true;
+    const bosta = this.bostaCompany();
+
+    if (bosta) {
+      this.shippingService.updateIntegration(bosta.id, {
+        apiKey: effectiveKey,
+        fulfillmentApiKey: fulfillmentKey,
+        webhookUrl: this.webhookEndpoint,
+        isIntegrated: true
+      }).subscribe({
+        next: () => {
+          this.loadData();
+          this.notificationService.success('تم حفظ وتوثيق المفاتيح تلقائياً وتأكيد الربط بنجاح! 🚀');
+        }
+      });
+    } else {
+      const defaultRates = this.governorates().map(gov => ({
+        governorateId: gov.id,
+        shippingPrice: 65,
+        returnPrice: 45
+      }));
+
+      this.shippingService.create({
+        name: 'شركة بوسطة (Bosta)',
+        phone: '19043',
+        apiKey: effectiveKey,
+        fulfillmentApiKey: fulfillmentKey,
+        webhookUrl: this.webhookEndpoint,
+        isIntegrated: true,
+        rates: defaultRates
+      }).subscribe({
+        next: () => {
+          this.loadData();
+          this.notificationService.success('تم حفظ وتوثيق المفاتيح تلقائياً وتأكيد الربط بنجاح! 🚀');
+        }
+      });
+    }
   }
 
   saveBostaIntegrationFast(): void {
