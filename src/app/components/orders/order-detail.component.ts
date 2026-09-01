@@ -10,7 +10,7 @@ import { AuthService } from '../../services/auth.service';
 import { WalletService } from '../../services/wallet.service';
 import { NotificationService } from '../../services/notification.service';
 import { BostaService, BostaShipmentDto, BostaDeliveryType, BostaShipmentSource, CreateBostaShipmentDto } from '../../services/bosta.service';
-import { Order, OrderStatus, Product, ShippingCompany, Governorate, SalesPlatform, Wallet } from '../../models/models';
+import { Order, OrderStatus, Product, ShippingCompany, Governorate, SalesPlatform, Wallet, BostaCity, BostaDistrict } from '../../models/models';
 
 @Component({
   selector: 'app-order-detail',
@@ -74,6 +74,11 @@ export class OrderDetailComponent implements OnInit {
   bostaNotes = '';
   bostaExchangeDetails = '';
 
+  bostaCities: BostaCity[] = [];
+  selectedBostaCityId: string = '';
+  selectedBostaDistrictId: string = '';
+  availableDistricts: BostaDistrict[] = [];
+
   BostaDeliveryType = BostaDeliveryType;
   BostaShipmentSource = BostaShipmentSource;
 
@@ -127,6 +132,10 @@ export class OrderDetailComponent implements OnInit {
       if (res.length > 0 && !this.selectedWalletId) {
         this.selectedWalletId = res[0].id;
       }
+    });
+    this.bostaService.getZones().subscribe({
+      next: (res: BostaCity[]) => this.bostaCities = res,
+      error: () => this.bostaCities = []
     });
   }
 
@@ -453,7 +462,30 @@ export class OrderDetailComponent implements OnInit {
     this.bostaIsFulfillment = false;
     this.bostaNotes = '';
     this.bostaExchangeDetails = '';
+    this.selectedBostaCityId = '';
+    this.selectedBostaDistrictId = '';
+    this.availableDistricts = [];
+
+    // Try to auto-match city from governorate name
+    if (this.bostaCities.length > 0 && current.governorateName) {
+      const match = this.bostaCities.find(c =>
+        c.cityOtherName.includes(current.governorateName) ||
+        current.governorateName.includes(c.cityOtherName) ||
+        c.cityName.toLowerCase().includes(current.governorateName.toLowerCase())
+      );
+      if (match) {
+        this.selectedBostaCityId = match.cityId;
+        this.onBostaCityChange();
+      }
+    }
+
     this.showBostaModal = true;
+  }
+
+  onBostaCityChange(): void {
+    const city = this.bostaCities.find(c => c.cityId === this.selectedBostaCityId);
+    this.availableDistricts = city ? city.districts : [];
+    this.selectedBostaDistrictId = '';
   }
 
   submitBostaShipment(): void {
@@ -461,6 +493,8 @@ export class OrderDetailComponent implements OnInit {
 
     this.creatingBostaShipment = true;
     const isFulfill = this.bostaSource === BostaShipmentSource.BostaFulfillment || this.bostaIsFulfillment;
+    const selectedCity = this.bostaCities.find(c => c.cityId === this.selectedBostaCityId);
+
     const dto: CreateBostaShipmentDto = {
       orderId: this.order()!.id,
       deliveryType: this.bostaDeliveryType,
@@ -468,7 +502,10 @@ export class OrderDetailComponent implements OnInit {
       codAmount: this.bostaCodAmount,
       notes: this.bostaNotes,
       isFulfillment: isFulfill,
-      exchangeItemDetails: this.bostaExchangeDetails
+      exchangeItemDetails: this.bostaExchangeDetails,
+      cityId: this.selectedBostaCityId || undefined,
+      districtId: this.selectedBostaDistrictId || undefined,
+      cityName: selectedCity ? selectedCity.cityName : undefined
     };
 
     this.bostaService.createShipment(dto).subscribe({

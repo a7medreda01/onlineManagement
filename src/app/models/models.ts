@@ -598,6 +598,20 @@ export interface CreatePurchaseInvoiceDto {
   }[];
 }
 
+export interface BostaDistrict {
+  districtId: string;
+  districtName: string;
+  districtOtherName: string;
+}
+
+export interface BostaCity {
+  cityId: string;
+  cityName: string;
+  cityOtherName: string;
+  cityCode: string;
+  districts: BostaDistrict[];
+}
+
 export interface CreateBostaShipmentDto {
   orderId: number;
   deliveryType?: number;
@@ -605,6 +619,10 @@ export interface CreateBostaShipmentDto {
   codAmount?: number;
   notes?: string;
   isFulfillment?: boolean;
+  cityId?: string;
+  districtId?: string;
+  cityName?: string;
+  exchangeItemDetails?: string;
 }
 
 export interface BostaShipmentDto {

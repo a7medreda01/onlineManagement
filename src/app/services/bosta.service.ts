@@ -31,6 +31,9 @@ export interface CreateBostaShipmentDto {
   notes?: string;
   isFulfillment?: boolean;
   exchangeItemDetails?: string;
+  cityId?: string;
+  districtId?: string;
+  cityName?: string;
 }
 
 export interface BostaShipmentDto {
@@ -108,6 +111,10 @@ export class BostaService {
 
   syncProductsAndStock(): Observable<{ success: boolean; message: string; productsImportedCount: number; stockUpdatedCount: number }> {
     return this.http.post<{ success: boolean; message: string; productsImportedCount: number; stockUpdatedCount: number }>(`${this.apiUrl}/sync-products-stock`, {});
+  }
+
+  getZones(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/zones`);
   }
 
   verifyApiKey(apiKey: string): Observable<{ success: boolean; message: string }> {
