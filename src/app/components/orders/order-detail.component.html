@@ -576,7 +576,7 @@
       <div class="space-y-3 bg-slate-800/40 p-3.5 sm:p-4 rounded-2xl border border-slate-700/60">
         <div class="flex items-center justify-between border-b border-slate-700/50 pb-2">
           <h4 class="font-bold text-xs text-amber-400 flex items-center gap-1.5">
-            <i class="fa-solid fa-boxes-packing"></i> المنتجات والأسعار والكميات
+            <i class="fa-solid fa-boxes-packing"></i> المنتجات
           </h4>
           <button type="button" (click)="addEditItem()" class="btn btn-secondary btn-xs text-emerald-400 font-bold flex items-center gap-1">
             <i class="fa-solid fa-plus"></i> إضافة منتج للأوردر
@@ -584,31 +584,38 @@
         </div>
 
         <div class="space-y-2.5">
-          <div *ngFor="let item of editItems; let idx = index" class="flex flex-col sm:flex-row items-end sm:items-center gap-2 p-3 rounded-xl bg-slate-800/60 border border-slate-700/60">
-            <div class="flex-1 w-full">
+          <div *ngFor="let item of editItems; let idx = index" class="p-3 rounded-xl bg-slate-800/60 border border-slate-700/60 space-y-2">
+            <!-- Row 1: Product Select -->
+            <div class="w-full">
               <label class="text-[10px] text-slate-400 block font-medium mb-0.5">اختر المنتج</label>
               <select [(ngModel)]="item.productId" [name]="'prod_' + idx" (change)="onEditProductSelect(item)" class="form-select text-xs py-1.5" required>
                 <option *ngFor="let p of availableProducts" [value]="p.id">{{ p.name }} (كود: {{ p.code }}) — {{ p.sellingPrice }} ج.م</option>
               </select>
             </div>
 
-            <div class="w-full sm:w-20">
-              <label class="text-[10px] text-slate-400 block font-medium mb-0.5">الكمية</label>
-              <input type="number" [(ngModel)]="item.quantity" [name]="'qty_' + idx" (input)="recalculateEditTotals()" min="1" class="form-control text-xs py-1.5 text-center font-bold" required />
-            </div>
+            <!-- Row 2: Quantity + Price + Subtotal + Delete Button (Single Line Layout!) -->
+            <div class="flex items-end justify-between gap-2 pt-1.5 border-t border-slate-700/40">
+              <div class="w-16 sm:w-20 shrink-0">
+                <label class="text-[10px] text-slate-400 block font-medium mb-0.5 text-center">الكمية</label>
+                <input type="number" [(ngModel)]="item.quantity" [name]="'qty_' + idx" (input)="recalculateEditTotals()" min="1" class="form-control text-xs py-1.5 px-1 text-center font-bold" required />
+              </div>
 
-            <div class="w-full sm:w-28">
-              <label class="text-[10px] text-amber-400 block font-bold mb-0.5">سعر القطعة (ج.م)</label>
-              <input type="number" [(ngModel)]="item.customSellingPrice" [name]="'price_' + idx" (input)="recalculateEditTotals()" min="0" class="form-control text-xs py-1.5 text-center font-bold text-amber-300 border-amber-500/40" required />
-            </div>
+              <div class="w-20 sm:w-24 shrink-0">
+                <label class="text-[10px] text-amber-400 block font-bold mb-0.5 text-center">سعر القطعة</label>
+                <input type="number" [(ngModel)]="item.customSellingPrice" [name]="'price_' + idx" (input)="recalculateEditTotals()" min="0" class="form-control text-xs py-1.5 px-1 text-center font-bold text-amber-300 border-amber-500/40" required />
+              </div>
 
-            <div class="text-left font-black text-emerald-400 text-xs w-full sm:w-24 shrink-0 pt-1 sm:pt-3">
-              = {{ (item.customSellingPrice || 0) * item.quantity }} ج.م
-            </div>
+              <div class="flex-1 text-center min-w-0 pb-1 px-1">
+                <span class="text-[9px] text-slate-400 block leading-none mb-1 truncate">إجمالي المنتج</span>
+                <span class="text-emerald-400 font-black text-xs sm:text-sm block truncate dir-ltr">{{ (item.customSellingPrice || 0) * item.quantity }} ج.م</span>
+              </div>
 
-            <button type="button" (click)="removeEditItem(idx)" class="text-rose-400 hover:text-rose-300 p-1.5 shrink-0 pt-1 sm:pt-3 transition-colors" title="حذف المنتج">
-              <i class="fa-solid fa-trash-can text-sm"></i>
-            </button>
+              <div class="shrink-0">
+                <button type="button" (click)="removeEditItem(idx)" class="btn btn-secondary btn-xs h-[34px] w-[34px] p-0 text-rose-400 hover:text-rose-300 rounded-xl border-rose-500/30 flex items-center justify-center transition-colors" title="حذف المنتج">
+                  <i class="fa-solid fa-trash-can text-xs"></i>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -642,7 +649,7 @@
         <div class="flex items-center gap-2">
           <label class="text-xs text-emerald-400 font-bold flex items-center gap-1">
             <i class="fa-solid fa-pen-to-square text-xs"></i>
-            <span>توتال الأوردر (المبلغ النهائي):</span>
+            <span>الاجمالي</span>
           </label>
           <div class="relative flex items-center">
             <input type="number"
@@ -879,7 +886,7 @@
 </div>
 
 <!-- ============ BOSTA ZONES SEARCH MODAL ============ -->
-<div *ngIf="showZoneModal" class="fixed inset-0 z-[100] flex items-center justify-center p-3 bg-slate-950/80 backdrop-blur-md fade-in">
+<div *ngIf="showZoneModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-3 bg-slate-950/85 backdrop-blur-md fade-in">
   <div class="glass-card w-full max-w-lg bg-slate-900 border border-slate-700/80 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
     <!-- Modal Header -->
     <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/90">

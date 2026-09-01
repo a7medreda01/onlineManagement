@@ -525,7 +525,7 @@ export class CreateOrderComponent implements OnInit {
 
   getStepTitle(step: number): string {
     switch (step) {
-      case 1: return 'شركة الشحن وبيانات العميل';
+      case 1: return 'شركة 1. الشحن وبيانات العميل';
       case 2: return 'منتجات الطلب والكميات';
       case 3: return 'الحسابات والتأكيد النهائي';
       default: return '';
