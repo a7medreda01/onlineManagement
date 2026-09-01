@@ -446,29 +446,100 @@ export class CreateOrderComponent implements OnInit {
     this.showZoneModal = false;
   }
 
-  getFilteredZoneItems(): { city: BostaCity; dist: BostaDistrict; govMatch?: Governorate }[] {
+  expandedGovIds: Set<string> = new Set<string>();
+
+  toggleGovAccordion(cityId: string): void {
+    if (this.expandedGovIds.has(cityId)) {
+      this.expandedGovIds.delete(cityId);
+    } else {
+      this.expandedGovIds.add(cityId);
+    }
+  }
+
+  getGroupedZoneItems(): {
+    govName: string;
+    govEnglishName?: string;
+    isSelectedGov: boolean;
+    districtCount: number;
+    isExpanded: boolean;
+    city: BostaCity;
+    districts: BostaDistrict[];
+    govMatch?: Governorate;
+  }[] {
     if (!this.bostaCities || this.bostaCities.length === 0) return [];
+
     const query = this.normalizeArabic(this.zoneSearchQuery);
 
-    const items: { city: BostaCity; dist: BostaDistrict; govMatch?: Governorate }[] = [];
+    let currentGovId = 0;
+    if (this.isNewCustomer && this.newCustomer.governorateId > 0) {
+      currentGovId = this.newCustomer.governorateId;
+    } else if (!this.isNewCustomer && this.selectedCustomerId) {
+      const selectedCust = this.customers().find(c => c.id === this.selectedCustomerId);
+      if (selectedCust && selectedCust.governorateId > 0) {
+        currentGovId = selectedCust.governorateId;
+      }
+    }
+
+    const currentGov = this.governorates().find(g => g.id === currentGovId);
+    const normCurrentGovName = currentGov ? this.normalizeArabic(currentGov.name) : '';
+
+    const groups: {
+      govName: string;
+      govEnglishName?: string;
+      isSelectedGov: boolean;
+      districtCount: number;
+      isExpanded: boolean;
+      city: BostaCity;
+      districts: BostaDistrict[];
+      govMatch?: Governorate;
+    }[] = [];
 
     for (const city of this.bostaCities) {
-      const normCity = this.normalizeArabic(city.cityOtherName + ' ' + city.cityName);
+      const normCity = this.normalizeArabic((city.cityOtherName || '') + ' ' + (city.cityName || ''));
       const govMatch = this.governorates().find(g => {
         const ng = this.normalizeArabic(g.name);
         return normCity.includes(ng) || ng.includes(normCity);
       });
 
-      if (city.districts) {
-        for (const dist of city.districts) {
-          const normDist = this.normalizeArabic(dist.districtOtherName + ' ' + dist.districtName);
-          if (!query || normDist.includes(query) || normCity.includes(query)) {
-            items.push({ city, dist, govMatch });
-          }
+      const isSelectedGov = !!(
+        (currentGovId > 0 && govMatch?.id === currentGovId) ||
+        (normCurrentGovName && normCity.includes(normCurrentGovName))
+      );
+
+      const allDistricts = city.districts || [];
+      let filteredDistricts = allDistricts;
+
+      if (query) {
+        filteredDistricts = allDistricts.filter(dist => {
+          const normDist = this.normalizeArabic((dist.districtOtherName || '') + ' ' + (dist.districtName || ''));
+          return normDist.includes(query) || normCity.includes(query);
+        });
+        if (filteredDistricts.length === 0 && !normCity.includes(query)) {
+          continue;
         }
       }
+
+      const isExpanded = isSelectedGov || query.length > 0 || this.expandedGovIds.has(city.cityId);
+
+      groups.push({
+        govName: city.cityOtherName || city.cityName,
+        govEnglishName: city.cityName,
+        isSelectedGov,
+        districtCount: filteredDistricts.length,
+        isExpanded,
+        city,
+        districts: filteredDistricts,
+        govMatch
+      });
     }
-    return items.slice(0, 100);
+
+    groups.sort((a, b) => {
+      if (a.isSelectedGov && !b.isSelectedGov) return -1;
+      if (!a.isSelectedGov && b.isSelectedGov) return 1;
+      return 0;
+    });
+
+    return groups;
   }
 
   selectZoneFromModal(item: { city: BostaCity; dist: BostaDistrict; govMatch?: Governorate }): void {

@@ -913,27 +913,60 @@
       </div>
     </div>
 
-    <!-- Search Results List -->
-    <div class="p-3 overflow-y-auto space-y-1.5 flex-1 divide-y divide-slate-800/60">
-      <div *ngIf="getFilteredZoneItems().length === 0" class="p-8 text-center text-slate-400 text-xs">
+    <!-- Grouped Accordion List by Governorate -->
+    <div class="p-3 overflow-y-auto space-y-2.5 flex-1 max-h-[60vh]">
+      <div *ngIf="getGroupedZoneItems().length === 0" class="p-8 text-center text-slate-400 text-xs">
         لا توجد نتائج مطابقة لـ "{{ zoneSearchQuery }}"
       </div>
 
-      <div *ngFor="let item of getFilteredZoneItems()" (click)="selectZoneFromModal(item)"
-           class="p-2.5 rounded-xl hover:bg-slate-800/80 cursor-pointer transition-all flex items-center justify-between gap-3 text-xs">
-        <div class="min-w-0">
-          <div class="font-bold text-amber-300 flex items-center gap-1.5">
-            <span>📍 {{ item.dist.districtOtherName }}</span>
-            <span class="text-[10px] text-slate-400 font-normal">({{ item.dist.districtName }})</span>
+      <!-- Governorate Accordion Card Loop -->
+      <div *ngFor="let group of getGroupedZoneItems()" 
+           class="rounded-2xl border transition-all overflow-hidden"
+           [ngClass]="group.isSelectedGov ? 'border-amber-500/60 bg-amber-500/5 shadow-md' : 'border-slate-800 bg-slate-900/60'">
+        
+        <!-- Accordion Header -->
+        <div (click)="toggleGovAccordion(group.city.cityId)"
+             class="p-3 cursor-pointer flex items-center justify-between gap-3 hover:bg-slate-800/50 transition-colors">
+          
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div class="w-8 h-8 rounded-xl flex items-center justify-center text-xs shrink-0"
+                 [ngClass]="group.isSelectedGov ? 'bg-amber-500/20 text-amber-400 font-bold border border-amber-500/30' : 'bg-slate-800 text-slate-400'">
+              <i class="fa-solid fa-location-dot"></i>
+            </div>
+            <div class="min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-xs sm:text-sm text-slate-100 truncate">{{ group.city.cityOtherName || group.govName }}</span>
+                <span *ngIf="group.isSelectedGov" class="badge bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[9px] px-2 font-bold shrink-0">
+                  المحافظة المحددة للأوردر ⭐
+                </span>
+              </div>
+              <span class="text-[10px] text-slate-400 block dir-ltr text-right truncate">{{ group.city.cityName }}</span>
+            </div>
           </div>
-          <div class="text-[11px] text-slate-400 mt-0.5 flex items-center gap-2">
-            <span>🏙️ {{ item.city.cityOtherName }} ({{ item.city.cityName }})</span>
-            <span *ngIf="item.govMatch" class="text-sky-400 font-semibold">• {{ item.govMatch.name }}</span>
+
+          <div class="flex items-center gap-2 shrink-0">
+            <span class="badge bg-slate-800 text-slate-300 border border-slate-700 text-[10px] py-0.5 px-2 font-semibold">
+              {{ group.districtCount }} مناطق
+            </span>
+            <i class="fa-solid text-xs text-slate-400 transition-transform duration-200"
+               [class.fa-chevron-up]="group.isExpanded"
+               [class.fa-chevron-down]="!group.isExpanded"></i>
           </div>
         </div>
-        <span class="badge bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[10px] font-mono shrink-0 font-bold">
-          كود: {{ item.city.cityCode || 'EG' }}
-        </span>
+
+        <!-- Accordion Content: Districts Grid -->
+        <div *ngIf="group.isExpanded" class="p-2 border-t border-slate-800/60 bg-slate-950/60 grid grid-cols-1 sm:grid-cols-2 gap-1.5 fade-in">
+          <div *ngFor="let dist of group.districts" 
+               (click)="selectZoneFromModal({ city: group.city, dist: dist, govMatch: group.govMatch })"
+               class="p-2 rounded-xl bg-slate-900/80 hover:bg-amber-500/20 border border-slate-800 hover:border-amber-500/40 cursor-pointer transition-all flex items-center justify-between gap-2 text-xs group">
+            <div class="min-w-0">
+              <span class="font-bold text-slate-200 group-hover:text-amber-300 text-xs block truncate">📍 {{ dist.districtOtherName }}</span>
+              <span class="text-[10px] text-slate-400 block truncate dir-ltr text-right">{{ dist.districtName }}</span>
+            </div>
+            <i class="fa-solid fa-check text-amber-400 opacity-0 group-hover:opacity-100 text-xs shrink-0"></i>
+          </div>
+        </div>
+
       </div>
     </div>
 
