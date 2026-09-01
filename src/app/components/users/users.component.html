@@ -226,12 +226,26 @@
           </div>
         </div>
 
-        <div class="flex items-center justify-end gap-2 pt-1 border-t border-slate-700/60">
-          <button (click)="openDisburseModal(p)" class="btn bg-emerald-600 hover:bg-emerald-500 text-white btn-sm py-1.5 px-3 text-xs flex items-center gap-1">
-            <i class="bi bi-cash"></i> صرف المرتب
+        <!-- Action Buttons (Responsive 2x2 grid on mobile) -->
+        <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-700/60">
+          <button (click)="openDisburseModal(p)" class="btn bg-emerald-600 hover:bg-emerald-500 text-white btn-sm py-2 px-2.5 text-xs flex items-center justify-center gap-1.5 font-bold rounded-xl shadow-md">
+            <i class="bi bi-cash"></i>
+            <span>صرف المرتب</span>
           </button>
-          <button (click)="openAdvanceModal(p)" class="btn bg-amber-600 hover:bg-amber-500 text-white btn-sm py-1.5 px-3 text-xs flex items-center gap-1">
-            <i class="bi bi-wallet2"></i> سلفة
+
+          <button (click)="openAdvanceModal(p)" class="btn bg-amber-600 hover:bg-amber-500 text-white btn-sm py-2 px-2.5 text-xs flex items-center justify-center gap-1.5 font-bold rounded-xl shadow-md">
+            <i class="bi bi-wallet2"></i>
+            <span>إعطاء سلفة</span>
+          </button>
+
+          <button (click)="openBonusPenaltyModal(p, 1)" class="btn bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 btn-sm py-2 px-2.5 text-xs flex items-center justify-center gap-1.5 font-bold rounded-xl">
+            <i class="bi bi-plus-circle-fill text-emerald-400"></i>
+            <span>مكافأة (+)</span>
+          </button>
+
+          <button (click)="openBonusPenaltyModal(p, 3)" class="btn bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 btn-sm py-2 px-2.5 text-xs flex items-center justify-center gap-1.5 font-bold rounded-xl">
+            <i class="bi bi-dash-circle-fill text-rose-400"></i>
+            <span>خصم (-)</span>
           </button>
         </div>
       </div>

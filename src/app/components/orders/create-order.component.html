@@ -51,14 +51,59 @@
   <form (ngSubmit)="submitOrder()">
 
     <!-- ============ STEP 1: CUSTOMER & DELIVERY ============ -->
-    <div *ngIf="currentStep === 1" class="glass-card p-3.5 sm:p-4 space-y-3 border-slate-700/80 shadow-md fade-in">
+    <div *ngIf="currentStep === 1" class="glass-card p-3.5 sm:p-4 space-y-4 border-slate-700/80 shadow-md fade-in">
 
-      <h3 class="font-bold text-xs sm:text-sm text-slate-100 flex items-center gap-2 border-b border-slate-700/50 pb-2">
-        <i class="fa-solid fa-user text-indigo-400 text-sm"></i>
-        <span>1. بيانات العميل والتوصيل</span>
+      <h3 class="font-bold text-xs sm:text-sm text-slate-100 flex items-center justify-between border-b border-slate-700/50 pb-2">
+        <span class="flex items-center gap-2">
+          <i class="fa-solid fa-truck-fast text-indigo-400 text-sm"></i>
+          <span>1. شركة الشحن وبيانات العميل والتوصيل</span>
+        </span>
+        <span class="badge badge-info text-[10px]">الخطوة الأولى</span>
       </h3>
 
-      <!-- Mode toggle -->
+      <!-- 1. Shipping Company & Sales Platform (NOW IN STEP 1) -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-800/40 p-3 rounded-2xl border border-slate-700/60">
+        <!-- Shipping Company -->
+        <div class="form-group mb-0">
+          <label class="text-xs text-slate-300 font-bold mb-1 flex items-center justify-between">
+            <span>شركة الشحن</span>
+            <span *ngIf="isSelectedCompanyBosta()" class="text-[10px] text-amber-400 font-bold flex items-center gap-1">
+              <i class="fa-solid fa-bolt text-amber-400"></i> شحن بوسطة مفعل
+            </span>
+          </label>
+          <select [(ngModel)]="selectedShippingCompanyId" (ngModelChange)="onShippingCompanyChange()" name="shipCompany" class="form-select text-xs py-2 px-3.5 rounded-xl font-bold bg-slate-900 border-indigo-500/40 text-indigo-300" required>
+            <option [ngValue]="0" disabled>-- اختر شركة الشحن --</option>
+            <option *ngFor="let comp of shippingCompanies()" [ngValue]="comp.id">
+              {{ getCleanShippingCompanyName(comp) }} {{ comp.isIntegrated ? '⚡ (ربط بوسطة)' : '' }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Sales Platform -->
+        <div class="form-group mb-0">
+          <label class="text-xs text-slate-300 font-bold mb-1 flex items-center justify-between">
+            <span>منصة / مصدر البيع</span>
+            <button type="button" (click)="showPlatformModal = true" class="text-[10px] text-sky-400 hover:underline font-bold flex items-center gap-1">
+              <i class="fa-solid fa-plus"></i> إضافة منصة
+            </button>
+          </label>
+          <select [(ngModel)]="selectedSalesPlatformId" name="salesPlat" class="form-select text-xs py-2 px-3.5 rounded-xl font-bold bg-slate-900 border-sky-500/40 text-sky-300" required>
+            <option [ngValue]="0" disabled>-- اختر منصة البيع --</option>
+            <option *ngFor="let plat of salesPlatforms()" [ngValue]="plat.id">{{ plat.name }}</option>
+          </select>
+        </div>
+
+        <!-- Fulfillment Toggle (Visible when Bosta is selected) -->
+        <div *ngIf="isSelectedCompanyBosta()" class="col-span-1 sm:col-span-2 pt-1 border-t border-slate-700/50 flex items-center justify-between text-xs">
+          <label (click)="toggleBostaFulfillment(!isBostaFulfillmentOrder)" class="cursor-pointer flex items-center gap-2 text-xs font-bold text-amber-300">
+            <input type="checkbox" [checked]="isBostaFulfillmentOrder" class="form-checkbox text-amber-500 rounded bg-slate-900 border-slate-700" />
+            <span>🏬 الشحن من مخازن بوسطة (Bosta Fulfillment Stock)</span>
+          </label>
+          <span class="text-[10px] text-slate-400">سحب المنتجات المطابقة آلياً</span>
+        </div>
+      </div>
+
+      <!-- Mode toggle: New vs Existing customer -->
       <div class="grid grid-cols-2 gap-1.5 p-1 bg-slate-800/50 rounded-xl border border-slate-700/60">
         <button type="button" (click)="setCustomerMode(true)" [class.btn-primary]="isNewCustomer" [class.btn-secondary]="!isNewCustomer" class="btn btn-xs py-1.5 text-xs font-bold justify-center rounded-lg flex items-center gap-1.5">
           <i class="fa-solid fa-user-plus text-xs"></i>
@@ -73,7 +118,7 @@
       <!-- ===== Mode A: New customer ===== -->
       <div *ngIf="isNewCustomer" class="space-y-3">
 
-        <!-- Name & Main Phone Side-By-Side -->
+        <!-- Name & Phone -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div class="form-group mb-0">
             <label class="text-xs text-slate-400 font-medium mb-1 block">اسم العميل بالكامل</label>
@@ -83,6 +128,12 @@
             <label class="text-xs text-slate-400 font-medium mb-1 block">رقم الهاتف الأساسي</label>
             <input type="text" [(ngModel)]="newCustomer.phone" (input)="onNewCustomerPhoneInput(newCustomer.phone)" name="custPhone" class="form-control text-xs py-2 px-3.5 rounded-xl font-mono" placeholder="01xxxxxxxxx" required />
           </div>
+        </div>
+
+        <!-- Secondary Phone -->
+        <div class="form-group mb-0">
+          <label class="text-xs text-slate-400 font-medium mb-1 block">هاتف بديل <span class="text-slate-500 font-normal">(اختياري)</span></label>
+          <input type="text" [(ngModel)]="newCustomer.secondaryPhone" name="custSecPhone" class="form-control text-xs py-2 px-3.5 rounded-xl font-mono" placeholder="رقم آخر" />
         </div>
 
         <!-- Existing customer alert -->
@@ -103,43 +154,49 @@
           </div>
         </div>
 
-        <!-- Secondary Phone & Governorate Side-By-Side -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div class="form-group mb-0">
-            <label class="text-xs text-slate-400 font-medium mb-1 block">هاتف بديل <span class="text-slate-500 font-normal">(اختياري)</span></label>
-            <input type="text" [(ngModel)]="newCustomer.secondaryPhone" name="custSecPhone" class="form-control text-xs py-2 px-3.5 rounded-xl font-mono" placeholder="رقم آخر" />
+        <!-- 2. Detailed Address FIRST with Smart Extraction -->
+        <div class="form-group mb-0 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <label class="text-xs text-slate-300 font-bold flex items-center gap-1.5">
+              <i class="fa-solid fa-house-user text-indigo-400"></i>
+              <span>العنوان التفصيلي للشحن</span>
+            </label>
+            <button type="button" (click)="smartExtractLocationFromAddress()" class="btn btn-xs py-1 px-2.5 bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border-indigo-500/40 text-[11px] font-bold rounded-lg flex items-center gap-1 transition-all">
+              <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i>
+              <span>استخراج ذكي للمحافظة والحي ✨</span>
+            </button>
           </div>
+          <textarea [(ngModel)]="newCustomer.address" (input)="smartExtractLocationFromAddress()" name="custAddress" class="form-textarea text-xs py-2 px-3.5 rounded-xl border-slate-700/80 focus:border-indigo-500" rows="2" placeholder="اكتب العنوان بالتفصيل أولاً (مثلاً: 15 شارع النصر، المعادي، القاهرة)..." required></textarea>
+        </div>
+
+        <!-- 3. Governorate & Bosta City/District Selection -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+          <!-- Governorate -->
           <div class="form-group mb-0">
             <label class="text-xs text-slate-400 font-medium mb-1 block">المحافظة</label>
-            <select [(ngModel)]="newCustomer.governorateId" (ngModelChange)="onGovernorateChange()" name="custGov" class="form-select text-xs py-2 px-3.5 rounded-xl" required>
+            <select [(ngModel)]="newCustomer.governorateId" (ngModelChange)="onGovernorateChange()" name="custGov" class="form-select text-xs py-2 px-3.5 rounded-xl font-bold text-slate-100" required>
               <option [ngValue]="0" disabled>-- اختر المحافظة --</option>
               <option *ngFor="let gov of governorates()" [ngValue]="gov.id">{{ gov.name }}</option>
             </select>
           </div>
+
+          <!-- Bosta District / Zone Selector -->
+          <div class="form-group mb-0">
+            <div class="flex items-center justify-between mb-1">
+              <label class="text-xs text-amber-300 font-bold block">المنطقة / الحي (District)</label>
+              <button type="button" (click)="openZoneSearchModal()" class="text-[10px] text-sky-400 hover:underline font-bold flex items-center gap-1">
+                <i class="fa-solid fa-magnifying-glass"></i> بحث شامل 🔍
+              </button>
+            </div>
+            <select [(ngModel)]="selectedBostaDistrictId" (change)="onDistrictChange()" name="custDistrict" class="form-select text-xs py-2 px-3.5 rounded-xl bg-slate-900 border-amber-500/50 text-amber-300 font-bold">
+              <option value="">-- اختر المنطقة / الحي (مثال: سموحة، المعادي...) --</option>
+              <option *ngFor="let dist of availableDistricts" [value]="dist.districtId">
+                📍 {{ dist.districtOtherName }} ({{ dist.districtName }})
+              </option>
+            </select>
+          </div>
         </div>
 
-        <!-- Bosta District / Zone Selector (Appears when Governorate is chosen) -->
-        <div *ngIf="availableDistricts.length > 0" class="form-group mb-0 fade-in bg-slate-800/40 p-3 rounded-2xl border border-amber-500/30">
-          <label class="text-xs text-amber-300 font-bold mb-1.5 flex items-center justify-between">
-            <span class="flex items-center gap-1.5">
-              <i class="fa-solid fa-map-location-dot text-amber-400"></i>
-              <span>المنطقة / الحي (المناطق المتاحة في المحافظة)</span>
-            </span>
-            <span class="text-[10px] font-normal text-slate-400">مناطق بوسطة الرسمية</span>
-          </label>
-          <select [(ngModel)]="selectedBostaDistrictId" (change)="onDistrictChange()" name="custDistrict" class="form-select text-xs py-2 px-3.5 rounded-xl bg-slate-900 border-amber-500/50 text-amber-300 font-bold">
-            <option value="">-- اختر المنطقة / الحي (مثل: سموحة، ميامي، المعادي...) --</option>
-            <option *ngFor="let dist of availableDistricts" [value]="dist.districtId">
-              📍 {{ dist.districtOtherName }} ({{ dist.districtName }})
-            </option>
-          </select>
-        </div>
-
-        <!-- Address -->
-        <div class="form-group mb-0">
-          <label class="text-xs text-slate-400 font-medium mb-1 block">العنوان التفصيلي للشحن</label>
-          <textarea [(ngModel)]="newCustomer.address" name="custAddress" class="form-textarea text-xs py-2 px-3.5 rounded-xl" rows="2" placeholder="الشارع، رقم العمارة، الشقة، العلامة المميزة..." required></textarea>
-        </div>
       </div>
 
       <!-- ===== Mode B: Existing customer ===== -->
@@ -661,6 +718,65 @@
           <i class="fa-solid fa-check"></i>
           <span>استخدام بيانات هذا العميل</span>
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ BOSTA ZONES SEARCH MODAL ============ -->
+  <div *ngIf="showZoneModal" class="fixed inset-0 z-[100] flex items-center justify-center p-3 bg-slate-950/80 backdrop-blur-md fade-in">
+    <div class="glass-card w-full max-w-lg bg-slate-900 border border-slate-700/80 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+      <!-- Modal Header -->
+      <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/90">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">
+            <i class="fa-solid fa-magnifying-glass text-sm"></i>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-sm text-slate-100">بحث شامل في المدن والمناطق (Bosta Zones)</h3>
+            <p class="text-[11px] text-slate-400">ابحث باسم المنطقة، الحي، أو المحافظة للاختيار التلقائي</p>
+          </div>
+        </div>
+        <button type="button" (click)="closeZoneSearchModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-sm transition-colors">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Search Input -->
+      <div class="p-3.5 bg-slate-800/40 border-b border-slate-800">
+        <div class="relative">
+          <i class="fa-solid fa-magnifying-glass absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+          <input type="text" [(ngModel)]="zoneSearchQuery" [ngModelOptions]="{standalone: true}" placeholder="اكتب اسم المنطقة أو الحي (مثل: سموحة، المعادي، الدقي، المنصورة...)..."
+                 class="form-control text-xs py-2.5 pr-9 pl-4 rounded-xl bg-slate-950 border-slate-700 text-amber-300 font-bold focus:border-amber-500" />
+        </div>
+      </div>
+
+      <!-- Search Results List -->
+      <div class="p-3 overflow-y-auto space-y-1.5 flex-1 divide-y divide-slate-800/60">
+        <div *ngIf="getFilteredZoneItems().length === 0" class="p-8 text-center text-slate-400 text-xs">
+          لا توجد نتائج مطابقة لـ "{{ zoneSearchQuery }}"
+        </div>
+
+        <div *ngFor="let item of getFilteredZoneItems()" (click)="selectZoneFromModal(item)"
+             class="p-2.5 rounded-xl hover:bg-slate-800/80 cursor-pointer transition-all flex items-center justify-between gap-3 text-xs">
+          <div class="min-w-0">
+            <div class="font-bold text-amber-300 flex items-center gap-1.5">
+              <span>📍 {{ item.dist.districtOtherName }}</span>
+              <span class="text-[10px] text-slate-400 font-normal">({{ item.dist.districtName }})</span>
+            </div>
+            <div class="text-[11px] text-slate-400 mt-0.5 flex items-center gap-2">
+              <span>🏙️ {{ item.city.cityOtherName }} ({{ item.city.cityName }})</span>
+              <span *ngIf="item.govMatch" class="text-sky-400 font-semibold">• {{ item.govMatch.name }}</span>
+            </div>
+          </div>
+          <span class="badge bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[10px] font-mono shrink-0 font-bold">
+            كود: {{ item.city.cityCode || 'EG' }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-3 border-t border-slate-800 bg-slate-900/90 flex justify-end">
+        <button type="button" (click)="closeZoneSearchModal()" class="btn btn-secondary text-xs px-4 py-1.5 rounded-xl">إغلاق</button>
       </div>
     </div>
   </div>

@@ -263,9 +263,9 @@ export class OrderDetailComponent implements OnInit {
 
   // Open Full Order Edit Modal
   openEditModal(): void {
-    this.toggleBodyScroll(true);
     const o = this.order();
     if (!o) return;
+    this.toggleBodyScroll(true);
 
     this.editForm = {
       customerName: o.customerName,
@@ -289,7 +289,173 @@ export class OrderDetailComponent implements OnInit {
 
     this.isCustomTotal = false;
     this.recalculateEditTotals();
+    this.autoMatchBostaCityAndDistrictForEdit();
     this.showEditModal = true;
+  }
+
+  // Zone Search Modal State in order-detail
+  showZoneModal = false;
+  zoneSearchQuery = '';
+
+  normalizeArabic(text: string): string {
+    if (!text) return '';
+    return text
+      .toLowerCase()
+      .replace(/[أإآ]/g, 'ا')
+      .replace(/ة/g, 'ه')
+      .replace(/ى/g, 'ي')
+      .replace(/\(.*\)/g, '')
+      .replace(/[^a-zA-Z0-9\u0621-\u064A\s]/g, '')
+      .trim();
+  }
+
+  autoMatchBostaCityAndDistrictForEdit(): void {
+    const govId = +this.editForm.governorateId;
+    const gov = this.governorates.find(g => g.id === govId);
+    if (!gov || this.bostaCities.length === 0) {
+      this.selectedBostaCityId = '';
+      this.availableDistricts = [];
+      this.selectedBostaDistrictId = '';
+      return;
+    }
+
+    const normGov = this.normalizeArabic(gov.name);
+    let matchedCity = this.bostaCities.find(c => {
+      const normCityOther = this.normalizeArabic(c.cityOtherName);
+      const normCityName = this.normalizeArabic(c.cityName);
+      return (normCityOther && (normCityOther.includes(normGov) || normGov.includes(normCityOther))) ||
+             (normCityName && (normCityName.includes(normGov) || normGov.includes(normCityName)));
+    });
+
+    if (!matchedCity) {
+      const codeMap: { [key: string]: string } = {
+        'القاهرة': 'EG-01', 'الجيزة': 'EG-02', 'الإسكندرية': 'EG-03', 'القليوبية': 'EG-04',
+        'الدقهلية': 'EG-05', 'المنوفية': 'EG-06', 'الغربية': 'EG-07', 'الشرقية': 'EG-08',
+        'البحيرة': 'EG-09', 'دمياط': 'EG-10', 'كفر الشيخ': 'EG-11', 'الإسماعيلية': 'EG-12',
+        'بورسعيد': 'EG-13', 'السويس': 'EG-14', 'سوهاج': 'EG-15', 'أسيوط': 'EG-16',
+        'قنا': 'EG-17', 'المنيا': 'EG-18', 'بني سويف': 'EG-19', 'الفيوم': 'EG-20',
+        'البحر الأحمر': 'EG-21', 'الوادي الجديد': 'EG-22', 'مطروح': 'EG-23',
+        'شمال سيناء': 'EG-24', 'جنوب سيناء': 'EG-25', 'الأقصر': 'EG-26', 'أسوان': 'EG-27'
+      };
+      const expectedCode = codeMap[gov.name] || codeMap[gov.name.replace('محافظة ', '')];
+      if (expectedCode) {
+        matchedCity = this.bostaCities.find(c => c.cityCode === expectedCode);
+      }
+    }
+
+    if (matchedCity) {
+      this.selectedBostaCityId = matchedCity.cityId;
+      this.availableDistricts = matchedCity.districts || [];
+    } else {
+      this.selectedBostaCityId = '';
+      this.availableDistricts = [];
+    }
+    this.selectedBostaDistrictId = '';
+  }
+
+  smartExtractLocationFromEditAddress(): void {
+    const rawAddr = this.editForm.customerAddress || '';
+    if (!rawAddr || rawAddr.trim().length < 2) return;
+
+    const normAddr = this.normalizeArabic(rawAddr);
+    let matchedGov: Governorate | undefined = undefined;
+    let matchedCity: BostaCity | undefined = undefined;
+    let matchedDist: BostaDistrict | undefined = undefined;
+
+    for (const gov of this.governorates) {
+      const normGovName = this.normalizeArabic(gov.name);
+      if (normAddr.includes(normGovName)) {
+        matchedGov = gov;
+        break;
+      }
+    }
+
+    for (const city of this.bostaCities) {
+      if (city.districts) {
+        for (const dist of city.districts) {
+          const normDistName = this.normalizeArabic(dist.districtOtherName);
+          const normDistEn = this.normalizeArabic(dist.districtName);
+          if ((normDistName && normDistName.length > 2 && normAddr.includes(normDistName)) ||
+              (normDistEn && normDistEn.length > 2 && normAddr.includes(normDistEn))) {
+            matchedDist = dist;
+            matchedCity = city;
+            break;
+          }
+        }
+      }
+      if (matchedDist) break;
+    }
+
+    if (matchedGov) {
+      this.editForm.governorateId = matchedGov.id;
+      this.onEditShippingCompanyOrGovChange();
+    }
+
+    if (matchedCity) {
+      this.selectedBostaCityId = matchedCity.cityId;
+      this.availableDistricts = matchedCity.districts || [];
+    }
+
+    if (matchedDist) {
+      this.selectedBostaDistrictId = matchedDist.districtId;
+    }
+
+    if (matchedGov || matchedDist) {
+      const govMsg = matchedGov ? `المحافظة: ${matchedGov.name}` : '';
+      const distMsg = matchedDist ? `المنطقة: ${matchedDist.districtOtherName}` : '';
+      this.notificationService.success(`✨ تم الاستخراج الذكي بنجاح! (${[govMsg, distMsg].filter(Boolean).join(' | ')})`);
+    }
+  }
+
+  openZoneSearchModal(): void {
+    this.zoneSearchQuery = '';
+    this.showZoneModal = true;
+  }
+
+  closeZoneSearchModal(): void {
+    this.showZoneModal = false;
+  }
+
+  getFilteredZoneItems(): { city: BostaCity; dist: BostaDistrict; govMatch?: Governorate }[] {
+    if (!this.bostaCities || this.bostaCities.length === 0) return [];
+    const query = this.normalizeArabic(this.zoneSearchQuery);
+    const items: { city: BostaCity; dist: BostaDistrict; govMatch?: Governorate }[] = [];
+
+    for (const city of this.bostaCities) {
+      const normCity = this.normalizeArabic(city.cityOtherName + ' ' + city.cityName);
+      const govMatch = this.governorates.find(g => {
+        const ng = this.normalizeArabic(g.name);
+        return normCity.includes(ng) || ng.includes(normCity);
+      });
+
+      if (city.districts) {
+        for (const dist of city.districts) {
+          const normDist = this.normalizeArabic(dist.districtOtherName + ' ' + dist.districtName);
+          if (!query || normDist.includes(query) || normCity.includes(query)) {
+            items.push({ city, dist, govMatch });
+          }
+        }
+      }
+    }
+    return items.slice(0, 100);
+  }
+
+  selectZoneFromModal(item: { city: BostaCity; dist: BostaDistrict; govMatch?: Governorate }): void {
+    if (item.govMatch) {
+      this.editForm.governorateId = item.govMatch.id;
+      this.onEditShippingCompanyOrGovChange();
+    }
+    this.selectedBostaCityId = item.city.cityId;
+    this.availableDistricts = item.city.districts || [];
+    this.selectedBostaDistrictId = item.dist.districtId;
+
+    if (item.dist.districtOtherName && !this.editForm.customerAddress.includes(item.dist.districtOtherName)) {
+      const current = this.editForm.customerAddress.trim();
+      this.editForm.customerAddress = current ? `${item.dist.districtOtherName} - ${current}` : item.dist.districtOtherName;
+    }
+
+    this.closeZoneSearchModal();
+    this.notificationService.success(`تم تحديد المنطقة: ${item.dist.districtOtherName} (${item.city.cityOtherName}) بنجاح`);
   }
 
   closeEditModal(): void {
