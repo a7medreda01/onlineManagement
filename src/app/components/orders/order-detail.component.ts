@@ -11,11 +11,12 @@ import { WalletService } from '../../services/wallet.service';
 import { NotificationService } from '../../services/notification.service';
 import { BostaService, BostaShipmentDto, BostaDeliveryType, BostaShipmentSource, CreateBostaShipmentDto } from '../../services/bosta.service';
 import { Order, OrderStatus, Product, ShippingCompany, Governorate, SalesPlatform, Wallet, BostaCity, BostaDistrict } from '../../models/models';
+import { ZoneModalComponent } from '../shared/zone-modal/zone-modal.component';
 
 @Component({
   selector: 'app-order-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, ZoneModalComponent],
   templateUrl: './order-detail.component.html'
 })
 export class OrderDetailComponent implements OnInit {

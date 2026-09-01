@@ -11,6 +11,7 @@ import { NotificationService } from '../../services/notification.service';
 import { BostaService } from '../../services/bosta.service';
 import { Customer, CustomerProfileDto, CustomerSearchDto, Governorate, Order, Product, SalesPlatform, ShippingCompany, Wallet, BostaCity, BostaDistrict } from '../../models/models';
 import { CustomDropdownComponent, DropdownOption } from '../shared/custom-dropdown/custom-dropdown.component';
+import { ZoneModalComponent } from '../shared/zone-modal/zone-modal.component';
 
 interface OrderItemRow {
   productId: number;
@@ -21,7 +22,7 @@ interface OrderItemRow {
 @Component({
   selector: 'app-create-order',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, CustomDropdownComponent],
+  imports: [CommonModule, FormsModule, RouterModule, CustomDropdownComponent, ZoneModalComponent],
   templateUrl: './create-order.component.html'
 })
 export class CreateOrderComponent implements OnInit {
@@ -435,6 +436,17 @@ export class CreateOrderComponent implements OnInit {
         this.notificationService.info('لم يتم التعرف التلقائي على المحافظة أو المنطقة في العنوان المدخل.');
       }
     }
+  }
+
+  getSelectedGovernorateIdForOrder(): number {
+    if (this.isNewCustomer && this.newCustomer.governorateId > 0) {
+      return this.newCustomer.governorateId;
+    }
+    if (!this.isNewCustomer && this.selectedCustomerId) {
+      const cust = this.customers().find(c => c.id === this.selectedCustomerId);
+      if (cust && cust.governorateId > 0) return cust.governorateId;
+    }
+    return 0;
   }
 
   openZoneSearchModal(): void {

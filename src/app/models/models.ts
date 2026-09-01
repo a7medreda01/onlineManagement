@@ -232,6 +232,20 @@ export interface Order {
   statusHistories: OrderStatusHistory[];
 }
 
+export interface BostaDistrict {
+  districtId: string;
+  districtName: string;
+  districtOtherName: string;
+}
+
+export interface BostaCity {
+  cityId: string;
+  cityName: string;
+  cityOtherName: string;
+  cityCode: string;
+  districts: BostaDistrict[];
+}
+
 export enum ExpenseCategory {
   Ads = 'Ads',
   Salaries = 'Salaries',
