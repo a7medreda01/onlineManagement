@@ -582,15 +582,35 @@
         </div>
       </div>
 
-      <!-- Live Recalculated Summary Card -->
-      <div class="p-3.5 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 text-slate-200 flex justify-between items-center text-xs font-bold shadow-xs">
-        <div>
+      <!-- Live Recalculated Summary Card with Editable Total -->
+      <div class="p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700/80 text-slate-200 flex flex-wrap items-center justify-between gap-3 text-xs font-bold shadow-md">
+        <div class="flex items-center gap-2">
           <span>إجمالي المنتجات: <strong class="text-white">{{ editSubTotal }} ج.م</strong></span>
-          <span class="mx-2 text-indigo-400">|</span>
+          <span class="text-slate-600">|</span>
           <span>الشحن: <strong class="text-amber-400">{{ editShippingCost }} ج.م</strong></span>
+          <span class="text-slate-600">|</span>
+          <span class="text-slate-400 font-normal">المحسوب تلقائياً: <strong class="text-slate-300">{{ editSubTotal + editShippingCost }} ج.م</strong></span>
         </div>
-        <div class="text-xs sm:text-sm font-black text-emerald-400">
-          المبلغ المطلوب: {{ editSubTotal + editShippingCost }} ج.م
+
+        <div class="flex items-center gap-2">
+          <label class="text-xs text-emerald-400 font-bold flex items-center gap-1">
+            <i class="fa-solid fa-pen-to-square text-xs"></i>
+            <span>توتال الأوردر (المبلغ النهائي):</span>
+          </label>
+          <div class="relative flex items-center">
+            <input type="number"
+                   [(ngModel)]="editForm.customTotalAmount"
+                   name="editCustomTotal"
+                   (input)="onCustomTotalInput()"
+                   min="0"
+                   class="form-control text-xs py-1.5 px-3 font-black text-emerald-400 bg-slate-900 border-emerald-500/60 rounded-xl w-32 text-center focus:border-emerald-400 shadow-inner"
+                   required />
+            <span class="mr-1 text-[11px] text-slate-400 font-bold">ج.م</span>
+          </div>
+          <button *ngIf="isCustomTotal" type="button" (click)="resetTotalToCalculated()" title="إعادة الحساب التلقائي (منتجات + شحن)" class="btn btn-secondary btn-xs py-1.5 px-2 text-[10px] text-sky-400 hover:text-white rounded-lg flex items-center gap-1">
+            <i class="fa-solid fa-rotate-left text-[10px]"></i>
+            <span>تلقائي</span>
+          </button>
         </div>
       </div>
 

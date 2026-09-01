@@ -55,12 +55,14 @@ export class OrderDetailComponent implements OnInit {
     salesPlatformId: 0,
     notes: '',
     depositAmount: 0,
-    paidToWalletId: 0
+    paidToWalletId: 0,
+    customTotalAmount: 0
   };
 
   editItems: { productId: number; quantity: number; customSellingPrice: number }[] = [];
   editSubTotal = 0;
   editShippingCost = 0;
+  isCustomTotal = false;
 
   // Bosta Integration States
   bostaShipment: BostaShipmentDto | null = null;
@@ -266,7 +268,8 @@ export class OrderDetailComponent implements OnInit {
       salesPlatformId: o.salesPlatformId,
       notes: o.notes || '',
       depositAmount: o.depositAmount || 0,
-      paidToWalletId: o.paidToWalletId || 0
+      paidToWalletId: o.paidToWalletId || 0,
+      customTotalAmount: o.totalAmount
     };
 
     this.editItems = o.orderItems.map(i => ({
@@ -275,6 +278,7 @@ export class OrderDetailComponent implements OnInit {
       customSellingPrice: i.sellingPrice
     }));
 
+    this.isCustomTotal = false;
     this.recalculateEditTotals();
     this.showEditModal = true;
   }
@@ -327,8 +331,24 @@ export class OrderDetailComponent implements OnInit {
         items: this.editItems.map(i => ({ productId: +i.productId, quantity: i.quantity, customSellingPrice: i.customSellingPrice }))
       }).subscribe(res => {
         this.editShippingCost = res.shippingCost;
+        if (!this.isCustomTotal) {
+          this.editForm.customTotalAmount = this.editSubTotal + this.editShippingCost;
+        }
       });
+    } else {
+      if (!this.isCustomTotal) {
+        this.editForm.customTotalAmount = this.editSubTotal + this.editShippingCost;
+      }
     }
+  }
+
+  onCustomTotalInput(): void {
+    this.isCustomTotal = true;
+  }
+
+  resetTotalToCalculated(): void {
+    this.isCustomTotal = false;
+    this.editForm.customTotalAmount = this.editSubTotal + this.editShippingCost;
   }
 
   saveOrderEdit(): void {
@@ -348,6 +368,7 @@ export class OrderDetailComponent implements OnInit {
       shippingCompanyId: +this.editForm.shippingCompanyId,
       salesPlatformId: +this.editForm.salesPlatformId,
       notes: this.editForm.notes,
+      customTotalAmount: this.editForm.customTotalAmount,
       items: this.editItems.map(i => ({
         productId: +i.productId,
         quantity: i.quantity,
