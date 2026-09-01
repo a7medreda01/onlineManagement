@@ -303,23 +303,47 @@
     </div>
   </div>
 
-  <!-- Modern Pagination Bar -->
-  <div *ngIf="!loading() && totalCount() > 0" class="glass-card p-2.5 px-3 flex items-center justify-between gap-2 border-slate-700/70">
-    <button (click)="previousPage()" [disabled]="!hasPreviousPage()" class="btn btn-secondary btn-xs py-1 px-2.5 text-xs disabled:opacity-40 disabled:cursor-not-allowed">
-      <i class="fa-solid fa-chevron-right"></i>
-      <span>السابق</span>
-    </button>
-
-    <div class="text-xs text-slate-300 font-medium text-center">
-      صفحة <strong class="text-indigo-300">{{ pageNumber() }}</strong> من <strong class="text-indigo-300">{{ totalPages() }}</strong>
-      <span class="text-slate-500 mx-1 hidden sm:inline">•</span>
+  <!-- Modern Pagination Bar with Page Size & Number Buttons -->
+  <div *ngIf="!loading() && totalCount() > 0" class="glass-card p-2.5 px-3 flex flex-wrap items-center justify-between gap-3 border-slate-700/70">
+    
+    <!-- Page Size Selector -->
+    <div class="flex items-center gap-2 text-xs text-slate-300">
+      <span class="text-slate-400">عدد العناصر بالصفحة:</span>
+      <select [ngModel]="pageSize" (ngModelChange)="onPageSizeChange($event)" class="form-select text-xs py-1 px-2.5 bg-slate-800 border-slate-700 rounded-lg text-indigo-300 font-bold cursor-pointer focus:border-sky-400">
+        <option [ngValue]="10">10 طلبات</option>
+        <option [ngValue]="20">20 طلب</option>
+        <option [ngValue]="50">50 طلب</option>
+      </select>
       <span class="text-slate-400 hidden sm:inline">(إجمالي {{ totalCount() }})</span>
     </div>
 
-    <button (click)="nextPage()" [disabled]="!hasNextPage()" class="btn btn-secondary btn-xs py-1 px-2.5 text-xs disabled:opacity-40 disabled:cursor-not-allowed">
-      <span>التالي</span>
-      <i class="fa-solid fa-chevron-left"></i>
-    </button>
+    <!-- Page Number Navigation Buttons -->
+    <div class="flex items-center gap-1.5 overflow-x-auto">
+      <button (click)="previousPage()" [disabled]="!hasPreviousPage()" class="btn btn-secondary btn-xs py-1 px-2.5 text-xs disabled:opacity-40 disabled:cursor-not-allowed">
+        <i class="fa-solid fa-chevron-right"></i>
+        <span class="hidden sm:inline">السابق</span>
+      </button>
+
+      <ng-container *ngFor="let page of getPageNumbers()">
+        <span *ngIf="page === -1" class="px-1 text-slate-500 text-xs select-none">...</span>
+        <button *ngIf="page !== -1"
+                (click)="goToPage(page)"
+                [class.bg-indigo-600]="page === pageNumber()"
+                [class.text-white]="page === pageNumber()"
+                [class.border-indigo-400]="page === pageNumber()"
+                [class.font-extrabold]="page === pageNumber()"
+                [class.shadow-md]="page === pageNumber()"
+                [class.btn-secondary]="page !== pageNumber()"
+                class="btn btn-xs min-w-[28px] h-7 py-0 px-2 text-xs flex items-center justify-center rounded-lg">
+          {{ page }}
+        </button>
+      </ng-container>
+
+      <button (click)="nextPage()" [disabled]="!hasNextPage()" class="btn btn-secondary btn-xs py-1 px-2.5 text-xs disabled:opacity-40 disabled:cursor-not-allowed">
+        <span class="hidden sm:inline">التالي</span>
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+    </div>
   </div>
 
   <!-- Update Status Modal -->

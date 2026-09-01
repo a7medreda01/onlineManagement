@@ -289,6 +289,57 @@ export class OrdersComponent implements OnInit {
     }
   }
 
+  onPageSizeChange(newSize: number): void {
+    this.pageSize = Number(newSize);
+    this.pageNumber.set(1);
+    this.loadOrders();
+  }
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.totalPages() || page === this.pageNumber()) return;
+    this.pageNumber.set(page);
+    this.loadOrders();
+  }
+
+  getPageNumbers(): number[] {
+    const total = this.totalPages();
+    const current = this.pageNumber();
+    const pages: number[] = [];
+
+    if (total <= 7) {
+      for (let i = 1; i <= total; i++) {
+        pages.push(i);
+      }
+    } else {
+      pages.push(1);
+
+      let start = Math.max(2, current - 2);
+      let end = Math.min(total - 1, current + 2);
+
+      if (current <= 3) {
+        end = 5;
+      } else if (current >= total - 2) {
+        start = total - 4;
+      }
+
+      if (start > 2) {
+        pages.push(-1);
+      }
+
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+
+      if (end < total - 1) {
+        pages.push(-1);
+      }
+
+      pages.push(total);
+    }
+
+    return pages;
+  }
+
   goToDetail(orderId: number): void {
     this.router.navigate(['/orders', orderId]);
   }
