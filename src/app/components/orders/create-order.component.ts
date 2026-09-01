@@ -302,6 +302,36 @@ export class CreateOrderComponent implements OnInit {
     return '';
   }
 
+  findBostaCityForGov(govName: string): BostaCity | undefined {
+    if (!govName || !this.bostaCities || this.bostaCities.length === 0) return undefined;
+    const normGov = this.normalizeArabic(govName);
+    
+    let match = this.bostaCities.find(c => {
+      const normCityOther = this.normalizeArabic(c.cityOtherName);
+      const normCityName = this.normalizeArabic(c.cityName);
+      return (normCityOther && (normCityOther.includes(normGov) || normGov.includes(normCityOther))) ||
+             (normCityName && (normCityName.includes(normGov) || normGov.includes(normCityName)));
+    });
+
+    if (!match) {
+      const codeMap: { [key: string]: string } = {
+        'القاهرة': 'EG-01', 'الجيزة': 'EG-02', 'الإسكندرية': 'EG-03', 'القليوبية': 'EG-04',
+        'الدقهلية': 'EG-05', 'المنوفية': 'EG-06', 'الغربية': 'EG-07', 'الشرقية': 'EG-08',
+        'البحيرة': 'EG-09', 'دمياط': 'EG-10', 'كفر الشيخ': 'EG-11', 'الإسماعيلية': 'EG-12',
+        'بورسعيد': 'EG-13', 'السويس': 'EG-14', 'سوهاج': 'EG-15', 'أسيوط': 'EG-16',
+        'قنا': 'EG-17', 'المنيا': 'EG-18', 'بني سويف': 'EG-19', 'الفيوم': 'EG-20',
+        'البحر الأحمر': 'EG-21', 'الوادي الجديد': 'EG-22', 'مطروح': 'EG-23',
+        'شمال سيناء': 'EG-24', 'جنوب سيناء': 'EG-25', 'الأقصر': 'EG-26', 'أسوان': 'EG-27'
+      };
+      const cleanGov = govName.replace('محافظة ', '').trim();
+      const expectedCode = codeMap[govName] || codeMap[cleanGov];
+      if (expectedCode) {
+        match = this.bostaCities.find(c => c.cityCode === expectedCode);
+      }
+    }
+    return match;
+  }
+
   smartExtractLocationFromAddress(isSilent: boolean = false): void {
     const rawAddr = this.isNewCustomer ? this.newCustomer.address : (this.selectedCustomerSearchDto?.address || '');
     if (!rawAddr || rawAddr.trim().length < 2) {
@@ -317,6 +347,7 @@ export class CreateOrderComponent implements OnInit {
     let matchedCity: BostaCity | undefined = undefined;
     let matchedDist: BostaDistrict | undefined = undefined;
 
+    // 1. Detect Governorate first
     for (const gov of this.governorates()) {
       const normGovName = this.normalizeArabic(gov.name);
       if (normGovName && normGovName.length > 2 && normAddr.includes(normGovName)) {
@@ -325,22 +356,43 @@ export class CreateOrderComponent implements OnInit {
       }
     }
 
-    for (const city of this.bostaCities) {
-      if (city.districts) {
-        for (const dist of city.districts) {
+    // 2. If Governorate matched, search districts inside THAT governorate's Bosta city FIRST!
+    if (matchedGov) {
+      const govCity = this.findBostaCityForGov(matchedGov.name);
+      if (govCity && govCity.districts) {
+        for (const dist of govCity.districts) {
           const normDistName = this.normalizeArabic(dist.districtOtherName);
           const normDistEn = this.normalizeArabic(dist.districtName);
           if ((normDistName && normDistName.length > 2 && normAddr.includes(normDistName)) ||
               (normDistEn && normDistEn.length > 2 && normAddr.includes(normDistEn))) {
             matchedDist = dist;
-            matchedCity = city;
+            matchedCity = govCity;
             break;
           }
         }
       }
-      if (matchedDist) break;
     }
 
+    // 3. Fallback: If no district found in matchedGov (or no matchedGov), search all Bosta cities
+    if (!matchedDist) {
+      for (const city of this.bostaCities) {
+        if (city.districts) {
+          for (const dist of city.districts) {
+            const normDistName = this.normalizeArabic(dist.districtOtherName);
+            const normDistEn = this.normalizeArabic(dist.districtName);
+            if ((normDistName && normDistName.length > 2 && normAddr.includes(normDistName)) ||
+                (normDistEn && normDistEn.length > 2 && normAddr.includes(normDistEn))) {
+              matchedDist = dist;
+              matchedCity = city;
+              break;
+            }
+          }
+        }
+        if (matchedDist) break;
+      }
+    }
+
+    // 4. If district found but no governorate found yet, deduce governorate from city
     if (matchedCity && !matchedGov) {
       const normCityName = this.normalizeArabic(matchedCity.cityOtherName);
       matchedGov = this.governorates().find(g => {
@@ -349,11 +401,16 @@ export class CreateOrderComponent implements OnInit {
       });
     }
 
+    // 5. Apply matched governorate & city/district
     if (matchedGov) {
       if (this.isNewCustomer) {
         this.newCustomer.governorateId = matchedGov.id;
       }
-      this.onGovernorateChange();
+      this.recalculateCosts();
+    }
+
+    if (matchedGov && !matchedCity) {
+      matchedCity = this.findBostaCityForGov(matchedGov.name);
     }
 
     if (matchedCity) {
@@ -374,7 +431,7 @@ export class CreateOrderComponent implements OnInit {
     } else {
       this.extractedZoneName = '';
       if (!isSilent) {
-        this.notificationService.info('لم يتم التعرف التلقائي على المحافظة أو المنطقة في العنوان المدخل. يمكنك اختيارهم من القوائم.');
+        this.notificationService.info('لم يتم التعرف التلقائي على المحافظة أو المنطقة في العنوان المدخل.');
       }
     }
   }

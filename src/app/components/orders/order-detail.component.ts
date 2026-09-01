@@ -362,28 +362,55 @@ export class OrderDetailComponent implements OnInit {
     let matchedCity: BostaCity | undefined = undefined;
     let matchedDist: BostaDistrict | undefined = undefined;
 
+    // 1. Detect Governorate first
     for (const gov of this.governorates) {
       const normGovName = this.normalizeArabic(gov.name);
-      if (normAddr.includes(normGovName)) {
+      if (normGovName && normGovName.length > 2 && normAddr.includes(normGovName)) {
         matchedGov = gov;
         break;
       }
     }
 
-    for (const city of this.bostaCities) {
-      if (city.districts) {
-        for (const dist of city.districts) {
+    // 2. If Governorate matched, search districts inside THAT governorate's Bosta city FIRST!
+    if (matchedGov) {
+      const govCity = this.bostaCities.find(c => {
+        const normCityOther = this.normalizeArabic(c.cityOtherName);
+        const normCityName = this.normalizeArabic(c.cityName);
+        const normG = this.normalizeArabic(matchedGov!.name);
+        return (normCityOther && (normCityOther.includes(normG) || normG.includes(normCityOther))) ||
+               (normCityName && (normCityName.includes(normG) || normG.includes(normCityName)));
+      });
+      if (govCity && govCity.districts) {
+        for (const dist of govCity.districts) {
           const normDistName = this.normalizeArabic(dist.districtOtherName);
           const normDistEn = this.normalizeArabic(dist.districtName);
           if ((normDistName && normDistName.length > 2 && normAddr.includes(normDistName)) ||
               (normDistEn && normDistEn.length > 2 && normAddr.includes(normDistEn))) {
             matchedDist = dist;
-            matchedCity = city;
+            matchedCity = govCity;
             break;
           }
         }
       }
-      if (matchedDist) break;
+    }
+
+    // 3. Fallback: If no district found in matchedGov, search all Bosta cities
+    if (!matchedDist) {
+      for (const city of this.bostaCities) {
+        if (city.districts) {
+          for (const dist of city.districts) {
+            const normDistName = this.normalizeArabic(dist.districtOtherName);
+            const normDistEn = this.normalizeArabic(dist.districtName);
+            if ((normDistName && normDistName.length > 2 && normAddr.includes(normDistName)) ||
+                (normDistEn && normDistEn.length > 2 && normAddr.includes(normDistEn))) {
+              matchedDist = dist;
+              matchedCity = city;
+              break;
+            }
+          }
+        }
+        if (matchedDist) break;
+      }
     }
 
     if (matchedGov) {
