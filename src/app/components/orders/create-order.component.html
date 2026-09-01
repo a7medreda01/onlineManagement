@@ -164,7 +164,7 @@
             </label>
             <span *ngIf="extractedZoneName" class="text-[10px] font-bold text-emerald-400 flex items-center gap-1">
               <i class="fa-solid fa-wand-magic-sparkles text-amber-400 text-[10px]"></i>
-              <span>مكتشف تلقائياً: {{ extractedZoneName }}</span>
+              <span>اكتشاف: {{ extractedZoneName }}</span>
             </span>
           </div>
           <textarea [(ngModel)]="newCustomer.address" (input)="smartExtractLocationFromAddress(true)" name="custAddress" class="form-textarea text-xs py-2 px-3 rounded-xl border-slate-700/80 focus:border-indigo-500" rows="2" placeholder="اكتب العنوان بالتفصيل أولاً (مثلاً: 15 شارع النصر، المعادي، القاهرة)..." required></textarea>

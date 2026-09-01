@@ -371,31 +371,32 @@ export class OrderDetailComponent implements OnInit {
       }
     }
 
-    // 2. If Governorate matched, search districts inside THAT governorate's Bosta city FIRST!
+    // 2. If Governorate was detected, strictly search ONLY inside this Governorate!
     if (matchedGov) {
-      const govCity = this.bostaCities.find(c => {
+      matchedCity = this.bostaCities.find(c => {
         const normCityOther = this.normalizeArabic(c.cityOtherName);
         const normCityName = this.normalizeArabic(c.cityName);
         const normG = this.normalizeArabic(matchedGov!.name);
         return (normCityOther && (normCityOther.includes(normG) || normG.includes(normCityOther))) ||
                (normCityName && (normCityName.includes(normG) || normG.includes(normCityName)));
       });
-      if (govCity && govCity.districts) {
-        for (const dist of govCity.districts) {
+      if (matchedCity && matchedCity.districts && matchedCity.districts.length > 0) {
+        for (const dist of matchedCity.districts) {
           const normDistName = this.normalizeArabic(dist.districtOtherName);
           const normDistEn = this.normalizeArabic(dist.districtName);
           if ((normDistName && normDistName.length > 2 && normAddr.includes(normDistName)) ||
               (normDistEn && normDistEn.length > 2 && normAddr.includes(normDistEn))) {
             matchedDist = dist;
-            matchedCity = govCity;
             break;
           }
         }
+        // If district not found inside this governorate, pick the FIRST district of this governorate!
+        if (!matchedDist) {
+          matchedDist = matchedCity.districts[0];
+        }
       }
-    }
-
-    // 3. Fallback: If no district found in matchedGov, search all Bosta cities
-    if (!matchedDist) {
+    } else {
+      // 3. Only if NO governorate was detected in address, search all Bosta cities for a matching district
       for (const city of this.bostaCities) {
         if (city.districts) {
           for (const dist of city.districts) {
