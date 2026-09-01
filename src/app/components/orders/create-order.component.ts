@@ -287,10 +287,28 @@ export class CreateOrderComponent implements OnInit {
     this.selectedBostaDistrictId = '';
   }
 
-  smartExtractLocationFromAddress(): void {
+  extractedZoneName = '';
+
+  getSelectedDistrictName(): string {
+    if (!this.selectedBostaDistrictId) return '';
+    for (const city of this.bostaCities) {
+      if (city.districts) {
+        const d = city.districts.find(x => x.districtId === this.selectedBostaDistrictId);
+        if (d) {
+          return `${d.districtOtherName} (${city.cityOtherName})`;
+        }
+      }
+    }
+    return '';
+  }
+
+  smartExtractLocationFromAddress(isSilent: boolean = false): void {
     const rawAddr = this.isNewCustomer ? this.newCustomer.address : (this.selectedCustomerSearchDto?.address || '');
     if (!rawAddr || rawAddr.trim().length < 2) {
-      this.notificationService.warning('يرجى كتابة العنوان التفصيلي للشحن أولاً لاستخراج المحافظة والمنطقة تلقائياً');
+      this.extractedZoneName = '';
+      if (!isSilent) {
+        this.notificationService.warning('يرجى كتابة العنوان التفصيلي للشحن أولاً لاستخراج المحافظة والمنطقة تلقائياً');
+      }
       return;
     }
 
@@ -301,7 +319,7 @@ export class CreateOrderComponent implements OnInit {
 
     for (const gov of this.governorates()) {
       const normGovName = this.normalizeArabic(gov.name);
-      if (normAddr.includes(normGovName)) {
+      if (normGovName && normGovName.length > 2 && normAddr.includes(normGovName)) {
         matchedGov = gov;
         break;
       }
@@ -348,11 +366,16 @@ export class CreateOrderComponent implements OnInit {
     }
 
     if (matchedGov || matchedDist) {
-      const govMsg = matchedGov ? `المحافظة: ${matchedGov.name}` : '';
-      const distMsg = matchedDist ? `المنطقة: ${matchedDist.districtOtherName}` : '';
-      this.notificationService.success(`✨ تم الاستخراج الذكي بنجاح! (${[govMsg, distMsg].filter(Boolean).join(' | ')})`);
+      const parts = [matchedGov?.name, matchedDist?.districtOtherName].filter(Boolean);
+      this.extractedZoneName = parts.join(' - ');
+      if (!isSilent) {
+        this.notificationService.success(`✨ تم الاستخراج الذكي: ${this.extractedZoneName}`);
+      }
     } else {
-      this.notificationService.info('لم يتم التعرف التلقائي على المحافظة أو المنطقة في العنوان المدخل. يمكنك اختيارهم من القوائم.');
+      this.extractedZoneName = '';
+      if (!isSilent) {
+        this.notificationService.info('لم يتم التعرف التلقائي على المحافظة أو المنطقة في العنوان المدخل. يمكنك اختيارهم من القوائم.');
+      }
     }
   }
 

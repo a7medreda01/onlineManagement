@@ -62,44 +62,45 @@
       </h3>
 
       <!-- 1. Shipping Company & Sales Platform (NOW IN STEP 1) -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-800/40 p-3 rounded-2xl border border-slate-700/60">
+      <!-- 1. Shipping Company & Sales Platform Header Card (Compact 2 Columns on Mobile) -->
+      <div class="grid grid-cols-2 gap-2 bg-slate-800/40 p-2 sm:p-3 rounded-2xl border border-slate-700/60">
         <!-- Shipping Company -->
         <div class="form-group mb-0">
-          <label class="text-xs text-slate-300 font-bold mb-1 flex items-center justify-between">
+          <label class="text-[10px] sm:text-xs text-slate-300 font-bold mb-1 flex items-center justify-between">
             <span>شركة الشحن</span>
-            <span *ngIf="isSelectedCompanyBosta()" class="text-[10px] text-amber-400 font-bold flex items-center gap-1">
-              <i class="fa-solid fa-bolt text-amber-400"></i> شحن بوسطة مفعل
+            <span *ngIf="isSelectedCompanyBosta()" class="text-[9px] text-amber-400 font-bold hidden sm:inline">
+              ⚡ بوسطة
             </span>
           </label>
-          <select [(ngModel)]="selectedShippingCompanyId" (ngModelChange)="onShippingCompanyChange()" name="shipCompany" class="form-select text-xs py-2 px-3.5 rounded-xl font-bold bg-slate-900 border-indigo-500/40 text-indigo-300" required>
-            <option [ngValue]="0" disabled>-- اختر شركة الشحن --</option>
+          <select [(ngModel)]="selectedShippingCompanyId" (ngModelChange)="onShippingCompanyChange()" name="shipCompany" class="form-select text-[11px] sm:text-xs py-1.5 px-2 rounded-xl font-bold bg-slate-900 border-indigo-500/40 text-indigo-300" required>
+            <option [ngValue]="0" disabled>-- اختر الشحن --</option>
             <option *ngFor="let comp of shippingCompanies()" [ngValue]="comp.id">
-              {{ getCleanShippingCompanyName(comp) }} {{ comp.isIntegrated ? '⚡ (ربط بوسطة)' : '' }}
+              {{ getCleanShippingCompanyName(comp) }} {{ comp.isIntegrated ? '⚡' : '' }}
             </option>
           </select>
         </div>
 
         <!-- Sales Platform -->
         <div class="form-group mb-0">
-          <label class="text-xs text-slate-300 font-bold mb-1 flex items-center justify-between">
-            <span>منصة / مصدر البيع</span>
-            <button type="button" (click)="showPlatformModal = true" class="text-[10px] text-sky-400 hover:underline font-bold flex items-center gap-1">
-              <i class="fa-solid fa-plus"></i> إضافة منصة
+          <label class="text-[10px] sm:text-xs text-slate-300 font-bold mb-1 flex items-center justify-between">
+            <span>منصة البيع</span>
+            <button type="button" (click)="showPlatformModal = true" class="text-[9px] text-sky-400 hover:underline font-bold">
+              + إضافة
             </button>
           </label>
-          <select [(ngModel)]="selectedSalesPlatformId" name="salesPlat" class="form-select text-xs py-2 px-3.5 rounded-xl font-bold bg-slate-900 border-sky-500/40 text-sky-300" required>
-            <option [ngValue]="0" disabled>-- اختر منصة البيع --</option>
+          <select [(ngModel)]="selectedSalesPlatformId" name="salesPlat" class="form-select text-[11px] sm:text-xs py-1.5 px-2 rounded-xl font-bold bg-slate-900 border-sky-500/40 text-sky-300" required>
+            <option [ngValue]="0" disabled>-- اختر المنصة --</option>
             <option *ngFor="let plat of salesPlatforms()" [ngValue]="plat.id">{{ plat.name }}</option>
           </select>
         </div>
 
         <!-- Fulfillment Toggle (Visible when Bosta is selected) -->
-        <div *ngIf="isSelectedCompanyBosta()" class="col-span-1 sm:col-span-2 pt-1 border-t border-slate-700/50 flex items-center justify-between text-xs">
-          <label (click)="toggleBostaFulfillment(!isBostaFulfillmentOrder)" class="cursor-pointer flex items-center gap-2 text-xs font-bold text-amber-300">
-            <input type="checkbox" [checked]="isBostaFulfillmentOrder" class="form-checkbox text-amber-500 rounded bg-slate-900 border-slate-700" />
-            <span>🏬 الشحن من مخازن بوسطة (Bosta Fulfillment Stock)</span>
+        <div *ngIf="isSelectedCompanyBosta()" class="col-span-2 pt-1 border-t border-slate-700/50 flex items-center justify-between text-[10px] sm:text-xs">
+          <label (click)="toggleBostaFulfillment(!isBostaFulfillmentOrder)" class="cursor-pointer flex items-center gap-1.5 text-[10px] sm:text-xs font-bold text-amber-300">
+            <input type="checkbox" [checked]="isBostaFulfillmentOrder" class="form-checkbox text-amber-500 rounded bg-slate-900 border-slate-700 w-3.5 h-3.5" />
+            <span>🏬 مخازن بوسطة (Bosta Fulfillment Stock)</span>
           </label>
-          <span class="text-[10px] text-slate-400">سحب المنتجات المطابقة آلياً</span>
+          <span class="text-[9px] text-slate-400">سحب آلي</span>
         </div>
       </div>
 
@@ -154,33 +155,33 @@
           </div>
         </div>
 
-        <!-- 2. Detailed Address FIRST with Smart Extraction -->
-        <div class="form-group mb-0 space-y-1.5">
+        <!-- 2. Detailed Address FIRST with Live Silent Smart Extraction -->
+        <div class="form-group mb-0 space-y-1">
           <div class="flex items-center justify-between">
             <label class="text-xs text-slate-300 font-bold flex items-center gap-1.5">
               <i class="fa-solid fa-house-user text-indigo-400"></i>
               <span>العنوان التفصيلي للشحن</span>
             </label>
-            <button type="button" (click)="smartExtractLocationFromAddress()" class="btn btn-xs py-1 px-2.5 bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border-indigo-500/40 text-[11px] font-bold rounded-lg flex items-center gap-1 transition-all">
-              <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i>
-              <span>استخراج ذكي للمحافظة والحي ✨</span>
-            </button>
+            <span *ngIf="extractedZoneName" class="text-[10px] font-bold text-emerald-400 flex items-center gap-1">
+              <i class="fa-solid fa-wand-magic-sparkles text-amber-400 text-[10px]"></i>
+              <span>مكتشف تلقائياً: {{ extractedZoneName }}</span>
+            </span>
           </div>
-          <textarea [(ngModel)]="newCustomer.address" (input)="smartExtractLocationFromAddress()" name="custAddress" class="form-textarea text-xs py-2 px-3.5 rounded-xl border-slate-700/80 focus:border-indigo-500" rows="2" placeholder="اكتب العنوان بالتفصيل أولاً (مثلاً: 15 شارع النصر، المعادي، القاهرة)..." required></textarea>
+          <textarea [(ngModel)]="newCustomer.address" (input)="smartExtractLocationFromAddress(true)" name="custAddress" class="form-textarea text-xs py-2 px-3 rounded-xl border-slate-700/80 focus:border-indigo-500" rows="2" placeholder="اكتب العنوان بالتفصيل أولاً (مثلاً: 15 شارع النصر، المعادي، القاهرة)..." required></textarea>
         </div>
 
-        <!-- 3. Governorate & Bosta City/District Selection -->
+        <!-- 3. Governorate & Bosta District Modal Selector -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
           <!-- Governorate -->
           <div class="form-group mb-0">
             <label class="text-xs text-slate-400 font-medium mb-1 block">المحافظة</label>
-            <select [(ngModel)]="newCustomer.governorateId" (ngModelChange)="onGovernorateChange()" name="custGov" class="form-select text-xs py-2 px-3.5 rounded-xl font-bold text-slate-100" required>
+            <select [(ngModel)]="newCustomer.governorateId" (ngModelChange)="onGovernorateChange()" name="custGov" class="form-select text-xs py-2 px-3 rounded-xl font-bold text-slate-100" required>
               <option [ngValue]="0" disabled>-- اختر المحافظة --</option>
               <option *ngFor="let gov of governorates()" [ngValue]="gov.id">{{ gov.name }}</option>
             </select>
           </div>
 
-          <!-- Bosta District / Zone Selector -->
+          <!-- Bosta District / Zone Modal Trigger Box -->
           <div class="form-group mb-0">
             <div class="flex items-center justify-between mb-1">
               <label class="text-xs text-amber-300 font-bold block">المنطقة / الحي (District)</label>
@@ -188,12 +189,18 @@
                 <i class="fa-solid fa-magnifying-glass"></i> بحث شامل 🔍
               </button>
             </div>
-            <select [(ngModel)]="selectedBostaDistrictId" (change)="onDistrictChange()" name="custDistrict" class="form-select text-xs py-2 px-3.5 rounded-xl bg-slate-900 border-amber-500/50 text-amber-300 font-bold">
-              <option value="">-- اختر المنطقة / الحي (مثال: سموحة، المعادي...) --</option>
-              <option *ngFor="let dist of availableDistricts" [value]="dist.districtId">
-                📍 {{ dist.districtOtherName }} ({{ dist.districtName }})
-              </option>
-            </select>
+            <button type="button" (click)="openZoneSearchModal()"
+                    class="w-full text-right form-control text-xs py-2 px-3 rounded-xl bg-slate-900 border border-amber-500/50 text-amber-300 font-bold flex items-center justify-between hover:bg-slate-800/80 transition-all">
+              <span class="truncate">
+                <ng-container *ngIf="getSelectedDistrictName(); else noDistText">
+                  📍 {{ getSelectedDistrictName() }}
+                </ng-container>
+                <ng-template #noDistText>
+                  <span class="text-slate-400 font-normal">اختر المنطقة / الحي من القائمة 🔍</span>
+                </ng-template>
+              </span>
+              <i class="fa-solid fa-magnifying-glass text-amber-400 text-xs shrink-0 mr-1"></i>
+            </button>
           </div>
         </div>
 
@@ -304,37 +311,13 @@
       </div>
     </div>
 
-    <!-- ============ STEP 2: SHIPPING & PRODUCTS ============ -->
+    <!-- ============ STEP 2: PRODUCTS & QUANTITIES ============ -->
     <div *ngIf="currentStep === 2" class="glass-card p-3.5 sm:p-4 space-y-3 border-slate-700/80 shadow-md fade-in">
 
       <h3 class="font-bold text-xs sm:text-sm text-slate-100 flex items-center gap-2 border-b border-slate-700/50 pb-2">
-        <i class="fa-solid fa-truck-fast text-sky-400 text-sm"></i>
-        <span>2. شركة الشحن والمنتجات</span>
+        <i class="fa-solid fa-boxes-packing text-amber-400 text-sm"></i>
+        <span>2. منتجات الطلب والكميات</span>
       </h3>
-
-      <!-- Shipping Company & Sales Platform SIDE-BY-SIDE in 1 row (always 2 columns) -->
-      <div class="grid grid-cols-2 gap-2 sm:gap-3">
-        <div class="form-group mb-0">
-          <label class="text-xs text-slate-400 font-medium mb-1 block">شركة الشحن</label>
-          <select [(ngModel)]="selectedShippingCompanyId" (ngModelChange)="onShippingCompanyChange()" name="shippingCompany" class="form-select text-xs py-2 px-3 sm:px-3.5 rounded-xl" required>
-            <option [ngValue]="0" disabled>-- اختر شركة الشحن --</option>
-            <option *ngFor="let comp of shippingCompanies()" [ngValue]="comp.id">{{ getCleanShippingCompanyName(comp) }}</option>
-          </select>
-        </div>
-
-        <div class="form-group mb-0">
-          <div class="flex items-center justify-between mb-1">
-            <label class="text-xs text-slate-400 font-medium block truncate">منصة البيع</label>
-            <button type="button" (click)="showPlatformModal = true" class="text-xs text-sky-400 hover:text-sky-300 font-bold flex items-center gap-0.5 shrink-0">
-              <i class="fa-solid fa-circle-plus"></i> <span class="hidden sm:inline">إضافة منصة</span><span class="inline sm:hidden">إضافة</span>
-            </button>
-          </div>
-          <select [(ngModel)]="selectedSalesPlatformId" name="salesPlatform" class="form-select text-xs py-2 px-3 sm:px-3.5 rounded-xl" required>
-            <option [ngValue]="0" disabled>-- اختر المنصة --</option>
-            <option *ngFor="let plat of salesPlatforms()" [ngValue]="plat.id">{{ plat.name }}</option>
-          </select>
-        </div>
-      </div>
 
       <!-- Warehouse origin (Bosta) - SHOW WHEN BOSTA INTEGRATION ACTIVE OR BOSTA SELECTED -->
       <div *ngIf="hasBostaIntegration || isSelectedCompanyBosta()" class="p-3 rounded-xl bg-slate-900/60 border border-slate-700/70 space-y-2">
