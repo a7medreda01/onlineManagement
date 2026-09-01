@@ -525,16 +525,16 @@
             <input type="text" [(ngModel)]="editForm.customerSecondaryPhone" name="editCustPhone2" class="form-control text-xs py-1.5" placeholder="اتركه فارغاً إن لم يكن موجود" />
           </div>
 
-          <!-- Detailed Address FIRST with Smart Extraction -->
+          <!-- Detailed Address FIRST with Live Silent Smart Extraction -->
           <div class="form-group sm:col-span-2 mb-0 space-y-1">
             <div class="flex items-center justify-between">
               <label class="form-label text-xs text-slate-200 font-bold">العنوان التفصيلي للشحن</label>
-              <button type="button" (click)="smartExtractLocationFromEditAddress()" class="btn btn-xs py-0.5 px-2 bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border-indigo-500/40 text-[10px] font-bold rounded-lg flex items-center gap-1">
-                <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i>
-                <span>استخراج ذكي ✨</span>
-              </button>
+              <span *ngIf="extractedZoneName" class="text-[10px] font-bold text-emerald-400 flex items-center gap-1">
+                <i class="fa-solid fa-wand-magic-sparkles text-amber-400 text-[10px]"></i>
+                <span>مكتشف تلقائياً: {{ extractedZoneName }}</span>
+              </span>
             </div>
-            <textarea [(ngModel)]="editForm.customerAddress" (input)="smartExtractLocationFromEditAddress()" name="editAddress" class="form-textarea text-xs py-1.5 rounded-xl border-slate-700/80" rows="2" required></textarea>
+            <textarea [(ngModel)]="editForm.customerAddress" (input)="smartExtractLocationFromEditAddress(true)" name="editAddress" class="form-textarea text-xs py-1.5 rounded-xl border-slate-700/80" rows="2" required></textarea>
           </div>
 
           <!-- Governorate -->
@@ -545,7 +545,7 @@
             </select>
           </div>
 
-          <!-- District / Region Selector -->
+          <!-- District / Region Modal Trigger Box -->
           <div class="form-group mb-0">
             <div class="flex items-center justify-between mb-1">
               <label class="form-label text-xs text-amber-300 font-bold mb-0">المنطقة / الحي (District)</label>
@@ -553,12 +553,18 @@
                 <i class="fa-solid fa-magnifying-glass"></i> بحث شامل 🔍
               </button>
             </div>
-            <select [(ngModel)]="selectedBostaDistrictId" name="editDistId" class="form-select text-xs py-1.5 bg-slate-900 border-amber-500/50 text-amber-300 font-bold">
-              <option value="">-- اختر المنطقة / الحي --</option>
-              <option *ngFor="let dist of availableDistricts" [value]="dist.districtId">
-                📍 {{ dist.districtOtherName }} ({{ dist.districtName }})
-              </option>
-            </select>
+            <button type="button" (click)="openZoneSearchModal()"
+                    class="w-full text-right form-control text-xs py-1.5 px-3 rounded-xl bg-slate-900 border border-amber-500/50 text-amber-300 font-bold flex items-center justify-between hover:bg-slate-800/80 transition-all">
+              <span class="truncate">
+                <ng-container *ngIf="getSelectedDistrictName(); else noDistEditText">
+                  📍 {{ getSelectedDistrictName() }}
+                </ng-container>
+                <ng-template #noDistEditText>
+                  <span class="text-slate-400 font-normal">اختر المنطقة / الحي من القائمة 🔍</span>
+                </ng-template>
+              </span>
+              <i class="fa-solid fa-magnifying-glass text-amber-400 text-xs shrink-0 mr-1"></i>
+            </button>
           </div>
         </div>
       </div>

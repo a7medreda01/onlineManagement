@@ -353,9 +353,30 @@ export class OrderDetailComponent implements OnInit {
     this.selectedBostaDistrictId = '';
   }
 
-  smartExtractLocationFromEditAddress(): void {
+  extractedZoneName = '';
+
+  getSelectedDistrictName(): string {
+    if (!this.selectedBostaDistrictId) return '';
+    for (const city of this.bostaCities) {
+      if (city.districts) {
+        const d = city.districts.find(x => x.districtId === this.selectedBostaDistrictId);
+        if (d) {
+          return `${d.districtOtherName} (${city.cityOtherName})`;
+        }
+      }
+    }
+    return '';
+  }
+
+  smartExtractLocationFromEditAddress(isSilent: boolean = false): void {
     const rawAddr = this.editForm.customerAddress || '';
-    if (!rawAddr || rawAddr.trim().length < 2) return;
+    if (!rawAddr || rawAddr.trim().length < 2) {
+      this.extractedZoneName = '';
+      if (!isSilent) {
+        this.notificationService.warning('يرجى كتابة العنوان التفصيلي أولاً لاستخراج المحافظة والمنطقة تلقائياً');
+      }
+      return;
+    }
 
     const normAddr = this.normalizeArabic(rawAddr);
     let matchedGov: Governorate | undefined = undefined;
@@ -429,9 +450,16 @@ export class OrderDetailComponent implements OnInit {
     }
 
     if (matchedGov || matchedDist) {
-      const govMsg = matchedGov ? `المحافظة: ${matchedGov.name}` : '';
-      const distMsg = matchedDist ? `المنطقة: ${matchedDist.districtOtherName}` : '';
-      this.notificationService.success(`✨ تم الاستخراج الذكي بنجاح! (${[govMsg, distMsg].filter(Boolean).join(' | ')})`);
+      const parts = [matchedGov?.name, matchedDist?.districtOtherName].filter(Boolean);
+      this.extractedZoneName = parts.join(' - ');
+      if (!isSilent) {
+        this.notificationService.success(`✨ تم الاستخراج الذكي بنجاح! (${this.extractedZoneName})`);
+      }
+    } else {
+      this.extractedZoneName = '';
+      if (!isSilent) {
+        this.notificationService.info('لم يتم التعرف التلقائي على المحافظة أو المنطقة في العنوان المدخل.');
+      }
     }
   }
 
