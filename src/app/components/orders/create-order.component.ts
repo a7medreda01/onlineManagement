@@ -853,6 +853,8 @@ export class CreateOrderComponent implements OnInit {
     const payload: any = {
       shippingCompanyId: this.selectedShippingCompanyId,
       salesPlatformId: this.selectedSalesPlatformId,
+      districtId: this.selectedBostaDistrictId || null,
+      districtName: this.getSelectedDistrictName() || null,
       notes: this.orderNotes,
       depositAmount: Number(this.depositAmount) || 0,
       paidToWalletId: (this.depositAmount || 0) > 0 && this.selectedPaidToWalletId ? Number(this.selectedPaidToWalletId) : null,

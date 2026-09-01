@@ -394,10 +394,10 @@
               </span>
             </div>
             <div class="flex flex-col sm:flex-row gap-2">
-              <button type="button" (click)="importBostaRates()" [disabled]="importingRates" class="btn bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-200 border border-emerald-500/40 text-xs py-2.5 px-4 font-bold flex items-center justify-center gap-2 transition flex-1 shadow-lg">
+              <button type="button" (click)="importBostaRates(false)" [disabled]="importingRates" class="btn bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-200 border border-emerald-500/40 text-xs py-2.5 px-4 font-bold flex items-center justify-center gap-2 transition flex-1 shadow-lg">
                 <i *ngIf="importingRates" class="fa-solid fa-circle-notch fa-spin"></i>
                 <i *ngIf="!importingRates" class="fa-solid fa-bolt text-emerald-400"></i>
-                <span>سحب أسعار تعاقد التاجر من بوسطة ⚡</span>
+                <span>سحب أسعار تعاقد التاجر المباشرة من بوسطة ⚡</span>
               </button>
 
               <button type="button" (click)="openBostaRatesModal()" class="btn btn-secondary text-xs py-2.5 px-4 text-sky-300 border-sky-500/30 hover:bg-sky-500/20 font-bold flex items-center justify-center gap-2 shrink-0">
@@ -501,10 +501,10 @@
               </span>
             </div>
             <div class="flex flex-col sm:flex-row gap-2">
-              <button type="button" (click)="importBostaRates()" [disabled]="importingRates" class="btn bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 border border-purple-500/40 text-xs py-2.5 px-4 font-bold flex items-center justify-center gap-2 transition flex-1 shadow-lg">
+              <button type="button" (click)="importBostaRates(true)" [disabled]="importingRates" class="btn bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 border border-purple-500/40 text-xs py-2.5 px-4 font-bold flex items-center justify-center gap-2 transition flex-1 shadow-lg">
                 <i *ngIf="importingRates" class="fa-solid fa-circle-notch fa-spin"></i>
                 <i *ngIf="!importingRates" class="fa-solid fa-bolt text-purple-400"></i>
-                <span>سحب أسعار حساب المستودع ⚡</span>
+                <span>سحب أسعار الفولفيلمنت (التاجر + رسوم التخزين) 🏬⚡</span>
               </button>
 
               <button type="button" (click)="openBostaRatesModal()" class="btn btn-secondary text-xs py-2.5 px-4 text-sky-300 border-sky-500/30 hover:bg-sky-500/20 font-bold flex items-center justify-center gap-2 shrink-0">

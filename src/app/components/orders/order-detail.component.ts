@@ -290,6 +290,15 @@ export class OrderDetailComponent implements OnInit {
     this.isCustomTotal = false;
     this.recalculateEditTotals();
     this.autoMatchBostaCityAndDistrictForEdit();
+
+    if (o.districtId) {
+      this.selectedBostaDistrictId = o.districtId;
+    }
+    if (o.districtName) {
+      this.extractedZoneName = o.districtName;
+    }
+
+    this.smartExtractLocationFromEditAddress(true);
     this.showEditModal = true;
   }
 
@@ -346,11 +355,14 @@ export class OrderDetailComponent implements OnInit {
     if (matchedCity) {
       this.selectedBostaCityId = matchedCity.cityId;
       this.availableDistricts = matchedCity.districts || [];
+      if (this.availableDistricts.length > 0 && !this.selectedBostaDistrictId) {
+        this.selectedBostaDistrictId = this.availableDistricts[0].districtId;
+      }
     } else {
       this.selectedBostaCityId = '';
       this.availableDistricts = [];
+      this.selectedBostaDistrictId = '';
     }
-    this.selectedBostaDistrictId = '';
   }
 
   extractedZoneName = '';
@@ -614,6 +626,8 @@ export class OrderDetailComponent implements OnInit {
       customerPhone: this.editForm.customerPhone,
       customerSecondaryPhone: this.editForm.customerSecondaryPhone,
       governorateId: +this.editForm.governorateId,
+      districtId: this.selectedBostaDistrictId || null,
+      districtName: this.getSelectedDistrictName() || null,
       customerAddress: this.editForm.customerAddress,
       shippingCompanyId: +this.editForm.shippingCompanyId,
       salesPlatformId: +this.editForm.salesPlatformId,

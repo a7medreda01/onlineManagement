@@ -452,7 +452,7 @@ export class ShippingComponent implements OnInit, OnDestroy {
     this.saveBostaIntegrationFast();
   }
 
-  importBostaRates(): void {
+  importBostaRates(isFulfillment: boolean = false): void {
     const bosta = this.bostaCompany();
     if (!bosta) {
       this.notificationService.error('يرجى حفظ بيانات ربط بوسطة أولاً قبل استيراد الأسعار');
@@ -461,11 +461,13 @@ export class ShippingComponent implements OnInit, OnDestroy {
 
     this.importingRates = true;
     this.ratesImportStatus = 'loading';
-    this.ratesImportMessage = 'جاري استعلام وحساب أسعار تعاقد حسابك المباشر في بوسطة...';
+    this.ratesImportMessage = isFulfillment
+      ? 'جاري سحب أسعار بوسطة وإضافة رسوم التخزين والفولفيلمنت عليها...'
+      : 'جاري استعلام وحساب أسعار تعاقد التاجر المباشرة من بوسطة...';
 
     const payload = {
-      useStorageService: this.useStorageService,
-      storageFee: this.storageFee
+      useStorageService: isFulfillment ? this.useStorageService : false,
+      storageFee: isFulfillment && this.useStorageService ? this.storageFee : 0
     };
 
     this.bostaService.importRates(bosta.id, payload).subscribe({
@@ -473,7 +475,7 @@ export class ShippingComponent implements OnInit, OnDestroy {
         this.importingRates = false;
         if (res.success) {
           this.ratesImportStatus = 'success';
-          this.ratesImportMessage = `✅ ${res.message || 'تم سحب أسعار الـ 27 محافظة التابعة لتعاقد حسابك المباشر في بوسطة بنجاح!'}`;
+          this.ratesImportMessage = `✅ ${res.message || 'تم سحب أسعار الـ 27 محافظة التابعة لحسابك في بوسطة بنجاح!'}`;
           this.notificationService.success(res.message || 'تم استيراد أسعار تعاقد بوسطة بنجاح!');
           this.loadData();
         } else {

@@ -303,45 +303,49 @@
     </div>
   </div>
 
-  <!-- Modern Pagination Bar with Page Size & Number Buttons -->
-  <div *ngIf="!loading() && totalCount() > 0" class="glass-card p-2.5 px-3 flex flex-wrap items-center justify-between gap-3 border-slate-700/70">
+  <!-- Modern Responsive Pagination Bar -->
+  <div *ngIf="!loading() && totalCount() > 0" class="glass-card p-2.5 px-3 flex flex-col sm:flex-row items-center justify-between gap-2.5 sm:gap-3 border-slate-700/70">
     
-    <!-- Page Size Selector -->
-    <div class="flex items-center gap-2 text-xs text-slate-300">
-      <span class="text-slate-400">عدد العناصر بالصفحة:</span>
-      <select [ngModel]="pageSize" (ngModelChange)="onPageSizeChange($event)" class="form-select text-xs py-1 px-2.5 bg-slate-800 border-slate-700 rounded-lg text-indigo-300 font-bold cursor-pointer focus:border-sky-400">
-        <option [ngValue]="10">10 طلبات</option>
-        <option [ngValue]="20">20 طلب</option>
-        <option [ngValue]="50">50 طلب</option>
-      </select>
-      <span class="text-slate-400 hidden sm:inline">(إجمالي {{ totalCount() }})</span>
+    <!-- Page Size Selector & Count -->
+    <div class="w-full sm:w-auto flex items-center justify-between sm:justify-start gap-2 text-xs text-slate-300">
+      <div class="flex items-center gap-1.5">
+        <span class="text-slate-400 text-[11px] sm:text-xs">عدد العناصر بالصفحة:</span>
+        <select [ngModel]="pageSize" (ngModelChange)="onPageSizeChange($event)" class="form-select text-[11px] sm:text-xs py-1 px-2 bg-slate-800 border-slate-700 rounded-lg text-indigo-300 font-bold cursor-pointer focus:border-sky-400">
+          <option [ngValue]="10">10 طلبات</option>
+          <option [ngValue]="20">20 طلب</option>
+          <option [ngValue]="50">50 طلب</option>
+        </select>
+      </div>
+      <span class="text-slate-400 text-[11px] sm:text-xs font-semibold">(إجمالي {{ totalCount() }})</span>
     </div>
 
     <!-- Page Number Navigation Buttons -->
-    <div class="flex items-center gap-1.5 overflow-x-auto">
-      <button (click)="previousPage()" [disabled]="!hasPreviousPage()" class="btn btn-secondary btn-xs py-1 px-2.5 text-xs disabled:opacity-40 disabled:cursor-not-allowed">
-        <i class="fa-solid fa-chevron-right"></i>
-        <span class="hidden sm:inline">السابق</span>
+    <div class="w-full sm:w-auto flex items-center justify-center gap-1">
+      <button (click)="previousPage()" [disabled]="!hasPreviousPage()" class="btn btn-secondary btn-xs py-1 px-2 text-xs disabled:opacity-40 disabled:cursor-not-allowed shrink-0 rounded-lg">
+        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+        <span class="hidden sm:inline mr-1">السابق</span>
       </button>
 
-      <ng-container *ngFor="let page of getPageNumbers()">
-        <span *ngIf="page === -1" class="px-1 text-slate-500 text-xs select-none">...</span>
-        <button *ngIf="page !== -1"
-                (click)="goToPage(page)"
-                [class.bg-indigo-600]="page === pageNumber()"
-                [class.text-white]="page === pageNumber()"
-                [class.border-indigo-400]="page === pageNumber()"
-                [class.font-extrabold]="page === pageNumber()"
-                [class.shadow-md]="page === pageNumber()"
-                [class.btn-secondary]="page !== pageNumber()"
-                class="btn btn-xs min-w-[28px] h-7 py-0 px-2 text-xs flex items-center justify-center rounded-lg">
-          {{ page }}
-        </button>
-      </ng-container>
+      <div class="flex items-center gap-1 overflow-x-auto py-0.5 no-scrollbar max-w-[220px] sm:max-w-none">
+        <ng-container *ngFor="let page of getPageNumbers()">
+          <span *ngIf="page === -1" class="px-0.5 text-slate-500 text-[10px] select-none">...</span>
+          <button *ngIf="page !== -1"
+                  (click)="goToPage(page)"
+                  [class.bg-indigo-600]="page === pageNumber()"
+                  [class.text-white]="page === pageNumber()"
+                  [class.border-indigo-400]="page === pageNumber()"
+                  [class.font-extrabold]="page === pageNumber()"
+                  [class.shadow-md]="page === pageNumber()"
+                  [class.btn-secondary]="page !== pageNumber()"
+                  class="btn btn-xs min-w-[26px] h-6 sm:h-7 py-0 px-1.5 text-[11px] sm:text-xs flex items-center justify-center rounded-lg shrink-0">
+            {{ page }}
+          </button>
+        </ng-container>
+      </div>
 
-      <button (click)="nextPage()" [disabled]="!hasNextPage()" class="btn btn-secondary btn-xs py-1 px-2.5 text-xs disabled:opacity-40 disabled:cursor-not-allowed">
-        <span class="hidden sm:inline">التالي</span>
-        <i class="fa-solid fa-chevron-left"></i>
+      <button (click)="nextPage()" [disabled]="!hasNextPage()" class="btn btn-secondary btn-xs py-1 px-2 text-xs disabled:opacity-40 disabled:cursor-not-allowed shrink-0 rounded-lg">
+        <span class="hidden sm:inline ml-1">التالي</span>
+        <i class="fa-solid fa-chevron-left text-[10px]"></i>
       </button>
     </div>
   </div>

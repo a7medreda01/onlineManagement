@@ -177,18 +177,21 @@
             </div>
           </div>
 
-          <!-- Governorate -->
+          <!-- Governorate & District -->
           <div class="flex items-center justify-between gap-2 bg-slate-800/50 p-2.5 rounded-xl border border-slate-700/60">
             <div class="flex items-center gap-2 overflow-hidden">
               <div class="w-7 h-7 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0 text-xs">
                 <i class="fa-solid fa-truck-dot"></i>
               </div>
               <div class="overflow-hidden">
-                <span class="text-[9px] text-slate-400 block">المحافظة</span>
-                <span class="font-bold text-slate-100 text-xs block truncate">{{ order()!.governorateName }}</span>
+                <span class="text-[9px] text-slate-400 block">المحافظة والحي/المنطقة</span>
+                <span class="font-bold text-slate-100 text-xs block truncate">
+                  {{ order()!.governorateName }}
+                  <span *ngIf="order()!.districtName" class="text-amber-300 font-semibold">• {{ order()!.districtName }}</span>
+                </span>
               </div>
             </div>
-            <button (click)="copyToClipboard(order()!.governorateName)" title="نسخ المحافظة" class="btn btn-secondary btn-xs p-1.5 text-sky-400 rounded-lg shrink-0">
+            <button (click)="copyToClipboard(order()!.governorateName + (order()!.districtName ? ' - ' + order()!.districtName : ''))" title="نسخ المحافظة والحي" class="btn btn-secondary btn-xs p-1.5 text-sky-400 rounded-lg shrink-0">
               <i class="fa-regular fa-copy text-xs"></i>
             </button>
           </div>
@@ -773,40 +776,7 @@
         </div>
       </div>
 
-      <!-- 3. Bosta City & District Selection (Zones) -->
-      <div class="p-3.5 rounded-2xl bg-slate-800/60 border border-slate-700/70 space-y-3">
-        <div class="flex items-center justify-between text-xs">
-          <span class="font-bold text-sky-300 flex items-center gap-1.5">
-            <i class="fa-solid fa-map-location-dot"></i>
-            <span>تحديد المحافظة والمنطقة من بوسطة (Bosta Zones)</span>
-          </span>
-          <span class="text-[10px] text-slate-400 font-normal">اختياري - مطابقة تلقائية متوفرة</span>
-        </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-          <!-- Bosta City -->
-          <div class="form-group mb-0">
-            <label class="form-label text-[11px] text-slate-300 font-medium">المحافظة / المدينة في بوسطة</label>
-            <select [(ngModel)]="selectedBostaCityId" name="bostaCitySel" (change)="onBostaCityChange()" class="form-select text-xs py-1.5 bg-slate-900 border-slate-700 text-sky-300 font-bold">
-              <option value="">-- مطابقة تلقائية حسب عنوان الأوردر --</option>
-              <option *ngFor="let c of bostaCities" [value]="c.cityId">
-                {{ c.cityOtherName }} ({{ c.cityName }}) — [كود: {{ c.cityCode }}]
-              </option>
-            </select>
-          </div>
-
-          <!-- Bosta District -->
-          <div class="form-group mb-0">
-            <label class="form-label text-[11px] text-slate-300 font-medium">المنطقة / الحي (District Zone)</label>
-            <select [(ngModel)]="selectedBostaDistrictId" name="bostaDistSel" [disabled]="!selectedBostaCityId || availableDistricts.length === 0" class="form-select text-xs py-1.5 bg-slate-900 border-slate-700 text-amber-300 font-bold disabled:opacity-50">
-              <option value="">-- اختر المنطقة / الحي التابع --</option>
-              <option *ngFor="let d of availableDistricts" [value]="d.districtId">
-                {{ d.districtOtherName }} ({{ d.districtName }})
-              </option>
-            </select>
-          </div>
-        </div>
-      </div>
 
       <!-- 4. COD Amount -->
       <div class="form-group mb-0">

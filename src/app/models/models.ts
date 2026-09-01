@@ -207,6 +207,8 @@ export interface Order {
   shippingCompanyName: string;
   governorateId: number;
   governorateName: string;
+  districtId?: string;
+  districtName?: string;
   salesPlatformId: number;
   salesPlatformName: string;
   status: OrderStatus;
