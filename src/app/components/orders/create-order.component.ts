@@ -8,7 +8,8 @@ import { ProductService } from '../../services/product.service';
 import { ShippingService } from '../../services/shipping.service';
 import { WalletService } from '../../services/wallet.service';
 import { NotificationService } from '../../services/notification.service';
-import { Customer, CustomerProfileDto, CustomerSearchDto, Governorate, Order, Product, SalesPlatform, ShippingCompany, Wallet } from '../../models/models';
+import { BostaService } from '../../services/bosta.service';
+import { Customer, CustomerProfileDto, CustomerSearchDto, Governorate, Order, Product, SalesPlatform, ShippingCompany, Wallet, BostaCity, BostaDistrict } from '../../models/models';
 import { CustomDropdownComponent, DropdownOption } from '../shared/custom-dropdown/custom-dropdown.component';
 
 interface OrderItemRow {
@@ -32,6 +33,11 @@ export class CreateOrderComponent implements OnInit {
   shippingCompanies = signal<ShippingCompany[]>([]);
   salesPlatforms = signal<SalesPlatform[]>([]);
   wallets = signal<Wallet[]>([]);
+
+  bostaCities: BostaCity[] = [];
+  selectedBostaCityId: string = '';
+  selectedBostaDistrictId: string = '';
+  availableDistricts: BostaDistrict[] = [];
 
   isNewCustomer = true;
   selectedCustomerId: number | null = null;
@@ -77,6 +83,7 @@ export class CreateOrderComponent implements OnInit {
     private shippingService: ShippingService,
     private walletService: WalletService,
     private notificationService: NotificationService,
+    private bostaService: BostaService,
     private router: Router
   ) {}
 
@@ -189,6 +196,13 @@ export class CreateOrderComponent implements OnInit {
       if (res.length > 0 && !this.selectedPaidToWalletId) {
         this.selectedPaidToWalletId = res[0].id;
       }
+    });
+    this.bostaService.getZones().subscribe({
+      next: (res: BostaCity[]) => {
+        this.bostaCities = res;
+        this.autoMatchBostaCityAndDistrict();
+      },
+      error: () => this.bostaCities = []
     });
   }
 
@@ -417,6 +431,51 @@ export class CreateOrderComponent implements OnInit {
 
   onGovernorateChange(): void {
     this.recalculateCosts();
+    this.autoMatchBostaCityAndDistrict();
+  }
+
+  autoMatchBostaCityAndDistrict(): void {
+    const govId = this.getSelectedGovernorateId();
+    const gov = this.governorates().find(g => g.id === govId);
+    if (!gov || this.bostaCities.length === 0) {
+      this.selectedBostaCityId = '';
+      this.availableDistricts = [];
+      this.selectedBostaDistrictId = '';
+      return;
+    }
+
+    const match = this.bostaCities.find(c =>
+      c.cityOtherName.includes(gov.name) ||
+      gov.name.includes(c.cityOtherName) ||
+      c.cityName.toLowerCase().includes(gov.name.toLowerCase())
+    );
+
+    if (match) {
+      this.selectedBostaCityId = match.cityId;
+      this.availableDistricts = match.districts || [];
+    } else {
+      this.selectedBostaCityId = '';
+      this.availableDistricts = [];
+    }
+    this.selectedBostaDistrictId = '';
+  }
+
+  onBostaCityChange(): void {
+    const city = this.bostaCities.find(c => c.cityId === this.selectedBostaCityId);
+    this.availableDistricts = city ? city.districts : [];
+    this.selectedBostaDistrictId = '';
+  }
+
+  onDistrictChange(): void {
+    if (this.selectedBostaDistrictId) {
+      const dist = this.availableDistricts.find(d => d.districtId === this.selectedBostaDistrictId);
+      if (dist && this.isNewCustomer) {
+        if (dist.districtOtherName && !this.newCustomer.address.includes(dist.districtOtherName)) {
+          const currentAddr = this.newCustomer.address.trim();
+          this.newCustomer.address = currentAddr ? `${dist.districtOtherName} - ${currentAddr}` : dist.districtOtherName;
+        }
+      }
+    }
   }
 
   onProductSelect(index: number): void {

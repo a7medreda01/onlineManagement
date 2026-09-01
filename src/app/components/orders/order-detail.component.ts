@@ -353,11 +353,30 @@ export class OrderDetailComponent implements OnInit {
 
   onCustomTotalInput(): void {
     this.isCustomTotal = true;
+    if (this.editForm.customTotalAmount != null && this.editForm.customTotalAmount >= 0) {
+      const totalMinusShipping = this.editForm.customTotalAmount - (this.editShippingCost || 0);
+      const totalQty = this.editItems.reduce((sum, i) => sum + (i.quantity || 1), 0);
+
+      if (totalQty > 0 && totalMinusShipping >= 0) {
+        const pricePerUnit = totalMinusShipping / totalQty;
+        this.editItems.forEach(i => {
+          i.customSellingPrice = Math.round(pricePerUnit * 100) / 100;
+        });
+        const rawSub = this.editItems.reduce((acc, i) => acc + ((i.customSellingPrice || 0) * (i.quantity || 1)), 0);
+        this.editSubTotal = Math.round(rawSub * 100) / 100;
+      }
+    }
   }
 
   resetTotalToCalculated(): void {
     this.isCustomTotal = false;
-    this.editForm.customTotalAmount = this.editSubTotal + this.editShippingCost;
+    this.editItems.forEach(item => {
+      const p = this.availableProducts.find(pr => pr.id === +item.productId);
+      if (p) {
+        item.customSellingPrice = p.sellingPrice;
+      }
+    });
+    this.recalculateEditTotals();
   }
 
   saveOrderEdit(): void {

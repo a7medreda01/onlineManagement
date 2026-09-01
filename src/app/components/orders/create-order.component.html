@@ -118,6 +118,23 @@
           </div>
         </div>
 
+        <!-- Bosta District / Zone Selector (Appears when Governorate is chosen) -->
+        <div *ngIf="availableDistricts.length > 0" class="form-group mb-0 fade-in bg-slate-800/40 p-3 rounded-2xl border border-amber-500/30">
+          <label class="text-xs text-amber-300 font-bold mb-1.5 flex items-center justify-between">
+            <span class="flex items-center gap-1.5">
+              <i class="fa-solid fa-map-location-dot text-amber-400"></i>
+              <span>المنطقة / الحي (المناطق المتاحة في المحافظة)</span>
+            </span>
+            <span class="text-[10px] font-normal text-slate-400">مناطق بوسطة الرسمية</span>
+          </label>
+          <select [(ngModel)]="selectedBostaDistrictId" (change)="onDistrictChange()" name="custDistrict" class="form-select text-xs py-2 px-3.5 rounded-xl bg-slate-900 border-amber-500/50 text-amber-300 font-bold">
+            <option value="">-- اختر المنطقة / الحي (مثل: سموحة، ميامي، المعادي...) --</option>
+            <option *ngFor="let dist of availableDistricts" [value]="dist.districtId">
+              📍 {{ dist.districtOtherName }} ({{ dist.districtName }})
+            </option>
+          </select>
+        </div>
+
         <!-- Address -->
         <div class="form-group mb-0">
           <label class="text-xs text-slate-400 font-medium mb-1 block">العنوان التفصيلي للشحن</label>
