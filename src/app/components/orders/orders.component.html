@@ -4,11 +4,6 @@
     <h1 class="text-lg sm:text-xl font-extrabold text-slate-100">الأوردرات</h1>
     
     <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-      <button (click)="syncBostaStatuses()" [disabled]="isSyncingBosta" class="btn btn-secondary btn-xs sm:btn-sm py-1.5 px-2 sm:px-2.5 text-xs text-sky-300 border-sky-500/30 hover:bg-sky-500/10 transition-all flex items-center gap-1.5 rounded-lg shadow-sm" title="مزامنة واستعلام حالات الشحنات الحية من بوسطة">
-        <i class="fa-solid" [ngClass]="isSyncingBosta ? 'fa-spinner fa-spin text-sky-400' : 'fa-rotate text-sky-400'"></i>
-        <span class="hidden xs:inline sm:inline">{{ isSyncingBosta ? 'مزامنة...' : 'مزامنة بوسطة' }}</span>
-      </button>
-
       <button (click)="toggleDateFilter()" [class.btn-primary]="showDateFilter" [class.btn-secondary]="!showDateFilter" class="btn btn-xs sm:btn-sm py-1.5 px-2 sm:px-2.5 text-xs flex items-center gap-1">
         <i class="fa-solid fa-calendar-days text-xs"></i>
         <span class="hidden xs:inline sm:inline">{{ (fromDate || toDate) ? 'مفلتر' : 'التاريخ' }}</span>

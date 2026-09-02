@@ -43,11 +43,6 @@
         <span>تحديث الحالة</span>
       </button>
 
-      <button *ngIf="order()?.status === OrderStatus.Shipped && (bostaShipment || isOrderBostaShipping())" (click)="syncBostaStatus()" [disabled]="isSyncingBosta" class="btn btn-secondary py-1.5 px-2.5 sm:py-2 sm:px-3 text-[11px] sm:text-xs font-bold text-indigo-300 border-indigo-500/30 hover:bg-indigo-500/10 flex items-center justify-center gap-1 rounded-lg sm:rounded-xl whitespace-nowrap" title="تحديث واستعلام الحالة اللحظية مباشرة من بوسطة للأوردر المشحون">
-        <i class="fa-solid" [ngClass]="isSyncingBosta ? 'fa-spinner fa-spin text-indigo-400' : 'fa-rotate text-indigo-400'"></i>
-        <span>{{ isSyncingBosta ? 'مزامنة...' : 'تحديث بوسطة 🔄' }}</span>
-      </button>
-
       <button (click)="printReceipt()" class="btn btn-secondary py-1.5 px-2.5 sm:py-2 sm:px-3 text-[11px] sm:text-xs text-slate-300 hover:text-white flex items-center justify-center gap-1 rounded-lg sm:rounded-xl">
         <i class="fa-solid fa-print text-[10px] sm:text-xs"></i>
         <span>طباعة</span>
