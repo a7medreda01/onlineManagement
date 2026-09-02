@@ -1,20 +1,20 @@
 <div class="space-y-4 fade-in font-cairo pb-8">
   <!-- Short Clean Header -->
-  <div class="flex items-center justify-between">
+  <div class="flex items-center justify-between gap-2 flex-wrap">
     <h1 class="text-lg sm:text-xl font-extrabold text-slate-100">الأوردرات</h1>
     
-    <div class="flex items-center gap-2">
-      <button (click)="syncBostaStatuses()" [disabled]="isSyncingBosta" class="btn btn-secondary btn-xs sm:btn-sm py-1 px-2.5 text-xs text-sky-300 border-sky-500/30 hover:bg-sky-500/10 transition-all flex items-center gap-1.5 rounded-lg shadow-sm" title="مزامنة واستعلام حالات الشحنات الحية من بوسطة">
+    <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+      <button (click)="syncBostaStatuses()" [disabled]="isSyncingBosta" class="btn btn-secondary btn-xs sm:btn-sm py-1.5 px-2 sm:px-2.5 text-xs text-sky-300 border-sky-500/30 hover:bg-sky-500/10 transition-all flex items-center gap-1.5 rounded-lg shadow-sm" title="مزامنة واستعلام حالات الشحنات الحية من بوسطة">
         <i class="fa-solid" [ngClass]="isSyncingBosta ? 'fa-spinner fa-spin text-sky-400' : 'fa-rotate text-sky-400'"></i>
-        <span>{{ isSyncingBosta ? 'جاري المزامنة...' : 'مزامنة بوسطة 🔄' }}</span>
+        <span class="hidden xs:inline sm:inline">{{ isSyncingBosta ? 'مزامنة...' : 'مزامنة بوسطة' }}</span>
       </button>
 
-      <button (click)="toggleDateFilter()" [class.btn-primary]="showDateFilter" [class.btn-secondary]="!showDateFilter" class="btn btn-xs sm:btn-sm py-1 px-2.5 text-xs">
+      <button (click)="toggleDateFilter()" [class.btn-primary]="showDateFilter" [class.btn-secondary]="!showDateFilter" class="btn btn-xs sm:btn-sm py-1.5 px-2 sm:px-2.5 text-xs flex items-center gap-1">
         <i class="fa-solid fa-calendar-days text-xs"></i>
-        <span>{{ (fromDate || toDate) ? 'مفلتر بالتاريخ' : 'التاريخ' }}</span>
+        <span class="hidden xs:inline sm:inline">{{ (fromDate || toDate) ? 'مفلتر' : 'التاريخ' }}</span>
       </button>
 
-      <a routerLink="/orders/create" class="hidden sm:inline-flex btn btn-primary btn-sm py-1.5 px-3 text-xs">
+      <a routerLink="/orders/create" class="btn btn-primary btn-xs sm:btn-sm py-1.5 px-2.5 text-xs flex items-center gap-1">
         <i class="fa-solid fa-plus text-xs"></i>
         <span>أوردر جديد</span>
       </a>
