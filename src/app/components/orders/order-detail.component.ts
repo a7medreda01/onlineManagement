@@ -79,6 +79,7 @@ export class OrderDetailComponent implements OnInit {
   selectedBostaCityId: string = '';
   selectedBostaDistrictId: string = '';
   availableDistricts: BostaDistrict[] = [];
+  isSyncingBosta = false;
 
   BostaDeliveryType = BostaDeliveryType;
   BostaShipmentSource = BostaShipmentSource;
@@ -144,6 +145,24 @@ export class OrderDetailComponent implements OnInit {
     this.bostaService.getShipmentByOrderId(orderId).subscribe({
       next: (res) => this.bostaShipment = res,
       error: () => this.bostaShipment = null
+    });
+  }
+
+  syncBostaStatus(): void {
+    const currentOrder = this.order();
+    if (!currentOrder) return;
+    this.isSyncingBosta = true;
+    this.bostaService.syncShipmentStatus(currentOrder.id).subscribe({
+      next: (res) => {
+        this.isSyncingBosta = false;
+        this.notificationService.success(`تم تحديث حالة الأوردر من بوسطة إلى (${res.shipmentStatusName}) بنجاح!`);
+        this.loadOrder(currentOrder.id);
+        this.loadBostaShipment(currentOrder.id);
+      },
+      error: (err) => {
+        this.isSyncingBosta = false;
+        this.notificationService.error(err.error?.message || 'تعذر مزامنة حالة الأوردر من بوسطة');
+      }
     });
   }
 

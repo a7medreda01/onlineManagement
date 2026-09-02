@@ -120,4 +120,12 @@ export class BostaService {
   verifyApiKey(apiKey: string): Observable<{ success: boolean; message: string }> {
     return this.http.post<{ success: boolean; message: string }>(`${this.apiUrl}/verify-key`, { apiKey });
   }
+
+  syncShipmentStatus(orderId: number): Observable<BostaShipmentDto> {
+    return this.http.get<BostaShipmentDto>(`${this.apiUrl}/shipments/sync/${orderId}`);
+  }
+
+  syncAllPendingShipments(): Observable<{ success: boolean; message: string; stockUpdatedCount?: number }> {
+    return this.http.post<{ success: boolean; message: string; stockUpdatedCount?: number }>(`${this.apiUrl}/sync-all-pending-shipments`, {});
+  }
 }

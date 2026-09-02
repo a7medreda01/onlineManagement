@@ -38,6 +38,7 @@ export class OrdersComponent implements OnInit {
   // Selection & Bulk Bosta Actions State
   selectedOrderIds = new Set<number>();
   sendingBulk = false;
+  isSyncingBosta = false;
   bulkIsFulfillment = false;
   bulkProgressPercent = 0;
   bulkProcessedCount = 0;
@@ -118,6 +119,21 @@ export class OrdersComponent implements OnInit {
     const selected = this.orders().filter(o => this.selectedOrderIds.has(o.id));
     if (selected.length === 0) return false;
     return selected.some(o => !this.isBostaOrder(o));
+  }
+
+  syncBostaStatuses(): void {
+    this.isSyncingBosta = true;
+    this.bostaService.syncAllPendingShipments().subscribe({
+      next: (res) => {
+        this.isSyncingBosta = false;
+        this.notificationService.success(res.message || 'تمت مزامنة حالات بوسطة بنجاح!');
+        this.loadOrders();
+      },
+      error: (err) => {
+        this.isSyncingBosta = false;
+        this.notificationService.error(err.error?.message || 'حدث خطأ أثناء مزامنة حالات بوسطة');
+      }
+    });
   }
 
   sendBulkToBosta(): void {
