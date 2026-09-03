@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../services/auth.service';
+import { SubscriptionDetails } from '../../../models/models';
 
 export interface PlanOption {
   id: number;
@@ -46,6 +47,10 @@ export class UpgradeModalComponent implements OnInit, OnChanges {
   selectedPlan: PlanOption | null = null;
   plans: PlanOption[] = [];
   loadingPlans = false;
+
+  // Current Subscription
+  currentSub: SubscriptionDetails | null = null;
+  loadingSubscription = false;
 
   // Payment Form (Vodafone Cash & InstaPay)
   paymentNumber = '01148472670';
@@ -109,8 +114,8 @@ export class UpgradeModalComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.plans = [...this.defaultPlans];
-    this.selectedPlan = this.plans[1]; // default standard
     this.transferTime = new Date().toISOString().slice(0, 16);
+    this.loadCurrentSubscription();
     this.loadPlansFromBackend();
   }
 
@@ -127,11 +132,102 @@ export class UpgradeModalComponent implements OnInit, OnChanges {
       this.submitSuccess = false;
       this.errorMessage = '';
       this.transferTime = new Date().toISOString().slice(0, 16);
+      this.loadCurrentSubscription();
+      this.autoSelectAppropriatePlan();
+    }
+  }
 
-      if (this.preselectedPlanName && this.plans.length > 0) {
-        const found = this.plans.find(p => p.name.includes(this.preselectedPlanName!));
-        if (found) this.selectedPlan = found;
+  loadCurrentSubscription(): void {
+    if (!this.authService.isLoggedIn()) return;
+    this.currentSub = this.authService.currentSubscription();
+    this.loadingSubscription = true;
+    this.authService.getSubscriptionDetails().subscribe({
+      next: (sub) => {
+        this.currentSub = sub;
+        this.loadingSubscription = false;
+        this.autoSelectAppropriatePlan();
+      },
+      error: () => {
+        this.currentSub = this.authService.currentSubscription();
+        this.loadingSubscription = false;
+        this.autoSelectAppropriatePlan();
       }
+    });
+  }
+
+  getPlanTier(plan: { price?: number; name?: string; planName?: string } | null | undefined): number {
+    if (!plan) return 1;
+    const name = (plan.planName || plan.name || '').toLowerCase();
+    const price = plan.price ?? 0;
+    if (price >= 1000 || name.includes('مميزة') || name.includes('premium') || name.includes('vip')) {
+      return 3;
+    }
+    if (price >= 400 || name.includes('قياسية') || name.includes('standard')) {
+      return 2;
+    }
+    return 1;
+  }
+
+  getCurrentPlanTier(): number {
+    const sub = this.currentSub || this.authService.currentSubscription();
+    if (sub) {
+      return this.getPlanTier(sub);
+    }
+    return 1;
+  }
+
+  getCurrentPlanName(): string {
+    const sub = this.currentSub || this.authService.currentSubscription();
+    if (sub?.planName) return sub.planName;
+    const tier = this.getCurrentPlanTier();
+    if (tier === 3) return 'خطة مميزة';
+    if (tier === 2) return 'خطة قياسية';
+    return 'خطة مجانية';
+  }
+
+  isCurrentPlan(plan: PlanOption): boolean {
+    const sub = this.currentSub || this.authService.currentSubscription();
+    if (!sub) return this.getPlanTier(plan) === 1;
+    if (sub.planId && plan.id === sub.planId) return true;
+    return this.getPlanTier(plan) === this.getCurrentPlanTier();
+  }
+
+  isLowerPlan(plan: PlanOption): boolean {
+    if (this.isCurrentPlan(plan)) return false;
+    return this.getPlanTier(plan) < this.getCurrentPlanTier();
+  }
+
+  isHigherPlan(plan: PlanOption): boolean {
+    if (this.isCurrentPlan(plan)) return false;
+    return this.getPlanTier(plan) > this.getCurrentPlanTier();
+  }
+
+  canSelectPlan(plan: PlanOption): boolean {
+    return this.isHigherPlan(plan);
+  }
+
+  isAllMaxedOut(): boolean {
+    return this.getCurrentPlanTier() >= 3;
+  }
+
+  autoSelectAppropriatePlan(): void {
+    if (!this.plans || this.plans.length === 0) return;
+
+    // 1. If preselectedPlanName requested and it is a higher plan
+    if (this.preselectedPlanName) {
+      const found = this.plans.find(p => p.name.includes(this.preselectedPlanName!));
+      if (found && this.canSelectPlan(found)) {
+        this.selectedPlan = found;
+        return;
+      }
+    }
+
+    // 2. Auto-select the lowest available higher plan
+    const higherPlans = this.plans.filter(p => this.canSelectPlan(p));
+    if (higherPlans.length > 0) {
+      this.selectedPlan = higherPlans[0];
+    } else {
+      this.selectedPlan = null;
     }
   }
 
@@ -169,27 +265,38 @@ export class UpgradeModalComponent implements OnInit, OnChanges {
             };
           });
 
-          if (this.preselectedPlanName) {
-            const found = this.plans.find(p => p.name.includes(this.preselectedPlanName!));
-            if (found) this.selectedPlan = found;
-          } else if (!this.selectedPlan) {
-            this.selectedPlan = this.plans.find(p => p.price > 0) || this.plans[0];
-          }
+          this.autoSelectAppropriatePlan();
         }
       },
       error: () => {
         this.loadingPlans = false;
+        this.autoSelectAppropriatePlan();
       }
     });
   }
 
   selectPlan(plan: PlanOption): void {
+    if (!this.canSelectPlan(plan)) {
+      if (this.isCurrentPlan(plan)) {
+        this.errorMessage = `أنت مشترك بالفعل في "${plan.name}". الترقية متاحة فقط للباقات الأعلى.`;
+      } else if (this.isLowerPlan(plan)) {
+        this.errorMessage = `لا يمكن النزول إلى "${plan.name}". الترقية متاحة فقط للباقات الأعلى من باقتك الحالية (${this.getCurrentPlanName()}).`;
+      }
+      return;
+    }
     this.selectedPlan = plan;
     this.errorMessage = '';
   }
 
   goToStep2(): void {
-    if (!this.selectedPlan) return;
+    if (!this.selectedPlan) {
+      this.errorMessage = 'يرجى اختيار باقة للترقية إليها أولاً';
+      return;
+    }
+    if (!this.canSelectPlan(this.selectedPlan)) {
+      this.errorMessage = 'لا يمكن الترقية إلى نفس باقتك الحالية أو باقة أقل. يرجى اختيار باقة أعلى.';
+      return;
+    }
     if (this.isFreePlan()) {
       this.submitUpgrade();
       return;
@@ -224,6 +331,10 @@ export class UpgradeModalComponent implements OnInit, OnChanges {
 
   submitUpgrade(): void {
     if (!this.selectedPlan) return;
+    if (!this.canSelectPlan(this.selectedPlan)) {
+      this.errorMessage = 'لا يمكن الترقية إلى نفس باقتك الحالية أو باقة أقل.';
+      return;
+    }
 
     if (!this.isFreePlan() && !this.senderPhone.trim()) {
       this.errorMessage = 'يرجى كتابة رقم الهاتف أو المحفظة المحول منها المبلغ';

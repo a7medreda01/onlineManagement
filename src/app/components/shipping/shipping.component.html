@@ -39,22 +39,32 @@
         <div>
           <div class="flex flex-wrap items-center gap-2">
             <h2 class="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100">الربط مع Bosta</h2>
-            <!-- Status Badge -->
-            <span *ngIf="!canAccessBosta()"
-                  class="badge bg-amber-500/15 text-amber-300 border border-amber-500/30 text-xs py-0.5 px-2.5 font-bold inline-flex items-center gap-1.5">
-              <svg class="w-3.5 h-3.5 text-amber-400" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2L3 9l3 13h12l3-13-9-7zm0 3.8l5.5 4.3-1.8 7.9H8.3L6.5 10.1 12 5.8z"/>
-              </svg>
-              مطلوب ترقية للخطة المميزة ⮅
+
+            <!-- 1. Checking Bosta Status (Prevents premature "غير مربوط" flicker) -->
+            <span *ngIf="isCheckingBostaStatus()"
+                  class="badge bg-slate-800/80 text-slate-300 border border-slate-700/80 text-xs py-0.5 px-2.5 font-medium inline-flex items-center gap-2 animate-pulse">
+              <i class="fa-solid fa-circle-notch fa-spin text-rose-400 text-xs"></i>
+              <span>جاري التحقق من حالة الربط...</span>
             </span>
-            <span *ngIf="canAccessBosta() && isBostaConnected()"
-                  class="badge bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-xs py-0.5 px-2.5 font-bold">
-              مربوط بنجاح ✅
-            </span>
-            <span *ngIf="canAccessBosta() && !isBostaConnected()"
-                  class="badge bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 text-xs py-0.5 px-2.5 font-bold">
-              غير مربوط ⚠️ (اضغط لضبط الربط)
-            </span>
+
+            <!-- 2. Status Badges (Rendered ONLY after verification is confirmed) -->
+            <ng-container *ngIf="!isCheckingBostaStatus()">
+              <span *ngIf="!canAccessBosta()"
+                    class="badge bg-amber-500/15 text-amber-300 border border-amber-500/30 text-xs py-0.5 px-2.5 font-bold inline-flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-amber-400" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2L3 9l3 13h12l3-13-9-7zm0 3.8l5.5 4.3-1.8 7.9H8.3L6.5 10.1 12 5.8z"/>
+                </svg>
+                مطلوب ترقية للخطة المميزة ⮅
+              </span>
+              <span *ngIf="canAccessBosta() && isBostaConnected()"
+                    class="badge bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-xs py-0.5 px-2.5 font-bold">
+                مربوط بنجاح ✅
+              </span>
+              <span *ngIf="canAccessBosta() && !isBostaConnected()"
+                    class="badge bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 text-xs py-0.5 px-2.5 font-bold">
+                غير مربوط ⚠️ (اضغط لضبط الربط)
+              </span>
+            </ng-container>
           </div>
 
           <!-- Simple text description (no heavy pills) -->
@@ -65,7 +75,16 @@
       </div>
 
       <!-- Action Buttons -->
-      <div *ngIf="!canAccessBosta()" class="flex flex-col sm:items-end gap-1.5 w-full sm:w-auto shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-700/30">
+      <!-- Case A: While checking status - display smooth loading skeleton -->
+      <div *ngIf="isCheckingBostaStatus()" class="flex items-center gap-2 w-full sm:w-auto shrink-0 pt-2 sm:pt-0">
+        <div class="h-9 w-40 bg-slate-800/70 rounded-xl animate-pulse border border-slate-700/60 flex items-center justify-center gap-2 text-xs text-slate-400">
+          <i class="fa-solid fa-circle-notch fa-spin text-rose-400 text-xs"></i>
+          <span>جاري الفحص...</span>
+        </div>
+      </div>
+
+      <!-- Case B: Plan doesn't allow Bosta -->
+      <div *ngIf="!isCheckingBostaStatus() && !canAccessBosta()" class="flex flex-col sm:items-end gap-1.5 w-full sm:w-auto shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-700/30">
         <button (click)="targetPlan = 'خطة مميزة'; isUpgradeModalOpen = true" class="btn bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black text-xs py-2 px-4 rounded-xl shadow-lg flex items-center justify-center gap-2 border border-amber-400/50 hover:brightness-110">
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 2L3 9l3 13h12l3-13-9-7zm0 3.8l5.5 4.3-1.8 7.9H8.3L6.5 10.1 12 5.8z"/>
@@ -75,7 +94,8 @@
         <span class="text-[11px] text-amber-400/90 font-medium">الربط الآلي متاح حصرياً في الخطة المميزة</span>
       </div>
 
-      <div *ngIf="canAccessBosta()" class="flex flex-col sm:items-end gap-2 w-full sm:w-auto shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-700/30">
+      <!-- Case C: Plan has access to Bosta (Connected or Disconnected) -->
+      <div *ngIf="!isCheckingBostaStatus() && canAccessBosta()" class="flex flex-col sm:items-end gap-2 w-full sm:w-auto shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-700/30">
         <button *ngIf="isBostaConnected()" (click)="openBostaModal('api')" class="btn btn-primary py-2 px-4 text-xs font-bold rounded-xl shadow-sm flex items-center justify-center gap-1.5">
           <i class="fa-solid fa-pen-to-square text-xs"></i>
           <span>تعديل بيانات الربط ⚙️</span>

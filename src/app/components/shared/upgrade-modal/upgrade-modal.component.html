@@ -14,26 +14,26 @@
         </div>
         <div>
           <h3 class="text-base sm:text-lg font-black text-white leading-tight">ترقية باقة متجرك</h3>
-          <p class="text-slate-400 text-[11px] sm:text-xs">اختر باقتك المفضلة وأكد التحويل بسهولة</p>
+          <p class="text-slate-400 text-[11px] sm:text-xs">اختر باقة أعلى واستمتع بمميزات إضافية لمتجرك</p>
         </div>
       </div>
 
       <!-- Stepper Progress (Mobile & Desktop) -->
-      <div *ngIf="!submitSuccess" class="grid grid-cols-2 gap-2 bg-slate-950/60 p-1.5 rounded-xl border border-slate-800 text-xs font-bold">
+      <div *ngIf="!submitSuccess && !isAllMaxedOut()" class="grid grid-cols-2 gap-2 bg-slate-950/60 p-1.5 rounded-xl border border-slate-800 text-xs font-bold">
         <button (click)="goToStep1()" type="button"
                 class="flex items-center justify-center gap-1.5 py-1.5 rounded-lg transition-all"
                 [ngClass]="currentStep === 1 
                   ? 'bg-sky-600 text-white shadow-sm' 
                   : 'text-emerald-400 hover:bg-slate-800/60'">
           <i class="bi" [class.bi-1-circle-fill]="currentStep === 1" [class.bi-check-circle-fill]="currentStep === 2"></i>
-          <span>١. اختيار الباقة</span>
+          <span>١. اختيار الباقة الأعلى</span>
         </button>
 
-        <button (click)="goToStep2()" type="button" [disabled]="!selectedPlan || isFreePlan()"
+        <button (click)="goToStep2()" type="button" [disabled]="!selectedPlan || !canSelectPlan(selectedPlan) || isFreePlan()"
                 class="flex items-center justify-center gap-1.5 py-1.5 rounded-lg transition-all"
                 [ngClass]="currentStep === 2 
                   ? 'bg-sky-600 text-white shadow-sm' 
-                  : isFreePlan() ? 'text-slate-600 cursor-not-allowed' : 'text-slate-400 hover:text-slate-200'">
+                  : (!selectedPlan || !canSelectPlan(selectedPlan) || isFreePlan()) ? 'text-slate-600 cursor-not-allowed' : 'text-slate-400 hover:text-slate-200'">
           <i class="bi bi-2-circle-fill"></i>
           <span>٢. الدفع والتحويل</span>
         </button>
@@ -53,7 +53,7 @@
         <p class="text-xs text-slate-300 max-w-md mx-auto leading-relaxed px-2">
           {{ isFreePlan() 
             ? 'تم تفعيل باقتك الجديدة فورياً دون أي تكلفة. جميع مميزات الخطة متاحة لك الآن.' 
-            : 'طلبك قيد المراجعة السريعة وسيقوم فريق العمل بتأكيد التحويل وتفعيل مميزات الخطة خلال دقائق معدودة.' }}
+            : 'طلبك قيد المراجعة وسيقوم فريق العمل بتأكيد التحويل وتفعيل مميزات الخطة فوراً.' }}
         </p>
       </div>
 
@@ -64,98 +64,180 @@
       </div>
     </div>
 
-    <!-- ==================== STEP 1: SELECT PLAN & DURATION ==================== -->
+    <!-- ==================== STEP 1: CURRENT SUB & SELECT HIGHER PLAN ==================== -->
     <div *ngIf="!submitSuccess && currentStep === 1" class="space-y-4 fade-in overflow-y-auto pr-1">
       
-      <!-- Duration Toggle: Monthly / Yearly -->
-      <div class="flex items-center justify-between gap-2 bg-slate-900/90 p-2.5 rounded-xl border border-slate-800">
-        <div class="text-[11px] sm:text-xs">
-          <span class="font-bold text-slate-200">دورة الاشتراك:</span>
-        </div>
-
-        <div class="flex items-center gap-1.5 bg-slate-800/90 p-1 rounded-lg border border-slate-700/60">
-          <button (click)="isAnnual = false" type="button"
-                  class="px-2.5 py-1 rounded-md text-xs font-bold transition-all"
-                  [ngClass]="!isAnnual ? 'bg-sky-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'">
-            شهرياً
-          </button>
-          <button (click)="isAnnual = true" type="button"
-                  class="px-2.5 py-1 rounded-md text-xs font-bold transition-all flex items-center gap-1"
-                  [ngClass]="isAnnual ? 'bg-amber-500 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'">
-            <span>سنوياً</span>
-            <span class="bg-emerald-500/20 text-emerald-300 text-[10px] px-1 py-0.2 rounded-full border border-emerald-500/30 font-black">خصم شهرين</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Plan Cards (Responsive 2x2 on mobile, 4 columns on desktop) -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5">
-        <div *ngFor="let p of plans" (click)="selectPlan(p)"
-             class="cursor-pointer rounded-xl p-2.5 sm:p-3 border transition-all duration-200 flex flex-col justify-between relative text-center group min-h-[110px]"
-             [ngClass]="selectedPlan?.id === p.id 
-               ? 'bg-sky-500/15 border-sky-400 shadow-md shadow-sky-500/10 ring-2 ring-sky-400/40 scale-[1.01]' 
-               : 'bg-slate-900/70 border-slate-800 hover:border-slate-700 hover:bg-slate-800/50'">
-          
-          <!-- Selected Checkmark -->
-          <div *ngIf="selectedPlan?.id === p.id" class="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-sky-500 text-white text-xs flex items-center justify-center shadow">
-            <i class="bi bi-check"></i>
-          </div>
-
-          <div class="space-y-1">
-            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-slate-800 border border-slate-700 mx-auto flex items-center justify-center text-xs sm:text-sm" [ngClass]="p.color">
-              <i [class]="'bi ' + p.icon"></i>
+      <!-- Current Subscription Details Banner -->
+      <div class="p-3 sm:p-3.5 rounded-2xl bg-gradient-to-r from-sky-950/80 via-slate-900 to-indigo-950/80 border border-sky-500/30 text-xs shadow-inner space-y-2">
+        <div class="flex items-center justify-between gap-2 flex-wrap">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-sky-500/20 text-sky-400 border border-sky-500/30 flex items-center justify-center text-sm shrink-0">
+              <i class="bi bi-shield-check"></i>
             </div>
-            <div class="font-bold text-[11px] sm:text-xs text-white leading-tight line-clamp-1">{{ p.name }}</div>
-          </div>
-
-          <div class="mt-2 pt-1.5 border-t border-slate-800/80">
-            <div *ngIf="p.price === 0" class="text-emerald-400 font-black text-xs sm:text-sm">مجاناً</div>
-            <div *ngIf="p.price > 0" class="text-white font-black text-xs sm:text-sm">
-              {{ isAnnual ? (p.annualOfferPrice > 0 ? p.annualOfferPrice : p.annualPrice) : p.price | number:'1.0-0' }}
-              <span class="text-[10px] text-slate-400 font-normal">ج.م</span>
+            <div>
+              <div class="text-slate-400 text-[11px] font-medium">باقتك الحالية المفعلة:</div>
+              <div class="font-black text-white text-xs sm:text-sm flex items-center gap-2">
+                <span>{{ getCurrentPlanName() }}</span>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold">
+                  {{ (currentSub?.status === 'Active' || !currentSub) ? 'سارية ونشطة' : 'منتهية' }}
+                </span>
+              </div>
             </div>
-            <div class="text-[9px] text-slate-400 mt-0.5">/ {{ isAnnual ? 'سنة' : 'شهر' }}</div>
+          </div>
+
+          <!-- Expiry / Remaining Days -->
+          <div class="text-left font-mono">
+            <div class="text-[11px] text-slate-400">الصلاحية:</div>
+            <div class="font-bold text-amber-300 text-xs">
+              <span *ngIf="getCurrentPlanTier() === 1" class="font-sans text-emerald-400">دائمة (مجانية مدى الحياة)</span>
+              <span *ngIf="getCurrentPlanTier() > 1">
+                متبقي {{ currentSub?.daysRemaining ?? authService.currentSubscription()?.daysRemaining ?? 0 }} يوم
+                <span class="text-[10px] text-slate-400 font-sans block sm:inline">
+                  (حتى {{ (currentSub?.endDate || authService.currentSubscription()?.endDate) | date:'yyyy-MM-dd' }})
+                </span>
+              </span>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- SELECTED PLAN DETAIL PREVIEW -->
-      <div *ngIf="selectedPlan" class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center justify-between text-xs gap-3">
-        <div class="space-y-0.5 min-w-0">
-          <div class="font-bold text-sky-400 flex items-center gap-1.5 flex-wrap">
-            <span>الباقة المختارة: {{ selectedPlan.name }}</span>
-            <span class="text-[10px] px-1.5 py-0.2 rounded-full border" [ngClass]="selectedPlan.badgeBg">{{ selectedPlan.badge }}</span>
-          </div>
-          <p class="text-slate-400 text-[11px] truncate">{{ selectedPlan.description }}</p>
+      <!-- Case A: All Maxed Out / Already on VIP Plan -->
+      <div *ngIf="isAllMaxedOut()" class="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-amber-500/15 via-slate-900 to-amber-500/10 border border-amber-500/40 text-center space-y-3 my-2">
+        <div class="w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center mx-auto text-xl shadow-lg">
+          <i class="bi bi-trophy-fill"></i>
         </div>
-        <div class="text-left font-mono shrink-0">
-          <span class="text-sm sm:text-base font-black text-white">
-            {{ isFreePlan() ? 'مجاناً' : (getAmount() | number:'1.0-0') + ' ج.م' }}
-          </span>
-          <div *ngIf="!isFreePlan()" class="text-[10px] text-slate-400">
-            {{ isAnnual ? 'سنوي (12 شهر)' : 'شهري (30 يوم)' }}
-          </div>
+        <div class="space-y-1">
+          <h4 class="font-black text-white text-sm sm:text-base">أنت مشترك بالفعل في أعلى باقة متاحة! 👑</h4>
+          <p class="text-xs text-amber-200/80 max-w-md mx-auto leading-relaxed">
+            متجرك مفعل بالكامل على <span class="font-bold text-amber-300">الخطة المميزة (VIP شاملة)</span> وتتمتع بكافة المميزات الحصرية وموظفين غير محدود والربط الآلي مع بوسطة بدون أي قيود.
+          </p>
+        </div>
+        <div class="pt-2">
+          <button (click)="onClose()" type="button" class="btn btn-secondary px-6 py-2.5 text-xs font-bold rounded-xl border-slate-700 hover:text-white">
+            حسناً، إغلاق النافذة
+          </button>
         </div>
       </div>
 
-      <!-- Action Button for Step 1 -->
-      <div class="pt-2">
-        <!-- Free Plan Instant Upgrade -->
-        <button *ngIf="isFreePlan()" (click)="submitUpgrade()" [disabled]="submitting" 
-                class="btn bg-emerald-600 hover:bg-emerald-500 text-white w-full py-3 rounded-xl text-xs sm:text-sm font-black shadow-lg transition flex items-center justify-center gap-2">
-          <i *ngIf="submitting" class="bi bi-arrow-repeat animate-spin"></i>
-          <span *ngIf="!submitting">تأكيد تفعيل الخطة المجانية فوراً</span>
-          <span *ngIf="submitting">جاري التفعيل...</span>
-          <i *ngIf="!submitting" class="bi bi-gift-fill text-xs"></i>
-        </button>
+      <!-- Case B: Upgrades Available -->
+      <ng-container *ngIf="!isAllMaxedOut()">
+        
+        <!-- Duration Toggle: Monthly / Yearly -->
+        <div class="flex items-center justify-between gap-2 bg-slate-900/90 p-2.5 rounded-xl border border-slate-800">
+          <div class="text-[11px] sm:text-xs">
+            <span class="font-bold text-slate-200">دورة الاشتراك للترقية:</span>
+          </div>
 
-        <!-- Paid Plan: Advance to Step 2 -->
-        <button *ngIf="!isFreePlan()" (click)="goToStep2()" type="button"
-                class="btn btn-primary w-full py-3 rounded-xl text-xs sm:text-sm font-bold shadow-lg flex items-center justify-center gap-2">
-          <span>المتابعة إلى بيانات الدفع والتحويل</span>
-          <i class="bi bi-arrow-left"></i>
-        </button>
-      </div>
+          <div class="flex items-center gap-1.5 bg-slate-800/90 p-1 rounded-lg border border-slate-700/60">
+            <button (click)="isAnnual = false" type="button"
+                    class="px-2.5 py-1 rounded-md text-xs font-bold transition-all"
+                    [ngClass]="!isAnnual ? 'bg-sky-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'">
+              شهرياً
+            </button>
+            <button (click)="isAnnual = true" type="button"
+                    class="px-2.5 py-1 rounded-md text-xs font-bold transition-all flex items-center gap-1"
+                    [ngClass]="isAnnual ? 'bg-amber-500 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'">
+              <span>سنوياً</span>
+              <span class="bg-emerald-500/20 text-emerald-300 text-[10px] px-1 py-0.2 rounded-full border border-emerald-500/30 font-black">خصم شهرين</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between px-1">
+          <span class="text-xs font-bold text-slate-300">اختر باقة للترقية إليها (الباقات الأعلى فقط):</span>
+        </div>
+
+        <!-- Plan Cards (Responsive 2x2 on mobile, 3 columns on desktop) -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-2.5">
+          <div *ngFor="let p of plans" (click)="selectPlan(p)"
+               class="rounded-xl p-2.5 sm:p-3 border transition-all duration-200 flex flex-col justify-between relative text-center group min-h-[120px]"
+               [ngClass]="{
+                 'cursor-pointer bg-sky-500/15 border-sky-400 shadow-md shadow-sky-500/10 ring-2 ring-sky-400/40 scale-[1.01]': selectedPlan?.id === p.id,
+                 'cursor-pointer bg-slate-900/70 border-slate-800 hover:border-slate-700 hover:bg-slate-800/50': selectedPlan?.id !== p.id && canSelectPlan(p),
+                 'cursor-not-allowed bg-slate-950/60 border-slate-800/60 opacity-60': !canSelectPlan(p)
+               }">
+            
+            <!-- Selected Checkmark -->
+            <div *ngIf="selectedPlan?.id === p.id" class="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-sky-500 text-white text-xs flex items-center justify-center shadow">
+              <i class="bi bi-check"></i>
+            </div>
+
+            <!-- Current Plan or Lower Plan Badges -->
+            <div *ngIf="isCurrentPlan(p)" class="absolute -top-2 left-2 text-[9px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-1.5 py-0.2 rounded-full font-bold shadow">
+              باقتك الحالية ✔️
+            </div>
+            <div *ngIf="isLowerPlan(p)" class="absolute -top-2 left-2 text-[9px] bg-slate-800 text-slate-400 border border-slate-700 px-1.5 py-0.2 rounded-full font-bold shadow">
+              باقة أقل 🔒
+            </div>
+
+            <div class="space-y-1 mt-1">
+              <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-slate-800 border border-slate-700 mx-auto flex items-center justify-center text-xs sm:text-sm" [ngClass]="p.color">
+                <i [class]="'bi ' + p.icon"></i>
+              </div>
+              <div class="font-bold text-[11px] sm:text-xs text-white leading-tight line-clamp-1">{{ p.name }}</div>
+            </div>
+
+            <div class="mt-2 pt-1.5 border-t border-slate-800/80">
+              <div *ngIf="p.price === 0" class="text-emerald-400 font-black text-xs sm:text-sm">مجاناً</div>
+              <div *ngIf="p.price > 0" class="text-white font-black text-xs sm:text-sm">
+                {{ isAnnual ? (p.annualOfferPrice > 0 ? p.annualOfferPrice : p.annualPrice) : p.price | number:'1.0-0' }}
+                <span class="text-[10px] text-slate-400 font-normal">ج.م</span>
+              </div>
+              <div class="text-[9px] text-slate-400 mt-0.5">/ {{ isAnnual ? 'سنة' : 'شهر' }}</div>
+
+              <div *ngIf="canSelectPlan(p)" class="mt-1 text-[9px] text-sky-400 font-bold">
+                <span>ترقية متاحة ⮅</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SELECTED PLAN DETAIL PREVIEW -->
+        <div *ngIf="selectedPlan && canSelectPlan(selectedPlan)" class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center justify-between text-xs gap-3">
+          <div class="space-y-0.5 min-w-0">
+            <div class="font-bold text-sky-400 flex items-center gap-1.5 flex-wrap">
+              <span>الباقة المختارة للترقية: {{ selectedPlan.name }}</span>
+              <span class="text-[10px] px-1.5 py-0.2 rounded-full border" [ngClass]="selectedPlan.badgeBg">{{ selectedPlan.badge }}</span>
+            </div>
+            <p class="text-slate-400 text-[11px] truncate">{{ selectedPlan.description }}</p>
+          </div>
+          <div class="text-left font-mono shrink-0">
+            <span class="text-sm sm:text-base font-black text-white">
+              {{ isFreePlan() ? 'مجاناً' : (getAmount() | number:'1.0-0') + ' ج.م' }}
+            </span>
+            <div *ngIf="!isFreePlan()" class="text-[10px] text-slate-400">
+              {{ isAnnual ? 'سنوي (12 شهر)' : 'شهري (30 يوم)' }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Error Alert in Step 1 -->
+        <div *ngIf="errorMessage" class="bg-rose-500/10 border border-rose-500/30 text-rose-400 p-2.5 rounded-xl text-xs flex items-center gap-2">
+          <i class="bi bi-exclamation-octagon-fill text-sm shrink-0"></i>
+          <span>{{ errorMessage }}</span>
+        </div>
+
+        <!-- Action Button for Step 1 -->
+        <div class="pt-2">
+          <!-- Free Plan Instant Upgrade -->
+          <button *ngIf="isFreePlan()" (click)="submitUpgrade()" [disabled]="submitting || !selectedPlan || !canSelectPlan(selectedPlan)" 
+                  class="btn bg-emerald-600 hover:bg-emerald-500 text-white w-full py-3 rounded-xl text-xs sm:text-sm font-black shadow-lg transition flex items-center justify-center gap-2">
+            <i *ngIf="submitting" class="bi bi-arrow-repeat animate-spin"></i>
+            <span *ngIf="!submitting">تأكيد تفعيل الخطة المجانية فوراً</span>
+            <span *ngIf="submitting">جاري التفعيل...</span>
+            <i *ngIf="!submitting" class="bi bi-gift-fill text-xs"></i>
+          </button>
+
+          <!-- Paid Plan: Advance to Step 2 -->
+          <button *ngIf="!isFreePlan()" (click)="goToStep2()" type="button" [disabled]="!selectedPlan || !canSelectPlan(selectedPlan)"
+                  class="btn btn-primary w-full py-3 rounded-xl text-xs sm:text-sm font-bold shadow-lg flex items-center justify-center gap-2"
+                  [ngClass]="(!selectedPlan || !canSelectPlan(selectedPlan)) ? 'opacity-50 cursor-not-allowed' : ''">
+            <span>المتابعة إلى بيانات الدفع والتحويل</span>
+            <i class="bi bi-arrow-left"></i>
+          </button>
+        </div>
+
+      </ng-container>
 
     </div>
 

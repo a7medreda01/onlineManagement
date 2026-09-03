@@ -341,6 +341,54 @@ export class PricingComponent implements OnInit {
     }
   ];
 
+  // Mobile Comparison Controls
+  selectedMobilePlan: 'free' | 'standard' | 'premium' = 'standard';
+  mobileComparisonMode: 'all' | 'single' = 'all';
+  expandedCategories: { [key: string]: boolean } = {};
+
+  toggleCategory(catName: string): void {
+    this.expandedCategories[catName] = !this.isCategoryExpanded(catName);
+  }
+
+  isCategoryExpanded(catName: string): boolean {
+    return this.expandedCategories[catName] !== false; // default open
+  }
+
+  getPlanStatus(row: any, plan: 'free' | 'standard' | 'premium'): { icon: string; text: string; cssClass: string; isCheck: boolean; isCross: boolean } {
+    const val = row[plan];
+    if (val === 'check') {
+      return { 
+        icon: 'bi-check-circle-fill', 
+        text: 'متاح', 
+        cssClass: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
+        isCheck: true,
+        isCross: false
+      };
+    }
+    if (val === 'cross') {
+      return { 
+        icon: 'bi-x-circle', 
+        text: 'غير متاح', 
+        cssClass: 'bg-rose-500/10 text-rose-400/80 border-rose-500/20',
+        isCheck: false,
+        isCross: true
+      };
+    }
+    return { 
+      icon: 'bi-info-circle-fill', 
+      text: val, 
+      cssClass: 'bg-sky-500/15 text-sky-300 border-sky-500/30 font-bold',
+      isCheck: false,
+      isCross: false
+    };
+  }
+
+  getSelectedPlanObject(): PricingPlan {
+    if (this.selectedMobilePlan === 'free') return this.plans[0];
+    if (this.selectedMobilePlan === 'premium') return this.plans[2];
+    return this.plans[1];
+  }
+
   constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {

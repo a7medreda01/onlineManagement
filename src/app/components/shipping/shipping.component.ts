@@ -22,6 +22,7 @@ export type BostaTab = 'instructions' | 'api' | 'rates' | 'fulfillment' | 'stock
 export class ShippingComponent implements OnInit, OnDestroy {
   companies = signal<ShippingCompany[]>([]);
   governorates = signal<Governorate[]>([]);
+  isCheckingBostaStatus = signal<boolean>(true);
 
   // Webhook official endpoint for Bosta
   readonly webhookEndpoint = 'https://besnesy.runasp.net/api/bosta/webhook';
@@ -147,6 +148,9 @@ export class ShippingComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    if (!this.authService.currentSubscription()) {
+      this.authService.getSubscriptionDetails().subscribe({ error: () => {} });
+    }
     this.loadData();
   }
 
@@ -155,49 +159,62 @@ export class ShippingComponent implements OnInit, OnDestroy {
   }
 
   loadData(): void {
-    this.customerService.getGovernorates().subscribe(govs => {
-      this.governorates.set(govs);
-      this.shippingService.getAll().subscribe(compList => {
-        this.companies.set(compList);
+    this.isCheckingBostaStatus.set(true);
+    this.customerService.getGovernorates().subscribe({
+      next: (govs) => {
+        this.governorates.set(govs);
+        this.shippingService.getAll().subscribe({
+          next: (compList) => {
+            this.companies.set(compList);
 
-        // Sync Bosta Company data
-        const bosta = compList.find(c =>
-          c.name.toLowerCase().includes('bosta') ||
-          c.name.includes('بوسطة') ||
-          c.isIntegrated
-        );
+            // Sync Bosta Company data
+            const bosta = compList.find(c =>
+              c.name.toLowerCase().includes('bosta') ||
+              c.name.includes('بوسطة') ||
+              c.isIntegrated
+            );
 
-        if (bosta) {
-          this.bostaIntegration = {
-            apiKey: bosta.apiKey || '',
-            fulfillmentApiKey: (bosta as any).fulfillmentApiKey || '',
-            webhookUrl: bosta.webhookUrl || this.webhookEndpoint,
-            isIntegrated: bosta.isIntegrated || false
-          };
+            if (bosta) {
+              this.bostaIntegration = {
+                apiKey: bosta.apiKey || '',
+                fulfillmentApiKey: (bosta as any).fulfillmentApiKey || '',
+                webhookUrl: bosta.webhookUrl || this.webhookEndpoint,
+                isIntegrated: bosta.isIntegrated || false
+              };
 
-          const bostaRatesMap = new Map(bosta.rates.map(r => [r.governorateId, r]));
-          this.editedBostaRates = govs.map(g => {
-            const existing = bostaRatesMap.get(g.id);
-            return {
-              governorateId: g.id,
-              governorateName: g.name,
-              shippingPrice: existing ? existing.shippingPrice : 65,
-              returnPrice: existing ? existing.returnPrice : 45
-            };
-          });
-        }
+              const bostaRatesMap = new Map(bosta.rates.map(r => [r.governorateId, r]));
+              this.editedBostaRates = govs.map(g => {
+                const existing = bostaRatesMap.get(g.id);
+                return {
+                  governorateId: g.id,
+                  governorateName: g.name,
+                  shippingPrice: existing ? existing.shippingPrice : 65,
+                  returnPrice: existing ? existing.returnPrice : 45
+                };
+              });
+            }
 
-        // Sync Regular Companies list & selection
-        const regulars = compList.filter(c => !bosta || c.id !== bosta.id);
-        if (regulars.length > 0) {
-          const currentId = this.selectedRegularCompany ? this.selectedRegularCompany.id : regulars[0].id;
-          const target = regulars.find(c => c.id === currentId) || regulars[0];
-          this.selectRegularCompany(target);
-        } else {
-          this.selectedRegularCompany = null;
-          this.editedRegularRates = [];
-        }
-      });
+            // Sync Regular Companies list & selection
+            const regulars = compList.filter(c => !bosta || c.id !== bosta.id);
+            if (regulars.length > 0) {
+              const currentId = this.selectedRegularCompany ? this.selectedRegularCompany.id : regulars[0].id;
+              const target = regulars.find(c => c.id === currentId) || regulars[0];
+              this.selectRegularCompany(target);
+            } else {
+              this.selectedRegularCompany = null;
+              this.editedRegularRates = [];
+            }
+
+            this.isCheckingBostaStatus.set(false);
+          },
+          error: () => {
+            this.isCheckingBostaStatus.set(false);
+          }
+        });
+      },
+      error: () => {
+        this.isCheckingBostaStatus.set(false);
+      }
     });
   }
 
