@@ -87,7 +87,7 @@ export class ShippingComponent implements OnInit, OnDestroy {
   bostaSearchQuery = '';
 
   isUpgradeModalOpen = false;
-  targetPlan = 'خطة متقدمة';
+  targetPlan = 'خطة مميزة';
 
   canAccessBosta(): boolean {
     return this.authService.canAccessBosta();
@@ -95,7 +95,7 @@ export class ShippingComponent implements OnInit, OnDestroy {
 
   openBostaRatesModal(): void {
     if (!this.canAccessBosta()) {
-      this.targetPlan = 'خطة متقدمة';
+      this.targetPlan = 'خطة مميزة';
       this.isUpgradeModalOpen = true;
       return;
     }
@@ -205,7 +205,7 @@ export class ShippingComponent implements OnInit, OnDestroy {
 
   openBostaModal(tab: BostaTab = 'instructions'): void {
     if (!this.canAccessBosta()) {
-      this.targetPlan = 'خطة متقدمة';
+      this.targetPlan = 'خطة مميزة';
       this.isUpgradeModalOpen = true;
       return;
     }

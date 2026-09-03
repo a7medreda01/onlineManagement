@@ -96,15 +96,20 @@
       </div>
     </div>
 
-    <!-- 4 Plan Cards Grid (Matching Image 2) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch">
+    <!-- 3 Plan Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch max-w-5xl mx-auto">
       <div *ngFor="let plan of plans" 
            class="lp-plan-card rounded-3xl p-6 flex flex-col justify-between space-y-6 relative transition-all duration-300 hover:-translate-y-1"
-           [class.lp-plan-popular]="plan.id === 2">
+           [class.lp-plan-popular]="plan.id === 2"
+           [class.border-amber-500]="plan.id === 3">
         
         <!-- Popular Badge for Standard Plan -->
         <div *ngIf="plan.id === 2" class="absolute -top-3.5 right-6 bg-gradient-to-r from-teal-500 to-emerald-600 text-white font-black text-[11px] px-3.5 py-0.5 rounded-full shadow-md">
-          الأكثر طلباً
+          الأكثر طلباً 🔥
+        </div>
+        <!-- VIP Badge for Premium Plan -->
+        <div *ngIf="plan.id === 3" class="absolute -top-3.5 right-6 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black text-[11px] px-3.5 py-0.5 rounded-full shadow-md">
+          شاملة بدون حدود 👑
         </div>
 
         <div class="space-y-4">
@@ -116,8 +121,8 @@
 
           <!-- Plan Title & Description -->
           <div class="text-center space-y-2">
-            <h3 class="text-lg sm:text-xl font-black lp-heading">{{ plan.name }}</h3>
-            <p class="text-xs lp-muted leading-relaxed min-h-[55px]">{{ plan.description }}</p>
+            <h3 class="text-xl font-black lp-heading">{{ plan.name }}</h3>
+            <p class="text-xs lp-muted leading-relaxed min-h-[50px]">{{ plan.description }}</p>
           </div>
         </div>
 
@@ -125,10 +130,11 @@
         <div class="space-y-4 pt-4 border-t lp-price-divider text-center">
           <div>
             <ng-container *ngIf="plan.isFree; else paidPricing">
-              <div class="text-2xl sm:text-3xl font-black text-slate-100">مجاناً</div>
+              <div class="text-3xl font-black text-slate-100">مجاناً</div>
+              <div class="text-xs text-slate-400 mt-1">مدى الحياة للمشاريع الناشئة</div>
             </ng-container>
             <ng-template #paidPricing>
-              <div class="text-2xl sm:text-3xl font-black text-slate-100">
+              <div class="text-3xl font-black text-slate-100">
                 {{ (isAnnual ? plan.yearlyPrice : plan.monthlyPrice) | number:'1.0-0' }}
                 <span class="text-xs font-bold text-sky-400">ج.م</span>
                 <span class="text-xs font-normal text-slate-400">/ {{ isAnnual ? 'سنة' : 'شهر' }}</span>
@@ -140,94 +146,103 @@
           </div>
 
           <button (click)="onPlanAction(plan)" type="button"
-                  class="w-full py-2.5 px-4 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+                  class="w-full py-2.5 px-4 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer hover:scale-[1.02]"
                   [ngClass]="plan.btnBorder">
             <i [class]="'bi ' + plan.btnIcon"></i>
-            <span>{{ isLoggedIn && !plan.isFree ? 'ترقية الآن' : plan.btnText }}</span>
+            <span>{{ isLoggedIn && !plan.isFree ? 'ترقية الباقة الآن ⮅' : plan.btnText }}</span>
           </button>
         </div>
 
       </div>
     </div>
 
-    <!-- Comparison Table (Matching Image 1) -->
+    <!-- Comparison Table (Detailed & Categorized for 3 Plans) -->
     <div class="space-y-4 pt-8">
       <div class="text-right">
-        <h2 class="text-xl sm:text-2xl font-black lp-heading">جدول مقارنة المميزات</h2>
-        <p class="text-xs lp-muted">تفاصيل دقيقة لمميزات وصلاحيات كل باقة لمساعدتك في اتخاذ القرار الأنسب</p>
+        <h2 class="text-xl sm:text-2xl font-black lp-heading">جدول مقارنة المميزات الشامل</h2>
+        <p class="text-xs lp-muted">تفاصيل دقيقة لمميزات وأقسام المنظومة موزعة على الباقات الثلاث لمساعدتك في اختيار الباقة الأنسب</p>
       </div>
 
-      <div class="pricing-table-container">
+      <div class="pricing-table-container shadow-2xl rounded-2xl border border-slate-700/60 overflow-hidden">
         <table class="pricing-table">
           <thead>
             <tr>
-              <th class="text-right w-1/3 min-w-[220px]">المميزات</th>
-              <th class="w-1/6 min-w-[120px]">الخطة المجانية</th>
-              <th class="w-1/6 min-w-[120px]">الخطة القياسية</th>
-              <th class="w-1/6 min-w-[120px]">الخطة المتقدمة</th>
-              <th class="w-1/6 min-w-[120px]">الخطة المميزة</th>
+              <th class="text-right w-2/5 min-w-[240px]">أقسام ومميزات المنظومة</th>
+              <th class="w-1/5 min-w-[130px] text-center bg-slate-900/60">الخطة المجانية</th>
+              <th class="w-1/5 min-w-[130px] text-center bg-teal-950/20 text-teal-300 border-x border-teal-500/20">
+                <div class="flex flex-col items-center gap-0.5">
+                  <span>الخطة القياسية</span>
+                  <span class="text-[10px] font-normal text-teal-400">الأكثر طلباً</span>
+                </div>
+              </th>
+              <th class="w-1/5 min-w-[130px] text-center bg-amber-950/20 text-amber-300">
+                <div class="flex flex-col items-center gap-0.5">
+                  <span>الخطة المميزة</span>
+                  <span class="text-[10px] font-normal text-amber-400">VIP شاملة</span>
+                </div>
+              </th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let row of comparisonRows">
-              <!-- Feature Title & Subtext -->
-              <td class="feature-title-cell">
-                <div class="text-slate-100 text-xs sm:text-sm font-bold">{{ row.title }}</div>
-                <span class="subtext">{{ row.subtext }}</span>
-              </td>
+            <ng-container *ngFor="let cat of comparisonCategories">
+              <!-- Category Header Row -->
+              <tr class="bg-slate-800/90 border-t-2 border-slate-700/80">
+                <td colspan="4" class="py-2.5 px-4 font-black text-xs sm:text-sm text-sky-400">
+                  <div class="flex items-center gap-2">
+                    <i [class]="'bi ' + cat.categoryIcon"></i>
+                    <span>{{ cat.categoryName }}</span>
+                  </div>
+                </td>
+              </tr>
 
-              <!-- Free -->
-              <td>
-                <ng-container *ngIf="row.free === 'check'">
-                  <i class="bi bi-check-circle-fill text-emerald-500 text-lg"></i>
-                </ng-container>
-                <ng-container *ngIf="row.free === 'cross'">
-                  <i class="bi bi-x-circle text-rose-500 text-lg"></i>
-                </ng-container>
-                <ng-container *ngIf="row.free !== 'check' && row.free !== 'cross'">
-                  <span class="font-bold text-xs text-slate-200">{{ row.free }}</span>
-                </ng-container>
-              </td>
+              <!-- Items in Category -->
+              <tr *ngFor="let row of cat.items" class="hover:bg-slate-800/30 transition-colors">
+                <!-- Feature Title & Subtext -->
+                <td class="feature-title-cell">
+                  <div class="text-slate-100 text-xs sm:text-sm font-bold">{{ row.title }}</div>
+                  <span class="subtext text-[11px] text-slate-400 mt-0.5 block leading-relaxed">{{ row.subtext }}</span>
+                </td>
 
-              <!-- Standard -->
-              <td>
-                <ng-container *ngIf="row.standard === 'check'">
-                  <i class="bi bi-check-circle-fill text-emerald-500 text-lg"></i>
-                </ng-container>
-                <ng-container *ngIf="row.standard === 'cross'">
-                  <i class="bi bi-x-circle text-rose-500 text-lg"></i>
-                </ng-container>
-                <ng-container *ngIf="row.standard !== 'check' && row.standard !== 'cross'">
-                  <span class="font-bold text-xs text-slate-200">{{ row.standard }}</span>
-                </ng-container>
-              </td>
+                <!-- Free -->
+                <td class="text-center">
+                  <ng-container *ngIf="row.free === 'check'">
+                    <i class="bi bi-check-circle-fill text-emerald-500 text-lg"></i>
+                  </ng-container>
+                  <ng-container *ngIf="row.free === 'cross'">
+                    <i class="bi bi-x-circle text-rose-500/80 text-lg"></i>
+                  </ng-container>
+                  <ng-container *ngIf="row.free !== 'check' && row.free !== 'cross'">
+                    <span class="font-bold text-xs text-slate-300">{{ row.free }}</span>
+                  </ng-container>
+                </td>
 
-              <!-- Advanced -->
-              <td>
-                <ng-container *ngIf="row.advanced === 'check'">
-                  <i class="bi bi-check-circle-fill text-emerald-500 text-lg"></i>
-                </ng-container>
-                <ng-container *ngIf="row.advanced === 'cross'">
-                  <i class="bi bi-x-circle text-rose-500 text-lg"></i>
-                </ng-container>
-                <ng-container *ngIf="row.advanced !== 'check' && row.advanced !== 'cross'">
-                  <span class="font-bold text-xs text-slate-200">{{ row.advanced }}</span>
-                </ng-container>
-              </td>
+                <!-- Standard -->
+                <td class="text-center bg-teal-950/10 border-x border-teal-500/10">
+                  <ng-container *ngIf="row.standard === 'check'">
+                    <i class="bi bi-check-circle-fill text-emerald-500 text-lg"></i>
+                  </ng-container>
+                  <ng-container *ngIf="row.standard === 'cross'">
+                    <i class="bi bi-x-circle text-rose-500/80 text-lg"></i>
+                  </ng-container>
+                  <ng-container *ngIf="row.standard !== 'check' && row.standard !== 'cross'">
+                    <span class="font-bold text-xs text-teal-300">{{ row.standard }}</span>
+                  </ng-container>
+                </td>
 
-              <!-- Premium -->
-              <td>
-                <ng-container *ngIf="row.premium === 'check'">
-                  <i class="bi bi-check-circle-fill text-emerald-500 text-lg"></i>
-                </ng-container>
-                <ng-container *ngIf="row.premium === 'cross'">
-                  <i class="bi bi-x-circle text-rose-500 text-lg"></i>
-                </ng-container>
-                <ng-container *ngIf="row.premium !== 'check' && row.premium !== 'cross'">
-                  <span class="font-bold text-xs text-slate-200">{{ row.premium }}</span>
-                </ng-container>
-              </td>
-            </tr>
+                <!-- Premium -->
+                <td class="text-center bg-amber-950/10">
+                  <ng-container *ngIf="row.premium === 'check'">
+                    <i class="bi bi-check-circle-fill text-emerald-500 text-lg"></i>
+                  </ng-container>
+                  <ng-container *ngIf="row.premium === 'cross'">
+                    <i class="bi bi-x-circle text-rose-500/80 text-lg"></i>
+                  </ng-container>
+                  <ng-container *ngIf="row.premium !== 'check' && row.premium !== 'cross'">
+                    <span class="font-bold text-xs text-amber-300">{{ row.premium }}</span>
+                  </ng-container>
+                </td>
+              </tr>
+            </ng-container>
           </tbody>
         </table>
       </div>

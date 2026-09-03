@@ -164,8 +164,8 @@
         </div>
       </div>
 
-      <!-- Plans Grid -->
-      <div *ngIf="!loadingPlans() && plans().length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 items-stretch">
+      <!-- Plans Grid (3 Official Plans) -->
+      <div *ngIf="!loadingPlans() && plans().length > 0" class="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch max-w-5xl mx-auto">
         <div *ngFor="let plan of plans(); let i = index"
              class="lp-plan-card rounded-3xl border p-6 sm:p-7 flex flex-col justify-between space-y-6 relative transition-all duration-300"
              [class.lp-plan-popular]="isPopular(plan, plans())"
@@ -173,7 +173,7 @@
 
           <!-- Popular Badge -->
           <div *ngIf="isPopular(plan, plans())" class="absolute -top-3.5 right-6 bg-gradient-to-r from-amber-500 to-amber-600 text-white font-black text-[11px] px-4 py-1 rounded-full shadow-lg">
-            <i class="bi bi-trophy-fill ml-1"></i> الأكثر طلباً
+            <i class="bi bi-trophy-fill ml-1"></i> الأكثر طلباً 🔥
           </div>
 
           <div class="space-y-5">
@@ -214,7 +214,7 @@
             <ul class="space-y-2 text-xs sm:text-sm">
               <li class="flex items-center gap-2.5 lp-text">
                 <i class="bi bi-check-circle-fill text-emerald-500 shrink-0"></i>
-                <span>{{ plan.maxModerators >= 100 ? 'مستخدمين بلا حدود' : plan.maxModerators + ' مستخدم' }} (مودريتور + مالي)</span>
+                <span>{{ plan.maxModerators >= 100 ? 'حسابات موظفين بلا حدود' : (plan.maxModerators > 0 ? 'حتى ' + plan.maxModerators + ' حسابات موظفين' : 'بدون حسابات موظفين') }}</span>
               </li>
               <li class="flex items-center gap-2.5 lp-text">
                 <i class="bi bi-check-circle-fill text-emerald-500 shrink-0"></i>
