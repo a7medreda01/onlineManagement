@@ -1,4 +1,12 @@
-<div class="space-y-6 fade-in font-cairo pb-16">
+<!-- Plan Feature Lock Card -->
+<app-plan-feature-lock *ngIf="!canAccessWallets()"
+  featureName="الخزائن والمحافظ والعربونات"
+  requiredPlan="خطة قياسية"
+  featureDescription="إدارة الخزائن النقدية والمحافظ الإلكترونية (فودافون كاش، انستاباي)، تسجيل عربونات الأوردرات والتحويلات الداخلية متاح بدءاً من الخطة القياسية فما فوق."
+  (upgrade)="isUpgradeModalOpen = true">
+</app-plan-feature-lock>
+
+<div *ngIf="canAccessWallets()" class="space-y-6 fade-in font-cairo pb-16">
   <!-- Header Title & Action Toolbar -->
   <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
     <div>
@@ -681,3 +689,11 @@
     </div>
   </div>
 </div>
+
+<!-- Standalone Upgrade Modal -->
+<app-upgrade-modal 
+  [isOpen]="isUpgradeModalOpen" 
+  preselectedPlanName="خطة قياسية" 
+  (close)="isUpgradeModalOpen = false"
+  (upgraded)="isUpgradeModalOpen = false; ngOnInit()">
+</app-upgrade-modal>

@@ -1,4 +1,12 @@
-<div class="space-y-6 fade-in font-cairo">
+<app-plan-feature-lock
+  *ngIf="!canAccessPurchases()"
+  featureName="إدارة فواتير المشتريات والموردين"
+  requiredPlan="الخطة القياسية أو المتقدمة"
+  description="ميزة إدارة المشتريات، وتسجيل فواتير البضائع، ومتابعة مديونيات الموردين والربط الآلي بالخزينة والمصروفات متاحة حصرياً لمشتركي الباقات المدفوعة."
+  (requestUpgrade)="targetPlan = 'خطة قياسية'; isUpgradeModalOpen = true">
+</app-plan-feature-lock>
+
+<div *ngIf="canAccessPurchases()" class="space-y-6 fade-in font-cairo">
   <!-- Header -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
     <div>
@@ -252,3 +260,9 @@
     </div>
   </div>
 </div>
+
+<app-upgrade-modal 
+  [isOpen]="isUpgradeModalOpen" 
+  [preselectedPlan]="targetPlan" 
+  (closeModal)="isUpgradeModalOpen = false">
+</app-upgrade-modal>

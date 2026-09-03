@@ -10,6 +10,7 @@ import { environment } from '../../environments/environment';
 export class AuthService {
   private readonly apiUrl = `${environment.apiUrl}/auth`;
   public currentUser = signal<AuthResponse | null>(this.getStoredUser());
+  public currentSubscription = signal<SubscriptionDetails | null>(null);
   private refreshTokenSubject: Observable<AuthResponse> | null = null;
 
   constructor(private http: HttpClient) {}
@@ -74,7 +75,47 @@ export class AuthService {
   }
 
   getSubscriptionDetails(): Observable<SubscriptionDetails> {
-    return this.http.get<SubscriptionDetails>(`${this.apiUrl}/subscription-details`);
+    return this.http.get<SubscriptionDetails>(`${this.apiUrl}/subscription-details`).pipe(
+      tap((sub) => {
+        this.currentSubscription.set(sub);
+      })
+    );
+  }
+
+  canAccessWallets(): boolean {
+    const sub = this.currentSubscription();
+    if (!sub) return false;
+    return !!sub.allowWalletsAndDeposits;
+  }
+
+  canAccessExpenses(): boolean {
+    const sub = this.currentSubscription();
+    if (!sub) return false;
+    return !!sub.allowExpensesTracking;
+  }
+
+  canAccessPurchases(): boolean {
+    const sub = this.currentSubscription();
+    if (!sub) return false;
+    return !!sub.allowPurchasesManagement;
+  }
+
+  canAccessFinancialReports(): boolean {
+    const sub = this.currentSubscription();
+    if (!sub) return false;
+    return !!sub.allowFinancialReports;
+  }
+
+  canAccessUsers(): boolean {
+    const sub = this.currentSubscription();
+    if (!sub) return false;
+    return (sub.maxModerators ?? 0) > 0;
+  }
+
+  canAccessBosta(): boolean {
+    const sub = this.currentSubscription();
+    if (!sub) return false;
+    return !!sub.allowBostaIntegration;
   }
 
   getPublicPlans(): Observable<Plan[]> {

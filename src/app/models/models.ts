@@ -484,6 +484,7 @@ export interface SubscriptionDetails {
   isGift: boolean;
   daysRemaining: number;
   suspendedReason?: string;
+  maxModerators?: number;
   allowBostaIntegration?: boolean;
   allowWalletsAndDeposits?: boolean;
   allowExpensesTracking?: boolean;

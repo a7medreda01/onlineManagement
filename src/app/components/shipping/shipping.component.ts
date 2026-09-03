@@ -8,13 +8,15 @@ import { BostaService } from '../../services/bosta.service';
 import { Observable, forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Governorate, ShippingCompany, ShippingRate } from '../../models/models';
+import { AuthService } from '../../services/auth.service';
+import { UpgradeModalComponent } from '../shared/upgrade-modal/upgrade-modal.component';
 
 export type BostaTab = 'instructions' | 'api' | 'rates' | 'fulfillment' | 'stock';
 
 @Component({
   selector: 'app-shipping',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, UpgradeModalComponent],
   templateUrl: './shipping.component.html'
 })
 export class ShippingComponent implements OnInit, OnDestroy {
@@ -84,7 +86,19 @@ export class ShippingComponent implements OnInit, OnDestroy {
   showBostaRatesModal = false;
   bostaSearchQuery = '';
 
+  isUpgradeModalOpen = false;
+  targetPlan = 'خطة متقدمة';
+
+  canAccessBosta(): boolean {
+    return this.authService.canAccessBosta();
+  }
+
   openBostaRatesModal(): void {
+    if (!this.canAccessBosta()) {
+      this.targetPlan = 'خطة متقدمة';
+      this.isUpgradeModalOpen = true;
+      return;
+    }
     this.showBostaRatesModal = true;
   }
 
@@ -128,7 +142,8 @@ export class ShippingComponent implements OnInit, OnDestroy {
     private shippingService: ShippingService,
     private customerService: CustomerService,
     private notificationService: NotificationService,
-    private bostaService: BostaService
+    private bostaService: BostaService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -189,6 +204,11 @@ export class ShippingComponent implements OnInit, OnDestroy {
   // ===================== BOSTA INTEGRATION METHODS =====================
 
   openBostaModal(tab: BostaTab = 'instructions'): void {
+    if (!this.canAccessBosta()) {
+      this.targetPlan = 'خطة متقدمة';
+      this.isUpgradeModalOpen = true;
+      return;
+    }
     this.activeBostaTab = tab;
     this.showBostaModal = true;
     document.body.style.overflow = 'hidden';

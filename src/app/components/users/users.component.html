@@ -1,4 +1,12 @@
-<div class="space-y-6 fade-in font-cairo">
+<!-- Plan Feature Lock Card -->
+<app-plan-feature-lock *ngIf="!canAccessUsers()"
+  featureName="إدارة حسابات الموظفين وفريق العمل"
+  requiredPlan="خطة قياسية"
+  featureDescription="إضافة وتعيين حسابات للموظفين والمسوقين وتحديد صلاحيات كل دور، متابعة شيفتات العمل وحساب السلف والمرتبات متاح بدءاً من الخطة القياسية فما فوق."
+  (upgrade)="isUpgradeModalOpen = true">
+</app-plan-feature-lock>
+
+<div *ngIf="canAccessUsers()" class="space-y-6 fade-in font-cairo">
   
   <!-- Header -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -552,3 +560,11 @@
   </div>
 
 </div>
+
+<!-- Standalone Upgrade Modal -->
+<app-upgrade-modal 
+  [isOpen]="isUpgradeModalOpen" 
+  preselectedPlanName="خطة قياسية" 
+  (close)="isUpgradeModalOpen = false"
+  (upgraded)="isUpgradeModalOpen = false; ngOnInit()">
+</app-upgrade-modal>

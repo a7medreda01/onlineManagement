@@ -5,17 +5,27 @@ import { Router, RouterModule } from '@angular/router';
 import { PurchaseService } from '../../../services/purchase.service';
 import { NotificationService } from '../../../services/notification.service';
 import { PurchaseInvoice, Supplier } from '../../../models/models';
+import { AuthService } from '../../../services/auth.service';
+import { PlanFeatureLockComponent } from '../../shared/plan-feature-lock/plan-feature-lock.component';
+import { UpgradeModalComponent } from '../../shared/upgrade-modal/upgrade-modal.component';
 
 @Component({
   selector: 'app-purchase-invoices',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, PlanFeatureLockComponent, UpgradeModalComponent],
   templateUrl: './purchase-invoices.component.html'
 })
 export class PurchaseInvoicesComponent implements OnInit {
   invoices = signal<PurchaseInvoice[]>([]);
   suppliers = signal<Supplier[]>([]);
   loading = signal<boolean>(true);
+
+  isUpgradeModalOpen = false;
+  targetPlan = 'خطة قياسية';
+
+  canAccessPurchases(): boolean {
+    return this.authService.canAccessPurchases();
+  }
 
   // Filters & Pagination
   searchTerm = '';
@@ -38,10 +48,15 @@ export class PurchaseInvoicesComponent implements OnInit {
   constructor(
     private purchaseService: PurchaseService,
     private notificationService: NotificationService,
+    private authService: AuthService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
+    if (!this.canAccessPurchases()) {
+      this.loading.set(false);
+      return;
+    }
     this.loadSuppliers();
     this.loadInvoices();
   }

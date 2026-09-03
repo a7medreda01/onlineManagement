@@ -4,6 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { WalletService } from '../../services/wallet.service';
 import { OrderService } from '../../services/order.service';
 import { NotificationService } from '../../services/notification.service';
+import { AuthService } from '../../services/auth.service';
+import { PlanFeatureLockComponent } from '../shared/plan-feature-lock/plan-feature-lock.component';
+import { UpgradeModalComponent } from '../shared/upgrade-modal/upgrade-modal.component';
 import {
   Wallet,
   WalletSummaryDto,
@@ -21,13 +24,18 @@ import {
 @Component({
   selector: 'app-wallets',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, PlanFeatureLockComponent, UpgradeModalComponent],
   templateUrl: './wallets.component.html'
 })
 export class WalletsComponent implements OnInit {
   summary = signal<WalletSummaryDto | null>(null);
   wallets = signal<Wallet[]>([]);
   transactions = signal<WalletTransaction[]>([]);
+  isUpgradeModalOpen = false;
+
+  canAccessWallets(): boolean {
+    return this.authService.canAccessWallets();
+  }
   loading = signal<boolean>(true);
   loadingTx = signal<boolean>(false);
 
@@ -101,11 +109,14 @@ export class WalletsComponent implements OnInit {
   constructor(
     private walletService: WalletService,
     private orderService: OrderService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    public authService: AuthService
   ) {}
 
   ngOnInit(): void {
-    this.loadData();
+    if (this.canAccessWallets()) {
+      this.loadData();
+    }
   }
 
   loadData(): void {

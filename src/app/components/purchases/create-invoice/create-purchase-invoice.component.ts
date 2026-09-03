@@ -6,6 +6,9 @@ import { PurchaseService } from '../../../services/purchase.service';
 import { ProductService } from '../../../services/product.service';
 import { NotificationService } from '../../../services/notification.service';
 import { Product, Supplier } from '../../../models/models';
+import { AuthService } from '../../../services/auth.service';
+import { PlanFeatureLockComponent } from '../../shared/plan-feature-lock/plan-feature-lock.component';
+import { UpgradeModalComponent } from '../../shared/upgrade-modal/upgrade-modal.component';
 
 interface InvoiceItemRow {
   productId?: number;
@@ -18,12 +21,19 @@ interface InvoiceItemRow {
 @Component({
   selector: 'app-create-purchase-invoice',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, PlanFeatureLockComponent, UpgradeModalComponent],
   templateUrl: './create-purchase-invoice.component.html'
 })
 export class CreatePurchaseInvoiceComponent implements OnInit {
   suppliers = signal<Supplier[]>([]);
   products = signal<Product[]>([]);
+
+  isUpgradeModalOpen = false;
+  targetPlan = 'خطة قياسية';
+
+  canAccessPurchases(): boolean {
+    return this.authService.canAccessPurchases();
+  }
 
   selectedSupplierId: number | null = null;
   title = '';
@@ -50,10 +60,12 @@ export class CreatePurchaseInvoiceComponent implements OnInit {
     private purchaseService: PurchaseService,
     private productService: ProductService,
     private notificationService: NotificationService,
+    private authService: AuthService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
+    if (!this.canAccessPurchases()) return;
     this.loadLookups();
     // Add default empty row
     this.addCustomItemRow();

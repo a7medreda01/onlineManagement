@@ -2,12 +2,15 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ReportService } from '../../services/report.service';
+import { AuthService } from '../../services/auth.service';
 import { FinancialSummary, ProductPerformance, TeamActivitySummary } from '../../models/models';
+import { PlanFeatureLockComponent } from '../shared/plan-feature-lock/plan-feature-lock.component';
+import { UpgradeModalComponent } from '../shared/upgrade-modal/upgrade-modal.component';
 
 @Component({
   selector: 'app-reports',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, PlanFeatureLockComponent, UpgradeModalComponent],
   templateUrl: './reports.component.html'
 })
 export class ReportsComponent implements OnInit {
@@ -15,15 +18,25 @@ export class ReportsComponent implements OnInit {
   productsPerformance = signal<ProductPerformance[]>([]);
   teamActivity = signal<TeamActivitySummary[]>([]);
   loading = signal<boolean>(true);
+  isUpgradeModalOpen = false;
+
+  canAccessFinancialReports(): boolean {
+    return this.authService.canAccessFinancialReports();
+  }
 
   fromDate = '';
   toDate = '';
   selectedPreset = 'month';
 
-  constructor(private reportService: ReportService) {}
+  constructor(
+    private reportService: ReportService,
+    public authService: AuthService
+  ) {}
 
   ngOnInit(): void {
-    this.setPreset('month');
+    if (this.canAccessFinancialReports()) {
+      this.setPreset('month');
+    }
   }
 
   setPreset(preset: string): void {

@@ -150,8 +150,8 @@
       </div>
 
       <!-- Loading Skeleton -->
-      <div *ngIf="loadingPlans()" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div *ngFor="let i of [1,2,3]" class="lp-card rounded-3xl border p-6 sm:p-8 animate-pulse space-y-4">
+      <div *ngIf="loadingPlans()" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+        <div *ngFor="let i of [1,2,3,4]" class="lp-card rounded-3xl border p-6 sm:p-7 animate-pulse space-y-4">
           <div class="h-4 lp-skeleton rounded w-1/3"></div>
           <div class="h-7 lp-skeleton rounded w-1/2"></div>
           <div class="h-3 lp-skeleton rounded w-full"></div>
@@ -165,9 +165,9 @@
       </div>
 
       <!-- Plans Grid -->
-      <div *ngIf="!loadingPlans() && plans().length > 0" class="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+      <div *ngIf="!loadingPlans() && plans().length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 items-stretch">
         <div *ngFor="let plan of plans(); let i = index"
-             class="lp-plan-card rounded-3xl border p-6 sm:p-8 flex flex-col justify-between space-y-6 relative transition-all duration-300"
+             class="lp-plan-card rounded-3xl border p-6 sm:p-7 flex flex-col justify-between space-y-6 relative transition-all duration-300"
              [class.lp-plan-popular]="isPopular(plan, plans())"
              [class.lp-plan-normal]="!isPopular(plan, plans())">
 
@@ -251,15 +251,15 @@
             </ul>
           </div>
 
-          <!-- CTA -->
-          <a routerLink="/signup"
-             class="w-full py-3 rounded-xl font-black text-center text-sm transition-all flex items-center justify-center gap-2"
+          <!-- CTA Button -->
+          <button type="button" (click)="onPlanAction(plan)"
+             class="w-full py-3 rounded-xl font-black text-center text-sm transition-all flex items-center justify-center gap-2 cursor-pointer"
              [ngClass]="isPopular(plan, plans()) ? 'bg-gradient-to-r from-amber-500 to-amber-600 hover:opacity-90 text-white shadow-lg'
-                       : i === 2                 ? 'bg-gradient-to-r from-indigo-600 to-sky-600 hover:opacity-90 text-white shadow-lg'
+                       : i === 3                 ? 'bg-gradient-to-r from-indigo-600 to-sky-600 hover:opacity-90 text-white shadow-lg'
                        :                           'lp-btn-ghost border'">
             <i class="bi bi-rocket-takeoff-fill text-xs"></i>
             {{ isFree(plan) ? 'ابدأ مجاناً' : 'اشترك الآن' }}
-          </a>
+          </button>
         </div>
       </div>
 

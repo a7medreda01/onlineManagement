@@ -75,7 +75,35 @@ export class LayoutComponent implements OnInit, OnDestroy {
            this.subscriptionData.planName?.includes('Free');
   }
 
+  canAccessWallets(): boolean {
+    return this.authService.canAccessWallets();
+  }
+
+  canAccessExpenses(): boolean {
+    return this.authService.canAccessExpenses();
+  }
+
+  canAccessPurchases(): boolean {
+    return this.authService.canAccessPurchases();
+  }
+
+  canAccessFinancialReports(): boolean {
+    return this.authService.canAccessFinancialReports();
+  }
+
+  canAccessUsers(): boolean {
+    return this.authService.canAccessUsers();
+  }
+
+  canAccessBosta(): boolean {
+    return this.authService.canAccessBosta();
+  }
+
   openUpgradeModal(planName?: string): void {
+    if (!this.authService.isLoggedIn()) {
+      this.router.navigate(['/login']);
+      return;
+    }
     this.selectedUpgradePlan = planName || null;
     this.isUpgradeModalOpen = true;
     if (this.isMoreMenuOpen()) {

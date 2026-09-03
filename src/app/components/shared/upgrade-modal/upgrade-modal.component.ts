@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Input, OnInit, Output, signal } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../services/auth.service';
 
@@ -25,18 +26,28 @@ export interface PlanOption {
   imports: [CommonModule, FormsModule],
   templateUrl: './upgrade-modal.component.html'
 })
-export class UpgradeModalComponent implements OnInit {
+export class UpgradeModalComponent implements OnInit, OnChanges {
   @Input() isOpen = false;
   @Input() preselectedPlanName: string | null = null;
+  @Input() set preselectedPlan(value: string | null) {
+    if (value) this.preselectedPlanName = value;
+  }
+  get preselectedPlan(): string | null {
+    return this.preselectedPlanName;
+  }
   @Output() close = new EventEmitter<void>();
+  @Output() closeModal = new EventEmitter<void>();
   @Output() upgraded = new EventEmitter<void>();
+
+  // Multi-step modal navigation (Step 1: اختيار الباقة والدورة, Step 2: بيانات الدفع والتحويل)
+  currentStep = 1;
 
   isAnnual = false;
   selectedPlan: PlanOption | null = null;
   plans: PlanOption[] = [];
   loadingPlans = false;
 
-  // Payment Form
+  // Payment Form (Vodafone Cash & InstaPay)
   paymentNumber = '01148472670';
   copiedNumber = false;
   senderPhone = '';
@@ -103,7 +114,11 @@ export class UpgradeModalComponent implements OnInit {
     }
   ];
 
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  constructor(
+    private http: HttpClient,
+    public authService: AuthService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.plans = [...this.defaultPlans];
@@ -112,13 +127,45 @@ export class UpgradeModalComponent implements OnInit {
     this.loadPlansFromBackend();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['isOpen'] && this.isOpen) {
+      // Guard: Do not open upgrade modal if user is not logged in
+      if (!this.authService.isLoggedIn()) {
+        this.close.emit();
+        this.closeModal.emit();
+        this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
+        return;
+      }
+      this.currentStep = 1;
+      this.submitSuccess = false;
+      this.errorMessage = '';
+      this.transferTime = new Date().toISOString().slice(0, 16);
+
+      if (this.preselectedPlanName && this.plans.length > 0) {
+        const found = this.plans.find(p => p.name.includes(this.preselectedPlanName!));
+        if (found) this.selectedPlan = found;
+      }
+    }
+  }
+
   loadPlansFromBackend(): void {
     this.loadingPlans = true;
     this.http.get<any[]>(`${environment.apiUrl}/plans`).subscribe({
       next: (data) => {
         this.loadingPlans = false;
         if (data && data.length > 0) {
-          this.plans = data.map((d, index) => {
+          // Deduplicate by trimmed name
+          const map = new Map<string, any>();
+          data.filter(d => d.isActive).forEach(d => {
+            const key = d.name.trim();
+            if (!map.has(key) || d.id > map.get(key).id) {
+              map.set(key, d);
+            }
+          });
+
+          const uniqueList = Array.from(map.values()).sort((a, b) => a.price - b.price);
+
+          this.plans = uniqueList.map((d, index) => {
             const fallback = this.defaultPlans[index] || this.defaultPlans[0];
             return {
               id: d.id,
@@ -138,7 +185,7 @@ export class UpgradeModalComponent implements OnInit {
           if (this.preselectedPlanName) {
             const found = this.plans.find(p => p.name.includes(this.preselectedPlanName!));
             if (found) this.selectedPlan = found;
-          } else {
+          } else if (!this.selectedPlan) {
             this.selectedPlan = this.plans.find(p => p.price > 0) || this.plans[0];
           }
         }
@@ -152,6 +199,21 @@ export class UpgradeModalComponent implements OnInit {
   selectPlan(plan: PlanOption): void {
     this.selectedPlan = plan;
     this.errorMessage = '';
+  }
+
+  goToStep2(): void {
+    if (!this.selectedPlan) return;
+    if (this.isFreePlan()) {
+      this.submitUpgrade();
+      return;
+    }
+    this.errorMessage = '';
+    this.currentStep = 2;
+  }
+
+  goToStep1(): void {
+    this.errorMessage = '';
+    this.currentStep = 1;
   }
 
   getAmount(): number {
@@ -177,7 +239,7 @@ export class UpgradeModalComponent implements OnInit {
     if (!this.selectedPlan) return;
 
     if (!this.isFreePlan() && !this.senderPhone.trim()) {
-      this.errorMessage = 'يرجى كتابة رقم الهاتف أو الحساب المحول منه المبلغ';
+      this.errorMessage = 'يرجى كتابة رقم الهاتف أو المحفظة المحول منها المبلغ';
       return;
     }
 
@@ -204,7 +266,7 @@ export class UpgradeModalComponent implements OnInit {
       },
       error: (err) => {
         this.submitting = false;
-        this.errorMessage = err?.error?.Message || 'حدث خطأ أثناء إرسال طلب الترقية. يرجى مراجعة الدعم.';
+        this.errorMessage = err?.error?.Message || 'حدث خطأ أثناء إرسال طلب الترقية. يرجى مراجعة الدعم الفني.';
       }
     });
   }
@@ -212,6 +274,8 @@ export class UpgradeModalComponent implements OnInit {
   onClose(): void {
     this.submitSuccess = false;
     this.errorMessage = '';
+    this.currentStep = 1;
     this.close.emit();
+    this.closeModal.emit();
   }
 }

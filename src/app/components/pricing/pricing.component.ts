@@ -211,8 +211,13 @@ export class PricingComponent implements OnInit {
       if (plan.isFree) {
         this.router.navigate(['/signup']);
       } else {
-        this.router.navigate(['/signup'], { queryParams: { plan: plan.name } });
+        this.router.navigate(['/login'], { queryParams: { returnUrl: '/pricing' } });
       }
+      return;
+    }
+
+    if (plan.isFree) {
+      this.router.navigate(['/dashboard']);
       return;
     }
 

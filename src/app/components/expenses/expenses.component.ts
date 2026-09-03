@@ -3,15 +3,16 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ExpenseService } from '../../services/expense.service';
 import { NotificationService } from '../../services/notification.service';
+import { AuthService } from '../../services/auth.service';
 import { Expense, ExpenseCategory, CreateExpenseDto, ExpenseSummary } from '../../models/models';
-
+import { PlanFeatureLockComponent } from '../shared/plan-feature-lock/plan-feature-lock.component';
+import { UpgradeModalComponent } from '../shared/upgrade-modal/upgrade-modal.component';
 import { CustomDatePickerComponent } from '../shared/custom-date-picker/custom-date-picker.component';
-import { CustomDropdownComponent } from '../shared/custom-dropdown/custom-dropdown.component';
 
 @Component({
   selector: 'app-expenses',
   standalone: true,
-  imports: [CommonModule, FormsModule, CustomDatePickerComponent, CustomDropdownComponent],
+  imports: [CommonModule, FormsModule, CustomDatePickerComponent, PlanFeatureLockComponent, UpgradeModalComponent],
   templateUrl: './expenses.component.html'
 })
 export class ExpensesComponent implements OnInit {
@@ -20,6 +21,11 @@ export class ExpensesComponent implements OnInit {
   expenses = signal<Expense[]>([]);
   summary = signal<ExpenseSummary | null>(null);
   loading = signal<boolean>(false);
+  isUpgradeModalOpen = false;
+
+  canAccessExpenses(): boolean {
+    return this.authService.canAccessExpenses();
+  }
 
   filterCategory: string = '';
   filterStartDate: string = '';
@@ -40,12 +46,15 @@ export class ExpensesComponent implements OnInit {
 
   constructor(
     private expenseService: ExpenseService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    public authService: AuthService
   ) {}
 
   ngOnInit(): void {
-    this.loadExpenses();
-    this.loadSummary();
+    if (this.canAccessExpenses()) {
+      this.loadExpenses();
+      this.loadSummary();
+    }
   }
 
   loadExpenses(): void {

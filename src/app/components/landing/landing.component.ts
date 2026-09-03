@@ -1,8 +1,9 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { AuthService } from '../../services/auth.service';
 
 export interface PlanDto {
   id: number;
@@ -37,93 +38,8 @@ export class LandingComponent implements OnInit {
   isDarkMode = true;
   isAnnual = false;
 
-  plans = signal<PlanDto[]>([
-    {
-      id: 1,
-      name: 'خطة مجانية',
-      description: 'المميزات الأساسية بدون قيود أو حدود، مناسبة للمشاريع الصغيرة مدى الحياة',
-      badge: 'مجاناً',
-      price: 0,
-      originalPrice: 0,
-      annualPrice: 0,
-      annualOfferPrice: 0,
-      durationInDays: 365,
-      maxModerators: 0,
-      maxProducts: null,
-      maxOrdersPerMonth: null,
-      allowBostaIntegration: false,
-      allowWalletsAndDeposits: false,
-      allowExpensesTracking: false,
-      allowFinancialReports: false,
-      allowPurchasesManagement: false,
-      allowPayrollAndShifts: false,
-      isActive: true
-    },
-    {
-      id: 2,
-      name: 'خطة قياسية',
-      description: 'مميزات متقدمة وحسابات متعددة ودعم فني مميز للمشاريع المتنامية',
-      badge: 'الأكثر طلباً',
-      price: 400,
-      originalPrice: 500,
-      annualPrice: 4800,
-      annualOfferPrice: 4000,
-      durationInDays: 365,
-      maxModerators: 2,
-      maxProducts: null,
-      maxOrdersPerMonth: null,
-      allowBostaIntegration: false,
-      allowWalletsAndDeposits: true,
-      allowExpensesTracking: true,
-      allowFinancialReports: true,
-      allowPurchasesManagement: true,
-      allowPayrollAndShifts: true,
-      isActive: true
-    },
-    {
-      id: 3,
-      name: 'خطة متقدمة',
-      description: 'تقارير متقدمة وخصائص شاملة للمشاريع المتوسطة',
-      badge: 'متقدمة',
-      price: 750,
-      originalPrice: 900,
-      annualPrice: 9000,
-      annualOfferPrice: 7500,
-      durationInDays: 365,
-      maxModerators: 10,
-      maxProducts: null,
-      maxOrdersPerMonth: null,
-      allowBostaIntegration: true,
-      allowWalletsAndDeposits: true,
-      allowExpensesTracking: true,
-      allowFinancialReports: true,
-      allowPurchasesManagement: true,
-      allowPayrollAndShifts: true,
-      isActive: true
-    },
-    {
-      id: 4,
-      name: 'خطة مميزة',
-      description: 'كل المميزات بدون أي حدود، وحسابات موظفين لا نهائية للمشاريع الكبيرة',
-      badge: 'VIP شاملة',
-      price: 1250,
-      originalPrice: 1500,
-      annualPrice: 15000,
-      annualOfferPrice: 12500,
-      durationInDays: 365,
-      maxModerators: 9999,
-      maxProducts: null,
-      maxOrdersPerMonth: null,
-      allowBostaIntegration: true,
-      allowWalletsAndDeposits: true,
-      allowExpensesTracking: true,
-      allowFinancialReports: true,
-      allowPurchasesManagement: true,
-      allowPayrollAndShifts: true,
-      isActive: true
-    }
-  ]);
-  loadingPlans = signal<boolean>(false);
+  plans = signal<PlanDto[]>([]);
+  loadingPlans = signal<boolean>(true);
 
   // Feature list for the system
   systemFeatures = [
@@ -177,7 +93,11 @@ export class LandingComponent implements OnInit {
     }
   ];
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    public authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     const saved = localStorage.getItem('theme');
@@ -192,15 +112,43 @@ export class LandingComponent implements OnInit {
   }
 
   loadPlans(): void {
+    this.loadingPlans.set(true);
     this.http.get<PlanDto[]>(`${environment.apiUrl}/plans`).subscribe({
       next: (plans) => {
-        const active = plans.filter(p => p.isActive);
-        if (active.length > 0) {
-          this.plans.set(active);
+        this.loadingPlans.set(false);
+        if (plans && plans.length > 0) {
+          // Deduplicate by trimmed name and keep highest ID
+          const map = new Map<string, PlanDto>();
+          plans.filter(p => p.isActive).forEach(p => {
+            const key = p.name.trim();
+            if (!map.has(key) || (p.id > map.get(key)!.id)) {
+              map.set(key, p);
+            }
+          });
+          const sorted = Array.from(map.values()).sort((a, b) => a.price - b.price);
+          this.plans.set(sorted);
         }
       },
-      error: () => {}
+      error: () => {
+        this.loadingPlans.set(false);
+      }
     });
+  }
+
+  onPlanAction(plan: PlanDto): void {
+    if (this.isFree(plan)) {
+      if (this.authService.isLoggedIn()) {
+        this.router.navigate(['/dashboard']);
+      } else {
+        this.router.navigate(['/signup']);
+      }
+    } else {
+      if (this.authService.isLoggedIn()) {
+        this.router.navigate(['/pricing'], { queryParams: { upgrade: plan.name } });
+      } else {
+        this.router.navigate(['/login'], { queryParams: { returnUrl: '/pricing' } });
+      }
+    }
   }
 
   toggleTheme(): void {

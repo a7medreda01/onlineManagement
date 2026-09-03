@@ -40,11 +40,18 @@
           <div class="flex flex-wrap items-center gap-2">
             <h2 class="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100">الربط مع Bosta</h2>
             <!-- Status Badge -->
-            <span *ngIf="isBostaConnected()"
+            <span *ngIf="!canAccessBosta()"
+                  class="badge bg-amber-500/15 text-amber-300 border border-amber-500/30 text-xs py-0.5 px-2.5 font-bold inline-flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5 text-amber-400" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2L3 9l3 13h12l3-13-9-7zm0 3.8l5.5 4.3-1.8 7.9H8.3L6.5 10.1 12 5.8z"/>
+              </svg>
+              مطلوب ترقية للخطة المتقدمة ⮅
+            </span>
+            <span *ngIf="canAccessBosta() && isBostaConnected()"
                   class="badge bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-xs py-0.5 px-2.5 font-bold">
               مربوط بنجاح ✅
             </span>
-            <span *ngIf="!isBostaConnected()"
+            <span *ngIf="canAccessBosta() && !isBostaConnected()"
                   class="badge bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 text-xs py-0.5 px-2.5 font-bold">
               غير مربوط ⚠️ (اضغط لضبط الربط)
             </span>
@@ -58,7 +65,17 @@
       </div>
 
       <!-- Action Buttons -->
-      <div class="flex flex-col sm:items-end gap-2 w-full sm:w-auto shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-700/30">
+      <div *ngIf="!canAccessBosta()" class="flex flex-col sm:items-end gap-1.5 w-full sm:w-auto shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-700/30">
+        <button (click)="targetPlan = 'خطة متقدمة'; isUpgradeModalOpen = true" class="btn bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black text-xs py-2 px-4 rounded-xl shadow-lg flex items-center justify-center gap-2 border border-amber-400/50 hover:brightness-110">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2L3 9l3 13h12l3-13-9-7zm0 3.8l5.5 4.3-1.8 7.9H8.3L6.5 10.1 12 5.8z"/>
+          </svg>
+          <span>ترقية الباقة للتفعيل ⮅</span>
+        </button>
+        <span class="text-[11px] text-amber-400/90 font-medium">الربط الآلي متاح في الخطة المتقدمة فما فوق</span>
+      </div>
+
+      <div *ngIf="canAccessBosta()" class="flex flex-col sm:items-end gap-2 w-full sm:w-auto shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-700/30">
         <button *ngIf="isBostaConnected()" (click)="openBostaModal('api')" class="btn btn-primary py-2 px-4 text-xs font-bold rounded-xl shadow-sm flex items-center justify-center gap-1.5">
           <i class="fa-solid fa-pen-to-square text-xs"></i>
           <span>تعديل بيانات الربط ⚙️</span>
@@ -722,3 +739,9 @@
   </div>
 
 </div>
+
+<app-upgrade-modal 
+  [isOpen]="isUpgradeModalOpen" 
+  [preselectedPlan]="targetPlan" 
+  (closeModal)="isUpgradeModalOpen = false">
+</app-upgrade-modal>

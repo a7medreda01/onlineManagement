@@ -76,32 +76,61 @@
         <span>دليل العملاء</span>
       </a>
 
-      <a *ngIf="isManager()" routerLink="/shipping" routerLinkActive="bg-sky-600/25 text-sky-300 font-bold border-r-4 border-sky-500" class="flex items-center gap-2.5 px-3 py-2 text-slate-300 rounded-lg hover:bg-slate-700/60 transition">
-        <i class="bi bi-truck text-sm w-5 text-blue-400"></i>
-        <span>شركات الشحن والأسعار</span>
+      <a *ngIf="isManager()" routerLink="/shipping" routerLinkActive="bg-sky-600/25 text-sky-300 font-bold border-r-4 border-sky-500" class="flex items-center justify-between px-3 py-2 text-slate-300 rounded-lg hover:bg-slate-700/60 transition">
+        <div class="flex items-center gap-2.5">
+          <i class="bi bi-truck text-sm w-5 text-blue-400"></i>
+          <span>شركات الشحن والأسعار</span>
+        </div>
       </a>
 
-      <a *ngIf="isFinancial()" routerLink="/wallets" routerLinkActive="bg-sky-600/25 text-sky-300 font-bold border-r-4 border-sky-500" class="flex items-center gap-2.5 px-3 py-2 text-slate-300 rounded-lg hover:bg-slate-700/60 transition">
-        <i class="bi bi-wallet2 text-sm w-5 text-amber-400"></i>
-        <span>الخزائن والمحافظ والعربونات</span>
+      <!-- Wallets & Deposits -->
+      <a *ngIf="isFinancial()" 
+         [routerLink]="canAccessWallets() ? '/wallets' : null" 
+         (click)="!canAccessWallets() ? openUpgradeModal('خطة قياسية') : null" 
+         routerLinkActive="bg-sky-600/25 text-sky-300 font-bold border-r-4 border-sky-500" 
+         class="flex items-center justify-between px-3 py-2 text-slate-300 rounded-lg hover:bg-slate-700/60 transition cursor-pointer group">
+        <div class="flex items-center gap-2.5">
+          <i class="bi bi-wallet2 text-sm w-5 text-amber-400"></i>
+          <span>الخزائن والمحافظ والعربونات</span>
+        </div>
+        <span *ngIf="!canAccessWallets()" (click)="openUpgradeModal('خطة قياسية'); $event.stopPropagation(); $event.preventDefault()" class="upgrade-badge-icon" title="ميزة مدفوعة - اضغط للترقية">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="#f97316"><path d="M7.247 1.141a1 1 0 0 1 1.506 0l4.5 5.5A1 1 0 0 1 12.5 8.25h-9a1 1 0 0 1-.753-1.609l4.5-5.5z"/><path d="M2 10.5h12v1.5H2v-1.5zm0 3h12V15H2v-1.5z"/></svg>
+        </span>
       </a>
 
-      <a *ngIf="isFinancial()" routerLink="/expenses" routerLinkActive="bg-sky-600/25 text-sky-300 font-bold border-r-4 border-sky-500" class="flex items-center gap-2.5 px-3 py-2 text-slate-300 rounded-lg hover:bg-slate-700/60 transition">
-        <i class="bi bi-receipt text-sm w-5 text-rose-400"></i>
-        <span>المصروفات اليومية</span>
+      <!-- Daily Expenses -->
+      <a *ngIf="isFinancial()" 
+         [routerLink]="canAccessExpenses() ? '/expenses' : null" 
+         (click)="!canAccessExpenses() ? openUpgradeModal('خطة قياسية') : null" 
+         routerLinkActive="bg-sky-600/25 text-sky-300 font-bold border-r-4 border-sky-500" 
+         class="flex items-center justify-between px-3 py-2 text-slate-300 rounded-lg hover:bg-slate-700/60 transition cursor-pointer group">
+        <div class="flex items-center gap-2.5">
+          <i class="bi bi-receipt text-sm w-5 text-rose-400"></i>
+          <span>المصروفات اليومية</span>
+        </div>
+        <span *ngIf="!canAccessExpenses()" (click)="openUpgradeModal('خطة قياسية'); $event.stopPropagation(); $event.preventDefault()" class="upgrade-badge-icon" title="ميزة مدفوعة - اضغط للترقية">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="#f97316"><path d="M7.247 1.141a1 1 0 0 1 1.506 0l4.5 5.5A1 1 0 0 1 12.5 8.25h-9a1 1 0 0 1-.753-1.609l4.5-5.5z"/><path d="M2 10.5h12v1.5H2v-1.5zm0 3h12V15H2v-1.5z"/></svg>
+        </span>
       </a>
 
       <!-- Purchases Management Menu -->
       <div *ngIf="isFinancial()" class="space-y-0.5 pt-1 border-t border-slate-700/50">
-        <button (click)="purchasesOpen.set(!purchasesOpen())" type="button" class="w-full flex items-center justify-between px-3 py-2 text-slate-300 rounded-lg hover:bg-slate-700/60 transition text-xs font-semibold">
+        <button (click)="canAccessPurchases() ? purchasesOpen.set(!purchasesOpen()) : openUpgradeModal('خطة قياسية')" 
+                type="button" 
+                class="w-full flex items-center justify-between px-3 py-2 text-slate-300 rounded-lg hover:bg-slate-700/60 transition text-xs font-semibold cursor-pointer">
           <div class="flex items-center gap-2.5">
             <i class="bi bi-boxes text-sm w-5 text-amber-400"></i>
             <span>إدارة المشتريات</span>
           </div>
-          <i class="bi text-[10px] text-slate-400" [class.bi-chevron-down]="!purchasesOpen()" [class.bi-chevron-up]="purchasesOpen()"></i>
+          <div class="flex items-center gap-1.5">
+            <span *ngIf="!canAccessPurchases()" class="upgrade-badge-icon" title="ميزة مدفوعة - اضغط للترقية">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="#f97316"><path d="M7.247 1.141a1 1 0 0 1 1.506 0l4.5 5.5A1 1 0 0 1 12.5 8.25h-9a1 1 0 0 1-.753-1.609l4.5-5.5z"/><path d="M2 10.5h12v1.5H2v-1.5zm0 3h12V15H2v-1.5z"/></svg>
+            </span>
+            <i *ngIf="canAccessPurchases()" class="bi text-[10px] text-slate-400" [class.bi-chevron-down]="!purchasesOpen()" [class.bi-chevron-up]="purchasesOpen()"></i>
+          </div>
         </button>
 
-        <div *ngIf="purchasesOpen()" class="pr-5 space-y-0.5 text-xs fade-in">
+        <div *ngIf="purchasesOpen() && canAccessPurchases()" class="pr-5 space-y-0.5 text-xs fade-in">
           <a routerLink="/purchases/create" routerLinkActive="bg-amber-500/20 text-amber-300 font-bold" class="flex items-center gap-2 px-2.5 py-1.5 text-slate-300 rounded-md hover:bg-slate-700/50 transition">
             <i class="bi bi-file-earmark-plus text-amber-400 text-xs w-4"></i>
             <span>إنشاء فاتورة مشتريات</span>
@@ -117,17 +146,32 @@
         </div>
       </div>
 
-      <a *ngIf="isFinancial()" routerLink="/reports" routerLinkActive="bg-sky-600/25 text-sky-300 font-bold border-r-4 border-sky-500" class="flex items-center gap-2.5 px-3 py-2 text-slate-300 rounded-lg hover:bg-slate-700/60 transition">
-        <i class="bi bi-file-earmark-bar-graph-fill text-sm w-5 text-indigo-400"></i>
-        <span>تقارير الأرباح والمالية</span>
+      <!-- Financial Reports P&L -->
+      <a *ngIf="isFinancial()" 
+         [routerLink]="canAccessFinancialReports() ? '/reports' : null" 
+         (click)="!canAccessFinancialReports() ? openUpgradeModal('خطة قياسية') : null" 
+         routerLinkActive="bg-sky-600/25 text-sky-300 font-bold border-r-4 border-sky-500" 
+         class="flex items-center justify-between px-3 py-2 text-slate-300 rounded-lg hover:bg-slate-700/60 transition cursor-pointer group">
+        <div class="flex items-center gap-2.5">
+          <i class="bi bi-file-earmark-bar-graph-fill text-sm w-5 text-indigo-400"></i>
+          <span>تقارير الأرباح والمالية</span>
+        </div>
+        <span *ngIf="!canAccessFinancialReports()" (click)="openUpgradeModal('خطة قياسية'); $event.stopPropagation(); $event.preventDefault()" class="upgrade-badge-icon" title="ميزة مدفوعة - اضغط للترقية">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="#f97316"><path d="M7.247 1.141a1 1 0 0 1 1.506 0l4.5 5.5A1 1 0 0 1 12.5 8.25h-9a1 1 0 0 1-.753-1.609l4.5-5.5z"/><path d="M2 10.5h12v1.5H2v-1.5zm0 3h12V15H2v-1.5z"/></svg>
+        </span>
       </a>
 
-      <a *ngIf="isManager()" [routerLink]="isFreePlan() ? null : '/users'" (click)="isFreePlan() ? openUpgradeModal('خطة قياسية') : null" routerLinkActive="bg-sky-600/25 text-sky-300 font-bold border-r-4 border-sky-500" class="flex items-center justify-between px-3 py-2 text-slate-300 rounded-lg hover:bg-slate-700/60 transition group cursor-pointer">
+      <!-- Staff Accounts (Moderators) -->
+      <a *ngIf="isManager()" 
+         [routerLink]="canAccessUsers() ? '/users' : null" 
+         (click)="!canAccessUsers() ? openUpgradeModal('خطة قياسية') : null" 
+         routerLinkActive="bg-sky-600/25 text-sky-300 font-bold border-r-4 border-sky-500" 
+         class="flex items-center justify-between px-3 py-2 text-slate-300 rounded-lg hover:bg-slate-700/60 transition group cursor-pointer">
         <div class="flex items-center gap-2.5">
           <i class="bi bi-people-fill text-sm w-5 text-amber-400"></i>
           <span>حسابات الموظفين</span>
         </div>
-        <span *ngIf="isFreePlan()" (click)="openUpgradeModal('خطة قياسية'); $event.stopPropagation(); $event.preventDefault()" class="upgrade-badge-icon" title="ميزة مدفوعة - اضغط للترقية">
+        <span *ngIf="!canAccessUsers()" (click)="openUpgradeModal('خطة قياسية'); $event.stopPropagation(); $event.preventDefault()" class="upgrade-badge-icon" title="ميزة مدفوعة - اضغط للترقية">
           <svg width="14" height="14" viewBox="0 0 16 16" fill="#f97316"><path d="M7.247 1.141a1 1 0 0 1 1.506 0l4.5 5.5A1 1 0 0 1 12.5 8.25h-9a1 1 0 0 1-.753-1.609l4.5-5.5z"/><path d="M2 10.5h12v1.5H2v-1.5zm0 3h12V15H2v-1.5z"/></svg>
         </span>
       </a>
@@ -432,50 +476,82 @@
           </div>
           <span class="font-semibold">شركات الشحن</span>
         </a>
-        <a *ngIf="isFinancial()" (click)="closeMoreMenu()" routerLink="/wallets" class="flex items-center gap-3 p-2.5 rounded-xl text-slate-300 hover:bg-slate-800 transition-colors">
-          <div class="w-8 h-8 rounded-lg bg-amber-500/15 flex items-center justify-center shrink-0">
-            <i class="bi bi-wallet2 text-amber-400 text-sm"></i>
+        <!-- Mobile Wallets -->
+        <a *ngIf="isFinancial()" (click)="canAccessWallets() ? closeMoreMenu() : openUpgradeModal('خطة قياسية')" [routerLink]="canAccessWallets() ? '/wallets' : null" class="flex items-center justify-between p-2.5 rounded-xl text-slate-300 hover:bg-slate-800 transition-colors cursor-pointer">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-amber-500/15 flex items-center justify-center shrink-0">
+              <i class="bi bi-wallet2 text-amber-400 text-sm"></i>
+            </div>
+            <span class="font-semibold">الخزائن والمحافظ والعربونات</span>
           </div>
-          <span class="font-semibold">الخزائن والمحافظ والعربونات</span>
+          <span *ngIf="!canAccessWallets()" class="upgrade-badge-icon" title="ميزة مدفوعة - اضغط للترقية">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="#f97316"><path d="M7.247 1.141a1 1 0 0 1 1.506 0l4.5 5.5A1 1 0 0 1 12.5 8.25h-9a1 1 0 0 1-.753-1.609l4.5-5.5z"/><path d="M2 10.5h12v1.5H2v-1.5zm0 3h12V15H2v-1.5z"/></svg>
+          </span>
         </a>
-        <a *ngIf="isFinancial()" (click)="closeMoreMenu()" routerLink="/expenses" class="flex items-center gap-3 p-2.5 rounded-xl text-slate-300 hover:bg-slate-800 transition-colors">
-          <div class="w-8 h-8 rounded-lg bg-rose-500/15 flex items-center justify-center shrink-0">
-            <i class="bi bi-receipt text-rose-400 text-sm"></i>
+
+        <!-- Mobile Expenses -->
+        <a *ngIf="isFinancial()" (click)="canAccessExpenses() ? closeMoreMenu() : openUpgradeModal('خطة قياسية')" [routerLink]="canAccessExpenses() ? '/expenses' : null" class="flex items-center justify-between p-2.5 rounded-xl text-slate-300 hover:bg-slate-800 transition-colors cursor-pointer">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-rose-500/15 flex items-center justify-center shrink-0">
+              <i class="bi bi-receipt text-rose-400 text-sm"></i>
+            </div>
+            <span class="font-semibold">المصروفات اليومية</span>
           </div>
-          <span class="font-semibold">المصروفات اليومية</span>
+          <span *ngIf="!canAccessExpenses()" class="upgrade-badge-icon" title="ميزة مدفوعة - اضغط للترقية">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="#f97316"><path d="M7.247 1.141a1 1 0 0 1 1.506 0l4.5 5.5A1 1 0 0 1 12.5 8.25h-9a1 1 0 0 1-.753-1.609l4.5-5.5z"/><path d="M2 10.5h12v1.5H2v-1.5zm0 3h12V15H2v-1.5z"/></svg>
+          </span>
         </a>
-        <a *ngIf="isFinancial()" (click)="closeMoreMenu()" routerLink="/purchases/invoices" class="flex items-center gap-3 p-2.5 rounded-xl text-slate-300 hover:bg-slate-800 transition-colors">
-          <div class="w-8 h-8 rounded-lg bg-amber-500/15 flex items-center justify-center shrink-0">
-            <i class="bi bi-file-earmark-text text-amber-400 text-sm"></i>
+
+        <!-- Mobile Purchases Invoices -->
+        <a *ngIf="isFinancial()" (click)="canAccessPurchases() ? closeMoreMenu() : openUpgradeModal('خطة قياسية')" [routerLink]="canAccessPurchases() ? '/purchases/invoices' : null" class="flex items-center justify-between p-2.5 rounded-xl text-slate-300 hover:bg-slate-800 transition-colors cursor-pointer">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-amber-500/15 flex items-center justify-center shrink-0">
+              <i class="bi bi-file-earmark-text text-amber-400 text-sm"></i>
+            </div>
+            <span class="font-semibold">إدارة وفواتير المشتريات</span>
           </div>
-          <span class="font-semibold">فواتير المشتريات</span>
+          <span *ngIf="!canAccessPurchases()" class="upgrade-badge-icon" title="ميزة مدفوعة - اضغط للترقية">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="#f97316"><path d="M7.247 1.141a1 1 0 0 1 1.506 0l4.5 5.5A1 1 0 0 1 12.5 8.25h-9a1 1 0 0 1-.753-1.609l4.5-5.5z"/><path d="M2 10.5h12v1.5H2v-1.5zm0 3h12V15H2v-1.5z"/></svg>
+          </span>
         </a>
-        <a *ngIf="isFinancial()" (click)="closeMoreMenu()" routerLink="/purchases/create" class="flex items-center gap-3 p-2.5 rounded-xl text-slate-300 hover:bg-slate-800 transition-colors">
-          <div class="w-8 h-8 rounded-lg bg-amber-500/15 flex items-center justify-center shrink-0">
-            <i class="bi bi-file-earmark-plus text-amber-400 text-sm"></i>
+
+        <ng-container *ngIf="isFinancial() && canAccessPurchases()">
+          <a (click)="closeMoreMenu()" routerLink="/purchases/create" class="flex items-center gap-3 p-2.5 rounded-xl text-slate-300 hover:bg-slate-800 transition-colors">
+            <div class="w-8 h-8 rounded-lg bg-amber-500/15 flex items-center justify-center shrink-0">
+              <i class="bi bi-file-earmark-plus text-amber-400 text-sm"></i>
+            </div>
+            <span class="font-semibold">إنشاء فاتورة مشتريات</span>
+          </a>
+          <a (click)="closeMoreMenu()" routerLink="/purchases/suppliers" class="flex items-center gap-3 p-2.5 rounded-xl text-slate-300 hover:bg-slate-800 transition-colors">
+            <div class="w-8 h-8 rounded-lg bg-amber-500/15 flex items-center justify-center shrink-0">
+              <i class="bi bi-person-lines-fill text-amber-400 text-sm"></i>
+            </div>
+            <span class="font-semibold">إدارة الموردين</span>
+          </a>
+        </ng-container>
+
+        <!-- Mobile Financial Reports -->
+        <a *ngIf="isFinancial()" (click)="canAccessFinancialReports() ? closeMoreMenu() : openUpgradeModal('خطة قياسية')" [routerLink]="canAccessFinancialReports() ? '/reports' : null" class="flex items-center justify-between p-2.5 rounded-xl text-slate-300 hover:bg-slate-800 transition-colors cursor-pointer">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-indigo-500/15 flex items-center justify-center shrink-0">
+              <i class="bi bi-file-earmark-bar-graph-fill text-indigo-400 text-sm"></i>
+            </div>
+            <span class="font-semibold">التقارير المالية والأرباح</span>
           </div>
-          <span class="font-semibold">إنشاء فاتورة مشتريات</span>
+          <span *ngIf="!canAccessFinancialReports()" class="upgrade-badge-icon" title="ميزة مدفوعة - اضغط للترقية">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="#f97316"><path d="M7.247 1.141a1 1 0 0 1 1.506 0l4.5 5.5A1 1 0 0 1 12.5 8.25h-9a1 1 0 0 1-.753-1.609l4.5-5.5z"/><path d="M2 10.5h12v1.5H2v-1.5zm0 3h12V15H2v-1.5z"/></svg>
+          </span>
         </a>
-        <a *ngIf="isFinancial()" (click)="closeMoreMenu()" routerLink="/purchases/suppliers" class="flex items-center gap-3 p-2.5 rounded-xl text-slate-300 hover:bg-slate-800 transition-colors">
-          <div class="w-8 h-8 rounded-lg bg-amber-500/15 flex items-center justify-center shrink-0">
-            <i class="bi bi-person-lines-fill text-amber-400 text-sm"></i>
-          </div>
-          <span class="font-semibold">إدارة الموردين</span>
-        </a>
-        <a *ngIf="isFinancial()" (click)="closeMoreMenu()" routerLink="/reports" class="flex items-center gap-3 p-2.5 rounded-xl text-slate-300 hover:bg-slate-800 transition-colors">
-          <div class="w-8 h-8 rounded-lg bg-indigo-500/15 flex items-center justify-center shrink-0">
-            <i class="bi bi-file-earmark-bar-graph-fill text-indigo-400 text-sm"></i>
-          </div>
-          <span class="font-semibold">التقارير المالية والأرباح</span>
-        </a>
-        <a *ngIf="isManager()" (click)="isFreePlan() ? openUpgradeModal('خطة قياسية') : closeMoreMenu()" [routerLink]="isFreePlan() ? null : '/users'" class="flex items-center justify-between p-2.5 rounded-xl text-slate-300 hover:bg-slate-800 transition-colors cursor-pointer">
+
+        <!-- Mobile Staff Accounts -->
+        <a *ngIf="isManager()" (click)="canAccessUsers() ? closeMoreMenu() : openUpgradeModal('خطة قياسية')" [routerLink]="canAccessUsers() ? '/users' : null" class="flex items-center justify-between p-2.5 rounded-xl text-slate-300 hover:bg-slate-800 transition-colors cursor-pointer">
           <div class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-lg bg-amber-500/15 flex items-center justify-center shrink-0">
               <i class="bi bi-people-fill text-amber-400 text-sm"></i>
             </div>
             <span class="font-semibold">حسابات الموظفين</span>
           </div>
-          <span *ngIf="isFreePlan()" class="upgrade-badge-icon">
+          <span *ngIf="!canAccessUsers()" class="upgrade-badge-icon" title="ميزة مدفوعة - اضغط للترقية">
             <svg width="14" height="14" viewBox="0 0 16 16" fill="#f97316"><path d="M7.247 1.141a1 1 0 0 1 1.506 0l4.5 5.5A1 1 0 0 1 12.5 8.25h-9a1 1 0 0 1-.753-1.609l4.5-5.5z"/><path d="M2 10.5h12v1.5H2v-1.5zm0 3h12V15H2v-1.5z"/></svg>
           </span>
         </a>

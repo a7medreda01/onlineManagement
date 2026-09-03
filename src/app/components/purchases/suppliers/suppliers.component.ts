@@ -4,16 +4,26 @@ import { FormsModule } from '@angular/forms';
 import { PurchaseService } from '../../../services/purchase.service';
 import { NotificationService } from '../../../services/notification.service';
 import { Supplier } from '../../../models/models';
+import { AuthService } from '../../../services/auth.service';
+import { PlanFeatureLockComponent } from '../../shared/plan-feature-lock/plan-feature-lock.component';
+import { UpgradeModalComponent } from '../../shared/upgrade-modal/upgrade-modal.component';
 
 @Component({
   selector: 'app-suppliers',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, PlanFeatureLockComponent, UpgradeModalComponent],
   templateUrl: './suppliers.component.html'
 })
 export class SuppliersComponent implements OnInit {
   suppliers = signal<Supplier[]>([]);
   loading = signal<boolean>(true);
+
+  isUpgradeModalOpen = false;
+  targetPlan = 'خطة قياسية';
+
+  canAccessPurchases(): boolean {
+    return this.authService.canAccessPurchases();
+  }
 
   searchTerm = '';
   pageNumber = signal<number>(1);
@@ -29,10 +39,15 @@ export class SuppliersComponent implements OnInit {
 
   constructor(
     private purchaseService: PurchaseService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    if (!this.canAccessPurchases()) {
+      this.loading.set(false);
+      return;
+    }
     this.loadSuppliers();
   }
 

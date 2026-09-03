@@ -6,12 +6,15 @@ import { PayrollService } from '../../services/payroll.service';
 import { WalletService } from '../../services/wallet.service';
 import { NotificationService } from '../../services/notification.service';
 import { OrderService } from '../../services/order.service';
+import { AuthService } from '../../services/auth.service';
 import { User, UserRole, StaffMemberPayrollSummary, StaffPayrollRecord, Wallet, SalesPlatform } from '../../models/models';
+import { PlanFeatureLockComponent } from '../shared/plan-feature-lock/plan-feature-lock.component';
+import { UpgradeModalComponent } from '../shared/upgrade-modal/upgrade-modal.component';
 
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, PlanFeatureLockComponent, UpgradeModalComponent],
   templateUrl: './users.component.html'
 })
 export class UsersComponent implements OnInit {
@@ -21,6 +24,12 @@ export class UsersComponent implements OnInit {
   wallets = signal<Wallet[]>([]);
   salesPlatforms = signal<SalesPlatform[]>([]);
   UserRole = UserRole;
+
+  isUpgradeModalOpen = false;
+
+  canAccessUsers(): boolean {
+    return this.authService.canAccessUsers();
+  }
 
   activeTab: 'users' | 'payroll' | 'history' = 'users';
 
@@ -78,14 +87,17 @@ export class UsersComponent implements OnInit {
     private payrollService: PayrollService,
     private walletService: WalletService,
     private orderService: OrderService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    public authService: AuthService
   ) {}
 
   ngOnInit(): void {
-    this.loadUsers();
-    this.loadPayrollSummaries();
-    this.loadWallets();
-    this.loadSalesPlatforms();
+    if (this.canAccessUsers()) {
+      this.loadUsers();
+      this.loadPayrollSummaries();
+      this.loadWallets();
+      this.loadSalesPlatforms();
+    }
   }
 
   loadSalesPlatforms(): void {

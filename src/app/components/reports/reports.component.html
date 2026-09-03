@@ -1,4 +1,12 @@
-<div class="space-y-6 fade-in font-cairo pb-12">
+<!-- Plan Feature Lock Card -->
+<app-plan-feature-lock *ngIf="!canAccessFinancialReports()"
+  featureName="تقارير الأرباح والمالية P&L"
+  requiredPlan="خطة قياسية"
+  featureDescription="تقارير الأرباح والخسائر الشاملة، متابعة صافي الأرباح، أداء المنتجات وفريق العمل والمقارنات البيانية متاح بدءاً من الخطة القياسية فما فوق."
+  (upgrade)="isUpgradeModalOpen = true">
+</app-plan-feature-lock>
+
+<div *ngIf="canAccessFinancialReports()" class="space-y-6 fade-in font-cairo pb-12">
   <!-- Header & Date Filter Bar -->
   <div class="space-y-3">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -326,3 +334,11 @@
     </div>
   </div>
 </div>
+
+<!-- Standalone Upgrade Modal -->
+<app-upgrade-modal 
+  [isOpen]="isUpgradeModalOpen" 
+  preselectedPlanName="خطة قياسية" 
+  (close)="isUpgradeModalOpen = false"
+  (upgraded)="isUpgradeModalOpen = false; ngOnInit()">
+</app-upgrade-modal>
