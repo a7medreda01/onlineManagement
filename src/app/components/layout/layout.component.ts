@@ -5,11 +5,12 @@ import { AuthService } from '../../services/auth.service';
 import { NotificationService } from '../../services/notification.service';
 import { SaasService } from '../../services/saas.service';
 import { SubscriptionDetails, Plan, UserRole } from '../../models/models';
+import { UpgradeModalComponent } from '../shared/upgrade-modal/upgrade-modal.component';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, UpgradeModalComponent],
   templateUrl: './layout.component.html'
 })
 export class LayoutComponent implements OnInit, OnDestroy {
@@ -26,6 +27,10 @@ export class LayoutComponent implements OnInit, OnDestroy {
   showSubscriptionModal = false;
   loadingSubscription = false;
   subscriptionData: SubscriptionDetails | null = null;
+
+  // Upgrade Modal Control
+  isUpgradeModalOpen = false;
+  selectedUpgradePlan: string | null = null;
 
   UserRole = UserRole;
 
@@ -51,6 +56,36 @@ export class LayoutComponent implements OnInit, OnDestroy {
     }
 
     this.startClock();
+    this.fetchSubscription();
+  }
+
+  fetchSubscription(): void {
+    this.authService.getSubscriptionDetails().subscribe({
+      next: (res) => {
+        this.subscriptionData = res;
+      },
+      error: () => {}
+    });
+  }
+
+  isFreePlan(): boolean {
+    if (!this.subscriptionData) return true; // Default to free limitations until loaded
+    return this.subscriptionData.price === 0 ||
+           this.subscriptionData.planName?.includes('مجانية') ||
+           this.subscriptionData.planName?.includes('Free');
+  }
+
+  openUpgradeModal(planName?: string): void {
+    this.selectedUpgradePlan = planName || null;
+    this.isUpgradeModalOpen = true;
+    if (this.isMoreMenuOpen()) {
+      this.closeMoreMenu();
+    }
+  }
+
+  onUpgradeSuccess(): void {
+    this.isUpgradeModalOpen = false;
+    this.fetchSubscription();
   }
 
   ngOnDestroy(): void {

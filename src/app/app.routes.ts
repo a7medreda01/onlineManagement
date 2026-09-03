@@ -28,9 +28,11 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { UnauthorizedComponent } from './components/shared/unauthorized/unauthorized.component';
 
 import { StoreSettingsComponent } from './components/store-settings/store-settings.component';
+import { PricingComponent } from './components/pricing/pricing.component';
 
 export const routes: Routes = [
   { path: '', component: LandingComponent },
+  { path: 'pricing', component: PricingComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'activate-account', component: ActivateComponent },
   { path: 'login', component: LoginComponent, canActivate: [loginGuard] },

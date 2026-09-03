@@ -25,7 +25,10 @@ import { SubscriptionPaymentRequest } from '../../../models/models';
             </thead>
             <tbody>
               <tr *ngFor="let req of requests">
-                <td class="text-xs text-slate-400 font-mono">{{ req.createdAt | date:'yyyy/MM/dd HH:mm' }}</td>
+                <td class="text-xs font-mono">
+                  <div class="text-slate-200">{{ req.createdAt | date:'yyyy/MM/dd HH:mm' }}</div>
+                  <div *ngIf="req.transferDate" class="text-[10px] text-amber-400">توقيت التحويل: {{ req.transferDate | date:'yyyy/MM/dd HH:mm' }}</div>
+                </td>
                 <td>
                   <div class="font-bold text-slate-100">{{ req.storeName }}</div>
                   <div class="text-xs text-slate-400">{{ req.ownerName }} ({{ req.ownerEmail }})</div>

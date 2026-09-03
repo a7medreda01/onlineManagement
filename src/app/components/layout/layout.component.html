@@ -18,6 +18,12 @@
       <button (click)="toggleTheme()" class="w-9 h-9 rounded-xl bg-slate-700/70 border border-slate-600/70 text-amber-400 flex items-center justify-center text-lg active:scale-95 transition shadow-xs" title="تغيير المظهر">
         <i class="bi" [class.bi-sun-fill]="isDarkMode()" [class.bi-moon-stars-fill]="!isDarkMode()"></i>
       </button>
+
+      <!-- Mobile Upgrade Button (Image 4) -->
+      <button (click)="openUpgradeModal()" class="btn-upgrade-navbar text-[11px] py-1 px-2.5 shadow-xs" title="ترقية الباقة">
+        <span>ترقية</span>
+        <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor"><path d="M7.247 1.141a1 1 0 0 1 1.506 0l4.5 5.5A1 1 0 0 1 12.5 8.25h-9a1 1 0 0 1-.753-1.609l4.5-5.5z"/><path d="M2 10.5h12v1.5H2v-1.5zm0 3h12V15H2v-1.5z"/></svg>
+      </button>
     </div>
 
     <!-- Left Section (Second in RTL): Store Icon THEN Name -->
@@ -116,9 +122,14 @@
         <span>تقارير الأرباح والمالية</span>
       </a>
 
-      <a *ngIf="isManager()" routerLink="/users" routerLinkActive="bg-sky-600/25 text-sky-300 font-bold border-r-4 border-sky-500" class="flex items-center gap-2.5 px-3 py-2 text-slate-300 rounded-lg hover:bg-slate-700/60 transition">
-        <i class="bi bi-people-fill text-sm w-5 text-amber-400"></i>
-        <span>فريق العمل والمرتبات</span>
+      <a *ngIf="isManager()" [routerLink]="isFreePlan() ? null : '/users'" (click)="isFreePlan() ? openUpgradeModal('خطة قياسية') : null" routerLinkActive="bg-sky-600/25 text-sky-300 font-bold border-r-4 border-sky-500" class="flex items-center justify-between px-3 py-2 text-slate-300 rounded-lg hover:bg-slate-700/60 transition group cursor-pointer">
+        <div class="flex items-center gap-2.5">
+          <i class="bi bi-people-fill text-sm w-5 text-amber-400"></i>
+          <span>حسابات الموظفين</span>
+        </div>
+        <span *ngIf="isFreePlan()" (click)="openUpgradeModal('خطة قياسية'); $event.stopPropagation(); $event.preventDefault()" class="upgrade-badge-icon" title="ميزة مدفوعة - اضغط للترقية">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="#f97316"><path d="M7.247 1.141a1 1 0 0 1 1.506 0l4.5 5.5A1 1 0 0 1 12.5 8.25h-9a1 1 0 0 1-.753-1.609l4.5-5.5z"/><path d="M2 10.5h12v1.5H2v-1.5zm0 3h12V15H2v-1.5z"/></svg>
+        </span>
       </a>
 
       <a *ngIf="isManager()" routerLink="/store-settings" routerLinkActive="bg-sky-600/25 text-sky-300 font-bold border-r-4 border-sky-500" class="flex items-center gap-2.5 px-3 py-2 text-slate-300 rounded-lg hover:bg-slate-700/60 transition">
@@ -189,6 +200,12 @@
           <i class="bi bi-person-circle text-sky-400"></i>
           <span>ملفي الشخصي</span>
         </a>
+
+        <!-- Upgrade Plan Button (Image 4) -->
+        <button (click)="openUpgradeModal()" class="btn-upgrade-navbar" title="ترقية باقة المتجر">
+          <span>قم بترقية خطتك الآن</span>
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M7.247 1.141a1 1 0 0 1 1.506 0l4.5 5.5A1 1 0 0 1 12.5 8.25h-9a1 1 0 0 1-.753-1.609l4.5-5.5z"/><path d="M2 10.5h12v1.5H2v-1.5zm0 3h12V15H2v-1.5z"/></svg>
+        </button>
 
         <!-- Subscription Info Pill -->
         <button (click)="openSubscriptionDetails()" class="px-3 py-1.5 rounded-full text-xs font-bold bg-amber-500/10 text-amber-300 border border-amber-500/30 hover:bg-amber-500/20 transition flex items-center gap-1.5">
@@ -451,11 +468,16 @@
           </div>
           <span class="font-semibold">التقارير المالية والأرباح</span>
         </a>
-        <a *ngIf="isManager()" (click)="closeMoreMenu()" routerLink="/users" class="flex items-center gap-3 p-2.5 rounded-xl text-slate-300 hover:bg-slate-800 transition-colors">
-          <div class="w-8 h-8 rounded-lg bg-amber-500/15 flex items-center justify-center shrink-0">
-            <i class="bi bi-people-fill text-amber-400 text-sm"></i>
+        <a *ngIf="isManager()" (click)="isFreePlan() ? openUpgradeModal('خطة قياسية') : closeMoreMenu()" [routerLink]="isFreePlan() ? null : '/users'" class="flex items-center justify-between p-2.5 rounded-xl text-slate-300 hover:bg-slate-800 transition-colors cursor-pointer">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-amber-500/15 flex items-center justify-center shrink-0">
+              <i class="bi bi-people-fill text-amber-400 text-sm"></i>
+            </div>
+            <span class="font-semibold">حسابات الموظفين</span>
           </div>
-          <span class="font-semibold">فريق العمل والمرتبات</span>
+          <span *ngIf="isFreePlan()" class="upgrade-badge-icon">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="#f97316"><path d="M7.247 1.141a1 1 0 0 1 1.506 0l4.5 5.5A1 1 0 0 1 12.5 8.25h-9a1 1 0 0 1-.753-1.609l4.5-5.5z"/><path d="M2 10.5h12v1.5H2v-1.5zm0 3h12V15H2v-1.5z"/></svg>
+          </span>
         </a>
         <a (click)="closeMoreMenu()" routerLink="/profile" class="flex items-center gap-3 p-2.5 rounded-xl text-slate-300 hover:bg-slate-800 transition-colors">
           <div class="w-8 h-8 rounded-lg bg-sky-500/15 flex items-center justify-center shrink-0">
@@ -467,6 +489,12 @@
     </div>
 
     <div class="border-t border-slate-800 pt-3 space-y-2">
+      <!-- Mobile More Menu Upgrade Action -->
+      <button (click)="openUpgradeModal()" class="btn-upgrade-navbar w-full py-2.5 text-xs flex items-center justify-center gap-2">
+        <span>قم بترقية خطتك الآن</span>
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M7.247 1.141a1 1 0 0 1 1.506 0l4.5 5.5A1 1 0 0 1 12.5 8.25h-9a1 1 0 0 1-.753-1.609l4.5-5.5z"/><path d="M2 10.5h12v1.5H2v-1.5zm0 3h12V15H2v-1.5z"/></svg>
+      </button>
+
       <button (click)="logout()" class="btn bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 w-full py-2 text-xs flex items-center justify-center gap-2">
         <i class="bi bi-box-arrow-right"></i>
         <span>تسجيل الخروج</span>
@@ -474,3 +502,11 @@
     </div>
   </div>
 </div>
+
+<!-- Standalone Upgrade Modal Component -->
+<app-upgrade-modal 
+  [isOpen]="isUpgradeModalOpen" 
+  [preselectedPlanName]="selectedUpgradePlan" 
+  (close)="isUpgradeModalOpen = false"
+  (upgraded)="onUpgradeSuccess()">
+</app-upgrade-modal>

@@ -1,9 +1,8 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { SaasService } from '../../services/saas.service';
-import { Plan } from '../../models/models';
 
 @Component({
   selector: 'app-signup',
@@ -12,7 +11,7 @@ import { Plan } from '../../models/models';
   templateUrl: './signup.component.html'
 })
 export class SignupComponent implements OnInit {
-  step = 1; // 1: Details, 2: Plan Selection, 3: Success / Payment / Activation
+  step = 1; // 1: Details, 2: Success / Activation
 
   ownerName = '';
   storeName = '';
@@ -20,27 +19,12 @@ export class SignupComponent implements OnInit {
   phone = '';
   password = '';
 
-  plans = signal<Plan[]>([]);
-  selectedPlanId: number | null = null;
-  selectedPlan: Plan | null = null;
-
   loading = false;
   registered = false;
-  showPaymentStep = false;
   activationToken = '';
   errorMessage = '';
   resending = false;
   isDarkMode = true;
-
-  // InstaPay / Vodafone Cash Form
-  paymentForm = {
-    senderPhone: '',
-    amount: 0,
-    referenceNumber: '',
-    notes: ''
-  };
-  submittingPayment = signal<boolean>(false);
-  paymentSubmitted = false;
 
   constructor(private saasService: SaasService, private router: Router) {}
 
@@ -53,45 +37,6 @@ export class SignupComponent implements OnInit {
       this.isDarkMode = true;
       document.body.classList.remove('light-mode');
     }
-
-    this.loadPlans();
-  }
-
-  loadPlans(): void {
-    this.saasService.getPlans().subscribe({
-      next: (res) => {
-        const active = res.filter(p => p.isActive);
-        this.plans.set(active);
-        if (active.length > 0) {
-          const defaultPlan = active.find(p => p.price === 0 || p.annualOfferPrice === 0) || active[0];
-          this.selectPlan(defaultPlan);
-        }
-      },
-      error: (err) => console.error(err)
-    });
-  }
-
-  selectPlan(plan: Plan): void {
-    this.selectedPlanId = plan.id;
-    this.selectedPlan = plan;
-    this.paymentForm.amount = plan.annualOfferPrice;
-  }
-
-  goToStep2(): void {
-    if (!this.ownerName || !this.storeName || !this.email || !this.phone || !this.password) {
-      this.errorMessage = 'يرجى استكمال جميع البيانات الأساسية المطلوبة';
-      return;
-    }
-    if (this.password.length < 8) {
-      this.errorMessage = 'كلمة المرور يجب أن لا تقل عن 8 أحرف';
-      return;
-    }
-    this.errorMessage = '';
-    this.step = 2;
-  }
-
-  goToStep1(): void {
-    this.step = 1;
   }
 
   toggleTheme(): void {
@@ -120,7 +65,11 @@ export class SignupComponent implements OnInit {
 
     if (!this.ownerName || !this.storeName || !this.email || !this.phone || !this.password) {
       this.errorMessage = 'يرجى استكمال جميع البيانات المطلوبة';
-      this.step = 1;
+      return;
+    }
+
+    if (this.password.length < 8) {
+      this.errorMessage = 'كلمة المرور يجب ألا تقل عن 8 أحرف';
       return;
     }
 
@@ -132,66 +81,33 @@ export class SignupComponent implements OnInit {
       storeName: this.storeName,
       email: this.email,
       phone: this.phone,
-      password: this.password,
-      selectedPlanId: this.selectedPlanId || undefined
+      password: this.password
     }).subscribe({
       next: (res) => {
         this.loading = false;
         this.registered = true;
-        this.step = 3;
+        this.step = 2;
         this.activationToken = res.activationToken;
-
-        if (this.selectedPlan && this.selectedPlan.annualOfferPrice > 0) {
-          this.showPaymentStep = true;
-          this.paymentForm.senderPhone = this.phone;
-          this.paymentForm.amount = this.selectedPlan.annualOfferPrice;
-        } else {
-          this.showPaymentStep = false;
-        }
       },
       error: (err) => {
         this.loading = false;
-        this.errorMessage = err?.error?.Message || 'حدث خطأ أثناء إنشاء المتجر';
-      }
-    });
-  }
-
-  onSubmitInstaPay(): void {
-    if (!this.paymentForm.senderPhone || this.paymentForm.amount <= 0) {
-      alert('يرجى كتابة رقم الهاتف المحول منه وقيمة المبلغ');
-      return;
-    }
-
-    this.submittingPayment.set(true);
-    this.saasService.submitPaymentRequest({
-      planId: this.selectedPlanId || 0,
-      senderPhone: this.paymentForm.senderPhone,
-      amount: this.paymentForm.amount,
-      referenceNumber: this.paymentForm.referenceNumber,
-      notes: this.paymentForm.notes
-    }).subscribe({
-      next: () => {
-        this.submittingPayment.set(false);
-        this.paymentSubmitted = true;
-      },
-      error: (err) => {
-        this.submittingPayment.set(false);
-        alert(err?.error?.Message || 'حدث خطأ أثناء إرسال تفاصيل التحويل');
+        this.errorMessage = err?.error?.Message || 'حدث خطأ أثناء إنشاء المتجر. يرجى المحاولة مرة أخرى.';
       }
     });
   }
 
   resendToken(): void {
+    if (!this.email) return;
     this.resending = true;
     this.saasService.resendToken(this.email).subscribe({
       next: (res) => {
         this.resending = false;
         this.activationToken = res.activationToken;
-        alert('تم إعادة إرسال رابط التفعيل إلى بريدك الإلكتروني بنجاح!');
+        alert('تم إرسال رابط التفعيل الجديد إلى بريدك الإلكتروني بنجاح!');
       },
       error: (err) => {
         this.resending = false;
-        alert(err?.error?.Message || 'خطأ أثناء إعادة الإرسال');
+        alert(err?.error?.Message || 'خطأ أثناء إعادة إرسال الرابط');
       }
     });
   }

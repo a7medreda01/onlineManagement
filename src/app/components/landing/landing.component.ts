@@ -37,8 +37,93 @@ export class LandingComponent implements OnInit {
   isDarkMode = true;
   isAnnual = false;
 
-  plans = signal<PlanDto[]>([]);
-  loadingPlans = signal<boolean>(true);
+  plans = signal<PlanDto[]>([
+    {
+      id: 1,
+      name: 'خطة مجانية',
+      description: 'المميزات الأساسية بدون قيود أو حدود، مناسبة للمشاريع الصغيرة مدى الحياة',
+      badge: 'مجاناً',
+      price: 0,
+      originalPrice: 0,
+      annualPrice: 0,
+      annualOfferPrice: 0,
+      durationInDays: 365,
+      maxModerators: 0,
+      maxProducts: null,
+      maxOrdersPerMonth: null,
+      allowBostaIntegration: false,
+      allowWalletsAndDeposits: false,
+      allowExpensesTracking: false,
+      allowFinancialReports: false,
+      allowPurchasesManagement: false,
+      allowPayrollAndShifts: false,
+      isActive: true
+    },
+    {
+      id: 2,
+      name: 'خطة قياسية',
+      description: 'مميزات متقدمة وحسابات متعددة ودعم فني مميز للمشاريع المتنامية',
+      badge: 'الأكثر طلباً',
+      price: 400,
+      originalPrice: 500,
+      annualPrice: 4800,
+      annualOfferPrice: 4000,
+      durationInDays: 365,
+      maxModerators: 2,
+      maxProducts: null,
+      maxOrdersPerMonth: null,
+      allowBostaIntegration: false,
+      allowWalletsAndDeposits: true,
+      allowExpensesTracking: true,
+      allowFinancialReports: true,
+      allowPurchasesManagement: true,
+      allowPayrollAndShifts: true,
+      isActive: true
+    },
+    {
+      id: 3,
+      name: 'خطة متقدمة',
+      description: 'تقارير متقدمة وخصائص شاملة للمشاريع المتوسطة',
+      badge: 'متقدمة',
+      price: 750,
+      originalPrice: 900,
+      annualPrice: 9000,
+      annualOfferPrice: 7500,
+      durationInDays: 365,
+      maxModerators: 10,
+      maxProducts: null,
+      maxOrdersPerMonth: null,
+      allowBostaIntegration: true,
+      allowWalletsAndDeposits: true,
+      allowExpensesTracking: true,
+      allowFinancialReports: true,
+      allowPurchasesManagement: true,
+      allowPayrollAndShifts: true,
+      isActive: true
+    },
+    {
+      id: 4,
+      name: 'خطة مميزة',
+      description: 'كل المميزات بدون أي حدود، وحسابات موظفين لا نهائية للمشاريع الكبيرة',
+      badge: 'VIP شاملة',
+      price: 1250,
+      originalPrice: 1500,
+      annualPrice: 15000,
+      annualOfferPrice: 12500,
+      durationInDays: 365,
+      maxModerators: 9999,
+      maxProducts: null,
+      maxOrdersPerMonth: null,
+      allowBostaIntegration: true,
+      allowWalletsAndDeposits: true,
+      allowExpensesTracking: true,
+      allowFinancialReports: true,
+      allowPurchasesManagement: true,
+      allowPayrollAndShifts: true,
+      isActive: true
+    }
+  ]);
+  loadingPlans = signal<boolean>(false);
 
   // Feature list for the system
   systemFeatures = [
@@ -107,15 +192,14 @@ export class LandingComponent implements OnInit {
   }
 
   loadPlans(): void {
-    this.loadingPlans.set(true);
     this.http.get<PlanDto[]>(`${environment.apiUrl}/plans`).subscribe({
       next: (plans) => {
-        this.plans.set(plans.filter(p => p.isActive));
-        this.loadingPlans.set(false);
+        const active = plans.filter(p => p.isActive);
+        if (active.length > 0) {
+          this.plans.set(active);
+        }
       },
-      error: () => {
-        this.loadingPlans.set(false);
-      }
+      error: () => {}
     });
   }
 

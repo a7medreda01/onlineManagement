@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap');
 @import 'bootstrap-icons/font/bootstrap-icons.css';
 @import '@fortawesome/fontawesome-free/css/all.min.css';
 
@@ -880,135 +879,383 @@ body.light-mode .landing-orb-3 {
   background: radial-gradient(circle, rgba(2,132,199,0.08) 0%, rgba(14,165,233,0.05) 50%, transparent 75%);
 }
 
-/* ===== Landing Page — Full Light Mode Overrides ===== */
+/* ===== Landing & Pricing Modern Design System ===== */
+.landing-page {
+  min-height: 100vh;
+  background-color: #030712;
+  color: #f8fafc;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
 body.light-mode .landing-page {
-  background-color: #f0f6ff;
+  background-color: #f8fafc;
   color: #0f172a;
 }
 
 /* Header */
-body.light-mode .landing-page header {
-  background: rgba(240, 246, 255, 0.92) !important;
-  border-color: #bfdbfe !important;
+.lp-header {
+  background: rgba(3, 7, 18, 0.85);
+  border-color: rgba(255, 255, 255, 0.08);
 }
-body.light-mode .landing-page header nav a {
+body.light-mode .lp-header {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(226, 232, 240, 0.8);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.lp-logo-bg {
+  background: #0f172a;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+body.light-mode .lp-logo-bg {
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+}
+
+.lp-brand-name {
+  color: #ffffff;
+}
+body.light-mode .lp-brand-name {
+  color: #0f172a;
+}
+
+.lp-muted {
+  color: #94a3b8;
+}
+body.light-mode .lp-muted {
+  color: #64748b;
+}
+
+.lp-heading {
+  color: #ffffff;
+}
+body.light-mode .lp-heading {
+  color: #0f172a;
+}
+
+.lp-text {
+  color: #e2e8f0;
+}
+body.light-mode .lp-text {
+  color: #1e293b;
+}
+
+.lp-nav-link {
+  color: #94a3b8;
+  transition: color 0.2s ease;
+}
+.lp-nav-link:hover {
+  color: #38bdf8;
+}
+body.light-mode .lp-nav-link {
   color: #475569;
 }
-body.light-mode .landing-page header nav a:hover {
-  color: #1e3a8a;
-}
-body.light-mode .landing-page header .font-black.text-white {
-  color: #1e3a8a !important;
-}
-body.light-mode .landing-page header .text-slate-400 {
-  color: #64748b !important;
-}
-/* Theme toggle btn in header */
-body.light-mode .landing-page header button.bg-slate-800 {
-  background: #dbeafe !important;
-  border-color: #93c5fd !important;
-}
-/* Login btn */
-body.light-mode .landing-page header a.bg-slate-800 {
-  background: #e2e8f0 !important;
-  border-color: #cbd5e1 !important;
-  color: #334155 !important;
-}
-body.light-mode .landing-page header a.bg-slate-800:hover {
-  background: #cbd5e1 !important;
+body.light-mode .lp-nav-link:hover {
+  color: #0284c7;
 }
 
-/* Hero Section */
-body.light-mode .landing-page section .text-slate-100,
-body.light-mode .landing-page .text-slate-100 { color: #0f172a !important; }
-body.light-mode .landing-page .text-white { color: #1e3a8a !important; }
-body.light-mode .landing-page .text-slate-400 { color: #475569 !important; }
-body.light-mode .landing-page .text-slate-500 { color: #64748b !important; }
-body.light-mode .landing-page .text-slate-300 { color: #334155 !important; }
-body.light-mode .landing-page .text-slate-200 { color: #1e293b !important; }
-
-/* Hero badge */
-body.light-mode .landing-page .bg-slate-900\/90 {
-  background: rgba(219,234,254,0.95) !important;
-  border-color: #f59e0b80 !important;
+.lp-nav-link-green {
+  color: #34d399;
+}
+.lp-nav-link-green:hover {
+  color: #10b981;
 }
 
-/* Hero metrics border */
-body.light-mode .landing-page .border-slate-800 { border-color: #bfdbfe !important; }
-body.light-mode .landing-page .border-slate-700 { border-color: #93c5fd !important; }
-
-/* Hero secondary button */
-body.light-mode .landing-page a.bg-slate-800\/80,
-body.light-mode .landing-page a.bg-slate-800 {
-  background: #e2e8f0 !important;
-  border-color: #94a3b8 !important;
-  color: #334155 !important;
+.lp-icon-btn {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+  transition: all 0.2s ease;
+}
+.lp-icon-btn:hover {
+  background: rgba(51, 65, 85, 0.9);
+}
+body.light-mode .lp-icon-btn {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #334155;
 }
 
-/* Features section */
-body.light-mode .landing-page section#features,
-body.light-mode .landing-page .bg-slate-900\/60 {
-  background: rgba(219,234,254,0.35) !important;
-  border-color: #bfdbfe !important;
+.lp-btn-ghost {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f1f5f9;
+  transition: all 0.2s ease;
 }
-body.light-mode .landing-page .bg-slate-900\/80,
-body.light-mode .landing-page .bg-slate-900 {
-  background: #ffffff !important;
-  border-color: #bfdbfe !important;
-  box-shadow: 0 1px 8px rgba(59,130,246,0.08);
+.lp-btn-ghost:hover {
+  background: rgba(51, 65, 85, 0.9);
+  border-color: rgba(56, 189, 248, 0.4);
 }
-body.light-mode .landing-page .hover\:bg-slate-800\/60:hover {
-  background: #eff6ff !important;
+body.light-mode .lp-btn-ghost {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #1e293b;
 }
-
-/* Feature icon colors stay vibrant — no override needed */
-
-/* Pricing section */
-body.light-mode .landing-page section#pricing { background: transparent !important; }
-
-/* Plan cards */
-body.light-mode .landing-page .border-slate-700\/60 {
-  border-color: #bfdbfe !important;
-  background: #ffffff !important;
-}
-body.light-mode .landing-page .border-amber-500\/80 {
-  border-color: #f59e0b !important;
-  background: linear-gradient(to bottom, rgba(251,191,36,0.06), #ffffff) !important;
-}
-body.light-mode .landing-page .border-slate-800\/80 { border-color: #dbeafe !important; }
-
-/* Plan badges */
-body.light-mode .landing-page .bg-slate-800.text-slate-300 {
-  background: #f1f5f9 !important;
-  color: #475569 !important;
-  border-color: #e2e8f0 !important;
+body.light-mode .lp-btn-ghost:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
 }
 
-/* Feature checkmarks / cross opacity */
-body.light-mode .landing-page .text-slate-600 { color: #94a3b8 !important; }
-
-/* Popular badge */
-body.light-mode .landing-page .-top-3\.5 { /* keep gold */ }
-
-/* CTA section */
-body.light-mode .landing-page .rounded-3xl.bg-gradient-to-br { /* keep blue gradient */ }
-body.light-mode .landing-page section .bg-slate-800\/10 { background: rgba(219,234,254,0.3) !important; }
-
-/* Annual toggle */
-body.light-mode .landing-page .bg-slate-700 { background: #e2e8f0 !important; }
-
-/* Footer */
-body.light-mode .landing-page footer {
-  background: #e0effe !important;
-  border-color: #bfdbfe !important;
-  color: #475569 !important;
+.lp-promo-badge {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  color: #fde68a;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.1);
 }
-body.light-mode .landing-page footer .text-white { color: #1e3a8a !important; }
-body.light-mode .landing-page footer .text-slate-700 { color: #94a3b8 !important; }
+body.light-mode .lp-promo-badge {
+  background: #fffbeb;
+  border-color: #fcd34d;
+  color: #b45309;
+}
 
-/* Skeleton shimmer in light mode */
-body.light-mode .landing-page .bg-slate-700 { background: #dbeafe !important; }
-body.light-mode .landing-page .bg-slate-800 { background: #eff6ff !important; }
+.lp-stat-mid {
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+body.light-mode .lp-stat-mid {
+  border-right-color: #e2e8f0;
+  border-left-color: #e2e8f0;
+}
 
-/* Info note */
-body.light-mode .landing-page .text-xs.text-slate-500 { color: #64748b !important; }
+.lp-section-alt {
+  background: rgba(15, 23, 42, 0.45);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+body.light-mode .lp-section-alt {
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+}
+
+.lp-section-badge {
+  background: rgba(14, 165, 233, 0.15);
+  border: 1px solid rgba(14, 165, 233, 0.3);
+  color: #38bdf8;
+}
+.lp-section-badge-amber {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: #fbbf24;
+}
+
+.lp-card {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+body.light-mode .lp-card {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.lp-toggle-label {
+  transition: color 0.2s ease;
+}
+.lp-toggle-active {
+  color: #38bdf8;
+}
+.lp-toggle-inactive {
+  color: #64748b;
+}
+.lp-toggle-off {
+  background: #334155;
+}
+body.light-mode .lp-toggle-off {
+  background: #cbd5e1;
+}
+
+.lp-skeleton {
+  background: linear-gradient(90deg, rgba(30, 41, 59, 0.6) 25%, rgba(51, 65, 85, 0.6) 50%, rgba(30, 41, 59, 0.6) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+body.light-mode .lp-skeleton {
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background-size: 200% 100%;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Plan Cards */
+.lp-plan-card {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+body.light-mode .lp-plan-card {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+.lp-plan-popular {
+  border-color: rgba(245, 158, 11, 0.6) !important;
+  box-shadow: 0 12px 35px rgba(245, 158, 11, 0.15) !important;
+}
+
+.lp-badge-neutral {
+  background: rgba(51, 65, 85, 0.5);
+  border-color: rgba(71, 85, 105, 0.6);
+  color: #cbd5e1;
+}
+.lp-badge-amber {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.4);
+  color: #fbbf24;
+}
+.lp-badge-indigo {
+  background: rgba(99, 102, 241, 0.15);
+  border-color: rgba(99, 102, 241, 0.4);
+  color: #818cf8;
+}
+
+.lp-price-divider {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+body.light-mode .lp-price-divider {
+  border-color: #e2e8f0;
+}
+
+.lp-feature-on {
+  color: #f1f5f9;
+}
+.lp-feature-on i {
+  color: #10b981;
+}
+body.light-mode .lp-feature-on {
+  color: #1e293b;
+}
+
+.lp-feature-off {
+  color: #64748b;
+  opacity: 0.6;
+}
+.lp-feature-off i {
+  color: #f43f5e;
+}
+
+/* ==================================================== */
+/* UPGRADE BUTTON IN NAVBAR & UPGRADE ICON IN TOOLBAR   */
+/* ==================================================== */
+
+/* Image 4 Navbar button style: Blue rounded button with glow and upgrade icon */
+.btn-upgrade-navbar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  border-radius: 0.65rem;
+  color: #2563eb;
+  background: #ffffff;
+  border: 1.5px solid #2563eb;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-upgrade-navbar:hover {
+  background: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+  transform: translateY(-1px);
+}
+.btn-upgrade-navbar i {
+  font-size: 0.85rem;
+  line-height: 1;
+}
+body.light-mode .btn-upgrade-navbar {
+  background: #ffffff;
+  border-color: #2563eb;
+  color: #2563eb;
+}
+body.light-mode .btn-upgrade-navbar:hover {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+/* Image 3 Toolbar & Sidebar Upgrade Icon: Stacked orange level up icon */
+.upgrade-badge-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #f97316;
+  font-size: 0.95rem;
+  line-height: 1;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  animation: upgrade-pulse 2.2s ease-in-out infinite;
+  margin-right: auto;
+  margin-left: 0.25rem;
+}
+.upgrade-badge-icon:hover {
+  transform: scale(1.2);
+  filter: drop-shadow(0 0 6px rgba(249, 115, 22, 0.6));
+}
+
+@keyframes upgrade-pulse {
+  0%, 100% {
+    opacity: 0.85;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+
+/* Comparison Table (Pricing) */
+.pricing-table-container {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(15, 23, 42, 0.75);
+}
+body.light-mode .pricing-table-container {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.pricing-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+.pricing-table th,
+.pricing-table td {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+body.light-mode .pricing-table th,
+body.light-mode .pricing-table td {
+  border-bottom-color: #f1f5f9;
+}
+.pricing-table th {
+  font-weight: 800;
+  font-size: 0.875rem;
+  background: rgba(30, 41, 59, 0.4);
+}
+body.light-mode .pricing-table th {
+  background: #f8fafc;
+  color: #0f172a;
+}
+.pricing-table td.feature-title-cell {
+  text-align: right;
+  font-weight: 700;
+}
+.pricing-table td.feature-title-cell .subtext {
+  display: block;
+  font-size: 0.725rem;
+  font-weight: 400;
+  color: #94a3b8;
+  margin-top: 0.2rem;
+}
+body.light-mode .pricing-table td.feature-title-cell .subtext {
+  color: #64748b;
+}
+

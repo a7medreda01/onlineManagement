@@ -1,0 +1,214 @@
+<div *ngIf="isOpen" class="app-modal-overlay overflow-y-auto py-8 z-[99999]" dir="rtl">
+  <div class="glass-card w-full max-w-2xl p-5 sm:p-7 fade-in relative border border-sky-500/30 shadow-2xl my-auto text-slate-100 font-cairo">
+    
+    <!-- Close Button -->
+    <button (click)="onClose()" class="absolute top-4 left-4 text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800 transition text-lg" title="إغلاق">
+      <i class="bi bi-x-lg"></i>
+    </button>
+
+    <!-- Header -->
+    <div class="flex items-center gap-3 mb-5">
+      <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-sky-600 to-indigo-600 text-white flex items-center justify-center text-xl shadow-md border border-sky-400/30">
+        <i class="bi bi-rocket-takeoff-fill"></i>
+      </div>
+      <div>
+        <h3 class="text-lg sm:text-xl font-black text-white">ترقية باقة متجرك</h3>
+        <p class="text-slate-400 text-xs">اختر الباقة المناسبة لحجم أعمالك وافتح كافة المميزات فوراً</p>
+      </div>
+    </div>
+
+    <!-- SUCCESS SCREEN -->
+    <div *ngIf="submitSuccess" class="py-8 text-center space-y-4 fade-in">
+      <div class="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center text-3xl mx-auto shadow-lg">
+        <i class="bi bi-check2-circle"></i>
+      </div>
+
+      <div class="space-y-2">
+        <h4 class="text-xl font-black text-white">
+          {{ isFreePlan() ? 'تمت الترقية بنجاح!' : 'تم إرسال طلب الترقية بنجاح!' }}
+        </h4>
+        <p class="text-xs text-slate-300 max-w-md mx-auto leading-relaxed">
+          {{ isFreePlan() 
+            ? 'تم تفعيل باقتك الجديدة فورياً دون أي تكلفة. جميع مميزات الخطة متاحة لك الآن.' 
+            : 'طلبك الآن قيد مراجعة الإدارة وسيقوم فريق العمل بتأكيد التحويل وتفعيل مميزات الخطة فوراً خلال دقائق.' }}
+        </p>
+      </div>
+
+      <div class="pt-2">
+        <button (click)="onClose()" class="btn btn-primary px-8 py-2.5 text-xs font-bold shadow-lg">
+          حسناً، متابعة العمل
+        </button>
+      </div>
+    </div>
+
+    <!-- MAIN FORM (When not submitted) -->
+    <div *ngIf="!submitSuccess" class="space-y-5">
+      
+      <!-- Duration Toggle: Monthly / Yearly -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-900/80 p-3 rounded-2xl border border-slate-800">
+        <div class="text-xs">
+          <span class="font-bold text-slate-200">دورة الاشتراك:</span>
+          <span class="text-slate-400 mr-1.5 text-[11px]">وفر شهرين كاملين عند اختيارك الدفع سنوياً</span>
+        </div>
+
+        <div class="flex items-center gap-2 bg-slate-800/90 p-1 rounded-xl border border-slate-700/60">
+          <button (click)="isAnnual = false" type="button"
+                  class="px-3 py-1 rounded-lg text-xs font-bold transition-all"
+                  [ngClass]="!isAnnual ? 'bg-sky-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'">
+            شهرياً
+          </button>
+          <button (click)="isAnnual = true" type="button"
+                  class="px-3 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1"
+                  [ngClass]="isAnnual ? 'bg-amber-500 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'">
+            <span>سنوياً</span>
+            <span class="bg-emerald-500/20 text-emerald-300 text-[10px] px-1.5 py-0.2 rounded-full border border-emerald-500/30 font-black">خصم شهرين</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Plan Cards Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+        <div *ngFor="let p of plans" (click)="selectPlan(p)"
+             class="cursor-pointer rounded-2xl p-3 border transition-all duration-200 flex flex-col justify-between relative text-center group"
+             [ngClass]="selectedPlan?.id === p.id 
+               ? 'bg-sky-500/15 border-sky-400 shadow-lg shadow-sky-500/10 scale-[1.02]' 
+               : 'bg-slate-900/60 border-slate-800 hover:border-slate-700 hover:bg-slate-800/40'">
+          
+          <!-- Selected Indicator Checkmark -->
+          <div *ngIf="selectedPlan?.id === p.id" class="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-sky-500 text-white text-xs flex items-center justify-center shadow">
+            <i class="bi bi-check"></i>
+          </div>
+
+          <div class="space-y-1.5">
+            <div class="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 mx-auto flex items-center justify-center text-sm" [ngClass]="p.color">
+              <i [class]="'bi ' + p.icon"></i>
+            </div>
+            <div class="font-bold text-xs text-white leading-tight">{{ p.name }}</div>
+          </div>
+
+          <div class="mt-2.5 pt-2 border-t border-slate-800/80">
+            <div *ngIf="p.price === 0" class="text-emerald-400 font-black text-sm">مجاناً</div>
+            <div *ngIf="p.price > 0" class="text-white font-black text-xs sm:text-sm">
+              {{ isAnnual ? (p.annualOfferPrice > 0 ? p.annualOfferPrice : p.annualPrice) : p.price | number:'1.0-0' }} ج.م
+              <span class="text-[10px] text-slate-400 font-normal">/ {{ isAnnual ? 'سنة' : 'شهر' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SELECTED PLAN DETAIL BANNER -->
+      <div *ngIf="selectedPlan" class="p-3 rounded-2xl bg-slate-900/70 border border-slate-800 flex items-center justify-between text-xs">
+        <div class="space-y-0.5">
+          <div class="font-bold text-sky-400 flex items-center gap-1.5">
+            <span>الباقة المختارة: {{ selectedPlan.name }}</span>
+            <span class="text-[10px] px-2 py-0.2 rounded-full border" [ngClass]="selectedPlan.badgeBg">{{ selectedPlan.badge }}</span>
+          </div>
+          <p class="text-slate-400 text-[11px]">{{ selectedPlan.description }}</p>
+        </div>
+        <div class="text-left font-mono">
+          <span class="text-base font-black text-white">
+            {{ isFreePlan() ? 'مجاناً' : (getAmount() | number:'1.0-0') + ' ج.م' }}
+          </span>
+          <div *ngIf="!isFreePlan()" class="text-[10px] text-slate-400">
+            {{ isAnnual ? 'اشتراك سنوي (12 شهر)' : 'اشتراك شهري (30 يوم)' }}
+          </div>
+        </div>
+      </div>
+
+      <!-- FREE PLAN INSTANT UPGRADE OPTION -->
+      <div *ngIf="isFreePlan()" class="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-center space-y-3">
+        <div class="text-xs text-emerald-300 font-semibold leading-relaxed">
+          <i class="bi bi-gift-fill ml-1 text-emerald-400"></i>
+          هذه الخطة مجانية بالكامل. عند التأكيد سيتم تفعيل حسابك مباشرة دون أي رسوم أو انتظار.
+        </div>
+        <button (click)="submitUpgrade()" [disabled]="submitting" 
+                class="btn bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-2.5 rounded-xl text-xs font-black shadow-lg transition flex items-center justify-center gap-2 mx-auto">
+          <i *ngIf="submitting" class="bi bi-arrow-repeat animate-spin"></i>
+          <span *ngIf="!submitting">تأكيد التفعيل المجاني فوراً</span>
+          <span *ngIf="submitting">جاري التفعيل...</span>
+        </button>
+      </div>
+
+      <!-- PAID PLAN: PAYMENT NUMBER & FORM -->
+      <div *ngIf="!isFreePlan()" class="space-y-4">
+        
+        <!-- Payment Details Card (Vodafone Cash & InstaPay) -->
+        <div class="p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 via-slate-900 to-indigo-500/10 border border-amber-500/30 space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping"></span>
+              <span class="font-bold text-xs text-amber-300">طرق الدفع المعتمدة: فودافون كاش أو انستاباي InstaPay</span>
+            </div>
+            <span class="text-[10px] text-slate-400 font-semibold">تحويل فوري</span>
+          </div>
+
+          <!-- Transfer Number Box -->
+          <div class="p-3 rounded-xl bg-slate-950/80 border border-slate-700/80 flex items-center justify-between gap-3">
+            <div class="space-y-1">
+              <div class="text-[11px] text-slate-400">حول المبلغ المطلوب إلى الرقم التالي:</div>
+              <div class="font-mono text-base sm:text-lg font-black text-amber-400 tracking-wider flex items-center gap-2">
+                <span>{{ paymentNumber }}</span>
+                <span class="text-[10px] font-cairo text-slate-400 font-normal">(فودافون كاش / انستاباي)</span>
+              </div>
+              <div class="text-xs text-emerald-400 font-bold flex items-center gap-1">
+                <span>المبلغ المطلوب:</span>
+                <span class="text-sm font-black font-mono text-white">{{ getAmount() | number:'1.0-0' }} ج.م</span>
+              </div>
+            </div>
+
+            <button (click)="copyNumber()" type="button"
+                    class="btn btn-secondary btn-sm py-1.5 px-3 rounded-lg text-xs font-bold flex items-center gap-1.5 border-slate-700 text-slate-200 hover:text-white">
+              <i class="bi" [class.bi-check-lg]="copiedNumber" [class.bi-clipboard]="!copiedNumber" [class.text-emerald-400]="copiedNumber"></i>
+              <span>{{ copiedNumber ? 'تم النسخ!' : 'نسخ الرقم' }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Payment Confirmation Inputs Form -->
+        <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3">
+          <div class="font-bold text-xs text-slate-200">أدخل بيانات التحويل لتأكيد طلبك:</div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="form-group mb-0">
+              <label class="form-label text-xs">رقم الهاتف / الحساب المحول منه <span class="text-rose-400">*</span></label>
+              <input type="text" [(ngModel)]="senderPhone" name="senderPhone" class="form-control font-mono text-xs" placeholder="01xxxxxxxxx" required />
+            </div>
+
+            <div class="form-group mb-0">
+              <label class="form-label text-xs">توقيت التحويل <span class="text-rose-400">*</span></label>
+              <input type="datetime-local" [(ngModel)]="transferTime" name="transferTime" class="form-control font-mono text-xs" required />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="form-group mb-0">
+              <label class="form-label text-xs">رقم العملية أو المرجع (اختياري)</label>
+              <input type="text" [(ngModel)]="referenceNumber" name="referenceNumber" class="form-control font-mono text-xs" placeholder="Ref # أو رقم الحوالة" />
+            </div>
+
+            <div class="form-group mb-0">
+              <label class="form-label text-xs">ملاحظات إضافية (اختياري)</label>
+              <input type="text" [(ngModel)]="notes" name="notes" class="form-control text-xs" placeholder="اسم صاحب المحفظة أو ملاحظة" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Error Alert -->
+        <div *ngIf="errorMessage" class="bg-rose-500/10 border border-rose-500/30 text-rose-400 p-2.5 rounded-xl text-xs flex items-center gap-2">
+          <i class="bi bi-exclamation-octagon-fill text-sm shrink-0"></i>
+          <span>{{ errorMessage }}</span>
+        </div>
+
+        <!-- Action Button -->
+        <button (click)="submitUpgrade()" [disabled]="submitting"
+                class="btn btn-primary w-full py-3 text-xs sm:text-sm font-bold shadow-lg flex items-center justify-center gap-2">
+          <i *ngIf="submitting" class="bi bi-arrow-repeat animate-spin"></i>
+          <span *ngIf="!submitting">تأكيد وإرسال طلب الترقية للمراجعة</span>
+          <span *ngIf="submitting">جاري إرسال الطلب...</span>
+          <i *ngIf="!submitting" class="bi bi-send-fill"></i>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
