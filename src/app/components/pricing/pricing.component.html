@@ -171,17 +171,22 @@
           <thead>
             <tr>
               <th class="text-right w-2/5 min-w-[240px]">أقسام ومميزات المنظومة</th>
-              <th class="w-1/5 min-w-[130px] text-center bg-slate-900/60">الخطة المجانية</th>
+              <th class="w-1/5 min-w-[130px] text-center bg-slate-900/60">
+                <div class="flex flex-col items-center gap-0.5">
+                  <span>{{ plans[0].name }}</span>
+                  <span class="text-[10px] font-normal text-slate-400">{{ plans[0].badge }}</span>
+                </div>
+              </th>
               <th class="w-1/5 min-w-[130px] text-center bg-teal-950/20 text-teal-300 border-x border-teal-500/20">
                 <div class="flex flex-col items-center gap-0.5">
-                  <span>الخطة القياسية</span>
-                  <span class="text-[10px] font-normal text-teal-400">الأكثر طلباً</span>
+                  <span>{{ plans[1].name }}</span>
+                  <span class="text-[10px] font-normal text-teal-400">{{ plans[1].badge }}</span>
                 </div>
               </th>
               <th class="w-1/5 min-w-[130px] text-center bg-amber-950/20 text-amber-300">
                 <div class="flex flex-col items-center gap-0.5">
-                  <span>الخطة المميزة</span>
-                  <span class="text-[10px] font-normal text-amber-400">VIP شاملة</span>
+                  <span>{{ plans[2].name }}</span>
+                  <span class="text-[10px] font-normal text-amber-400">{{ plans[2].badge }}</span>
                 </div>
               </th>
             </tr>
@@ -267,25 +272,31 @@
             <button type="button" (click)="selectedMobilePlan = 'free'"
                     class="py-2 px-1 rounded-lg text-xs font-bold transition-all text-center flex flex-col items-center justify-center gap-0.5"
                     [ngClass]="selectedMobilePlan === 'free' ? 'bg-slate-800 text-white shadow-md border border-slate-600' : 'text-slate-400 hover:text-slate-200'">
-              <span>مجانية</span>
-              <span class="text-[10px] font-mono text-emerald-400">0 ج.م</span>
+              <span>{{ plans[0].name }}</span>
+              <span class="text-[10px] font-mono text-emerald-400">
+                {{ (isAnnual ? plans[0].yearlyPrice : plans[0].monthlyPrice) | number:'1.0-0' }} ج.م
+              </span>
             </button>
 
             <!-- Standard Tab -->
             <button type="button" (click)="selectedMobilePlan = 'standard'"
                     class="py-2 px-1 rounded-lg text-xs font-bold transition-all text-center flex flex-col items-center justify-center gap-0.5 relative"
                     [ngClass]="selectedMobilePlan === 'standard' ? 'bg-teal-600 text-white shadow-md border border-teal-400' : 'text-slate-400 hover:text-slate-200'">
-              <span class="absolute -top-2 px-1 rounded-full bg-amber-500 text-[8px] font-black text-slate-950">الأكثر طلباً</span>
-              <span>قياسية 🔥</span>
-              <span class="text-[10px] font-mono text-teal-100">400 ج.م</span>
+              <span *ngIf="plans[1].badge" class="absolute -top-2 px-1 rounded-full bg-amber-500 text-[8px] font-black text-slate-950">{{ plans[1].badge }}</span>
+              <span>{{ plans[1].name }}</span>
+              <span class="text-[10px] font-mono text-teal-100">
+                {{ (isAnnual ? plans[1].yearlyPrice : plans[1].monthlyPrice) | number:'1.0-0' }} ج.م
+              </span>
             </button>
 
             <!-- Premium Tab -->
             <button type="button" (click)="selectedMobilePlan = 'premium'"
                     class="py-2 px-1 rounded-lg text-xs font-bold transition-all text-center flex flex-col items-center justify-center gap-0.5"
                     [ngClass]="selectedMobilePlan === 'premium' ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow-md border border-amber-300 font-black' : 'text-slate-400 hover:text-slate-200'">
-              <span>مميزة 👑</span>
-              <span class="text-[10px] font-mono" [ngClass]="selectedMobilePlan === 'premium' ? 'text-slate-900 font-bold' : 'text-amber-400'">1,000 ج.م</span>
+              <span>{{ plans[2].name }}</span>
+              <span class="text-[10px] font-mono" [ngClass]="selectedMobilePlan === 'premium' ? 'text-slate-900 font-bold' : 'text-amber-400'">
+                {{ (isAnnual ? plans[2].yearlyPrice : plans[2].monthlyPrice) | number:'1.0-0' }} ج.م
+              </span>
             </button>
           </div>
 
@@ -343,7 +354,7 @@
                   <!-- Free -->
                   <div class="p-1.5 rounded-xl border flex flex-col items-center justify-center gap-1"
                        [ngClass]="getPlanStatus(row, 'free').cssClass">
-                    <span class="text-[9px] opacity-75 font-semibold">المجانية</span>
+                    <span class="text-[9px] opacity-75 font-semibold">{{ plans[0].name }}</span>
                     <div class="font-bold text-[10px] flex items-center gap-1">
                       <i *ngIf="getPlanStatus(row, 'free').isCheck" class="bi bi-check-circle-fill text-emerald-400"></i>
                       <i *ngIf="getPlanStatus(row, 'free').isCross" class="bi bi-x-circle text-rose-400"></i>
@@ -354,7 +365,7 @@
                   <!-- Standard -->
                   <div class="p-1.5 rounded-xl border flex flex-col items-center justify-center gap-1"
                        [ngClass]="getPlanStatus(row, 'standard').cssClass">
-                    <span class="text-[9px] opacity-75 font-semibold">القياسية 🔥</span>
+                    <span class="text-[9px] opacity-75 font-semibold">{{ plans[1].name }}</span>
                     <div class="font-bold text-[10px] flex items-center gap-1">
                       <i *ngIf="getPlanStatus(row, 'standard').isCheck" class="bi bi-check-circle-fill text-emerald-400"></i>
                       <i *ngIf="getPlanStatus(row, 'standard').isCross" class="bi bi-x-circle text-rose-400"></i>
@@ -365,7 +376,7 @@
                   <!-- Premium -->
                   <div class="p-1.5 rounded-xl border flex flex-col items-center justify-center gap-1"
                        [ngClass]="getPlanStatus(row, 'premium').cssClass">
-                    <span class="text-[9px] opacity-75 font-semibold">المميزة 👑</span>
+                    <span class="text-[9px] opacity-75 font-semibold">{{ plans[2].name }}</span>
                     <div class="font-bold text-[10px] flex items-center gap-1">
                       <i *ngIf="getPlanStatus(row, 'premium').isCheck" class="bi bi-check-circle-fill text-emerald-400"></i>
                       <i *ngIf="getPlanStatus(row, 'premium').isCross" class="bi bi-x-circle text-rose-400"></i>
