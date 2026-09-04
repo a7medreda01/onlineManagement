@@ -171,19 +171,21 @@
                  [alt]="pageData()?.title" 
                  class="w-full h-80 sm:h-[420px] object-contain transition-all duration-300 group-hover:scale-105 drop-shadow-md">
             
-            <!-- Badges -->
-            <div class="absolute top-4 right-4 flex flex-col gap-2 z-10">
-              <span *ngIf="pageData()?.badge" class="bg-rose-600 text-white font-black text-xs sm:text-sm px-3.5 py-1.5 rounded-full shadow-md">
-                {{ pageData()?.badge }}
-              </span>
-              <span *ngIf="discountPercentage > 0" class="bg-amber-400 text-slate-950 font-black text-xs px-3 py-1 rounded-full shadow-sm">
-                وفر {{ discountPercentage }}%
-              </span>
-            </div>
+            <!-- Clean Badges Bar (Non-overlapping) -->
+            <div class="absolute top-3 inset-x-3 flex items-center justify-between gap-2 z-10 pointer-events-none">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span *ngIf="pageData()?.badge" class="bg-rose-600 text-white font-black text-xs px-3 py-1 rounded-full shadow-md pointer-events-auto">
+                  {{ pageData()?.badge }}
+                </span>
+                <span *ngIf="discountPercentage > 0" class="bg-amber-400 text-slate-950 font-black text-xs px-2.5 py-0.5 rounded-full shadow-sm pointer-events-auto">
+                  وفر {{ discountPercentage }}%
+                </span>
+              </div>
 
-            <div class="absolute top-4 left-4 bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold px-3 py-1 rounded-full shadow-sm flex items-center gap-1">
-              <i class="bi bi-shield-check"></i>
-              <span>أصلي 100%</span>
+              <div class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1 pointer-events-auto flex-shrink-0">
+                <i class="bi bi-patch-check-fill text-emerald-600"></i>
+                <span>أصلي 100%</span>
+              </div>
             </div>
 
             <!-- Carousel Navigation Arrows -->
