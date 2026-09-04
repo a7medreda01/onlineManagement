@@ -74,6 +74,21 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
     this.selectImage(prevIdx);
   }
 
+  // Shoe / Apparel Size Selection (Behance E-commerce style)
+  selectedSize = signal<string>('42');
+  sizes = ['40', '41', '42', '43', '44', '45'];
+
+  selectSize(s: string): void {
+    this.selectedSize.set(s);
+  }
+
+  getStoreCatalogLink(): any[] {
+    if (getSubdomain()) {
+      return ['/'];
+    }
+    return ['/store', this.subdomain];
+  }
+
   // Countdown timer state
   timerHours = 2;
   timerMinutes = 43;
@@ -358,6 +373,10 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
     if (!this.orderForm.address.trim()) {
       alert('يرجى كتابة العنوان بالتفصيل لضمان سرعة التوصيل');
       return;
+    }
+
+    if (this.selectedSize() && !this.orderForm.notes?.includes('المقاس:')) {
+      this.orderForm.notes = `المقاس المختار: ${this.selectedSize()}` + (this.orderForm.notes ? ` | ${this.orderForm.notes}` : '');
     }
 
     this.submitting.set(true);

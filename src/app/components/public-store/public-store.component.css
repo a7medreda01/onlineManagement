@@ -1,22 +1,24 @@
-/* Scoped isolation for Public Storefront */
+/* Modern Light Mode Boutique Storefront - Behance E-commerce Aesthetics */
 .store-catalog-wrapper {
-  background-color: #070b14;
-  color: #f1f5f9;
+  background-color: #f8fafc;
+  color: #0f172a;
   min-height: 100vh;
-  font-family: 'Cairo', system-ui, sans-serif;
+  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+  direction: rtl;
+  text-align: right;
 }
 
 .store-hero-banner {
   position: relative;
-  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 50%, #f8fafc 100%);
   overflow: hidden;
 }
 
 .store-cover-box {
   position: relative;
   width: 100%;
-  height: 240px;
-  background: #0f172a;
+  height: 260px;
+  background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%);
 }
 
 .store-cover-img {
@@ -29,95 +31,102 @@
 .store-cover-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(7, 11, 20, 0.1) 0%, rgba(7, 11, 20, 0.85) 80%, rgba(7, 11, 20, 1) 100%);
+  background: linear-gradient(to bottom, rgba(15, 23, 42, 0.15) 0%, rgba(15, 23, 42, 0.45) 80%, rgba(248, 250, 252, 0.95) 100%);
 }
 
 .store-profile-card {
   position: relative;
-  margin-top: -70px;
+  margin-top: -80px;
   z-index: 10;
-  background: rgba(17, 24, 39, 0.9);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 1.5rem;
-  padding: 1.75rem;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.6);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 2rem;
+  padding: 2rem;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.07), 0 0 1px 1px rgba(0, 0, 0, 0.04);
 }
 
 .store-logo {
-  width: 96px;
-  height: 96px;
+  width: 100px;
+  height: 100px;
   border-radius: 9999px;
-  border: 3px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.5);
-  background: #1e293b;
+  border: 4px solid #ffffff;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12);
+  background: #f8fafc;
   object-fit: cover;
 }
 
 .store-title {
-  color: #ffffff !important;
-  font-weight: 800;
-  font-size: 1.65rem;
+  color: #0f172a !important;
+  font-weight: 900;
+  font-size: 1.85rem;
   line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 
 .store-bio {
-  color: #94a3b8 !important;
-  font-size: 0.92rem;
-  max-width: 650px;
-  line-height: 1.5;
+  color: #475569 !important;
+  font-size: 0.96rem;
+  max-width: 680px;
+  line-height: 1.6;
 }
 
 .product-card-luxury {
-  background: #111827;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 1.25rem;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1.5rem;
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
   height: 100%;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
 }
 
 .product-card-luxury:hover {
-  transform: translateY(-6px);
-  border-color: rgba(14, 165, 233, 0.4);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 0 20px rgba(14, 165, 233, 0.15);
+  transform: translateY(-8px);
+  border-color: #cbd5e1;
+  box-shadow: 0 25px 35px -10px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
 }
 
 .product-thumb {
-  height: 220px;
+  height: 240px;
   width: 100%;
-  object-fit: cover;
-  background: #1e293b;
+  object-fit: contain;
+  background: #f8fafc;
+  padding: 1rem;
+  transition: transform 0.4s ease;
+}
+
+.product-card-luxury:hover .product-thumb {
+  transform: scale(1.05);
 }
 
 .badge-tag {
-  background: rgba(245, 158, 11, 0.15);
-  color: #fbbf24;
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
   font-weight: 700;
-  padding: 0.25rem 0.75rem;
+  padding: 0.3rem 0.85rem;
   border-radius: 9999px;
-  font-size: 0.75rem;
+  font-size: 0.78rem;
 }
 
-.search-input-dark {
-  background: #1e293b;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #f8fafc;
+.search-input-light {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #0f172a;
   border-radius: 9999px;
-  padding: 0.65rem 1.25rem 0.65rem 2.75rem;
+  padding: 0.75rem 1.25rem 0.75rem 2.85rem;
   width: 100%;
   outline: none;
-  transition: border-color 0.2s;
-  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  font-size: 0.92rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
-.search-input-dark:focus {
-  border-color: #0ea5e9;
-  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
+.search-input-light:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
 }
 
 .line-clamp-2 {
