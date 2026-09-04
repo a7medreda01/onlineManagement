@@ -663,12 +663,51 @@
           </div>
 
           <div *ngIf="!generatingAi()">
-            <div class="alert alert-success d-flex align-items-center gap-2 rounded-3 border-0 bg-success bg-opacity-20 text-success mb-4">
-              <i class="bi bi-check-circle-fill fs-5"></i>
-              <span>تم توليد صفحة الهبوط بنجاح! يمكنك الآن مراجعة التفاصيل وتعديلها قبل النشر المباشر.</span>
+            <div class="alert alert-success d-flex align-items-center justify-content-between gap-2 rounded-3 border-0 bg-success bg-opacity-20 text-success mb-3 p-3">
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-check-circle-fill fs-5"></i>
+                <span class="fw-bold">تم تجهيز صفحة الهبوط بالذكاء الاصطناعي! يمكنك تعديل كل تفصيلة فيها بحرية تامة:</span>
+              </div>
+              <span class="badge bg-success rounded-pill px-3 py-1">محرر تفاعلي كامل 🎨</span>
             </div>
 
-            <div class="row g-4">
+            <!-- Visual Editor Sub-Tabs -->
+            <ul class="nav nav-pills nav-fill mb-3 bg-slate-900 p-1 rounded-3 border border-slate-800">
+              <li class="nav-item">
+                <button type="button" (click)="editorTab = 'general'" class="nav-link rounded-pill py-2 small fw-bold" [class.active]="editorTab === 'general'" [class.text-white]="editorTab !== 'general'">
+                  <i class="bi bi-pencil-square me-1"></i> البيانات والأسعار
+                </button>
+              </li>
+              <li class="nav-item">
+                <button type="button" (click)="editorTab = 'images'" class="nav-link rounded-pill py-2 small fw-bold position-relative" [class.active]="editorTab === 'images'" [class.text-white]="editorTab !== 'images'">
+                  <i class="bi bi-images me-1"></i> الصور والسلايدر
+                  <span *ngIf="generatedPreview.images?.length" class="badge bg-info text-dark rounded-pill ms-1">{{ generatedPreview.images?.length }}</span>
+                </button>
+              </li>
+              <li class="nav-item">
+                <button type="button" (click)="editorTab = 'features'" class="nav-link rounded-pill py-2 small fw-bold" [class.active]="editorTab === 'features'" [class.text-white]="editorTab !== 'features'">
+                  <i class="bi bi-stars me-1"></i> المميزات والمواصفات
+                </button>
+              </li>
+              <li class="nav-item">
+                <button type="button" (click)="editorTab = 'why'" class="nav-link rounded-pill py-2 small fw-bold" [class.active]="editorTab === 'why'" [class.text-white]="editorTab !== 'why'">
+                  <i class="bi bi-lightbulb me-1"></i> المشكلة والحل
+                </button>
+              </li>
+              <li class="nav-item">
+                <button type="button" (click)="editorTab = 'reviews'" class="nav-link rounded-pill py-2 small fw-bold" [class.active]="editorTab === 'reviews'" [class.text-white]="editorTab !== 'reviews'">
+                  <i class="bi bi-chat-heart me-1"></i> آراء المشترين
+                </button>
+              </li>
+              <li class="nav-item">
+                <button type="button" (click)="editorTab = 'faq'" class="nav-link rounded-pill py-2 small fw-bold" [class.active]="editorTab === 'faq'" [class.text-white]="editorTab !== 'faq'">
+                  <i class="bi bi-question-circle me-1"></i> الأسئلة الشائعة
+                </button>
+              </li>
+            </ul>
+
+            <!-- TAB 1: GENERAL & PRICING -->
+            <div *ngIf="editorTab === 'general'" class="row g-4">
               <div class="col-12 col-md-6">
                 <div class="mb-3">
                   <label class="form-label fw-bold small">عنوان صفحة الهبوط (Title)</label>
@@ -689,6 +728,11 @@
                 </div>
 
                 <div class="mb-3">
+                  <label class="form-label fw-bold small">السطر الفرعي المقنع (Subheadline)</label>
+                  <textarea [(ngModel)]="generatedPreview.subheadline" rows="2" class="form-control rounded-3 bg-dark text-white border-slate-700"></textarea>
+                </div>
+
+                <div class="mb-3">
                   <label class="form-label fw-bold small">بادج العرض التسويقي (Badge)</label>
                   <input type="text" [(ngModel)]="generatedPreview.badge" class="form-control rounded-3 bg-dark text-white border-slate-700" placeholder="🔥 عرض خاص لفترة محدودة">
                 </div>
@@ -706,8 +750,8 @@
                   </div>
                 </div>
 
-                <div class="card p-3 rounded-4 bg-slate-900 border border-slate-800">
-                  <h6 class="fw-bold mb-2 text-warning">روابط المعاينة المباشرة:</h6>
+                <div class="card p-3 rounded-4 bg-slate-900 border border-slate-800 mb-3">
+                  <h6 class="fw-bold mb-2 text-warning">روابط الصفحة بعد النشر:</h6>
                   <div class="small" dir="ltr">
                     <div class="text-info text-truncate mb-1">
                       {{ settings()?.subdomain }}.besnesy.com/{{ generatedPreview.slug }}
@@ -717,8 +761,184 @@
                     </div>
                   </div>
                 </div>
+
+                <div class="card p-3 rounded-4 bg-slate-900 border border-slate-800">
+                  <h6 class="fw-bold mb-2 text-white">إعدادات الشحن:</h6>
+                  <div class="d-flex items-center gap-2 mb-2">
+                    <input class="form-check-input" type="checkbox" [(ngModel)]="aiRequest.isFreeShipping" id="freeShipEditor">
+                    <label class="form-check-label text-white small" for="freeShipEditor">شحن مجاني لكافة المحافظات</label>
+                  </div>
+                  <div *ngIf="!aiRequest.isFreeShipping">
+                    <label class="form-label small text-white-50">قيمة مصاريف الشحن (ج.م)</label>
+                    <input type="number" [(ngModel)]="aiRequest.customShippingCost" class="form-control form-control-sm bg-dark text-white border-slate-700" placeholder="مثال: 45">
+                  </div>
+                </div>
               </div>
             </div>
+
+            <!-- TAB 2: IMAGES MANAGER (CAROUSEL SLIDER) -->
+            <div *ngIf="editorTab === 'images'">
+              <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                <p class="text-white-50 small mb-0">يمكنك رفع صور إضافية من جهازك أو لصق روابط، وحذف أو تعيين صورة كغلاف رئيسي للسلايدر.</p>
+                <div class="d-flex gap-2">
+                  <input type="file" #editorImageInput (change)="onProductImageUploaded($event)" accept="image/*" class="d-none">
+                  <button type="button" (click)="editorImageInput.click()" [disabled]="uploadingProductImage()" class="btn btn-primary btn-sm rounded-pill">
+                    <span *ngIf="uploadingProductImage()" class="spinner-border spinner-border-sm me-1"></span>
+                    <i *ngIf="!uploadingProductImage()" class="bi bi-cloud-arrow-up me-1"></i>
+                    <span>رفع صورة من الجهاز</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Paste image link row -->
+              <div class="input-group mb-4">
+                <input type="url" [(ngModel)]="manualImageUrl" class="form-control bg-dark text-white border-slate-700" placeholder="أو أدخل رابط صورة مباشر (URL)...">
+                <button (click)="addManualProductImage()" type="button" class="btn btn-outline-info">
+                  <i class="bi bi-plus-lg me-1"></i> إضافة الرابط
+                </button>
+              </div>
+
+              <!-- Images Grid -->
+              <div class="row g-3">
+                <div *ngFor="let img of generatedPreview.images; let idx = index" class="col-6 col-md-3">
+                  <div class="card h-100 bg-slate-900 border border-slate-800 rounded-3 overflow-hidden position-relative group">
+                    <img [src]="img" class="card-img-top object-fit-cover" style="height: 140px;" alt="product thumb">
+                    
+                    <span *ngIf="idx === 0" class="position-absolute top-0 start-0 m-2 badge bg-success">
+                      الرئيسية ⭐
+                    </span>
+
+                    <div class="card-body p-2 d-flex justify-content-between align-items-center">
+                      <button *ngIf="idx > 0" (click)="setAsMainImage(idx)" type="button" class="btn btn-xs btn-outline-light py-0 px-2 small text-xs" title="تعيين كصورة رئيسية">
+                        تعيين كرئيسية
+                      </button>
+                      <div *ngIf="idx === 0"></div>
+                      <button (click)="removeProductImage(idx)" type="button" class="btn btn-xs btn-outline-danger py-0 px-2 text-xs" title="حذف">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div *ngIf="!generatedPreview.images?.length" class="col-12 text-center py-4 bg-slate-900 rounded-3 border border-slate-800">
+                  <i class="bi bi-image text-white-50 fs-2 d-block mb-2"></i>
+                  <span class="text-white-50 small">لا توجد صور مضافة، يرجى رفع صورة أو إضافة رابط.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 3: FEATURES & SPECS -->
+            <div *ngIf="editorTab === 'features'">
+              <div class="d-flex align-items-center justify-content-between mb-3">
+                <p class="text-white-50 small mb-0">المميزات والمواصفات الفنية المستخرجة بالذكاء الاصطناعي والتي تعرض في بطاقات الصفحة:</p>
+                <button (click)="addFeature()" type="button" class="btn btn-outline-success btn-sm rounded-pill">
+                  <i class="bi bi-plus-lg me-1"></i> إضافة ميزة جديدة
+                </button>
+              </div>
+
+              <div class="row g-3">
+                <div *ngFor="let feat of editableFeatures; let i = index" class="col-12 col-md-6">
+                  <div class="card bg-slate-900 border border-slate-800 rounded-3 p-3 position-relative">
+                    <button (click)="removeFeature(i)" type="button" class="btn btn-sm btn-link text-danger position-absolute top-0 end-0 m-2 p-1" title="حذف الميزة">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                    <div class="mb-2 pe-4">
+                      <label class="form-label text-white-50 small mb-1">عنوان الميزة</label>
+                      <input type="text" [(ngModel)]="feat.title" class="form-control form-control-sm bg-dark text-white border-slate-700">
+                    </div>
+                    <div>
+                      <label class="form-label text-white-50 small mb-1">الشرح التفصيلي</label>
+                      <textarea [(ngModel)]="feat.description" rows="2" class="form-control form-control-sm bg-dark text-white border-slate-700"></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 4: PAIN POINTS / WHY CHOOSE US -->
+            <div *ngIf="editorTab === 'why'">
+              <div class="d-flex align-items-center justify-content-between mb-3">
+                <p class="text-white-50 small mb-0">نقاط "المشكلة والحل" لإقناع العميل بأهمية الشراء وتفوق منتجك:</p>
+                <button (click)="addWhyItem()" type="button" class="btn btn-outline-warning btn-sm rounded-pill text-white">
+                  <i class="bi bi-plus-lg me-1"></i> إضافة مقارنة
+                </button>
+              </div>
+
+              <div class="space-y-3">
+                <div *ngFor="let w of editableWhyChooseUs; let i = index" class="card bg-slate-900 border border-slate-800 rounded-3 p-3 position-relative mb-2">
+                  <button (click)="removeWhyItem(i)" type="button" class="btn btn-sm btn-link text-danger position-absolute top-0 end-0 m-2 p-1">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                  <div class="mb-2 pe-4">
+                    <label class="form-label text-white-50 small mb-1">العنوان أو المشكلة</label>
+                    <input type="text" [(ngModel)]="w.title" class="form-control form-control-sm bg-dark text-white border-slate-700">
+                  </div>
+                  <div>
+                    <label class="form-label text-white-50 small mb-1">الحل وميزة المنتج</label>
+                    <textarea [(ngModel)]="w.text" rows="2" class="form-control form-control-sm bg-dark text-white border-slate-700"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 5: CUSTOMER REVIEWS -->
+            <div *ngIf="editorTab === 'reviews'">
+              <div class="d-flex align-items-center justify-content-between mb-3">
+                <p class="text-white-50 small mb-0">تجارب وتقييمات المشترين (تظهر مع 5 نجوم وعلامة مشتري معتمد):</p>
+                <button (click)="addReview()" type="button" class="btn btn-outline-success btn-sm rounded-pill">
+                  <i class="bi bi-plus-lg me-1"></i> إضافة تقييم عميل
+                </button>
+              </div>
+
+              <div class="row g-3">
+                <div *ngFor="let rev of editableReviews; let i = index" class="col-12 col-md-4">
+                  <div class="card bg-slate-900 border border-slate-800 rounded-3 p-3 position-relative">
+                    <button (click)="removeReview(i)" type="button" class="btn btn-sm btn-link text-danger position-absolute top-0 end-0 m-1 p-1">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                    <div class="mb-2 pe-3">
+                      <label class="form-label text-white-50 small mb-1">اسم العميل</label>
+                      <input type="text" [(ngModel)]="rev.name" class="form-control form-control-sm bg-dark text-white border-slate-700">
+                    </div>
+                    <div class="mb-2">
+                      <label class="form-label text-white-50 small mb-1">المدينة</label>
+                      <input type="text" [(ngModel)]="rev.city" class="form-control form-control-sm bg-dark text-white border-slate-700">
+                    </div>
+                    <div>
+                      <label class="form-label text-white-50 small mb-1">الرأي / التعليق</label>
+                      <textarea [(ngModel)]="rev.comment" rows="2" class="form-control form-control-sm bg-dark text-white border-slate-700"></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 6: FAQS -->
+            <div *ngIf="editorTab === 'faq'">
+              <div class="d-flex align-items-center justify-content-between mb-3">
+                <p class="text-white-50 small mb-0">الأسئلة الشائعة وإجاباتها لتبديد مخاوف العميل وتأكيد سهولة المعاينة والشحن:</p>
+                <button (click)="addFaq()" type="button" class="btn btn-outline-info btn-sm rounded-pill">
+                  <i class="bi bi-plus-lg me-1"></i> إضافة سؤال جديد
+                </button>
+              </div>
+
+              <div class="space-y-3">
+                <div *ngFor="let q of editableFaqs; let i = index" class="card bg-slate-900 border border-slate-800 rounded-3 p-3 position-relative mb-2">
+                  <button (click)="removeFaq(i)" type="button" class="btn btn-sm btn-link text-danger position-absolute top-0 end-0 m-2 p-1">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                  <div class="mb-2 pe-4">
+                    <label class="form-label text-white-50 small mb-1">السؤال</label>
+                    <input type="text" [(ngModel)]="q.question" class="form-control form-control-sm bg-dark text-white border-slate-700">
+                  </div>
+                  <div>
+                    <label class="form-label text-white-50 small mb-1">الإجابة</label>
+                    <textarea [(ngModel)]="q.answer" rows="2" class="form-control form-control-sm bg-dark text-white border-slate-700"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>

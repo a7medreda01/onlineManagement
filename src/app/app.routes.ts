@@ -1,4 +1,4 @@
-import { Routes } from '@angular/router';
+import { Routes, CanMatchFn } from '@angular/router';
 import { authGuard, adminGuard, managerGuard, financialGuard, loginGuard } from './guards/auth.guard';
 import { superAdminGuard } from './guards/super-admin.guard';
 import { LoginComponent } from './components/login/login.component';
@@ -32,9 +32,37 @@ import { PricingComponent } from './components/pricing/pricing.component';
 import { StorefrontComponent } from './components/storefront/storefront.component';
 import { PublicStoreComponent } from './components/public-store/public-store.component';
 import { PublicLandingPageComponent } from './components/public-store/public-landing-page.component';
+import { getSubdomain } from './utils/subdomain.util';
+
+export const isSubdomainActive: CanMatchFn = () => !!getSubdomain();
+export const isMainDomainActive: CanMatchFn = () => !getSubdomain();
 
 export const routes: Routes = [
-  { path: '', component: LandingComponent },
+  // When accessed via merchant subdomain (e.g. seven.besnesy.com)
+  // Clean redirect legacy /store/subdomain paths to clean root paths
+  {
+    path: 'store/:subdomain/:slug',
+    canMatch: [isSubdomainActive],
+    redirectTo: ':slug'
+  },
+  {
+    path: 'store/:subdomain',
+    canMatch: [isSubdomainActive],
+    redirectTo: ''
+  },
+  // Direct subdomain root -> directly load the merchant store catalog!
+  {
+    path: '',
+    canMatch: [isSubdomainActive],
+    component: PublicStoreComponent
+  },
+
+  // When accessed via main platform domain (besnesy.com / www.besnesy.com)
+  {
+    path: '',
+    canMatch: [isMainDomainActive],
+    component: LandingComponent
+  },
   { path: 'pricing', component: PricingComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'activate-account', component: ActivateComponent },

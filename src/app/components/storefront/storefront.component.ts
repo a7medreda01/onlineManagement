@@ -339,6 +339,143 @@ export class StorefrontComponent implements OnInit {
   // AI Landing Page Wizard Actions
   // ==========================================
 
+  // Visual Editor State
+  editorTab: 'general' | 'images' | 'features' | 'why' | 'reviews' | 'faq' = 'general';
+  editableFeatures: Array<{ title: string; description: string; icon: string }> = [];
+  editableWhyChooseUs: Array<{ title: string; text: string }> = [];
+  editableReviews: Array<{ name: string; city: string; rating: number; comment: string }> = [];
+  editableFaqs: Array<{ question: string; answer: string }> = [];
+  uploadingProductImage = signal<boolean>(false);
+  manualImageUrl = '';
+
+  initEditableContent(contentJson?: string): void {
+    try {
+      const raw = JSON.parse(contentJson || '{}');
+      this.editableFeatures = (raw.features || raw.benefits || []).map((f: any) => ({
+        title: f.title || '',
+        description: f.description || '',
+        icon: f.icon || 'bi-shield-check'
+      }));
+      if (this.editableFeatures.length === 0) {
+        this.editableFeatures = [
+          { title: 'جودة استثنائية وخامات ممتازة', description: 'مصنوع بأعلى المعايير لضمان أفضل تجربة استخدام واعتمادية تدوم طويلاً.', icon: 'bi-shield-check' },
+          { title: 'أداء عملي وسرعة استجابة', description: 'تصميم مبتكر يوفر الوقت والجهد ويفي بجميع متطلباتك اليومية.', icon: 'bi-lightning-charge-fill' }
+        ];
+      }
+
+      this.editableWhyChooseUs = (raw.whyChooseUs || raw.painPoints || []).map((w: any) => ({
+        title: w.title || w.problem || '',
+        text: w.text || w.solution || ''
+      }));
+      if (this.editableWhyChooseUs.length === 0) {
+        this.editableWhyChooseUs = [
+          { title: 'تجنب المنتجات الرديئة والمقلدة', text: 'نضمن لك الحصول على النسخة الأصلية 100% مع الفحص والمعاينة قبل الدفع.' }
+        ];
+      }
+
+      this.editableReviews = (raw.customerReviews || raw.testimonials || []).map((r: any) => ({
+        name: r.name || 'عميل معتمد',
+        city: r.city || 'القاهرة',
+        rating: r.rating || 5,
+        comment: r.comment || r.review || 'منتج ممتاز جداً وتوصيل سريع وتغليف شيك.'
+      }));
+      if (this.editableReviews.length === 0) {
+        this.editableReviews = [
+          { name: 'كريم سامي', city: 'القاهرة', rating: 5, comment: 'المنتج فاق توقعاتي ووصل في نفس اليوم، شكراً لكم.' }
+        ];
+      }
+
+      this.editableFaqs = (raw.faq || raw.faqs || []).map((q: any) => ({
+        question: q.question || '',
+        answer: q.answer || ''
+      }));
+      if (this.editableFaqs.length === 0) {
+        this.editableFaqs = [
+          { question: 'هل يمكنني معاينة المنتج قبل الاستلام والدفع؟', answer: 'نعم بالتأكيد! يمكنك فحص الشحنة مع المندوب قبل دفع أي مبالغ.' }
+        ];
+      }
+    } catch {
+      this.editableFeatures = [];
+      this.editableWhyChooseUs = [];
+      this.editableReviews = [];
+      this.editableFaqs = [];
+    }
+  }
+
+  addFeature(): void {
+    this.editableFeatures.push({ title: 'ميزة جديدة', description: 'شرح تفصيلي للميزة وفوائدها للعميل.', icon: 'bi-check-circle-fill' });
+  }
+
+  removeFeature(index: number): void {
+    this.editableFeatures.splice(index, 1);
+  }
+
+  addWhyItem(): void {
+    this.editableWhyChooseUs.push({ title: 'المشكلة والحل', text: 'كيف يقضي هذا المنتج على المشكلة تماماً مقارنة بالبدائل.' });
+  }
+
+  removeWhyItem(index: number): void {
+    this.editableWhyChooseUs.splice(index, 1);
+  }
+
+  addReview(): void {
+    this.editableReviews.push({ name: 'اسم العميل', city: 'القاهرة', rating: 5, comment: 'رأي العميل في جودة المنتج والخدمة.' });
+  }
+
+  removeReview(index: number): void {
+    this.editableReviews.splice(index, 1);
+  }
+
+  addFaq(): void {
+    this.editableFaqs.push({ question: 'سؤال شائع جديد؟', answer: 'إجابة واضحة ومطمئنة للعميل تشجعه على الشراء.' });
+  }
+
+  removeFaq(index: number): void {
+    this.editableFaqs.splice(index, 1);
+  }
+
+  onProductImageUploaded(event: any): void {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    this.uploadingProductImage.set(true);
+    this.storefrontService.uploadMedia(file).subscribe({
+      next: (res) => {
+        this.uploadingProductImage.set(false);
+        if (!this.generatedPreview.images) this.generatedPreview.images = [];
+        this.generatedPreview.images.push(res.url);
+        this.notificationService.success('تم رفع الصورة بنجاح وإضافتها لسلايدر المنتج');
+      },
+      error: (err) => {
+        this.uploadingProductImage.set(false);
+        this.notificationService.error(err?.error?.Message || 'فشل رفع الصورة');
+      }
+    });
+  }
+
+  addManualProductImage(): void {
+    if (this.manualImageUrl?.trim()) {
+      if (!this.generatedPreview.images) this.generatedPreview.images = [];
+      this.generatedPreview.images.push(this.manualImageUrl.trim());
+      this.manualImageUrl = '';
+      this.notificationService.success('تمت إضافة الصورة بنجاح');
+    }
+  }
+
+  removeProductImage(index: number): void {
+    if (this.generatedPreview.images && this.generatedPreview.images.length > index) {
+      this.generatedPreview.images.splice(index, 1);
+    }
+  }
+
+  setAsMainImage(index: number): void {
+    if (this.generatedPreview.images && this.generatedPreview.images.length > index && index > 0) {
+      const img = this.generatedPreview.images.splice(index, 1)[0];
+      this.generatedPreview.images.unshift(img);
+      this.notificationService.success('تم تعيين الصورة كغلاف رئيسي للمنتج');
+    }
+  }
+
   openAiWizard(existingPage?: ProductLandingPage): void {
     if (!this.isVip()) {
       this.showUpgradeModal = true;
@@ -377,10 +514,13 @@ export class StorefrontComponent implements OnInit {
         images: this.aiRequest.images
       };
 
+      this.initEditableContent(existingPage.contentJson);
+      this.editorTab = 'general';
       this.wizardStep = 3;
     } else {
       this.editingPageId = null;
       this.wizardStep = 1;
+      this.editorTab = 'general';
       this.aiRequest = {
         selectedProductId: null,
         productName: '',
@@ -468,6 +608,8 @@ export class StorefrontComponent implements OnInit {
           contentJson: res.contentJson,
           images: productImages
         };
+        this.initEditableContent(res.contentJson);
+        this.editorTab = 'general';
         this.generatingAi.set(false);
         this.notificationService.success('تم توليد محتوى صفحة الهبوط وتصميمها بنجاح 🪄');
       },
@@ -487,6 +629,22 @@ export class StorefrontComponent implements OnInit {
 
     this.savingPage.set(true);
 
+    const contentPayload = {
+      features: this.editableFeatures,
+      benefits: this.editableFeatures,
+      whyChooseUs: this.editableWhyChooseUs,
+      customerReviews: this.editableReviews,
+      testimonials: this.editableReviews,
+      faq: this.editableFaqs,
+      faqs: this.editableFaqs,
+      guarantees: [
+        "ضمان جودة وأصالة 100%",
+        "معاينة كاملة قبل دفع أي مليم",
+        "شحن سريع وآمن لباب المنزل",
+        "استبدال واسترجاع مجاني لمدة 14 يوماً"
+      ]
+    };
+
     const payload = {
       productId: this.aiRequest.selectedProductId,
       slug: this.generatedPreview.slug.trim().toLowerCase().replace(/[^a-z0-9-]/g, ''),
@@ -496,7 +654,7 @@ export class StorefrontComponent implements OnInit {
       badge: this.generatedPreview.badge,
       niche: this.generatedPreview.niche,
       themeConfigJson: this.generatedPreview.themeConfigJson || '{}',
-      contentJson: this.generatedPreview.contentJson || '{}',
+      contentJson: JSON.stringify(contentPayload),
       mediaUrlsJson: JSON.stringify(this.generatedPreview.images || []),
       sellingPrice: this.generatedPreview.suggestedPrice || 399,
       originalPrice: this.generatedPreview.suggestedOriginalPrice || 599,

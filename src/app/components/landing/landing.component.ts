@@ -103,7 +103,7 @@ export class LandingComponent implements OnInit {
   ngOnInit(): void {
     const sub = getSubdomain();
     if (sub) {
-      this.router.navigate(['/store', sub], { replaceUrl: true });
+      this.router.navigate(['/'], { replaceUrl: true });
       return;
     }
 

@@ -156,14 +156,14 @@
         
         <!-- Gallery Column (Right on RTL) -->
         <div class="lg:col-span-6 flex flex-col items-center">
-          <!-- Main Product Image Frame -->
-          <div class="w-full relative rounded-3xl overflow-hidden bg-slate-900 border border-slate-700/80 shadow-2xl group mb-4">
+          <!-- Main Product Image Frame (Carousel Slider) -->
+          <div class="w-full relative rounded-3xl overflow-hidden bg-slate-900 border border-slate-700/80 shadow-2xl group mb-4 select-none">
             <img [src]="selectedImage" 
                  [alt]="pageData()?.title" 
-                 class="w-full h-80 sm:h-[460px] object-contain p-4 transition-transform duration-500 group-hover:scale-105">
+                 class="w-full h-80 sm:h-[460px] object-contain p-4 transition-all duration-300 group-hover:scale-105">
             
             <!-- Badges -->
-            <div class="absolute top-4 right-4 flex flex-col gap-2">
+            <div class="absolute top-4 right-4 flex flex-col gap-2 z-10">
               <span *ngIf="pageData()?.badge" class="bg-gradient-to-r from-red-600 to-rose-600 text-white font-black text-xs sm:text-sm px-3.5 py-1.5 rounded-full shadow-lg">
                 {{ pageData()?.badge }}
               </span>
@@ -171,16 +171,37 @@
                 خصم {{ discountPercentage }}%
               </span>
             </div>
+
+            <!-- Carousel Navigation Arrows -->
+            <div *ngIf="images.length > 1" class="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-3 pointer-events-none z-10">
+              <button (click)="nextImage()" 
+                      type="button" 
+                      class="pointer-events-auto w-11 h-11 rounded-full bg-slate-950/70 hover:bg-slate-900 text-white flex items-center justify-center backdrop-blur-md border border-white/20 shadow-lg transition hover:scale-110 active:scale-95" 
+                      title="الصورة التالية">
+                <i class="bi bi-chevron-left text-lg"></i>
+              </button>
+              <button (click)="prevImage()" 
+                      type="button" 
+                      class="pointer-events-auto w-11 h-11 rounded-full bg-slate-950/70 hover:bg-slate-900 text-white flex items-center justify-center backdrop-blur-md border border-white/20 shadow-lg transition hover:scale-110 active:scale-95" 
+                      title="الصورة السابقة">
+                <i class="bi bi-chevron-right text-lg"></i>
+              </button>
+            </div>
+
+            <!-- Image Counter Badge -->
+            <div *ngIf="images.length > 1" class="absolute bottom-4 left-4 bg-slate-950/80 backdrop-blur-md text-white border border-white/10 text-xs font-mono font-bold px-3 py-1 rounded-full shadow z-10">
+              {{ activeImageIndex() + 1 }} / {{ images.length }}
+            </div>
           </div>
 
           <!-- Thumbnails Row -->
           <div *ngIf="images.length > 1" class="w-full flex gap-3 overflow-x-auto pb-2 thumb-scroll justify-center">
-            <button *ngFor="let img of images" 
-                    (click)="selectedImage = img" 
+            <button *ngFor="let img of images; let idx = index" 
+                    (click)="selectImage(idx)" 
                     type="button"
                     class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 bg-slate-900 transition flex-shrink-0"
-                    [class.thumb-active]="selectedImage === img"
-                    [class.thumb-inactive]="selectedImage !== img">
+                    [class.thumb-active]="activeImageIndex() === idx || selectedImage === img"
+                    [class.thumb-inactive]="activeImageIndex() !== idx && selectedImage !== img">
               <img [src]="img" class="w-full h-full object-cover" alt="thumbnail">
             </button>
           </div>

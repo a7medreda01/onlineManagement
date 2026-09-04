@@ -144,7 +144,7 @@
           </div>
 
           <!-- Direct CTA to Single-Product Landing Page -->
-          <a [routerLink]="['/store', subdomain, page.slug]" 
+          <a [routerLink]="getProductRoute(page.slug)" 
              class="w-full bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-bold py-2.5 px-4 rounded-xl shadow-md flex items-center justify-center gap-2 transition text-sm">
             <span>عرض التفاصيل واطلب الآن</span>
             <i class="bi bi-arrow-left"></i>

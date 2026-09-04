@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
+import { Title, Meta } from '@angular/platform-browser';
 import { StorefrontService } from '../../services/storefront.service';
 import {
   ProductLandingPage,
@@ -21,6 +22,8 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private storefrontService = inject(StorefrontService);
+  private titleService = inject(Title);
+  private metaService = inject(Meta);
 
   subdomain = '';
   slug = '';
@@ -50,6 +53,26 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
 
   images: string[] = [];
   selectedImage: string = '';
+  activeImageIndex = signal<number>(0);
+
+  selectImage(index: number): void {
+    if (this.images.length > 0 && index >= 0 && index < this.images.length) {
+      this.activeImageIndex.set(index);
+      this.selectedImage = this.images[index];
+    }
+  }
+
+  nextImage(): void {
+    if (this.images.length <= 1) return;
+    const nextIdx = (this.activeImageIndex() + 1) % this.images.length;
+    this.selectImage(nextIdx);
+  }
+
+  prevImage(): void {
+    if (this.images.length <= 1) return;
+    const prevIdx = (this.activeImageIndex() - 1 + this.images.length) % this.images.length;
+    this.selectImage(prevIdx);
+  }
 
   // Countdown timer state
   timerHours = 2;
@@ -136,6 +159,15 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
     this.storefrontService.getPublicLandingPage(this.subdomain, this.slug).subscribe({
       next: (page) => {
         this.pageData.set(page);
+
+        // Dynamically update document title and meta tags with product branding
+        const productTitle = page.title || 'عرض خاص';
+        const productDesc = page.headline || page.subheadline || `عرض خاص وتخفيض لفترة محدودة على ${productTitle}. اطلب الآن والدفع عند الاستلام.`;
+        const storeName = page.storeDisplayName || page.storeSubdomain || '';
+        this.titleService.setTitle(storeName ? `${productTitle} | ${storeName}` : productTitle);
+        this.metaService.updateTag({ name: 'description', content: productDesc });
+        this.metaService.updateTag({ property: 'og:title', content: productTitle });
+        this.metaService.updateTag({ property: 'og:description', content: productDesc });
 
         // Parse theme
         try {
