@@ -4,6 +4,7 @@ import { RouterModule, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../services/auth.service';
+import { getSubdomain } from '../../utils/subdomain.util';
 
 export interface PlanDto {
   id: number;
@@ -100,6 +101,12 @@ export class LandingComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    const sub = getSubdomain();
+    if (sub) {
+      this.router.navigate(['/store', sub], { replaceUrl: true });
+      return;
+    }
+
     const saved = localStorage.getItem('theme');
     if (saved === 'light') {
       this.isDarkMode = false;

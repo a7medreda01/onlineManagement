@@ -64,6 +64,16 @@ export class StorefrontService {
     return this.http.post<AiGeneratedLandingPageResponse>(`${this.baseUrl}/generate-ai`, request);
   }
 
+  generateStoreIdentity(request: { storeDescriptionOrIdea: string; niche?: string; preferredName?: string }): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/generate-store-identity`, request);
+  }
+
+  uploadMedia(file: File): Observable<{ url: string; relativeUrl: string; fileName: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<{ url: string; relativeUrl: string; fileName: string }>(`${environment.apiUrl}/uploads/storefront-media`, formData);
+  }
+
   // ==========================================
   // Public Customer Facing APIs
   // ==========================================

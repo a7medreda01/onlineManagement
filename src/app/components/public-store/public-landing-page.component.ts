@@ -1,13 +1,14 @@
 import { Component, OnInit, OnDestroy, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { StorefrontService } from '../../services/storefront.service';
 import {
   ProductLandingPage,
   PublicLandingOrderRequest,
   PublicLandingOrderResponse
 } from '../../models/models';
+import { getSubdomain } from '../../utils/subdomain.util';
 
 @Component({
   selector: 'app-public-landing-page',
@@ -18,6 +19,7 @@ import {
 })
 export class PublicLandingPageComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private storefrontService = inject(StorefrontService);
 
   subdomain = '';
@@ -100,8 +102,19 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
-      this.subdomain = params['subdomain'] || '';
-      this.slug = params['slug'] || '';
+      const hostSub = getSubdomain();
+      if (hostSub) {
+        this.subdomain = hostSub;
+        this.slug = params['slug'] || params['subdomain'] || '';
+      } else if (params['subdomain'] && params['slug']) {
+        this.subdomain = params['subdomain'];
+        this.slug = params['slug'];
+      } else if (params['slug'] && !params['subdomain']) {
+        // Direct link e.g. besnesy.com/seven -> treat as store catalog
+        this.router.navigate(['/store', params['slug']], { replaceUrl: true });
+        return;
+      }
+
       if (this.subdomain && this.slug) {
         this.loadLandingPage();
       }

@@ -250,6 +250,92 @@ export class StorefrontComponent implements OnInit {
   }
 
   // ==========================================
+  // Store AI Generation & Media Uploads
+  // ==========================================
+
+  isGeneratingStoreAi = signal<boolean>(false);
+  storeAiPrompt = '';
+  uploadingLogo = signal<boolean>(false);
+  uploadingCover = signal<boolean>(false);
+
+  generateStoreWithAi(): void {
+    if (!this.storeAiPrompt.trim()) {
+      this.notificationService.error('يرجى كتابة نبذة أو فكرة المتجر لتوليد هويته بالذكاء الاصطناعي');
+      return;
+    }
+
+    this.isGeneratingStoreAi.set(true);
+    this.storefrontService.generateStoreIdentity({
+      storeDescriptionOrIdea: this.storeAiPrompt,
+      niche: this.settingsForm.niche,
+      preferredName: this.settingsForm.storeDisplayName
+    }).subscribe({
+      next: (res) => {
+        this.isGeneratingStoreAi.set(false);
+        if (res) {
+          this.settingsForm.storeDisplayName = res.storeDisplayName || this.settingsForm.storeDisplayName;
+          this.settingsForm.subdomain = res.subdomain || this.settingsForm.subdomain;
+          this.settingsForm.niche = res.niche || this.settingsForm.niche;
+          this.settingsForm.bio = res.bio || this.settingsForm.bio;
+          this.settingsForm.themeColor = res.themeColor || this.settingsForm.themeColor;
+          this.onSubdomainChange();
+          this.notificationService.success('تم توليد هوية المتجر وبياناته بنجاح بواسطة الذكاء الاصطناعي ✨');
+        }
+      },
+      error: () => {
+        this.isGeneratingStoreAi.set(false);
+        this.notificationService.error('حدث خطأ أثناء التوليد، يرجى المحاولة مرة أخرى');
+      }
+    });
+  }
+
+  onLogoFileSelected(event: any): void {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    this.uploadingLogo.set(true);
+    this.storefrontService.uploadMedia(file).subscribe({
+      next: (res) => {
+        this.uploadingLogo.set(false);
+        this.settingsForm.logoUrl = res.url;
+        this.notificationService.success('تم رفع شعار المتجر (اللوجو) بنجاح');
+      },
+      error: (err) => {
+        this.uploadingLogo.set(false);
+        this.notificationService.error(err?.error?.Message || 'فشل رفع صورة الشعار');
+      }
+    });
+  }
+
+  onCoverFileSelected(event: any): void {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    this.uploadingCover.set(true);
+    this.storefrontService.uploadMedia(file).subscribe({
+      next: (res) => {
+        this.uploadingCover.set(false);
+        this.settingsForm.coverUrl = res.url;
+        this.notificationService.success('تم رفع صورة الغلاف بنجاح');
+      },
+      error: (err) => {
+        this.uploadingCover.set(false);
+        this.notificationService.error(err?.error?.Message || 'فشل رفع صورة الغلاف');
+      }
+    });
+  }
+
+  copyToClipboard(text: string, message = 'تم نسخ الرابط بنجاح!'): void {
+    if (!navigator.clipboard) {
+      this.notificationService.info(text);
+      return;
+    }
+    navigator.clipboard.writeText(text).then(() => {
+      this.notificationService.success(message);
+    });
+  }
+
+  // ==========================================
   // AI Landing Page Wizard Actions
   // ==========================================
 
@@ -499,5 +585,57 @@ export class StorefrontComponent implements OnInit {
 
   get totalOrders(): number {
     return this.landingPages().reduce((acc, p) => acc + (p.ordersCount || 0), 0);
+  }
+
+  get conversionRate(): number {
+    const views = this.totalViews;
+    if (!views || views === 0) return 0;
+    return Math.round((this.totalOrders / views) * 100 * 10) / 10;
+  }
+
+  getCoverImage(page: ProductLandingPage): string {
+    const imgs = this.parseImages(page.mediaUrlsJson);
+    return imgs[0] || page.storeLogoUrl || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80';
+  }
+
+  getDirectPageUrl(page: ProductLandingPage): string {
+    const sub = page.storeSubdomain || this.settings()?.subdomain || 'store';
+    return `${window.location.origin}/store/${sub}/${page.slug}`;
+  }
+
+  togglePagePublish(page: ProductLandingPage): void {
+    this.togglePublish(page);
+  }
+
+  addImageUrl(): void {
+    this.addImageToWizard();
+  }
+
+  removeImage(i: number): void {
+    this.removeImageFromWizard(i);
+  }
+
+  triggerAiGeneration(): void {
+    this.generateWithAi();
+  }
+
+  prevStep(): void {
+    if (this.wizardStep === 3) {
+      this.wizardStep = 2;
+    } else if (this.wizardStep === 2) {
+      this.wizardStep = 1;
+    }
+  }
+
+  nextStep(): void {
+    if (this.wizardStep === 1) {
+      this.wizardStep = 2;
+    } else if (this.wizardStep === 2) {
+      this.wizardStep = 3;
+    }
+  }
+
+  onSubdomainChange(): void {
+    this.onSubdomainInput();
   }
 }

@@ -4,12 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { StorefrontService } from '../../services/storefront.service';
 import { StorefrontSettings, ProductLandingPage } from '../../models/models';
+import { getSubdomain } from '../../utils/subdomain.util';
 
 @Component({
   selector: 'app-public-store',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
-  templateUrl: './public-store.component.html'
+  templateUrl: './public-store.component.html',
+  styleUrls: ['./public-store.component.css']
 })
 export class PublicStoreComponent implements OnInit {
   private route = inject(ActivatedRoute);
@@ -25,7 +27,7 @@ export class PublicStoreComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
-      this.subdomain = params['subdomain'] || '';
+      this.subdomain = params['subdomain'] || getSubdomain() || '';
       if (this.subdomain) {
         this.loadStore();
       }

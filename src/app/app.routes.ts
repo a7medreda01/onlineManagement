@@ -73,5 +73,7 @@ export const routes: Routes = [
   },
   // Direct subdomain & slug route fallback (e.g. besnesy.com/storename/product-slug)
   { path: ':subdomain/:slug', component: PublicLandingPageComponent },
+  // Subdomain direct product fallback (e.g. seven.besnesy.com/product-slug)
+  { path: ':slug', component: PublicLandingPageComponent },
   { path: '**', redirectTo: '' }
 ];
