@@ -36,6 +36,10 @@ export class StorefrontService {
     return this.http.get<{ subdomain: string; available: boolean }>(`${this.baseUrl}/check-subdomain?subdomain=${encodeURIComponent(subdomain)}`);
   }
 
+  deleteStore(): Observable<{ message: string }> {
+    return this.http.delete<{ message: string }>(`${this.baseUrl}/store`);
+  }
+
   getLandingPages(): Observable<ProductLandingPage[]> {
     return this.http.get<ProductLandingPage[]>(`${this.baseUrl}/pages`);
   }

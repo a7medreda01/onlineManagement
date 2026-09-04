@@ -55,6 +55,38 @@ export class PublicStoreComponent implements OnInit {
     { question: 'ما هي سياسة الاستبدال والاسترجاع؟', answer: 'نضمن لك استبدال أو استرجاع سهل وسريع خلال 14 يوماً من استلام الشحنة في حالة وجود أي عيب مصنعي أو رغبة في استبدال المقاس/اللون.' }
   ];
 
+  get storeFeatures(): Array<{ title: string; description: string; icon: string }> {
+    try {
+      const raw = this.settings()?.featuresJson;
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {}
+    return [
+      { title: 'معاينة قبل الدفع', description: 'افحص المنتج بنفسك وتأكد من جودته أمام مندوب الشحن قبل سداد أي مليم.', icon: 'bi-eye' },
+      { title: 'دفع عند الاستلام', description: 'لا تدفع أي مبلغ مسبقاً — الدفع نقداً عند استلام شحنتك بيدك.', icon: 'bi-cash-stack' },
+      { title: 'شحن سريع ومجاني', description: 'شحن فوري ومتابعة خطوة بخطوة حتى باب البيت.', icon: 'bi-truck' },
+      { title: 'ضمان ذهبي 14 يوم', description: 'حق الاستبدال أو الاسترجاع الفوري في حال وجود أي ملاحظة.', icon: 'bi-shield-check' }
+    ];
+  }
+
+  get storeStats(): Array<{ label: string; value: string }> {
+    try {
+      const raw = this.settings()?.statsJson;
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {}
+    return [
+      { label: 'منتج متوفر', value: `${this.pages().length}+` },
+      { label: 'تقييم موثق', value: '4.9 ★' },
+      { label: 'دفع باستلام', value: 'COD' },
+      { label: 'معاينة وفحص', value: '100%' }
+    ];
+  }
+
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       this.subdomain = params['subdomain'] || getSubdomain() || '';

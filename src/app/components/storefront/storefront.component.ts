@@ -107,6 +107,11 @@ export class StorefrontComponent implements OnInit {
   subdomainChecking = false;
   subdomainAvailable: boolean | null = null;
 
+  // Delete Store Modal state
+  showDeleteStoreModal = signal<boolean>(false);
+  deletingStore = signal<boolean>(false);
+  deleteStoreConfirmInput = '';
+
   // AI Wizard Modal state
   showAiWizardModal = false;
   wizardStep: 1 | 2 | 3 = 1;
@@ -116,7 +121,11 @@ export class StorefrontComponent implements OnInit {
     productName: '',
     productDescription: '',
     productSpecs: '',
-    niche: 'عام',
+    niche: 'ساعات وإكسسوارات فاخرة',
+    keyFeatures: '',
+    materials: '',
+    warranty: 'ضمان عامين واستبدال فوري',
+    colorVariantsStr: 'أخضر زمردي, أسود ملكي, فضي بلاتيني',
     targetSellingPrice: null as number | null,
     images: [] as string[],
     newImageUrl: '',
@@ -157,15 +166,69 @@ export class StorefrontComponent implements OnInit {
 
   // Niche presets
   niches = [
-    { name: 'عام', icon: 'bi-grid-fill', color: '#0284c7' },
-    { name: 'عطور وبخور فاخر', icon: 'bi-gem', color: '#d97706' },
-    { name: 'ساعات وإكسسوارات', icon: 'bi-watch', color: '#b45309' },
-    { name: 'مكياج وعناية بالبشرة', icon: 'bi-heart-fill', color: '#e11d48' },
-    { name: 'إلكترونيات وهواتف ذكية', icon: 'bi-cpu-fill', color: '#2563eb' },
-    { name: 'ملابس وموضة وأحذية', icon: 'bi-bag-fill', color: '#7c3aed' },
-    { name: 'أدوات منزلية ومطبخ', icon: 'bi-house-heart-fill', color: '#059669' },
-    { name: 'صحة ورشاقة ومكملات', icon: 'bi-activity', color: '#16a34a' }
+    { name: 'ساعات وإكسسوارات فاخرة', icon: 'bi-watch', color: '#059669', badge: 'الأكثر طلباً 🔥' },
+    { name: 'مجوهرات وإكسسوارات فاخرة', icon: 'bi-gem', color: '#d97706', badge: 'فخامة ملكية ✨' },
+    { name: 'عطور وبخور ملكي', icon: 'bi-stars', color: '#b45309', badge: 'ثبات وفوحان' },
+    { name: 'إلكترونيات وهواتف ذكية', icon: 'bi-cpu-fill', color: '#2563eb', badge: 'تكنولوجيا متطورة' },
+    { name: 'ملابس وموضة وأحذية', icon: 'bi-bag-fill', color: '#7c3aed', badge: 'أناقة عصرية' },
+    { name: 'مكياج وعناية بالبشرة', icon: 'bi-heart-fill', color: '#e11d48', badge: 'عناية طبيعية' },
+    { name: 'أدوات منزلية ومطبخ', icon: 'bi-house-heart-fill', color: '#059669', badge: 'عملية وذكية' },
+    { name: 'عام', icon: 'bi-grid-fill', color: '#0284c7', badge: 'متنوع' }
   ];
+
+  selectNichePreset(nicheName: string): void {
+    this.aiRequest.niche = nicheName;
+    if (nicheName.includes('ساعات')) {
+      if (!this.aiRequest.productName) this.aiRequest.productName = 'ساعة رولكس صبمارينر إميرالد Submariner Emerald';
+      this.aiRequest.keyFeatures = 'مقاومة فائقة للماء 50M، محرك حركة فائق الدقة، عقارب مضيئة بالظلام، شاشة دقيقة';
+      this.aiRequest.materials = 'هيكل فولاذ 316L وتيتانيوم، زجاج ياقوتي Sapphire مضاد للخدش، طارة سيراميك خضراء';
+      this.aiRequest.warranty = 'ضمان عامين كاملين مع فحص ومعاينة حرة قبل الدفع';
+      this.aiRequest.colorVariantsStr = 'أخضر زمردي, أسود ملكي, فضي بلاتيني';
+      if (!this.aiRequest.targetSellingPrice) this.aiRequest.targetSellingPrice = 850;
+    } else if (nicheName.includes('مجوهرات')) {
+      if (!this.aiRequest.productName) this.aiRequest.productName = 'طقم مجوهرات رويال إيليجانس مرصع بالزركون';
+      this.aiRequest.keyFeatures = 'بريق يدوم طويلاً، قفل أمان محكم، تصميم يدوي متقن، صندوق هدايا مخملي فاخر';
+      this.aiRequest.materials = 'فضة إسترليني 925، مطلي ذهب عيار 18، أحجار زركون سويسرية نقية';
+      this.aiRequest.warranty = 'شهادة ضمان الأصالة مدى الحياة';
+      this.aiRequest.colorVariantsStr = 'ذهبي ملكي, فضي ناصع, روز جولد';
+      if (!this.aiRequest.targetSellingPrice) this.aiRequest.targetSellingPrice = 650;
+    } else if (nicheName.includes('عطور')) {
+      if (!this.aiRequest.productName) this.aiRequest.productName = 'عطر ليذر نايت الملكي - Royal Leather';
+      this.aiRequest.keyFeatures = 'ثبات عالي يتجاوز 24 ساعة، فوحان مميز يلفت الأنظار، زجاجة كريستالية فخمة';
+      this.aiRequest.materials = 'زيوت فرنسية أصلية مركزة، عنبر وباتشولي وخشب الصندل';
+      this.aiRequest.warranty = 'ضمان الثبات والفوحان أو استرجاع كامل المبلغ';
+      this.aiRequest.colorVariantsStr = '100 مل مركز, 50 مل مركز';
+      if (!this.aiRequest.targetSellingPrice) this.aiRequest.targetSellingPrice = 450;
+    }
+  }
+
+  openDeleteStoreModal(): void {
+    this.deleteStoreConfirmInput = '';
+    this.showDeleteStoreModal.set(true);
+  }
+
+  closeDeleteStoreModal(): void {
+    this.showDeleteStoreModal.set(false);
+    this.deleteStoreConfirmInput = '';
+  }
+
+  confirmDeleteStore(): void {
+    this.deletingStore.set(true);
+    this.storefrontService.deleteStore().subscribe({
+      next: () => {
+        this.deletingStore.set(false);
+        this.showDeleteStoreModal.set(false);
+        this.settings.set(null);
+        this.landingPages.set([]);
+        this.notificationService.success('تم حذف المتجر وكافة صفحاته التابعة بنجاح');
+        this.loadStoreSettings();
+      },
+      error: (err) => {
+        this.deletingStore.set(false);
+        this.notificationService.error(err?.error?.Message || 'تعذر حذف المتجر');
+      }
+    });
+  }
 
   themePresets = [
     { name: 'سماوي عصري (Default Sky)', color: '#0284c7' },
@@ -604,6 +667,10 @@ export class StorefrontComponent implements OnInit {
         productDescription: '',
         productSpecs: '',
         niche: this.settings()?.niche || 'عام',
+        keyFeatures: '',
+        materials: '',
+        warranty: 'سنتين ضمان معتمد ضد عيوب الصناعة',
+        colorVariantsStr: '',
         targetSellingPrice: null,
         images: [],
         newImageUrl: '',
@@ -662,13 +729,23 @@ export class StorefrontComponent implements OnInit {
     
     const combinedDescription = [
       this.aiRequest.productDescription?.trim(),
-      this.aiRequest.productSpecs?.trim() ? `المواصفات الفنية والمميزات:\n${this.aiRequest.productSpecs.trim()}` : ''
+      this.aiRequest.productSpecs?.trim() ? `المواصفات الفنية والمميزات:\n${this.aiRequest.productSpecs.trim()}` : '',
+      this.aiRequest.materials?.trim() ? `خامات التصنيع:\n${this.aiRequest.materials.trim()}` : '',
+      this.aiRequest.keyFeatures?.trim() ? `مميزات إضافية:\n${this.aiRequest.keyFeatures.trim()}` : ''
     ].filter(Boolean).join('\n\n');
+
+    const colorVariants = this.aiRequest.colorVariantsStr
+      ? this.aiRequest.colorVariantsStr.split(',').map(s => s.trim()).filter(Boolean)
+      : [];
 
     this.storefrontService.generateAi({
       productName: this.aiRequest.productName.trim(),
       productDescription: combinedDescription || undefined,
       niche: this.aiRequest.niche,
+      keyFeatures: this.aiRequest.keyFeatures || undefined,
+      materials: this.aiRequest.materials || undefined,
+      warranty: this.aiRequest.warranty || undefined,
+      colorVariants: colorVariants.length > 0 ? colorVariants : undefined,
       targetSellingPrice: this.aiRequest.targetSellingPrice || undefined,
       existingImages: this.aiRequest.images,
       existingProductId: this.aiRequest.selectedProductId || undefined
@@ -689,6 +766,8 @@ export class StorefrontComponent implements OnInit {
           suggestedOriginalPrice: res.suggestedOriginalPrice,
           themeConfigJson: res.themeConfigJson,
           contentJson: res.contentJson,
+          specsJson: res.specsJson || '[]',
+          variantOptionsJson: res.variantOptionsJson || '[]',
           images: productImages
         };
         this.initEditableContent(res.contentJson);
@@ -745,6 +824,8 @@ export class StorefrontComponent implements OnInit {
       themeConfigJson: this.generatedPreview.themeConfigJson || '{}',
       contentJson: JSON.stringify(contentPayload),
       mediaUrlsJson: JSON.stringify(this.generatedPreview.images || []),
+      specsJson: this.generatedPreview.specsJson || '[]',
+      variantOptionsJson: this.generatedPreview.variantOptionsJson || '[]',
       sellingPrice: this.generatedPreview.suggestedPrice || 399,
       originalPrice: this.generatedPreview.suggestedOriginalPrice || 599,
       shippingCompanyId: this.aiRequest.shippingCompanyId,

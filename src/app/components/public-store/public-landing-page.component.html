@@ -194,6 +194,19 @@
 
             <!-- Counter -->
             <div *ngIf="images.length > 1" class="img-counter">{{ activeImageIndex() + 1 }} / {{ images.length }}</div>
+
+            <!-- Luxury Pointer Callouts (Image 2 Rolex Style) -->
+            <div *ngIf="specs().length > 0" class="specs-overlay-pins hidden md:block pointer-events-none">
+              <div *ngFor="let sp of specs().slice(0, 3); let idx = index"
+                   class="spec-pin-item"
+                   [ngClass]="'spec-pin-' + idx">
+                <span class="spec-pin-dot"></span>
+                <div class="spec-pin-tag">
+                  <span class="spec-pin-badge" *ngIf="sp.badge">{{ sp.badge }}</span>
+                  <span class="spec-pin-title">{{ sp.title }}</span>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Thumbnails -->
@@ -206,6 +219,19 @@
                     [class.thumb-inactive]="activeImageIndex() !== idx">
               <img [src]="img" class="w-full h-full object-contain" alt="thumb">
             </button>
+          </div>
+
+          <!-- Specs Highlight Strip (Image 2 Bottom Bar) -->
+          <div *ngIf="specs().length > 0" class="specs-bar-luxury">
+            <div *ngFor="let sp of specs()" class="spec-bar-item">
+              <div class="spec-bar-check">
+                <i class="bi bi-check-lg"></i>
+              </div>
+              <div class="spec-bar-text">
+                <span class="spec-bar-title">{{ sp.title }}</span>
+                <span *ngIf="sp.badge" class="spec-bar-badge">{{ sp.badge }}</span>
+              </div>
+            </div>
           </div>
 
           <!-- Trust Badges Row -->
@@ -256,6 +282,25 @@
                  class="save-badge">
               <span>🔥</span>
               <span>وفّر {{ (pageData()!.originalPrice! - pageData()!.sellingPrice) | currency:'EGP':'symbol':'1.0-0' }}</span>
+            </div>
+          </div>
+
+          <!-- Variant / Color / Model Selector (Image 1 & 2) -->
+          <div *ngIf="variantOptions().length > 0" class="variant-selection-card mb-4">
+            <div class="flex items-center justify-between mb-2.5">
+              <span class="text-xs font-bold text-slate-700">الموديل / اللون:</span>
+              <span class="text-xs font-black text-slate-900 bg-slate-100 px-3 py-1 rounded-full border border-slate-200">{{ selectedVariant() }}</span>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+              <button *ngFor="let v of variantOptions()"
+                      type="button"
+                      (click)="selectVariant(v.name)"
+                      class="variant-card-btn"
+                      [class.variant-card-active]="selectedVariant() === v.name">
+                <div *ngIf="v.colorCode" class="variant-color-dot" [style.backgroundColor]="v.colorCode"></div>
+                <img *ngIf="v.image" [src]="v.image" class="w-7 h-7 object-contain rounded" alt="variant">
+                <span class="text-xs font-bold truncate">{{ v.name }}</span>
+              </button>
             </div>
           </div>
 
@@ -314,6 +359,59 @@
           </div>
         </div>
 
+      </div>
+    </section>
+
+    <!-- 3.5 CIRCULAR SERVICE & SPECIFICATION NODES (Image 1 Style) -->
+    <section *ngIf="circularFeatures().length > 0" class="py-12 sm:py-16 px-4 bg-gradient-to-b from-slate-50 via-white to-slate-50 border-y border-slate-200">
+      <div class="max-w-5xl mx-auto text-center">
+        <div class="inline-flex items-center gap-2 bg-slate-900 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-3 shadow-sm">
+          <i class="bi bi-gear-wide-connected text-amber-400"></i>
+          <span>مواصفات وتقنيات مدمجة</span>
+        </div>
+        <h2 class="text-2xl sm:text-4xl font-black text-slate-900 mb-3">
+          أهم المزايا والوظائف التقنية
+        </h2>
+        <p class="text-slate-500 text-xs sm:text-sm max-w-xl mx-auto mb-10">
+          تم تصميم كل تفصيلة لتوفر لك تجربة استثنائية وأداء فائق يدوم طوال اليوم
+        </p>
+
+        <!-- 6 Circular Nodes Grid (Image 1 Style) -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6">
+          <div *ngFor="let node of circularFeatures()" class="circular-feature-card">
+            <div class="circular-feature-circle">
+              <i [class]="'bi ' + (node.icon || 'bi-patch-check-fill')"></i>
+            </div>
+            <h4 class="circular-feature-title">{{ node.title }}</h4>
+            <p class="circular-feature-spec">{{ node.spec }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3.6 VIDEO SHOWCASE (Image 1 Style) -->
+    <section *ngIf="pageData()?.videoUrl" class="py-12 px-4 bg-slate-950 text-white">
+      <div class="max-w-5xl mx-auto rounded-3xl overflow-hidden border border-slate-800 bg-gradient-to-br from-slate-900 to-slate-950 shadow-2xl p-6 sm:p-10 flex flex-col lg:flex-row items-center gap-8">
+        <div class="flex-1 text-right">
+          <div class="inline-flex items-center gap-2 bg-amber-400/10 text-amber-400 border border-amber-400/20 text-xs font-black px-3.5 py-1 rounded-full mb-3">
+            <i class="bi bi-play-circle-fill"></i>
+            <span>معاينة حية على الطبيعة</span>
+          </div>
+          <h3 class="text-2xl sm:text-3xl font-black text-white mb-3">
+            شاهد {{ pageData()?.title }} أثناء الاستخدام الفعلي
+          </h3>
+          <p class="text-slate-400 text-sm leading-relaxed mb-6">
+            دقة التفاصيل وفخامة الخامات كما ستصلك تماماً حتى باب منزلك مع حق المعاينة قبل الدفع.
+          </p>
+          <button (click)="scrollToOrderForm()" class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-6 py-3 rounded-full text-sm transition shadow-lg inline-flex items-center gap-2 cursor-pointer">
+            <i class="bi bi-bag-check-fill"></i>
+            <span>احصل على نسختك الآن</span>
+          </button>
+        </div>
+        <div class="w-full lg:w-[460px] rounded-2xl overflow-hidden shadow-2xl border border-slate-800 bg-black aspect-video flex items-center justify-center relative">
+          <iframe *ngIf="isVideoEmbed(pageData()!.videoUrl!)" [src]="getVideoSafeUrl(pageData()!.videoUrl!)" class="w-full h-full" frameborder="0" allowfullscreen></iframe>
+          <video *ngIf="!isVideoEmbed(pageData()!.videoUrl!)" [src]="pageData()!.videoUrl" controls class="w-full h-full object-cover"></video>
+        </div>
       </div>
     </section>
 
@@ -481,7 +579,8 @@
                 <h4 class="text-sm font-bold text-slate-900 mb-0 truncate max-w-[200px]">{{ pageData()?.title }}</h4>
                 <div class="flex items-center gap-2 mt-1 flex-wrap">
                   <span class="text-sm font-black text-emerald-600">{{ pageData()?.sellingPrice | currency:'EGP':'symbol':'1.0-0' }}</span>
-                  <span *ngIf="selectedSize()" class="text-xs bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full font-bold">{{ selectedSize() }}</span>
+                  <span *ngIf="selectedVariant()" class="text-xs bg-slate-900 text-white px-2 py-0.5 rounded-full font-bold">الموديل: {{ selectedVariant() }}</span>
+                  <span *ngIf="selectedSize()" class="text-xs bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full font-bold">المقاس: {{ selectedSize() }}</span>
                 </div>
               </div>
             </div>

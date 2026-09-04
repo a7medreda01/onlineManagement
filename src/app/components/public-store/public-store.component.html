@@ -4,6 +4,9 @@
 <div *ngIf="!loading() && !error() && settings()" class="top-store-ticker">
   <div class="max-w-7xl mx-auto px-4 flex items-center justify-between text-xs font-semibold">
     <div class="ticker-content flex items-center gap-6 overflow-hidden whitespace-nowrap">
+      <span *ngIf="settings()?.announcementText" class="ticker-item font-bold text-amber-300">
+        <i class="bi bi-megaphone-fill"></i> {{ settings()?.announcementText }}
+      </span>
       <span class="ticker-item"><i class="bi bi-shield-check text-emerald-400"></i> معاينة المنتج وفحصه قبل الدفع 100%</span>
       <span class="ticker-item hidden sm:inline"><i class="bi bi-truck text-sky-400"></i> شحن سريع لجميع محافظات مصر</span>
       <span class="ticker-item hidden md:inline"><i class="bi bi-cash-stack text-amber-400"></i> الدفع عند الاستلام (COD) بدون أي مصاريف خفية</span>
@@ -128,30 +131,18 @@
                   متاح للطلب الآن
                 </span>
               </div>
-
-              <p class="store-bio">{{ settings()?.bio || 'أهلاً بكم في متجرنا الرسمي. نوفر لكم أفضل المنتجات بأعلى معايير الجودة مع ميزة المعاينة قبل الدفع والدفع عند الاستلام بضمان 100%.' }}</p>
+              <h2 *ngIf="settings()?.heroHeadline" class="text-base sm:text-xl font-bold text-slate-800 mt-2 mb-1">{{ settings()?.heroHeadline }}</h2>
+              <p class="store-bio">{{ settings()?.heroSubheadline || settings()?.bio || 'أهلاً بكم في متجرنا الرسمي. نوفر لكم أفضل المنتجات بأعلى معايير الجودة مع ميزة المعاينة قبل الدفع والدفع عند الاستلام بضمان 100%.' }}</p>
 
               <!-- Live Highlights Bar -->
               <div class="store-stats-strip">
-                <div class="stat-pill">
-                  <span class="stat-num">{{ pages().length }}+</span>
-                  <span class="stat-label">منتج متوفر</span>
-                </div>
-                <div class="stat-divider"></div>
-                <div class="stat-pill">
-                  <span class="stat-num text-amber-500">4.9 ★</span>
-                  <span class="stat-label">تقييم ممتاز</span>
-                </div>
-                <div class="stat-divider"></div>
-                <div class="stat-pill">
-                  <span class="stat-num text-emerald-600">COD</span>
-                  <span class="stat-label">دفع باستلام</span>
-                </div>
-                <div class="stat-divider"></div>
-                <div class="stat-pill">
-                  <span class="stat-num text-blue-600">100%</span>
-                  <span class="stat-label">معاينة وفحص</span>
-                </div>
+                <ng-container *ngFor="let st of storeStats; let isLast = last">
+                  <div class="stat-pill">
+                    <span class="stat-num">{{ st.value }}</span>
+                    <span class="stat-label">{{ st.label }}</span>
+                  </div>
+                  <div *ngIf="!isLast" class="stat-divider"></div>
+                </ng-container>
               </div>
             </div>
           </div>
@@ -179,46 +170,16 @@
     </div>
   </header>
 
-  <!-- ─── 4. PILLARS OF TRUST (4-CARD GRID) ─── -->
+  <!-- ─── 4. PILLARS OF TRUST (DYNAMIC 4-CARD GRID) ─── -->
   <section class="max-w-7xl mx-auto px-4 sm:px-6 my-10">
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <div class="trust-card group">
-        <div class="trust-icon-box bg-emerald-50 text-emerald-600 group-hover:scale-110 transition-transform">
-          <i class="bi bi-eye"></i>
+      <div *ngFor="let ft of storeFeatures" class="trust-card group">
+        <div class="trust-icon-box bg-slate-50 text-slate-800 group-hover:scale-110 transition-transform">
+          <i [class]="'bi ' + (ft.icon || 'bi-patch-check-fill')"></i>
         </div>
         <div class="trust-card-body">
-          <h4 class="trust-title">معاينة قبل الدفع</h4>
-          <p class="trust-desc">افحص المنتج بنفسك وتأكد من جودته أمام مندوب الشحن قبل سداد أي مليم.</p>
-        </div>
-      </div>
-
-      <div class="trust-card group">
-        <div class="trust-icon-box bg-blue-50 text-blue-600 group-hover:scale-110 transition-transform">
-          <i class="bi bi-cash-stack"></i>
-        </div>
-        <div class="trust-card-body">
-          <h4 class="trust-title">دفع عند الاستلام</h4>
-          <p class="trust-desc">تسوق بأمان تام بدون بطاقات بنكية، الدفع نقداً عند استلام شحنتك.</p>
-        </div>
-      </div>
-
-      <div class="trust-card group">
-        <div class="trust-icon-box bg-sky-50 text-sky-600 group-hover:scale-110 transition-transform">
-          <i class="bi bi-truck"></i>
-        </div>
-        <div class="trust-card-body">
-          <h4 class="trust-title">شحن فوري بالمحافظات</h4>
-          <p class="trust-desc">توصيل سريع لباب بيتك بالتعاون مع كبرى شركات الشحن (بوسطة).</p>
-        </div>
-      </div>
-
-      <div class="trust-card group">
-        <div class="trust-icon-box bg-purple-50 text-purple-600 group-hover:scale-110 transition-transform">
-          <i class="bi bi-arrow-repeat"></i>
-        </div>
-        <div class="trust-card-body">
-          <h4 class="trust-title">استبدال وضمان مرن</h4>
-          <p class="trust-desc">ضمان حقيقي واستبدال سهل خلال 14 يوماً بكل يسر وسهولة.</p>
+          <h4 class="trust-title">{{ ft.title }}</h4>
+          <p class="trust-desc">{{ ft.description }}</p>
         </div>
       </div>
     </div>

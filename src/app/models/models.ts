@@ -791,6 +791,11 @@ export interface StorefrontSettings {
   googleAnalyticsId?: string;
   customDomain?: string;
   customDomainStatus?: string;
+  heroHeadline?: string;
+  heroSubheadline?: string;
+  announcementText?: string;
+  featuresJson?: string;
+  statsJson?: string;
   isActive: boolean;
   totalLandingPagesCount: number;
   totalViewsCount: number;
@@ -824,6 +829,9 @@ export interface ProductLandingPage {
   themeConfigJson: string;
   contentJson: string;
   mediaUrlsJson: string;
+  specsJson?: string;
+  variantOptionsJson?: string;
+  videoUrl?: string;
   sellingPrice: number;
   originalPrice?: number;
   offerCountdownEnd?: string;
@@ -844,6 +852,10 @@ export interface AiGenerateLandingPageRequest {
   productName: string;
   productDescription?: string;
   niche?: string;
+  keyFeatures?: string;
+  materials?: string;
+  warranty?: string;
+  colorVariants?: string[];
   targetSellingPrice?: number;
   existingImages?: string[];
   existingProductId?: number;
@@ -860,6 +872,8 @@ export interface AiGeneratedLandingPageResponse {
   suggestedOriginalPrice: number;
   themeConfigJson: string;
   contentJson: string;
+  specsJson?: string;
+  variantOptionsJson?: string;
   suggestedMediaUrls: string[];
 }
 

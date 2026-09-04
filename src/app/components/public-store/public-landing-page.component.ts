@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
-import { Title, Meta } from '@angular/platform-browser';
+import { Title, Meta, DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { StorefrontService } from '../../services/storefront.service';
 import {
   ProductLandingPage,
@@ -24,6 +24,7 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
   private storefrontService = inject(StorefrontService);
   private titleService = inject(Title);
   private metaService = inject(Meta);
+  private sanitizer = inject(DomSanitizer);
 
   subdomain = '';
   slug = '';
@@ -73,6 +74,36 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
     if (this.images.length <= 1) return;
     const prevIdx = (this.activeImageIndex() - 1 + this.images.length) % this.images.length;
     this.selectImage(prevIdx);
+  }
+
+  // Visual Specs Callouts & Variant Options (Images 1 & 2)
+  specs = signal<Array<{ title: string; description: string; badge?: string }>>([]);
+  variantOptions = signal<Array<{ name: string; colorCode?: string; image?: string }>>([]);
+  selectedVariant = signal<string>('');
+  circularFeatures = signal<Array<{ title: string; spec: string; icon: string }>>([]);
+
+  selectVariant(v: string): void {
+    this.selectedVariant.set(v);
+    const found = this.variantOptions().find(o => o.name === v);
+    if (found?.image) {
+      this.selectedImage = found.image;
+    }
+  }
+
+  isVideoEmbed(url?: string): boolean {
+    if (!url) return false;
+    return url.includes('youtube.com') || url.includes('youtu.be') || url.includes('vimeo.com');
+  }
+
+  getVideoSafeUrl(url?: string): SafeResourceUrl {
+    if (!url) return '';
+    let embedUrl = url;
+    if (url.includes('youtube.com/watch?v=')) {
+      embedUrl = url.replace('watch?v=', 'embed/');
+    } else if (url.includes('youtu.be/')) {
+      embedUrl = url.replace('youtu.be/', 'www.youtube.com/embed/');
+    }
+    return this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
   }
 
   // Conditional Size Selection (e.g. shoes, clothing, abayas)
@@ -258,6 +289,50 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
             guarantees: raw.guarantees || []
           };
 
+          // Parse Visual Specs Callouts (Image 2 style)
+          let parsedSpecs: any[] = [];
+          try {
+            parsedSpecs = JSON.parse(page.specsJson || '[]');
+          } catch {}
+          if (!Array.isArray(parsedSpecs) || parsedSpecs.length === 0) {
+            parsedSpecs = raw.specs || [];
+          }
+          if (!Array.isArray(parsedSpecs) || parsedSpecs.length === 0) {
+            parsedSpecs = [
+              { title: 'خامات ومواد أصلية فاخرة', description: 'مقاومة للصدمات والخدوش وعوامل الاستخدام', badge: 'Top Notch' },
+              { title: 'مقاومة الماء والغبار', description: 'معايير تصنيع موثوقة لحماية فائقة', badge: 'Water-Resistant' },
+              { title: 'ضمان معتمد واستبدال فوري', description: 'معاينة وفحص مجاني قبل دفع الحساب', badge: '2 Years Warranty' }
+            ];
+          }
+          this.specs.set(parsedSpecs);
+
+          // Parse Variants / Colors (Image 1 style)
+          let parsedVariants: any[] = [];
+          try {
+            parsedVariants = JSON.parse(page.variantOptionsJson || '[]');
+          } catch {}
+          if (!Array.isArray(parsedVariants) || parsedVariants.length === 0) {
+            parsedVariants = raw.variantOptions || [];
+          }
+          this.variantOptions.set(parsedVariants);
+          if (parsedVariants.length > 0) {
+            this.selectedVariant.set(parsedVariants[0].name);
+          }
+
+          // Parse Circular Feature Nodes (Image 1 style)
+          let circular = raw.circularFeatures || [];
+          if (!Array.isArray(circular) || circular.length === 0) {
+            circular = [
+              { title: 'إصدار وتوافق', spec: 'أداء فائق', icon: 'bi-cpu-fill' },
+              { title: 'عمر البطارية', spec: 'تدوم طويلاً', icon: 'bi-battery-charging' },
+              { title: 'اتصال ومكالمات', spec: 'استجابة سريعة', icon: 'bi-lightning-charge-fill' },
+              { title: 'إعدادات متقدمة', spec: 'تخصيص كامل', icon: 'bi-gear-wide-connected' },
+              { title: 'مشغل صوتيات', spec: 'صوت نقي', icon: 'bi-music-note-beamed' },
+              { title: 'إشعارات وتطبيقات', spec: 'تنبيهات فورية', icon: 'bi-chat-dots-fill' }
+            ];
+          }
+          this.circularFeatures.set(circular);
+
           // Conditional Size Selection (only if product has sizes e.g. shoes, clothes)
           const hasSizesFlag = !!raw.hasSizes;
           this.hasSizes.set(hasSizesFlag);
@@ -398,6 +473,10 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
     if (!this.orderForm.address.trim()) {
       alert('يرجى كتابة العنوان بالتفصيل لضمان سرعة التوصيل');
       return;
+    }
+
+    if (this.selectedVariant() && !this.orderForm.notes?.includes('اللون / الموديل:')) {
+      this.orderForm.notes = `اللون / الموديل: ${this.selectedVariant()}` + (this.orderForm.notes ? ` | ${this.orderForm.notes}` : '');
     }
 
     if (this.hasSizes() && this.selectedSize() && !this.orderForm.notes?.includes('المقاس:')) {

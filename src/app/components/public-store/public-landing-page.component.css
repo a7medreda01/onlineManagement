@@ -1,4 +1,4 @@
-﻿/* ================================================================
+/* ================================================================
    PRODUCT LANDING PAGE — Behance Luxury Light Mode
    Premium High-Converting E-commerce Page
 ================================================================ */
@@ -667,3 +667,220 @@
   .cta-primary { font-size: 0.95rem; padding: 0.95rem 1.25rem; }
   .gallery-stage { min-height: 280px; }
 }
+
+/* ─── LUXURY SPECS CALLOUT PINS (Image 2 Style) ─── */
+.specs-overlay-pins {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.spec-pin-item {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: float-in 0.8s ease-out;
+}
+
+.spec-pin-0 { top: 22%; right: 10%; }
+.spec-pin-1 { bottom: 24%; left: 8%; flex-direction: row-reverse; }
+.spec-pin-2 { top: 62%; right: 10%; }
+
+.spec-pin-dot {
+  width: 10px;
+  height: 10px;
+  background: #10b981;
+  border: 2px solid #ffffff;
+  border-radius: 9999px;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.35);
+  animation: pulse-cta 2s infinite;
+}
+
+.spec-pin-tag {
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #ffffff;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.25);
+}
+
+.spec-pin-badge {
+  background: #10b981;
+  color: #ffffff;
+  font-size: 0.65rem;
+  padding: 1px 6px;
+  border-radius: 9999px;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+}
+
+/* ─── SPECS LUXURY BOTTOM STRIP (Image 2 Bottom Bar) ─── */
+.specs-bar-luxury {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 1.25rem;
+  padding: 12px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+@media (min-width: 640px) {
+  .specs-bar-luxury {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+  }
+}
+
+.spec-bar-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.spec-bar-check {
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  background: #10b981;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+
+.spec-bar-text {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+}
+
+.spec-bar-title {
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.spec-bar-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #059669;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  padding: 1px 6px;
+  border-radius: 6px;
+}
+
+/* ─── VARIANT SELECTOR (Image 1 Style) ─── */
+.variant-selection-card {
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 1.25rem;
+  padding: 14px;
+}
+
+.variant-card-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 1rem;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  color: #334155;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  text-align: right;
+}
+
+.variant-card-btn:hover {
+  border-color: #94a3b8;
+  background: #f1f5f9;
+}
+
+.variant-card-active {
+  border-color: #0f172a !important;
+  background: #0f172a !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+}
+
+.variant-color-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  border: 1.5px solid #ffffff;
+  box-shadow: 0 0 0 1px #cbd5e1;
+  flex-shrink: 0;
+}
+
+/* ─── CIRCULAR SERVICE & SPECIFICATION NODES (Image 1 Style) ─── */
+.circular-feature-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 16px 12px;
+  border-radius: 1.5rem;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.circular-feature-card:hover {
+  transform: translateY(-4px);
+  border-color: #cbd5e1;
+  box-shadow: 0 16px 24px -8px rgba(0, 0, 0, 0.08);
+}
+
+.circular-feature-circle {
+  width: 58px;
+  height: 58px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border: 2px solid #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: #1e3a5f;
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+}
+
+.circular-feature-card:hover .circular-feature-circle {
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+  color: #38bdf8;
+  transform: scale(1.08);
+}
+
+.circular-feature-title {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.circular-feature-spec {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 0;
+}
+
