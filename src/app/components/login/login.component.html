@@ -27,16 +27,46 @@
         <p class="text-slate-400 text-xs sm:text-sm">تسجيل الدخول للوحة تحكم المتجر</p>
       </div>
 
-      <div *ngIf="errorMessage" class="bg-rose-500/10 border border-rose-500/30 text-rose-400 p-4 rounded-xl text-xs mb-6 flex flex-col gap-2">
-        <div class="flex items-center gap-2 font-bold">
-          <i class="fa-solid fa-circle-exclamation text-sm"></i>
-          <span>{{ errorMessage }}</span>
+      <!-- Suspended Store Notice with Direct WhatsApp Support -->
+      <div *ngIf="errorMessage && isStoreSuspended" class="bg-amber-500/15 border-2 border-amber-500/40 text-amber-300 p-4 rounded-xl text-xs mb-6 flex flex-col gap-3 shadow-lg shadow-amber-500/10">
+        <div class="flex items-start gap-2.5">
+          <i class="fa-solid fa-triangle-exclamation text-amber-400 text-base mt-0.5 shrink-0"></i>
+          <div class="space-y-1">
+            <div class="font-bold text-amber-200 text-sm">حالة المتجر: موقوف</div>
+            <p class="text-amber-300/90 leading-relaxed">{{ errorMessage }}</p>
+          </div>
         </div>
-        <div *ngIf="requiresActivation" class="pt-2 border-t border-rose-500/20 text-center">
-          <a [routerLink]="['/activate-account']" [queryParams]="{ email: username }" class="text-sky-400 hover:underline font-bold text-xs">
-            اضغط هنا لتأكيد تفعيل الإيميل الآن ←
+        <div class="pt-2 border-t border-amber-500/20 flex flex-col sm:flex-row gap-2">
+          <a href="https://wa.me/201148472670?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%D8%8C%20%D8%AA%D9%85%20%D8%A5%D9%8A%D9%82%D8%A7%D9%81%20%D9%85%D8%AA%D8%AC%D8%B1%D9%8A%20%D9%88%D8%A3%D8%B1%D8%BA%D8%A8%20%D9%81%D9%8A%20%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D8%A9%20%D9%88%D8%AA%D9%81%D8%B9%D9%8A%D9%84%20%D8%A7%D9%84%D8%AD%D8%B3%D8%A7%D8%A8"
+             target="_blank"
+             rel="noopener noreferrer"
+             class="btn btn-sm bg-emerald-600 hover:bg-emerald-500 text-white font-bold flex items-center justify-center gap-1.5 py-1.5 rounded-lg transition shadow">
+            <i class="fa-brands fa-whatsapp text-sm"></i>
+            <span>تواصل مع الدعم الفني عبر واتساب (01148472670)</span>
+          </a>
+          <a href="tel:01148472670"
+             class="btn btn-sm bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold flex items-center justify-center gap-1.5 py-1.5 rounded-lg transition border border-slate-700">
+            <i class="fa-solid fa-phone text-xs"></i>
+            <span>اتصال هاتفي</span>
           </a>
         </div>
+      </div>
+
+      <!-- Account Disabled Notice -->
+      <div *ngIf="errorMessage && isAccountDisabled" class="bg-rose-500/15 border-2 border-rose-500/40 text-rose-300 p-4 rounded-xl text-xs mb-6 flex flex-col gap-2">
+        <div class="flex items-start gap-2.5">
+          <i class="fa-solid fa-user-slash text-rose-400 text-base mt-0.5 shrink-0"></i>
+          <div class="space-y-1">
+            <div class="font-bold text-rose-200 text-sm">الحساب معطل</div>
+            <p class="text-rose-300/90 leading-relaxed">{{ errorMessage }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Standard Error Notice (Wrong credentials, network, etc.) -->
+      <div *ngIf="errorMessage && !isStoreSuspended && !isAccountDisabled" class="bg-rose-500/10 border border-rose-500/30 text-rose-400 p-4 rounded-xl text-xs mb-6 flex items-center gap-2 font-bold">
+        <i class="fa-solid fa-circle-exclamation text-sm shrink-0"></i>
+        <span>{{ errorMessage }}</span>
       </div>
 
       <form (ngSubmit)="onSubmit()" class="space-y-4">

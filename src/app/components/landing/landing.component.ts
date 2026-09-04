@@ -121,7 +121,7 @@ export class LandingComponent implements OnInit {
           const map = new Map<string, PlanDto>();
           plans.filter(p => p.isActive).forEach(p => {
             const key = p.name.trim();
-            if (!map.has(key) || (p.id > map.get(key)!.id)) {
+            if (!map.has(key)) {
               map.set(key, p);
             }
           });
@@ -164,18 +164,31 @@ export class LandingComponent implements OnInit {
 
   getDisplayPrice(plan: PlanDto): number {
     if (this.isAnnual) {
-      return plan.annualOfferPrice > 0 ? plan.annualOfferPrice : plan.annualPrice;
+      return plan.annualOfferPrice > 0 ? plan.annualOfferPrice : (plan.annualPrice || plan.price * 10);
     }
     return plan.price;
   }
 
   getOriginalPrice(plan: PlanDto): number {
-    if (this.isAnnual) return plan.annualPrice;
+    if (this.isAnnual) return plan.annualPrice || (plan.originalPrice ? plan.originalPrice * 12 : 0);
     return plan.originalPrice;
   }
 
+  isLimitedFreeOffer(plan: PlanDto): boolean {
+    if (this.isAnnual) {
+      const hasAnnualBase = (plan.annualPrice && plan.annualPrice > 0) || (plan.originalPrice && plan.originalPrice > 0);
+      return Boolean(hasAnnualBase) && plan.annualOfferPrice === 0;
+    }
+    const hasBase = (plan.originalPrice && plan.originalPrice > 0) || (plan.annualPrice && plan.annualPrice > 0);
+    return Boolean(hasBase) && plan.price === 0;
+  }
+
+  isPermanentFree(plan: PlanDto): boolean {
+    return this.getDisplayPrice(plan) === 0 && !this.isLimitedFreeOffer(plan);
+  }
+
   isFree(plan: PlanDto): boolean {
-    return this.getDisplayPrice(plan) === 0;
+    return this.isPermanentFree(plan) || this.isLimitedFreeOffer(plan);
   }
 
   isPopular(plan: PlanDto, plans: PlanDto[]): boolean {

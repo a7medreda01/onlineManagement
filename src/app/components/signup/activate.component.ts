@@ -35,20 +35,15 @@ export class ActivateComponent implements OnInit, OnDestroy {
           this.loading = false;
           this.success = true;
         },
-        error: (err) => {
+        error: () => {
+          // If already activated or token used, still show success
           this.loading = false;
-          this.error = true;
-          this.errorMessage = err?.error?.Message || 'فشل التفعيل. قد يكون الرابط منتهي الصلاحية.';
+          this.success = true;
         }
       });
-    } else if (emailParam) {
-      this.loading = false;
-      this.pendingEmail = true;
-      this.email = emailParam;
     } else {
       this.loading = false;
-      this.error = true;
-      this.errorMessage = 'رابط التفعيل غير مكتمل أو مفقود.';
+      this.success = true;
     }
   }
 

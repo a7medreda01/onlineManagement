@@ -178,11 +178,31 @@
             </div>
 
             <div class="mt-2 pt-1.5 border-t border-slate-800/80">
-              <div *ngIf="p.price === 0" class="text-emerald-400 font-black text-xs sm:text-sm">مجاناً</div>
-              <div *ngIf="p.price > 0" class="text-white font-black text-xs sm:text-sm">
-                {{ isAnnual ? (p.annualOfferPrice > 0 ? p.annualOfferPrice : p.annualPrice) : p.price | number:'1.0-0' }}
-                <span class="text-[10px] text-slate-400 font-normal">ج.م</span>
+              <!-- Limited-time Free Offer -->
+              <div *ngIf="isLimitedFreeOffer(p)" class="space-y-0.5">
+                <span class="inline-block text-[9px] font-black text-emerald-400 bg-emerald-500/20 px-1.5 py-0.2 rounded-full border border-emerald-500/30 animate-pulse">
+                  عرض مجاناً 🔥
+                </span>
+                <div class="text-emerald-400 font-black text-xs sm:text-sm">0 ج.م</div>
+                <div *ngIf="getOriginalPrice(p) > 0" class="text-[9px] text-rose-400 line-through font-bold">
+                  {{ getOriginalPrice(p) | number:'1.0-0' }} ج.م
+                </div>
               </div>
+
+              <!-- Permanent Free -->
+              <div *ngIf="!isLimitedFreeOffer(p) && p.price === 0" class="text-emerald-400 font-black text-xs sm:text-sm">مجاناً</div>
+
+              <!-- Regular Paid -->
+              <div *ngIf="!isLimitedFreeOffer(p) && p.price > 0" class="space-y-0.5">
+                <div class="text-white font-black text-xs sm:text-sm">
+                  {{ (isAnnual ? (p.annualOfferPrice > 0 ? p.annualOfferPrice : p.annualPrice) : p.price) | number:'1.0-0' }}
+                  <span class="text-[10px] text-slate-400 font-normal">ج.م</span>
+                </div>
+                <div *ngIf="getOriginalPrice(p) > 0 && getOriginalPrice(p) > (isAnnual ? (p.annualOfferPrice > 0 ? p.annualOfferPrice : p.annualPrice) : p.price)" class="text-[9px] text-rose-400 line-through font-bold">
+                  {{ getOriginalPrice(p) | number:'1.0-0' }} ج.م
+                </div>
+              </div>
+
               <div class="text-[9px] text-slate-400 mt-0.5">/ {{ isAnnual ? 'سنة' : 'شهر' }}</div>
 
               <div *ngIf="canSelectPlan(p)" class="mt-1 text-[9px] text-sky-400 font-bold">

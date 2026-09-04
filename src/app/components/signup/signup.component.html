@@ -97,33 +97,25 @@
         </div>
 
         <div class="space-y-2">
-          <h3 class="text-xl font-black text-white">أهلاً بك في Besnesy! تم إنشاء متجرك بنجاح 🎉</h3>
+          <h3 class="text-xl font-black text-white">أهلاً بك في Besnesy! تم إنشاء وتفعيل متجرك بنجاح 🎉</h3>
           <p class="text-xs text-slate-300 max-w-md mx-auto leading-relaxed">
-            تم تسجيل متجر <strong>{{ storeName }}</strong> وتعيين <span class="text-emerald-400 font-bold">الخطة المجانية</span> لحسابك بنجاح.
+            تم تسجيل وتفعيل متجر <strong>{{ storeName }}</strong> تلقائياً بالخطة المجانية. يمكنك تسجيل الدخول إلى لوحة التحكم فوراً وبدء العمل!
           </p>
         </div>
 
-        <div class="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 text-xs text-slate-300 text-right space-y-2">
-          <div class="flex items-center gap-2 text-sky-400 font-bold">
-            <i class="bi bi-envelope-check-fill"></i>
-            <span>خطوة التفعيل السريعة:</span>
+        <div class="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-300 text-center space-y-1">
+          <div class="font-bold flex items-center justify-center gap-1.5">
+            <i class="bi bi-shield-check text-emerald-400"></i>
+            <span>حسابك مفعل وجاهز للاستخدام مباشرة دون الحاجة لتأكيد الإيميل</span>
           </div>
-          <p class="leading-relaxed">
-            أرسلنا رابط تفعيل إلى بريدك: <strong class="text-white">{{ email }}</strong>. اضغط على الرابط في البريد لتسجيل دخولك فوراً.
-          </p>
         </div>
 
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-          <a [routerLink]="['/activate-account']" [queryParams]="{ token: activationToken }" 
-             class="btn btn-primary w-full sm:w-auto px-6 py-2.5 text-xs font-bold flex items-center justify-center gap-2">
-            <i class="bi bi-shield-check"></i>
-            <span>تفعيل الحساب والدخول الآن</span>
+        <div class="flex items-center justify-center gap-3 pt-2">
+          <a routerLink="/login" 
+             class="btn btn-primary w-full sm:w-auto px-8 py-3 text-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/30">
+            <i class="bi bi-box-arrow-in-left text-base"></i>
+            <span>تسجيل الدخول إلى لوحة التحكم الآن ←</span>
           </a>
-
-          <button (click)="resendToken()" [disabled]="resending" class="btn btn-secondary w-full sm:w-auto px-4 py-2.5 text-xs font-bold">
-            <i *ngIf="resending" class="bi bi-arrow-repeat animate-spin ml-1"></i>
-            <span>إعادة إرسال البريد</span>
-          </button>
         </div>
       </div>
 

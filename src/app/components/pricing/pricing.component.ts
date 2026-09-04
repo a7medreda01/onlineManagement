@@ -11,7 +11,10 @@ interface PricingPlan {
   badge: string;
   description: string;
   monthlyPrice: number;
+  originalPrice?: number;
   yearlyPrice: number;
+  annualPrice?: number;
+  annualOfferPrice?: number;
   yearlyMonthlyEquivalent: number;
   icon: string;
   iconBg: string;
@@ -434,9 +437,9 @@ export class PricingComponent implements OnInit {
   private applyBackendPlans(sorted: Plan[]): void {
     if (!sorted || sorted.length === 0) return;
 
-    const free = sorted.find(p => p.price === 0 || p.name.includes('مجانية')) || sorted[0];
-    const standard = sorted.find(p => p.name.includes('قياسية') || (p.price > 0 && p.price < (sorted[sorted.length - 1]?.price || 1000))) || sorted[1] || sorted[0];
-    const premium = sorted.find(p => p.name.includes('مميزة') || p.price >= 1000) || sorted[sorted.length - 1];
+    const free = sorted.find(p => p.name.includes('مجانية') || p.price === 0) || sorted[0];
+    const standard = sorted.find(p => p.name.includes('قياسية')) || (sorted.length > 2 ? sorted[1] : (sorted[1] || sorted[0]));
+    const premium = sorted.find(p => p.name.includes('مميزة')) || sorted[sorted.length - 1];
 
     // 1. Update Plan Cards
     if (free) {
@@ -445,7 +448,10 @@ export class PricingComponent implements OnInit {
       if (free.badge) this.plans[0].badge = free.badge;
       if (free.description) this.plans[0].description = free.description;
       this.plans[0].monthlyPrice = free.price;
-      this.plans[0].yearlyPrice = free.annualOfferPrice > 0 ? free.annualOfferPrice : free.annualPrice;
+      this.plans[0].originalPrice = free.originalPrice;
+      this.plans[0].annualPrice = free.annualPrice;
+      this.plans[0].annualOfferPrice = free.annualOfferPrice;
+      this.plans[0].yearlyPrice = free.annualOfferPrice > 0 ? free.annualOfferPrice : (free.annualPrice || 0);
       this.plans[0].yearlyMonthlyEquivalent = Math.round(this.plans[0].yearlyPrice / 12);
     }
 
@@ -455,6 +461,9 @@ export class PricingComponent implements OnInit {
       if (standard.badge) this.plans[1].badge = standard.badge;
       if (standard.description) this.plans[1].description = standard.description;
       this.plans[1].monthlyPrice = standard.price;
+      this.plans[1].originalPrice = standard.originalPrice;
+      this.plans[1].annualPrice = standard.annualPrice;
+      this.plans[1].annualOfferPrice = standard.annualOfferPrice;
       const yearly = standard.annualOfferPrice > 0 ? standard.annualOfferPrice : (standard.annualPrice || standard.price * 10);
       this.plans[1].yearlyPrice = yearly;
       this.plans[1].yearlyMonthlyEquivalent = Math.round(yearly / 12);
@@ -466,6 +475,9 @@ export class PricingComponent implements OnInit {
       if (premium.badge) this.plans[2].badge = premium.badge;
       if (premium.description) this.plans[2].description = premium.description;
       this.plans[2].monthlyPrice = premium.price;
+      this.plans[2].originalPrice = premium.originalPrice;
+      this.plans[2].annualPrice = premium.annualPrice;
+      this.plans[2].annualOfferPrice = premium.annualOfferPrice;
       const yearly = premium.annualOfferPrice > 0 ? premium.annualOfferPrice : (premium.annualPrice || premium.price * 10);
       this.plans[2].yearlyPrice = yearly;
       this.plans[2].yearlyMonthlyEquivalent = Math.round(yearly / 12);
@@ -473,6 +485,25 @@ export class PricingComponent implements OnInit {
 
     // 2. Dynamically Update Comparison Categories from Live Database Plan configurations
     this.updateComparisonCategories(free, standard, premium);
+  }
+
+  isLimitedFreeOffer(plan: PricingPlan): boolean {
+    if (this.isAnnual) {
+      return ((plan.annualPrice ?? 0) > 0 || (plan.originalPrice ?? 0) > 0) && (plan.annualOfferPrice === 0 || plan.yearlyPrice === 0);
+    }
+    return ((plan.originalPrice ?? 0) > 0 || (plan.annualPrice ?? 0) > 0) && plan.monthlyPrice === 0;
+  }
+
+  isPermanentFree(plan: PricingPlan): boolean {
+    const currentPrice = this.isAnnual ? plan.yearlyPrice : plan.monthlyPrice;
+    return currentPrice === 0 && !this.isLimitedFreeOffer(plan);
+  }
+
+  getOriginalPrice(plan: PricingPlan): number {
+    if (this.isAnnual) {
+      return plan.annualPrice || (plan.originalPrice ? plan.originalPrice * 12 : 0);
+    }
+    return plan.originalPrice || 0;
   }
 
   private formatModerators(p?: Plan): string {

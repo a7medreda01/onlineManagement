@@ -12,6 +12,9 @@ import { SuperAdminRequestsListComponent } from './requests-list/super-admin-req
 import { SuperAdminPlansManagerComponent } from './plans-manager/super-admin-plans-manager.component';
 import { SuperAdminBroadcastEmailComponent } from './broadcast-email/super-admin-broadcast-email.component';
 
+import { SuperAdminToolbarComponent } from './toolbar/super-admin-toolbar.component';
+import { SuperAdminModalsComponent } from './modals/super-admin-modals.component';
+
 @Component({
   selector: 'app-super-admin',
   standalone: true,
@@ -19,11 +22,13 @@ import { SuperAdminBroadcastEmailComponent } from './broadcast-email/super-admin
     CommonModule,
     FormsModule,
     RouterModule,
+    SuperAdminToolbarComponent,
     SuperAdminOverviewCardsComponent,
     SuperAdminTenantsListComponent,
     SuperAdminRequestsListComponent,
     SuperAdminPlansManagerComponent,
-    SuperAdminBroadcastEmailComponent
+    SuperAdminBroadcastEmailComponent,
+    SuperAdminModalsComponent
   ],
   templateUrl: './super-admin.component.html'
 })
@@ -171,7 +176,8 @@ export class SuperAdminComponent implements OnInit {
     this.showRejectModal = true;
   }
 
-  confirmRejectRequest(): void {
+  confirmRejectRequest(reason?: string): void {
+    if (reason !== undefined) this.rejectReason = reason;
     if (!this.selectedRequest || !this.rejectReason.trim()) return;
 
     this.saasService.rejectSubscriptionRequest(this.selectedRequest.id, this.rejectReason).subscribe({
@@ -297,7 +303,8 @@ export class SuperAdminComponent implements OnInit {
     this.showSuspendModal = true;
   }
 
-  confirmSuspend(): void {
+  confirmSuspend(reason?: string): void {
+    if (reason !== undefined) this.suspendReason = reason;
     if (!this.selectedTenant || !this.suspendReason) return;
 
     this.saasService.suspendTenant(this.selectedTenant.id, this.suspendReason).subscribe({
@@ -315,7 +322,8 @@ export class SuperAdminComponent implements OnInit {
     this.showExtendModal = true;
   }
 
-  confirmExtend(): void {
+  confirmExtend(days?: number): void {
+    if (days !== undefined) this.additionalDays = days;
     if (!this.selectedTenant || this.additionalDays <= 0) return;
 
     this.saasService.extendSubscription(this.selectedTenant.id, this.additionalDays).subscribe({
@@ -334,6 +342,12 @@ export class SuperAdminComponent implements OnInit {
         error: (err) => alert(err?.error?.Message || 'خطأ أثناء التفعيل')
       });
     }
+  }
+
+  refreshAll(): void {
+    this.loadData();
+    this.loadPlans();
+    this.loadSubscriptionRequests();
   }
 
   logout(): void {

@@ -241,7 +241,7 @@ export class UpgradeModalComponent implements OnInit, OnChanges {
           const map = new Map<string, any>();
           data.filter(d => d.isActive).forEach(d => {
             const key = d.name.trim();
-            if (!map.has(key) || d.id > map.get(key).id) {
+            if (!map.has(key)) {
               map.set(key, d);
             }
           });
@@ -256,6 +256,7 @@ export class UpgradeModalComponent implements OnInit, OnChanges {
               badge: d.badge || fallback.badge,
               description: d.description || fallback.description,
               price: d.price,
+              originalPrice: d.originalPrice,
               annualPrice: d.annualPrice || d.price * 12,
               annualOfferPrice: d.annualOfferPrice > 0 ? d.annualOfferPrice : (d.annualPrice || d.price * 10),
               icon: fallback.icon,
@@ -273,6 +274,20 @@ export class UpgradeModalComponent implements OnInit, OnChanges {
         this.autoSelectAppropriatePlan();
       }
     });
+  }
+
+  isLimitedFreeOffer(p: any): boolean {
+    if (!p) return false;
+    if (this.isAnnual) {
+      return ((p.annualPrice ?? 0) > 0 || (p.originalPrice ?? 0) > 0) && (p.annualOfferPrice === 0);
+    }
+    return ((p.originalPrice ?? 0) > 0 || (p.annualPrice ?? 0) > 0) && p.price === 0;
+  }
+
+  getOriginalPrice(p: any): number {
+    if (!p) return 0;
+    if (this.isAnnual) return p.annualPrice || (p.originalPrice ? p.originalPrice * 12 : 0);
+    return p.originalPrice || 0;
   }
 
   selectPlan(plan: PlanOption): void {

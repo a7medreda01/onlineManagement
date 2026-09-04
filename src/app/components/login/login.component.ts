@@ -17,7 +17,9 @@ export class LoginComponent implements OnInit {
   rememberMe = false;
   loading = false;
   errorMessage = '';
-  requiresActivation = false;
+  isStoreSuspended = false;
+  isAccountDisabled = false;
+  isInvalidCredentials = false;
   isDarkMode = true;
 
   constructor(private authService: AuthService, private router: Router) {}
@@ -67,12 +69,17 @@ export class LoginComponent implements OnInit {
 
     if (!normalizedUsername || !normalizedPassword) {
       this.errorMessage = 'يرجى إدخال اسم المستخدم وكلمة المرور';
+      this.isStoreSuspended = false;
+      this.isAccountDisabled = false;
+      this.isInvalidCredentials = true;
       return;
     }
 
     this.loading = true;
     this.errorMessage = '';
-    this.requiresActivation = false;
+    this.isStoreSuspended = false;
+    this.isAccountDisabled = false;
+    this.isInvalidCredentials = false;
 
     // Save username if remember me is checked
     if (this.rememberMe) {
@@ -92,15 +99,32 @@ export class LoginComponent implements OnInit {
       },
       error: (err) => {
         this.loading = false;
-        const msg = err?.error?.Message || 'فشل تسجيل الدخول. اسم المستخدم أو كلمة المرور غير صحيحة.';
-        this.errorMessage = msg;
+        const status = err?.status;
+        const msg = err?.error?.Message || err?.error?.message || err?.message || '';
 
-        if (msg.includes('تفعيل') || msg.includes('تأكيد')) {
-          this.requiresActivation = true;
-          setTimeout(() => {
-            this.router.navigate(['/activate-account'], { queryParams: { email: normalizedUsername } });
-          }, 1800);
+        if (status === 0) {
+          this.errorMessage = 'تعذر الاتصال بالخادم. يرجى التأكد من اتصال الإنترنت والمحاولة مرة أخرى.';
+          return;
         }
+
+        if (status === 403 || msg.includes('موقوف') || msg.includes('إيقاف') || msg.includes('المتجر')) {
+          if (msg.includes('تعطيل هذا الحساب') || msg.includes('معطل')) {
+            this.isAccountDisabled = true;
+            this.errorMessage = msg || 'تم تعطيل هذا الحساب من قِبل إدارة المتجر. يرجى مراجعة المسؤول.';
+          } else {
+            this.isStoreSuspended = true;
+            this.errorMessage = msg || 'تم إيقاف هذا المتجر حالياً من قِبل إدارة المنصة. يرجى التواصل مع الدعم الفني لتفعيل المتجر.';
+          }
+          return;
+        }
+
+        if (status === 401 || msg.includes('كلمة المرور') || msg.includes('اسم المستخدم')) {
+          this.isInvalidCredentials = true;
+          this.errorMessage = msg || 'اسم المستخدم أو كلمة المرور غير صحيحة. يرجى التأكد من البيانات والمحاولة مجدداً.';
+          return;
+        }
+
+        this.errorMessage = msg || 'حدث خطأ أثناء تسجيل الدخول. يرجى المحاولة مرة أخرى.';
       }
     });
   }

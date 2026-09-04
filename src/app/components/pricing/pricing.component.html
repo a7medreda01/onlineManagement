@@ -1,7 +1,7 @@
 <div class="landing-page font-cairo min-h-screen flex flex-col relative overflow-x-hidden" dir="rtl">
 
-  <!-- Ambient Animated Orbs -->
-  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+  <!-- Ambient Animated Orbs (Desktop only for fast 60fps mobile loading) -->
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden hidden md:block" aria-hidden="true">
     <div class="landing-orb landing-orb-1"></div>
     <div class="landing-orb landing-orb-2"></div>
     <div class="landing-orb landing-orb-3"></div>
@@ -129,20 +129,42 @@
         <!-- Price & Action Button -->
         <div class="space-y-4 pt-4 border-t lp-price-divider text-center">
           <div>
-            <ng-container *ngIf="plan.isFree; else paidPricing">
+            <!-- Case 1: Limited-time Free Offer -->
+            <ng-container *ngIf="isLimitedFreeOffer(plan)">
+              <div class="space-y-1.5">
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[11px] font-black shadow-sm animate-pulse">
+                  <i class="bi bi-gift-fill"></i>
+                  <span>عرض مجاناً لفترة محدودة 🔥</span>
+                </div>
+                <div class="text-3xl font-black text-emerald-400">
+                  0 <span class="text-xs text-slate-400">ج.م / {{ isAnnual ? 'سنة' : 'شهر' }}</span>
+                </div>
+                <div *ngIf="getOriginalPrice(plan) > 0" class="text-xs text-rose-400 font-bold line-through">
+                  السعر الأساسي: {{ getOriginalPrice(plan) | number:'1.0-0' }} ج.م
+                </div>
+              </div>
+            </ng-container>
+
+            <!-- Case 2: Permanent Free Plan -->
+            <ng-container *ngIf="!isLimitedFreeOffer(plan) && isPermanentFree(plan)">
               <div class="text-3xl font-black text-slate-100">مجاناً</div>
               <div class="text-xs text-slate-400 mt-1">مدى الحياة للمشاريع الناشئة</div>
             </ng-container>
-            <ng-template #paidPricing>
+
+            <!-- Case 3: Regular Paid Plan -->
+            <ng-container *ngIf="!isLimitedFreeOffer(plan) && !isPermanentFree(plan)">
               <div class="text-3xl font-black text-slate-100">
                 {{ (isAnnual ? plan.yearlyPrice : plan.monthlyPrice) | number:'1.0-0' }}
                 <span class="text-xs font-bold text-sky-400">ج.م</span>
                 <span class="text-xs font-normal text-slate-400">/ {{ isAnnual ? 'سنة' : 'شهر' }}</span>
               </div>
+              <div *ngIf="getOriginalPrice(plan) > 0 && getOriginalPrice(plan) > (isAnnual ? plan.yearlyPrice : plan.monthlyPrice)" class="text-xs text-rose-500 font-bold line-through mt-0.5">
+                {{ getOriginalPrice(plan) | number:'1.0-0' }} ج.م
+              </div>
               <div *ngIf="isAnnual" class="text-[11px] text-emerald-400 font-bold mt-0.5">
                 (ما يعادل {{ plan.yearlyMonthlyEquivalent | number:'1.0-0' }} ج.م / شهر)
               </div>
-            </ng-template>
+            </ng-container>
           </div>
 
           <button (click)="onPlanAction(plan)" type="button"
@@ -353,34 +375,34 @@
                 <div *ngIf="mobileComparisonMode === 'all'" class="grid grid-cols-3 gap-1.5 pt-1 text-center">
                   <!-- Free -->
                   <div class="p-1.5 rounded-xl border flex flex-col items-center justify-center gap-1"
-                       [ngClass]="getPlanStatus(row, 'free').cssClass">
+                       [ngClass]="row.free === 'check' ? 'bg-emerald-950/20 border-emerald-500/30 text-emerald-300' : (row.free === 'cross' ? 'bg-slate-900/40 border-slate-800 text-slate-500' : 'bg-slate-800/40 border-slate-700/60 text-slate-200')">
                     <span class="text-[9px] opacity-75 font-semibold">{{ plans[0].name }}</span>
                     <div class="font-bold text-[10px] flex items-center gap-1">
-                      <i *ngIf="getPlanStatus(row, 'free').isCheck" class="bi bi-check-circle-fill text-emerald-400"></i>
-                      <i *ngIf="getPlanStatus(row, 'free').isCross" class="bi bi-x-circle text-rose-400"></i>
-                      <span>{{ getPlanStatus(row, 'free').text }}</span>
+                      <i *ngIf="row.free === 'check'" class="bi bi-check-circle-fill text-emerald-400"></i>
+                      <i *ngIf="row.free === 'cross'" class="bi bi-x-circle text-rose-400"></i>
+                      <span>{{ row.free === 'check' ? 'متاح' : (row.free === 'cross' ? 'غير متاح' : row.free) }}</span>
                     </div>
                   </div>
 
                   <!-- Standard -->
                   <div class="p-1.5 rounded-xl border flex flex-col items-center justify-center gap-1"
-                       [ngClass]="getPlanStatus(row, 'standard').cssClass">
+                       [ngClass]="row.standard === 'check' ? 'bg-teal-950/30 border-teal-500/40 text-teal-300' : (row.standard === 'cross' ? 'bg-slate-900/40 border-slate-800 text-slate-500' : 'bg-teal-950/20 border-teal-500/30 text-teal-200')">
                     <span class="text-[9px] opacity-75 font-semibold">{{ plans[1].name }}</span>
                     <div class="font-bold text-[10px] flex items-center gap-1">
-                      <i *ngIf="getPlanStatus(row, 'standard').isCheck" class="bi bi-check-circle-fill text-emerald-400"></i>
-                      <i *ngIf="getPlanStatus(row, 'standard').isCross" class="bi bi-x-circle text-rose-400"></i>
-                      <span>{{ getPlanStatus(row, 'standard').text }}</span>
+                      <i *ngIf="row.standard === 'check'" class="bi bi-check-circle-fill text-emerald-400"></i>
+                      <i *ngIf="row.standard === 'cross'" class="bi bi-x-circle text-rose-400"></i>
+                      <span>{{ row.standard === 'check' ? 'متاح' : (row.standard === 'cross' ? 'غير متاح' : row.standard) }}</span>
                     </div>
                   </div>
 
                   <!-- Premium -->
                   <div class="p-1.5 rounded-xl border flex flex-col items-center justify-center gap-1"
-                       [ngClass]="getPlanStatus(row, 'premium').cssClass">
+                       [ngClass]="row.premium === 'check' ? 'bg-amber-950/30 border-amber-500/40 text-amber-300' : (row.premium === 'cross' ? 'bg-slate-900/40 border-slate-800 text-slate-500' : 'bg-amber-950/20 border-amber-500/30 text-amber-200')">
                     <span class="text-[9px] opacity-75 font-semibold">{{ plans[2].name }}</span>
                     <div class="font-bold text-[10px] flex items-center gap-1">
-                      <i *ngIf="getPlanStatus(row, 'premium').isCheck" class="bi bi-check-circle-fill text-emerald-400"></i>
-                      <i *ngIf="getPlanStatus(row, 'premium').isCross" class="bi bi-x-circle text-rose-400"></i>
-                      <span>{{ getPlanStatus(row, 'premium').text }}</span>
+                      <i *ngIf="row.premium === 'check'" class="bi bi-check-circle-fill text-emerald-400"></i>
+                      <i *ngIf="row.premium === 'cross'" class="bi bi-x-circle text-rose-400"></i>
+                      <span>{{ row.premium === 'check' ? 'متاح' : (row.premium === 'cross' ? 'غير متاح' : row.premium) }}</span>
                     </div>
                   </div>
                 </div>
@@ -388,14 +410,36 @@
                 <!-- Case B: Single Selected Plan Pill on Mobile -->
                 <div *ngIf="mobileComparisonMode === 'single'" class="flex items-center justify-between pt-1">
                   <span class="text-[11px] text-slate-400">
-                    في {{ selectedMobilePlan === 'free' ? 'الخطة المجانية' : (selectedMobilePlan === 'standard' ? 'الخطة القياسية' : 'الخطة المميزة') }}:
+                    في {{ selectedMobilePlan === 'free' ? plans[0].name : (selectedMobilePlan === 'standard' ? plans[1].name : plans[2].name) }}:
                   </span>
-                  <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold border shadow-xs"
-                        [ngClass]="getPlanStatus(row, selectedMobilePlan).cssClass">
-                    <i *ngIf="getPlanStatus(row, selectedMobilePlan).isCheck" class="bi bi-check-circle-fill"></i>
-                    <i *ngIf="getPlanStatus(row, selectedMobilePlan).isCross" class="bi bi-x-circle"></i>
-                    <span>{{ getPlanStatus(row, selectedMobilePlan).text }}</span>
-                  </span>
+                  <ng-container [ngSwitch]="selectedMobilePlan">
+                    <!-- Free Value -->
+                    <span *ngSwitchCase="'free'"
+                          class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold border shadow-xs"
+                          [ngClass]="row.free === 'check' ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : (row.free === 'cross' ? 'bg-rose-500/10 border-rose-500/20 text-rose-400' : 'bg-slate-800 border-slate-700 text-slate-200')">
+                      <i *ngIf="row.free === 'check'" class="bi bi-check-circle-fill"></i>
+                      <i *ngIf="row.free === 'cross'" class="bi bi-x-circle"></i>
+                      <span>{{ row.free === 'check' ? 'متاح' : (row.free === 'cross' ? 'غير متاح' : row.free) }}</span>
+                    </span>
+
+                    <!-- Standard Value -->
+                    <span *ngSwitchCase="'standard'"
+                          class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold border shadow-xs"
+                          [ngClass]="row.standard === 'check' ? 'bg-teal-500/10 border-teal-500/30 text-teal-300' : (row.standard === 'cross' ? 'bg-rose-500/10 border-rose-500/20 text-rose-400' : 'bg-teal-950/40 border-teal-500/30 text-teal-200')">
+                      <i *ngIf="row.standard === 'check'" class="bi bi-check-circle-fill"></i>
+                      <i *ngIf="row.standard === 'cross'" class="bi bi-x-circle"></i>
+                      <span>{{ row.standard === 'check' ? 'متاح' : (row.standard === 'cross' ? 'غير متاح' : row.standard) }}</span>
+                    </span>
+
+                    <!-- Premium Value -->
+                    <span *ngSwitchCase="'premium'"
+                          class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold border shadow-xs"
+                          [ngClass]="row.premium === 'check' ? 'bg-amber-500/10 border-amber-500/30 text-amber-300' : (row.premium === 'cross' ? 'bg-rose-500/10 border-rose-500/20 text-rose-400' : 'bg-amber-950/40 border-amber-500/30 text-amber-200')">
+                      <i *ngIf="row.premium === 'check'" class="bi bi-check-circle-fill"></i>
+                      <i *ngIf="row.premium === 'cross'" class="bi bi-x-circle"></i>
+                      <span>{{ row.premium === 'check' ? 'متاح' : (row.premium === 'cross' ? 'غير متاح' : row.premium) }}</span>
+                    </span>
+                  </ng-container>
                 </div>
 
               </div>
