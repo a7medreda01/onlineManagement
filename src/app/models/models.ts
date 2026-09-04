@@ -789,6 +789,8 @@ export interface StorefrontSettings {
   facebookPixelId?: string;
   tiktokPixelId?: string;
   googleAnalyticsId?: string;
+  customDomain?: string;
+  customDomainStatus?: string;
   isActive: boolean;
   totalLandingPagesCount: number;
   totalViewsCount: number;

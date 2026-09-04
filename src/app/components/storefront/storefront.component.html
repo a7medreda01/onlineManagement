@@ -524,14 +524,80 @@
           </div>
         </div>
 
+        <!-- Section 4: Custom Domain Linking (الدومين المخصص الخاص بك) -->
+        <div class="pt-3 border-top border-white border-opacity-10">
+          <h5 class="fw-bold mb-3 d-flex align-items-center gap-2 text-warning border-bottom border-white border-opacity-10 pb-2">
+            <i class="bi bi-globe2"></i> 4. ربط دومين مخصص خاص بك (Custom Domain)
+          </h5>
+
+          <div class="p-3.5 rounded-4 bg-slate-900 border border-slate-800 space-y-3">
+            <div>
+              <label class="form-label text-xs fw-bold text-white-50">اسم الدومين الخاص بك (الذي قمت بشرائه من GoDaddy أو Namecheap أو غيرهم)</label>
+              <div class="input-group" dir="ltr">
+                <span class="input-group-text bg-slate-800 text-slate-400 border-slate-700 font-monospace">https://</span>
+                <input type="text" 
+                       [(ngModel)]="settingsForm.customDomain" 
+                       class="form-control bg-dark text-white border-slate-700 font-monospace text-sm" 
+                       placeholder="mybrand.com أو shop.mybrand.com">
+              </div>
+              <small class="text-white-50 text-xs mt-1 d-block">اكتب الدومين بدون https:// وبدون / في النهاية.</small>
+            </div>
+
+            <!-- DNS Setup Guide Alert -->
+            <div class="p-3 rounded-3 bg-dark border border-slate-700 text-xs text-white-50 space-y-2">
+              <div class="d-flex align-items-center gap-2 text-warning fw-bold">
+                <i class="bi bi-info-circle-fill"></i>
+                <span>خطوات ضبط الـ DNS في لوحة تحكم شركة الدومين (GoDaddy / Namecheap / Cloudflare):</span>
+              </div>
+              <p class="mb-1 text-slate-300 leading-relaxed">
+                لكي يعمل دومينك المخصص مع متجرك على Besnesy، توجه إلى إعدادات الـ <strong>DNS Management</strong> عند مزود الدومين وأضف السجلين التاليين:
+              </p>
+              <div class="table-responsive">
+                <table class="table table-dark table-sm table-bordered text-center text-xs font-monospace mb-0">
+                  <thead class="bg-slate-800 text-warning">
+                    <tr>
+                      <th>النوع (Type)</th>
+                      <th>الاسم (Name / Host)</th>
+                      <th>القيمة / التوجيه (Value / Target)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="text-info fw-bold">A Record</td>
+                      <td>@</td>
+                      <td class="text-success fw-bold select-all">216.198.79.1</td>
+                    </tr>
+                    <tr>
+                      <td class="text-info fw-bold">CNAME</td>
+                      <td>www</td>
+                      <td class="text-success fw-bold select-all">cname.vercel-dns.com</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="text-[11px] text-white-50 mt-1">
+                * ملاحظة: قد يستغرق انتشار الـ DNS عالمياً من 15 دقيقة إلى عدة ساعات حتى يصبح متجرك متاحاً عالمياً بالدومين الجديد مع شهادة SSL مجانية تلقائياً.
+              </div>
+            </div>
+
+            <!-- Domain Status Badge -->
+            <div *ngIf="settingsForm.customDomain" class="d-flex align-items-center justify-content-between p-2 rounded-2 bg-slate-800 text-xs">
+              <span class="text-white-50">حالة الدومين المخصص:</span>
+              <span class="badge bg-info text-dark fw-bold">
+                <i class="bi bi-broadcast me-1"></i> بانتظار توجيه الـ DNS (Pending DNS)
+              </span>
+            </div>
+          </div>
+        </div>
+
         <!-- Submit Button -->
         <div class="pt-4 border-top border-white border-opacity-10 d-flex justify-content-end">
           <button (click)="saveSettings()" 
                   [disabled]="savingSettings()" 
-                  class="btn btn-success rounded-pill px-5 py-3 fw-bold shadow-lg d-flex align-items-center gap-2">
+                  class="btn btn-success rounded-pill px-5 py-3 fw-bold shadow-lg d-flex align-items-center gap-2 cursor-pointer">
             <span *ngIf="savingSettings()" class="spinner-border spinner-border-sm"></span>
             <i *ngIf="!savingSettings()" class="bi bi-check-circle-fill"></i>
-            <span>{{ savingSettings() ? 'جاري حفظ الإعدادات...' : 'حفظ كافة إعدادات المتجر 💾' }}</span>
+            <span>{{ savingSettings() ? 'جاري حفظ الإعدادات...' : 'حفظ كافة إعدادات المتجر والدومين 💾' }}</span>
           </button>
         </div>
 
@@ -629,8 +695,17 @@
             </div>
 
             <div>
-              <label class="form-label text-xs fw-bold text-white-50">وصف أو مواصفات المنتج التي ترغب بإبرازها</label>
-              <textarea [(ngModel)]="aiRequest.productDescription" rows="3" class="form-control bg-dark text-white border-slate-700 rounded-3" placeholder="اكتب أي تفاصيل، خامات، مميزات، أو اتركها للذكاء الاصطناعي ليبحث عنها ويستخرجها..."></textarea>
+              <label class="form-label text-xs fw-bold text-warning d-flex align-items-center gap-1">
+                <i class="bi bi-card-text"></i>
+                <span>المواصفات الفنية والمميزات لمساعدة الـ AI (اختياري ولكن هام جداً)</span>
+              </label>
+              <textarea [(ngModel)]="aiRequest.productSpecs" rows="3" class="form-control bg-dark text-white border-warning border-opacity-50 rounded-3" placeholder="انسخ والصق هنا مواصفات المنتج من إعلان فيسبوك أو المورد (الخامات، الموديل، الملحقات، الصناعة، المميزات الحصرية) ليقوم الـ AI بصياغة صفحة هبوط مقنعة بالكامل بناءً عليها..."></textarea>
+              <small class="text-white-50 text-[11px] mt-1 d-block">سيعتمد الذكاء الاصطناعي على هذه المواصفات في كتابة المميزات الفنية، والأسئلة الشائعة، والحلول التسويقية.</small>
+            </div>
+
+            <div>
+              <label class="form-label text-xs fw-bold text-white-50">وصف تسويقي إضافي أو فكرة العرض</label>
+              <textarea [(ngModel)]="aiRequest.productDescription" rows="2" class="form-control bg-dark text-white border-slate-700 rounded-3" placeholder="أي تفاصيل تسويقية إضافية (مثل: خصم لفترة محدودة، عرض 2 قطعة، هدية مجانية)..."></textarea>
             </div>
 
             <!-- Image Upload & Preview -->
@@ -750,6 +825,51 @@
               <div class="col-12 col-md-4">
                 <label class="form-label text-xs fw-bold text-white-50">شارة تسويقية (Badge)</label>
                 <input type="text" [(ngModel)]="generatedPreview.badge" class="form-control bg-dark text-white border-slate-700 rounded-3" placeholder="مثال: الأكثر مبيعاً 🔥">
+              </div>
+
+              <!-- Product Sizes Management (Only for shoes/clothing/apparel) -->
+              <div class="col-12 pt-3 border-top border-slate-800">
+                <div class="p-3 rounded-3 bg-slate-900 border border-slate-800">
+                  <div class="d-flex align-items-center justify-content-between mb-2">
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="form-check form-switch m-0">
+                        <input class="form-check-input" type="checkbox" [(ngModel)]="hasSizes" id="hasSizesToggle">
+                      </div>
+                      <label class="form-check-label text-sm fw-bold text-white cursor-pointer" for="hasSizesToggle">
+                        هل المنتج ملابس أو أحذية ويحتاج اختيار مقاس؟
+                      </label>
+                    </div>
+                    <span class="badge" [class.bg-success]="hasSizes" [class.bg-secondary]="!hasSizes">
+                      {{ hasSizes ? 'مفعل (سيظهر اختيار المقاس)' : 'معطل (لن يظهر قسم المقاسات)' }}
+                    </span>
+                  </div>
+
+                  <div *ngIf="hasSizes" class="mt-3 pt-3 border-top border-slate-800">
+                    <div class="mb-2">
+                      <span class="text-xs text-white-50 mb-1.5 d-block">نماذج مقاسات جاهزة بضغطة زر:</span>
+                      <div class="d-flex flex-wrap gap-2">
+                        <button type="button" (click)="setSizePreset('shoes-men')" class="btn btn-xs btn-outline-warning rounded-pill text-[11px] py-1 px-2.5">
+                          👟 أحذية رجالي (40 - 45)
+                        </button>
+                        <button type="button" (click)="setSizePreset('shoes-women')" class="btn btn-xs btn-outline-info rounded-pill text-[11px] py-1 px-2.5">
+                          👠 أحذية حريمي (36 - 41)
+                        </button>
+                        <button type="button" (click)="setSizePreset('clothes-general')" class="btn btn-xs btn-outline-success rounded-pill text-[11px] py-1 px-2.5">
+                          👕 ملابس (S إلى 3XL)
+                        </button>
+                        <button type="button" (click)="setSizePreset('free-size')" class="btn btn-xs btn-outline-light rounded-pill text-[11px] py-1 px-2.5">
+                          👗 ون سايز (One Size)
+                        </button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label class="form-label text-xs fw-bold text-white-50">قائمة المقاسات المتاحة (مفصولة بفاصلة ,)</label>
+                      <input type="text" [(ngModel)]="customSizesStr" class="form-control form-control-sm bg-dark text-white border-slate-700 font-monospace text-xs" placeholder="مثال: 40, 41, 42, 43, 44, 45">
+                      <small class="text-white-50 text-[11px]">يمكنك كتابة أي مقاسات أو أرقام أو أحجام يريد المشتري الاختيار من بينها عند الطلب.</small>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

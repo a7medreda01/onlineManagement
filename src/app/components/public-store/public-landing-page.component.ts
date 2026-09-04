@@ -74,9 +74,10 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
     this.selectImage(prevIdx);
   }
 
-  // Shoe / Apparel Size Selection (Behance E-commerce style)
-  selectedSize = signal<string>('42');
-  sizes = ['40', '41', '42', '43', '44', '45'];
+  // Conditional Size Selection (e.g. shoes, clothing, abayas)
+  hasSizes = signal<boolean>(false);
+  selectedSize = signal<string>('');
+  sizes = signal<string[]>([]);
 
   selectSize(s: string): void {
     this.selectedSize.set(s);
@@ -255,7 +256,30 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
             faq,
             guarantees: raw.guarantees || []
           };
+
+          // Conditional Size Selection (only if product has sizes e.g. shoes, clothes)
+          const hasSizesFlag = !!raw.hasSizes;
+          this.hasSizes.set(hasSizesFlag);
+          if (hasSizesFlag) {
+            let sizeList: string[] = [];
+            if (Array.isArray(raw.sizes) && raw.sizes.length > 0) {
+              sizeList = raw.sizes.map((s: any) => String(s).trim()).filter(Boolean);
+            } else if (typeof raw.sizes === 'string') {
+              sizeList = raw.sizes.split(',').map((s: string) => s.trim()).filter(Boolean);
+            }
+            if (sizeList.length === 0) {
+              sizeList = ['S', 'M', 'L', 'XL', 'XXL'];
+            }
+            this.sizes.set(sizeList);
+            this.selectedSize.set(sizeList[0]);
+          } else {
+            this.sizes.set([]);
+            this.selectedSize.set('');
+          }
         } catch {
+          this.hasSizes.set(false);
+          this.sizes.set([]);
+          this.selectedSize.set('');
           this.content = {
             features: [
               { title: 'خامات أصلية وتصنيع فائق الجودة', description: 'مصنوع بأعلى المعايير لتحمل الاستخدام اليومي الشاق.', icon: 'bi-shield-check' },
@@ -375,7 +399,7 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.selectedSize() && !this.orderForm.notes?.includes('المقاس:')) {
+    if (this.hasSizes() && this.selectedSize() && !this.orderForm.notes?.includes('المقاس:')) {
       this.orderForm.notes = `المقاس المختار: ${this.selectedSize()}` + (this.orderForm.notes ? ` | ${this.orderForm.notes}` : '');
     }
 

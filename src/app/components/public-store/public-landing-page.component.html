@@ -271,14 +271,14 @@
             </div>
           </div>
 
-          <!-- Behance Shoe Size Selector Demo -->
-          <div class="mb-5 bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm">
+          <!-- Optional Size Selector (e.g. Shoes / Apparel) -->
+          <div *ngIf="hasSizes() && sizes().length > 0" class="mb-5 bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm">
             <div class="flex items-center justify-between mb-2.5">
               <label class="text-xs font-bold text-slate-700">اختر المقاس:</label>
               <span class="text-xs text-indigo-600 font-semibold cursor-pointer">جدول المقاسات 📏</span>
             </div>
             <div class="flex flex-wrap gap-2">
-              <button *ngFor="let s of sizes" 
+              <button *ngFor="let s of sizes()" 
                       type="button" 
                       (click)="selectSize(s)"
                       [class.bg-slate-900]="selectedSize() === s"
@@ -286,7 +286,7 @@
                       [class.shadow-md]="selectedSize() === s"
                       [class.bg-slate-100]="selectedSize() !== s"
                       [class.text-slate-700]="selectedSize() !== s"
-                      class="w-12 h-11 rounded-xl font-bold text-sm transition flex items-center justify-center hover:scale-105 active:scale-95">
+                      class="w-12 h-11 rounded-xl font-bold text-sm transition flex items-center justify-center hover:scale-105 active:scale-95 cursor-pointer">
                 {{ s }}
               </button>
             </div>

@@ -37,5 +37,18 @@ export function getSubdomain(): string | null {
     }
   }
 
+  // Check if it's a custom domain purchased by the merchant (e.g. brand.com or shop.brand.com)
+  // If the host does NOT end with besnesy.com or vercel.app or runasp.net, and is not localhost/IP:
+  const isPlatformDomain = hostname.endsWith('besnesy.com') || 
+                           hostname.endsWith('vercel.app') || 
+                           hostname.endsWith('runasp.net') || 
+                           hostname.endsWith('localhost');
+
+  if (!isPlatformDomain) {
+    // It's a custom domain! Strip leading 'www.' if present
+    const cleanDomain = hostname.startsWith('www.') ? hostname.substring(4) : hostname;
+    return cleanDomain;
+  }
+
   return null;
 }

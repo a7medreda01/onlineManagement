@@ -99,6 +99,8 @@ export class StorefrontComponent implements OnInit {
     facebookPixelId: '',
     tiktokPixelId: '',
     googleAnalyticsId: '',
+    customDomain: '',
+    customDomainStatus: 'PendingDns',
     isActive: true
   };
 
@@ -113,6 +115,7 @@ export class StorefrontComponent implements OnInit {
     selectedProductId: null as number | null,
     productName: '',
     productDescription: '',
+    productSpecs: '',
     niche: 'عام',
     targetSellingPrice: null as number | null,
     images: [] as string[],
@@ -124,6 +127,23 @@ export class StorefrontComponent implements OnInit {
     initialStock: 100,
     productCostPrice: 0
   };
+
+  // Apparel / Shoes Size Configuration
+  hasSizes: boolean = false;
+  customSizesStr: string = '40, 41, 42, 43, 44, 45';
+
+  setSizePreset(type: 'shoes-men' | 'shoes-women' | 'clothes-general' | 'free-size'): void {
+    this.hasSizes = true;
+    if (type === 'shoes-men') {
+      this.customSizesStr = '40, 41, 42, 43, 44, 45';
+    } else if (type === 'shoes-women') {
+      this.customSizesStr = '36, 37, 38, 39, 40, 41';
+    } else if (type === 'clothes-general') {
+      this.customSizesStr = 'S, M, L, XL, XXL, 3XL';
+    } else if (type === 'free-size') {
+      this.customSizesStr = 'One Size (وان سايز)';
+    }
+  }
 
   // AI Generated output for preview & tweaking
   generatedPreview: Partial<AiGeneratedLandingPageResponse> & {
@@ -434,7 +454,20 @@ export class StorefrontComponent implements OnInit {
           { question: 'هل يمكنني معاينة المنتج قبل الاستلام والدفع؟', answer: 'نعم بالتأكيد! يمكنك فحص الشحنة مع المندوب قبل دفع أي مبالغ.' }
         ];
       }
+      // Handle product sizes configuration
+      this.hasSizes = !!raw.hasSizes;
+      if (raw.sizes) {
+        if (Array.isArray(raw.sizes)) {
+          this.customSizesStr = raw.sizes.join(', ');
+        } else if (typeof raw.sizes === 'string') {
+          this.customSizesStr = raw.sizes;
+        }
+      } else {
+        this.customSizesStr = '40, 41, 42, 43, 44, 45';
+      }
     } catch {
+      this.hasSizes = false;
+      this.customSizesStr = '40, 41, 42, 43, 44, 45';
       this.editableFeatures = [];
       this.editableWhyChooseUs = [];
       this.editableReviews = [];
@@ -569,6 +602,7 @@ export class StorefrontComponent implements OnInit {
         selectedProductId: null,
         productName: '',
         productDescription: '',
+        productSpecs: '',
         niche: this.settings()?.niche || 'عام',
         targetSellingPrice: null,
         images: [],
@@ -625,10 +659,15 @@ export class StorefrontComponent implements OnInit {
 
     this.generatingAi.set(true);
     this.wizardStep = 3;
+    
+    const combinedDescription = [
+      this.aiRequest.productDescription?.trim(),
+      this.aiRequest.productSpecs?.trim() ? `المواصفات الفنية والمميزات:\n${this.aiRequest.productSpecs.trim()}` : ''
+    ].filter(Boolean).join('\n\n');
 
     this.storefrontService.generateAi({
       productName: this.aiRequest.productName.trim(),
-      productDescription: this.aiRequest.productDescription?.trim(),
+      productDescription: combinedDescription || undefined,
       niche: this.aiRequest.niche,
       targetSellingPrice: this.aiRequest.targetSellingPrice || undefined,
       existingImages: this.aiRequest.images,
@@ -673,7 +712,13 @@ export class StorefrontComponent implements OnInit {
 
     this.savingPage.set(true);
 
+    const parsedSizes = this.hasSizes && this.customSizesStr
+      ? this.customSizesStr.split(',').map(s => s.trim()).filter(Boolean)
+      : [];
+
     const contentPayload = {
+      hasSizes: this.hasSizes,
+      sizes: parsedSizes,
       features: this.editableFeatures,
       benefits: this.editableFeatures,
       whyChooseUs: this.editableWhyChooseUs,
