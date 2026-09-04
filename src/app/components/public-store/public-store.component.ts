@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, signal, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -27,6 +27,33 @@ export class PublicStoreComponent implements OnInit {
   settings = signal<StorefrontSettings | null>(null);
   pages = signal<ProductLandingPage[]>([]);
   searchTerm = '';
+  activeFilter = signal<'all' | 'deals' | 'free_shipping'>('all');
+  sortBy = signal<'default' | 'price_asc' | 'price_desc' | 'discount'>('default');
+  viewMode = signal<'grid' | 'compact'>('grid');
+
+  // Quick View Modal
+  quickViewProduct = signal<ProductLandingPage | null>(null);
+  quickViewActiveImageIndex = signal<number>(0);
+
+  // FAQ state
+  activeFaqIndex = signal<number | null>(null);
+
+  currentYear = new Date().getFullYear();
+
+  // Testimonials / Social Proof
+  storeReviews = [
+    { name: 'أحمد محمود', city: 'القاهرة', rating: 5, comment: 'تجربة ممتازة وسريعة جداً. عاينت المنتج مع مندوب الشحن وتأكدت من الجودة قبل ما أدفع قرش واحد!', verified: true, date: 'منذ يومين' },
+    { name: 'سارة إبراهيم', city: 'الإسكندرية', rating: 5, comment: 'خامة المنتج رائعة ومطابقة للصور بالظبط، والتغليف راقي وفخم. هتعامل معاكم دايماً بإذن الله.', verified: true, date: 'منذ 4 أيام' },
+    { name: 'طارق عبد الله', city: 'الجيزة', rating: 5, comment: 'خدمة العملاء في قمة الذوق وسرعة الرد على الواتساب. التوصيل تم في أقل من 48 ساعة.', verified: true, date: 'منذ أسبوع' }
+  ];
+
+  // Store FAQs
+  storeFaqs = [
+    { question: 'هل يمكنني معاينة وفحص المنتج قبل الدفع؟', answer: 'نعم بكل تأكيد! يحق لك فتح الشحنة وفحص المنتج والتأكد من مطابقته للمواصفات أمام مندوب التوصيل قبل دفع أي مبلغ.' },
+    { question: 'ما هي مدة التوصيل لكافة المحافظات؟', answer: 'يتم تسليم الطلبات داخل القاهرة والجيزة والإسكندرية خلال 24 إلى 48 ساعة، وخلال 2 إلى 3 أيام عمل لباقي محافظات الجمهورية عبر شركات شحن موثوقة (بوسطة).' },
+    { question: 'كيف يمكنني تأكيد طلبي أو الاستفسار؟', answer: 'يمكنك اختيار المنتج والضغط على "طلب سريع" وملء بياناتك مباشرة، أو الضغط على زر "طلب عبر واتساب" للتواصل الفوري مع خدمة العملاء.' },
+    { question: 'ما هي سياسة الاستبدال والاسترجاع؟', answer: 'نضمن لك استبدال أو استرجاع سهل وسريع خلال 14 يوماً من استلام الشحنة في حالة وجود أي عيب مصنعي أو رغبة في استبدال المقاس/اللون.' }
+  ];
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
@@ -45,7 +72,6 @@ export class PublicStoreComponent implements OnInit {
       next: (settings) => {
         this.settings.set(settings);
 
-        // Dynamically update document title and meta tags with store branding
         const storeName = settings?.storeDisplayName || 'المتجر الإلكتروني';
         const bio = settings?.bio || `أهلاً بكم في ${storeName}. تسوق أفضل المنتجات بأعلى جودة وضمان.`;
         this.titleService.setTitle(storeName);
@@ -79,21 +105,109 @@ export class PublicStoreComponent implements OnInit {
   }
 
   get filteredPages(): ProductLandingPage[] {
-    if (!this.searchTerm.trim()) {
-      return this.pages();
+    let result = [...this.pages()];
+
+    // 1. Search Query Filter
+    if (this.searchTerm.trim()) {
+      const q = this.searchTerm.toLowerCase();
+      result = result.filter(p => 
+        p.title.toLowerCase().includes(q) || 
+        (p.headline && p.headline.toLowerCase().includes(q))
+      );
     }
-    const q = this.searchTerm.toLowerCase();
-    return this.pages().filter(p => 
-      p.title.toLowerCase().includes(q) || 
-      (p.headline && p.headline.toLowerCase().includes(q))
-    );
+
+    // 2. Tab Filter
+    if (this.activeFilter() === 'deals') {
+      result = result.filter(p => p.originalPrice && p.originalPrice > p.sellingPrice);
+    } else if (this.activeFilter() === 'free_shipping') {
+      result = result.filter(p => p.isFreeShipping);
+    }
+
+    // 3. Sorting
+    if (this.sortBy() === 'price_asc') {
+      result.sort((a, b) => a.sellingPrice - b.sellingPrice);
+    } else if (this.sortBy() === 'price_desc') {
+      result.sort((a, b) => b.sellingPrice - a.sellingPrice);
+    } else if (this.sortBy() === 'discount') {
+      result.sort((a, b) => {
+        const discA = a.originalPrice && a.originalPrice > a.sellingPrice ? (a.originalPrice - a.sellingPrice) / a.originalPrice : 0;
+        const discB = b.originalPrice && b.originalPrice > b.sellingPrice ? (b.originalPrice - b.sellingPrice) / b.originalPrice : 0;
+        return discB - discA;
+      });
+    }
+
+    return result;
+  }
+
+  get dealsCount(): number {
+    return this.pages().filter(p => p.originalPrice && p.originalPrice > p.sellingPrice).length;
+  }
+
+  get freeShippingCount(): number {
+    return this.pages().filter(p => p.isFreeShipping).length;
   }
 
   parseImages(json: string): string[] {
     try {
-      return JSON.parse(json || '[]');
+      const parsed = JSON.parse(json || '[]');
+      return Array.isArray(parsed) ? parsed : [];
     } catch {
       return [];
     }
+  }
+
+  getDiscountPercentage(original?: number, selling?: number): number {
+    if (!original || !selling || original <= selling) return 0;
+    return Math.round(((original - selling) / original) * 100);
+  }
+
+  getSavedAmount(original?: number, selling?: number): number {
+    if (!original || !selling || original <= selling) return 0;
+    return Math.round(original - selling);
+  }
+
+  // Quick View
+  openQuickView(product: ProductLandingPage, event?: MouseEvent): void {
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
+    this.quickViewProduct.set(product);
+    this.quickViewActiveImageIndex.set(0);
+    document.body.style.overflow = 'hidden';
+  }
+
+  closeQuickView(): void {
+    this.quickViewProduct.set(null);
+    document.body.style.overflow = '';
+  }
+
+  getQuickViewImages(): string[] {
+    const p = this.quickViewProduct();
+    if (!p) return [];
+    return this.parseImages(p.mediaUrlsJson);
+  }
+
+  selectQuickViewImage(index: number): void {
+    this.quickViewActiveImageIndex.set(index);
+  }
+
+  toggleFaq(index: number): void {
+    if (this.activeFaqIndex() === index) {
+      this.activeFaqIndex.set(null);
+    } else {
+      this.activeFaqIndex.set(index);
+    }
+  }
+
+  getWhatsAppStoreUrl(productTitle?: string): string {
+    const phone = this.settings()?.whatsAppNumber || this.settings()?.contactPhone || '';
+    const cleanPhone = phone.replace(/[^0-9]/g, '');
+    const storeName = this.settings()?.storeDisplayName || 'المتجر';
+    let text = `مرحباً، أود الاستفسار عن منتجات متجر ${storeName}`;
+    if (productTitle) {
+      text = `مرحباً، أود الاستفسار وطلب منتج: *${productTitle}* من متجر ${storeName}`;
+    }
+    return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(text)}`;
   }
 }

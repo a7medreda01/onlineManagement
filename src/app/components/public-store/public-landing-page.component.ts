@@ -27,6 +27,7 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
 
   subdomain = '';
   slug = '';
+  currentYear = new Date().getFullYear();
 
   loading = signal<boolean>(true);
   submitting = signal<boolean>(false);
