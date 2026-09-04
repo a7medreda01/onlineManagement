@@ -969,6 +969,7 @@
    RESPONSIVE QUERIES
    ──────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
+  .store-catalog-wrapper { padding-bottom: 5.5rem; }
   .store-cover-box { height: 190px; }
   .store-profile-card { margin-top: -65px; padding: 1.5rem; border-radius: 1.5rem; }
   .store-logo { width: 85px; height: 85px; }

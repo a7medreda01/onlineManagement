@@ -35,7 +35,7 @@
         </div>
 
         <!-- Action Buttons in Hero -->
-        <div class="flex flex-wrap items-center gap-3">
+        <div class="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
           <!-- Visit Public Store -->
           <a *ngIf="settings()?.subdomain" 
              [href]="getStorePublicUrl()" 
@@ -48,8 +48,8 @@
           <!-- AI Wizard CTA -->
           <button (click)="openAiWizard()" 
                   class="btn-hero-ai-wizard">
-            <i class="bi bi-magic text-lg"></i>
-            <span>إنشاء صفحة هبوط بالـ AI 🪄</span>
+            <i class="bi bi-stars text-amber-300 text-lg"></i>
+            <span>إنشاء صفحة هبوط بالـ AI</span>
           </button>
 
           <!-- Delete Store Danger Button -->
@@ -67,46 +67,46 @@
       <div class="metrics-grid-container">
         <!-- Metric 1: Total Pages -->
         <div class="metric-glass-card">
-          <div class="metric-icon-box bg-blue-500/20 text-blue-300">
-            <i class="bi bi-file-earmark-richtext"></i>
+          <div class="metric-card-top">
+            <span class="metric-number">{{ landingPages().length }}</span>
+            <div class="metric-icon-box bg-blue-500/20 text-blue-300">
+              <i class="bi bi-file-earmark-richtext"></i>
+            </div>
           </div>
-          <div>
-            <div class="metric-number">{{ landingPages().length }}</div>
-            <div class="metric-label">{{ publishedPagesCount }} منشورة • {{ draftPagesCount }} مسودة</div>
-          </div>
+          <div class="metric-label">{{ publishedPagesCount }} منشورة • {{ draftPagesCount }} مسودة</div>
         </div>
 
         <!-- Metric 2: Total Views -->
         <div class="metric-glass-card">
-          <div class="metric-icon-box bg-emerald-500/20 text-emerald-300">
-            <i class="bi bi-eye"></i>
+          <div class="metric-card-top">
+            <span class="metric-number">{{ totalViews }}</span>
+            <div class="metric-icon-box bg-emerald-500/20 text-emerald-300">
+              <i class="bi bi-eye"></i>
+            </div>
           </div>
-          <div>
-            <div class="metric-number">{{ totalViews }}</div>
-            <div class="metric-label">إجمالي الزيارات والمشاهدات</div>
-          </div>
+          <div class="metric-label">إجمالي الزيارات والمشاهدات</div>
         </div>
 
         <!-- Metric 3: Total Orders -->
         <div class="metric-glass-card">
-          <div class="metric-icon-box bg-amber-500/20 text-amber-300">
-            <i class="bi bi-bag-check"></i>
+          <div class="metric-card-top">
+            <span class="metric-number">{{ totalOrders }}</span>
+            <div class="metric-icon-box bg-amber-500/20 text-amber-300">
+              <i class="bi bi-bag-check"></i>
+            </div>
           </div>
-          <div>
-            <div class="metric-number">{{ totalOrders }}</div>
-            <div class="metric-label">طلبات الشراء المستلمة (COD)</div>
-          </div>
+          <div class="metric-label">طلبات الشراء المستلمة (COD)</div>
         </div>
 
         <!-- Metric 4: Conversion Rate -->
         <div class="metric-glass-card">
-          <div class="metric-icon-box bg-sky-500/20 text-sky-300">
-            <i class="bi bi-graph-up-arrow"></i>
+          <div class="metric-card-top">
+            <span class="metric-number font-mono">{{ conversionRate }}%</span>
+            <div class="metric-icon-box bg-sky-500/20 text-sky-300">
+              <i class="bi bi-graph-up-arrow"></i>
+            </div>
           </div>
-          <div>
-            <div class="metric-number font-mono">{{ conversionRate }}%</div>
-            <div class="metric-label">معدل تحويل الزوار لطلبات</div>
-          </div>
+          <div class="metric-label">معدل تحويل الزوار لطلبات</div>
         </div>
       </div>
 
@@ -116,21 +116,21 @@
   <!-- ============================================================ -->
   <!-- 2. NAVIGATION TABS -->
   <!-- ============================================================ -->
-  <div class="flex flex-wrap items-center justify-between gap-4 my-6">
-    <div class="dashboard-tabs-bar">
-      <button class="tab-btn" [class.active]="activeTab === 'pages'" (click)="activeTab = 'pages'">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 my-6">
+    <div class="dashboard-tabs-bar w-full sm:w-auto">
+      <button class="tab-btn flex-1 sm:flex-none justify-center" [class.active]="activeTab === 'pages'" (click)="activeTab = 'pages'">
         <i class="bi bi-file-earmark-richtext"></i>
-        <span>صفحات الهبوط الذكية ({{ landingPages().length }})</span>
+        <span>صفحات الهبوط ({{ landingPages().length }})</span>
       </button>
 
-      <button class="tab-btn" [class.active]="activeTab === 'settings'" (click)="activeTab = 'settings'">
+      <button class="tab-btn flex-1 sm:flex-none justify-center" [class.active]="activeTab === 'settings'" (click)="activeTab = 'settings'">
         <i class="bi bi-palette2"></i>
         <span>إعدادات وهُوِيّة المتجر</span>
       </button>
     </div>
 
-    <div class="flex items-center gap-2">
-      <button (click)="openAiWizard()" class="btn-create-header-ai">
+    <div class="flex items-center gap-2 w-full sm:w-auto">
+      <button (click)="openAiWizard()" class="btn-create-header-ai w-full sm:w-auto justify-center">
         <i class="bi bi-stars text-amber-500"></i>
         <span>إنشاء صفحة جديدة بالـ AI</span>
       </button>
@@ -294,15 +294,15 @@
   <!-- ============================================================ -->
   <!-- 4. TAB 2: STORE SETTINGS & BRANDING -->
   <!-- ============================================================ -->
-  <div *ngIf="activeTab === 'settings'" class="max-w-4xl mx-auto bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm">
-    <div class="flex items-center justify-between pb-6 border-b border-slate-100 mb-6">
+  <div *ngIf="activeTab === 'settings'" class="max-w-4xl mx-auto bg-white border border-slate-200 rounded-3xl p-5 sm:p-8 shadow-sm">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-6 border-b border-slate-100 mb-6">
       <div>
         <h3 class="text-xl font-black text-slate-900">إعدادات وهُوِيّة المتجر الرئيسي</h3>
         <p class="text-slate-500 text-xs sm:text-sm mt-1">اضبط اسم متجرك، رابط الـ Subdomain، ألوان الهُوِيّة، وأرقام التواصل</p>
       </div>
 
       <!-- Delete Store Trigger -->
-      <button (click)="openDeleteStoreModal()" class="btn-danger-outline">
+      <button (click)="openDeleteStoreModal()" class="btn-danger-outline shrink-0">
         <i class="bi bi-trash3"></i>
         <span>حذف المتجر بالكامل</span>
       </button>
@@ -379,19 +379,19 @@
 
       <!-- Wizard Header -->
       <div class="wizard-header-bar">
-        <div>
+        <div class="min-w-0 pr-1">
           <div class="flex items-center gap-2 mb-1">
             <span class="badge-ai-magic">
               <i class="bi bi-stars"></i>
               استوديو الذكاء الاصطناعي
             </span>
-            <span class="text-xs text-slate-400 font-semibold">تخصيص كامل للمجال</span>
+            <span class="text-xs text-slate-400 font-semibold hidden sm:inline">تخصيص كامل للمجال</span>
           </div>
-          <h2 class="text-xl font-black text-slate-900">
-            {{ editingPageId ? 'تعديل صفحة الهبوط' : 'توليد صفحة هبوط لمتجرك بالذكاء الاصطناعي' }}
+          <h2 class="text-base sm:text-xl font-black text-slate-900 truncate sm:whitespace-normal">
+            {{ editingPageId ? 'تعديل صفحة الهبوط' : 'توليد صفحة هبوط بالذكاء الاصطناعي' }}
           </h2>
         </div>
-        <button (click)="closeAiWizard()" class="wizard-close-btn" aria-label="إغلاق">
+        <button (click)="closeAiWizard()" class="wizard-close-btn shrink-0" aria-label="إغلاق">
           <i class="bi bi-x-lg"></i>
         </button>
       </div>
@@ -400,17 +400,17 @@
       <div class="wizard-stepper-strip">
         <button class="step-nav-btn" [class.active]="wizardStep === 1" (click)="wizardStep = 1">
           <span class="step-num">1</span>
-          <span>المجال والمنتج</span>
+          <span>المجال <span class="hidden sm:inline">والمنتج</span></span>
         </button>
         <div class="step-divider"></div>
         <button class="step-nav-btn" [class.active]="wizardStep === 2" (click)="wizardStep = 2">
           <span class="step-num">2</span>
-          <span>المواصفات والخامات والخيارات</span>
+          <span>المواصفات <span class="hidden sm:inline">والخامات</span></span>
         </button>
         <div class="step-divider"></div>
         <button class="step-nav-btn" [class.active]="wizardStep === 3" (click)="wizardStep = 3">
           <span class="step-num">3</span>
-          <span>التسعير والمعاينة والنشر</span>
+          <span>التسعير <span class="hidden sm:inline">والنشر</span></span>
         </button>
       </div>
 
@@ -421,11 +421,11 @@
         <div *ngIf="wizardStep === 1" class="space-y-6">
           <!-- Niche Presets Selector -->
           <div>
-            <label class="form-label-title flex items-center justify-between">
+            <label class="form-label-title flex flex-col sm:flex-row sm:items-center justify-between gap-1">
               <span>اختر مجال وتصنيف المتجر والمنتج:</span>
-              <span class="text-xs text-blue-600 font-normal">يساعد الـ AI على اختيار المصطلحات الفاخرة المناسبة</span>
+              <span class="text-xs text-blue-600 font-normal">يساعد الـ AI على اختيار أفضل المصطلحات</span>
             </label>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5">
               <button *ngFor="let n of niches"
                       (click)="selectNichePreset(n.name)"
                       class="niche-preset-card"
@@ -468,7 +468,7 @@
 
           <!-- Next Button -->
           <div class="flex justify-end pt-4">
-            <button (click)="wizardStep = 2" class="btn-primary-gradient px-8">
+            <button (click)="wizardStep = 2" class="btn-primary-gradient w-full sm:w-auto justify-center px-8">
               <span>التالي: المواصفات والخامات</span>
               <i class="bi bi-arrow-left"></i>
             </button>
@@ -533,12 +533,12 @@
           </div>
 
           <!-- Navigation Buttons -->
-          <div class="flex items-center justify-between pt-4 border-t border-slate-100">
-            <button (click)="wizardStep = 1" class="btn-secondary-outline">
+          <div class="flex items-center justify-between gap-3 pt-4 border-t border-slate-100">
+            <button (click)="wizardStep = 1" class="btn-secondary-outline flex-1 sm:flex-none justify-center">
               <i class="bi bi-arrow-right"></i>
               <span>السابق</span>
             </button>
-            <button (click)="wizardStep = 3" class="btn-primary-gradient px-8">
+            <button (click)="wizardStep = 3" class="btn-primary-gradient flex-1 sm:flex-none justify-center px-8">
               <span>التالي: التسعير والتوليد</span>
               <i class="bi bi-arrow-left"></i>
             </button>
@@ -564,12 +564,12 @@
           </div>
 
           <!-- Generate Button Trigger -->
-          <div class="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-2xl">
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-2xl">
             <div>
               <h4 class="font-bold text-slate-900 text-sm">جاهز لتوليد المحتوى الفاخر؟</h4>
               <p class="text-xs text-slate-500 mt-0.5">سيقوم الـ AI بصياغة العناوين الفاخرة، المؤشرات البصرية، والمميزات باللغة العربية</p>
             </div>
-            <button (click)="generateWithAi()" [disabled]="generatingAi()" class="btn-hero-ai-wizard shadow-md">
+            <button (click)="generateWithAi()" [disabled]="generatingAi()" class="btn-hero-ai-wizard shadow-md justify-center shrink-0">
               <span *ngIf="generatingAi()" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
               <i *ngIf="!generatingAi()" class="bi bi-magic"></i>
               <span>{{ generatingAi() ? 'جاري التوليد والتحليل...' : 'توليد بالذكاء الاصطناعي 🪄' }}</span>
@@ -609,12 +609,12 @@
             </div>
 
             <!-- Save Page CTA Buttons -->
-            <div class="flex items-center justify-end gap-3 pt-6 border-t border-slate-100">
-              <button (click)="saveLandingPage(false)" [disabled]="savingPage()" class="btn-secondary-outline">
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-6 border-t border-slate-100">
+              <button (click)="saveLandingPage(false)" [disabled]="savingPage()" class="btn-secondary-outline justify-center">
                 <span>حفظ كمسودة</span>
               </button>
 
-              <button (click)="saveLandingPage(true)" [disabled]="savingPage()" class="btn-primary-gradient px-8">
+              <button (click)="saveLandingPage(true)" [disabled]="savingPage()" class="btn-primary-gradient justify-center px-8">
                 <span *ngIf="savingPage()" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
                 <i *ngIf="!savingPage()" class="bi bi-rocket-takeoff-fill"></i>
                 <span>حفظ ونشر الصفحة الآن 🚀</span>
