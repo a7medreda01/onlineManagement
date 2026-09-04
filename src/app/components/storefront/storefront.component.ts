@@ -44,6 +44,46 @@ export class StorefrontComponent implements OnInit {
   showUpgradeModal = false;
   FulfillmentSource = FulfillmentSource;
 
+  // Search and status filter for landing pages
+  searchTerm = '';
+  statusFilter: 'all' | 'published' | 'draft' = 'all';
+
+  get filteredLandingPages(): ProductLandingPage[] {
+    let list = this.landingPages();
+    if (this.statusFilter === 'published') {
+      list = list.filter(p => p.isPublished);
+    } else if (this.statusFilter === 'draft') {
+      list = list.filter(p => !p.isPublished);
+    }
+    if (this.searchTerm.trim()) {
+      const q = this.searchTerm.toLowerCase();
+      list = list.filter(p =>
+        p.title.toLowerCase().includes(q) ||
+        p.slug.toLowerCase().includes(q) ||
+        (p.headline && p.headline.toLowerCase().includes(q))
+      );
+    }
+    return list;
+  }
+
+  get publishedPagesCount(): number {
+    return this.landingPages().filter(p => p.isPublished).length;
+  }
+
+  get draftPagesCount(): number {
+    return this.landingPages().filter(p => !p.isPublished).length;
+  }
+
+  getStorePublicUrl(): string {
+    const sub = this.settings()?.subdomain || 'seven';
+    return `https://${sub}.besnesy.com`;
+  }
+
+  getPagePublicUrl(page: ProductLandingPage): string {
+    const sub = page.storeSubdomain || this.settings()?.subdomain || 'seven';
+    return `https://${sub}.besnesy.com/${page.slug}`;
+  }
+
   // Settings form
   settingsForm: Partial<StorefrontSettings> = {
     subdomain: '',
@@ -460,6 +500,10 @@ export class StorefrontComponent implements OnInit {
       this.manualImageUrl = '';
       this.notificationService.success('تمت إضافة الصورة بنجاح');
     }
+  }
+
+  addManualImage(): void {
+    this.addManualProductImage();
   }
 
   removeProductImage(index: number): void {

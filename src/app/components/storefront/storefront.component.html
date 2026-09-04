@@ -1,69 +1,72 @@
 <div class="storefront-container p-3 p-md-4">
-  <!-- Top Banner / Header -->
-  <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden position-relative storefront-hero">
-    <div class="card-body p-4 position-relative z-1 text-white">
-      <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
+  
+  <!-- ============================================================ -->
+  <!-- TOP BANNER & METRICS -->
+  <!-- ============================================================ -->
+  <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden storefront-hero">
+    <div class="card-body p-4 text-white">
+      <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 mb-4">
         <div>
           <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
             <span class="badge bg-warning text-dark fw-bold px-3 py-1 rounded-pill d-inline-flex align-items-center gap-1">
-              <i class="bi bi-stars"></i> ميزة حصرية للخطة المميزة VIP
+              <i class="bi bi-stars"></i> استوديو متجر البيع وصفحات الهبوط VIP
             </span>
-            <span *ngIf="settings()?.subdomain" class="badge bg-white bg-opacity-20 text-white rounded-pill px-3 py-1">
+            <span *ngIf="settings()?.subdomain" class="badge bg-white bg-opacity-20 text-white rounded-pill px-3 py-1 font-monospace">
               <i class="bi bi-globe2 me-1"></i> {{ settings()?.subdomain }}.besnesy.com
             </span>
           </div>
-          <h2 class="fw-black mb-1">متجر البيع وصفحات الهبوط الذكية 🛍️✨</h2>
+          <h2 class="fw-black mb-1">إدارة المتجر وصفحات الهبوط الذكية 🛍️✨</h2>
           <p class="text-white-50 mb-0 fs-6">
-            أنشئ متجرك المتكامل وصفحات هبوط عالية التحويل بنقرة واحدة باستخدام الذكاء الاصطناعي Google Gemini
+            تحكّم بشكل كامل في هُوِيّة متجرك، وأنشئ وعدّل صفحات هبوط فائقة التحويل بالذكاء الاصطناعي مع روابط فرعية مخصصة.
           </p>
         </div>
 
         <div class="d-flex flex-wrap gap-2 align-items-center">
           <a *ngIf="settings()?.subdomain" 
-             [routerLink]="['/store', settings()?.subdomain]" 
+             [href]="getStorePublicUrl()" 
              target="_blank" 
              class="btn btn-outline-light rounded-pill px-3 py-2 fw-semibold shadow-sm d-flex align-items-center gap-2">
             <i class="bi bi-box-arrow-up-right text-warning"></i>
-            <span>زيارة متجري العام</span>
+            <span>زيارة متجري المباشر</span>
           </a>
 
           <button (click)="openAiWizard()" 
                   class="btn btn-warning text-dark rounded-pill px-4 py-2 fw-bold shadow-sm d-flex align-items-center gap-2 ai-pulse-btn">
             <i class="bi bi-magic fs-5"></i>
-            <span>توليد صفحة هبوط بالـ AI 🪄</span>
+            <span>إنشاء صفحة هبوط بالـ AI 🪄</span>
           </button>
         </div>
       </div>
 
       <!-- Quick Metrics Bar -->
-      <div class="row g-3 mt-3 pt-3 border-top border-white border-opacity-10">
+      <div class="row g-3 pt-3 border-top border-white border-opacity-10">
         <div class="col-6 col-md-3">
           <div class="d-flex align-items-center gap-3 bg-white bg-opacity-10 rounded-3 p-3">
-            <div class="stats-icon rounded-circle bg-white text-primary d-flex align-items-center justify-content-center">
-              <i class="bi bi-layout-text-window-reverse fs-5"></i>
+            <div class="stats-icon rounded-circle bg-white text-primary d-flex align-items-center justify-content-center shadow-sm">
+              <i class="bi bi-file-earmark-richtext fs-5"></i>
             </div>
             <div>
               <div class="fs-4 fw-bold">{{ landingPages().length }}</div>
-              <small class="text-white-50">صفحات هبوط نشطة</small>
+              <small class="text-white-50">{{ publishedPagesCount }} منشورة • {{ draftPagesCount }} مسودة</small>
             </div>
           </div>
         </div>
 
         <div class="col-6 col-md-3">
           <div class="d-flex align-items-center gap-3 bg-white bg-opacity-10 rounded-3 p-3">
-            <div class="stats-icon rounded-circle bg-white text-success d-flex align-items-center justify-content-center">
+            <div class="stats-icon rounded-circle bg-white text-success d-flex align-items-center justify-content-center shadow-sm">
               <i class="bi bi-eye fs-5"></i>
             </div>
             <div>
               <div class="fs-4 fw-bold">{{ totalViews }}</div>
-              <small class="text-white-50">إجمالي الزيارات</small>
+              <small class="text-white-50">إجمالي الزيارات والمشاهدات</small>
             </div>
           </div>
         </div>
 
         <div class="col-6 col-md-3">
           <div class="d-flex align-items-center gap-3 bg-white bg-opacity-10 rounded-3 p-3">
-            <div class="stats-icon rounded-circle bg-white text-warning d-flex align-items-center justify-content-center">
+            <div class="stats-icon rounded-circle bg-white text-warning d-flex align-items-center justify-content-center shadow-sm">
               <i class="bi bi-bag-check fs-5"></i>
             </div>
             <div>
@@ -75,12 +78,12 @@
 
         <div class="col-6 col-md-3">
           <div class="d-flex align-items-center gap-3 bg-white bg-opacity-10 rounded-3 p-3">
-            <div class="stats-icon rounded-circle bg-white text-info d-flex align-items-center justify-content-center">
+            <div class="stats-icon rounded-circle bg-white text-info d-flex align-items-center justify-content-center shadow-sm">
               <i class="bi bi-graph-up-arrow fs-5"></i>
             </div>
             <div>
               <div class="fs-4 fw-bold">{{ conversionRate }}%</div>
-              <small class="text-white-50">معدل التحويل (CR)</small>
+              <small class="text-white-50">معدل تحويل الزوار لطلبات</small>
             </div>
           </div>
         </div>
@@ -88,121 +91,225 @@
     </div>
   </div>
 
-  <!-- Navigation Tabs -->
-  <ul class="nav nav-pills gap-2 mb-4 bg-dark bg-opacity-50 p-2 rounded-4 d-inline-flex border border-white border-opacity-10">
-    <li class="nav-item">
-      <button class="nav-link rounded-pill px-4 py-2 fw-bold d-flex align-items-center gap-2" 
-              [class.active]="activeTab === 'pages'" 
+  <!-- ============================================================ -->
+  <!-- NAVIGATION TABS -->
+  <!-- ============================================================ -->
+  <div class="d-flex flex-wrap items-center justify-between gap-3 mb-4">
+    <div class="d-flex gap-2 bg-dark bg-opacity-50 p-1.5 rounded-4 border border-white border-opacity-10">
+      <button class="btn rounded-pill px-4 py-2 fw-bold d-flex align-items-center gap-2 transition" 
+              [class.btn-primary]="activeTab === 'pages'" 
+              [class.text-white-50]="activeTab !== 'pages'" 
               (click)="activeTab = 'pages'">
         <i class="bi bi-file-earmark-richtext"></i>
         <span>صفحات الهبوط للمنتجات ({{ landingPages().length }})</span>
       </button>
-    </li>
-    <li class="nav-item">
-      <button class="nav-link rounded-pill px-4 py-2 fw-bold d-flex align-items-center gap-2" 
-              [class.active]="activeTab === 'settings'" 
+
+      <button class="btn rounded-pill px-4 py-2 fw-bold d-flex align-items-center gap-2 transition" 
+              [class.btn-primary]="activeTab === 'settings'" 
+              [class.text-white-50]="activeTab !== 'settings'" 
               (click)="activeTab = 'settings'">
         <i class="bi bi-gear-wide-connected"></i>
-        <span>هوية وإعدادات المتجر بالـ AI 🤖</span>
+        <span>إعدادات وهُوِيّة المتجر والبراند ⚙️</span>
       </button>
-    </li>
-  </ul>
+    </div>
+
+    <!-- Quick Store Link Display -->
+    <div *ngIf="settings()?.subdomain" class="d-none d-md-flex align-items-center gap-2 bg-dark bg-opacity-50 px-3 py-2 rounded-pill border border-white border-opacity-10 text-white-50 text-xs">
+      <span>رابط متجرك:</span>
+      <strong class="text-info font-monospace">{{ settings()?.subdomain }}.besnesy.com</strong>
+      <button (click)="copyToClipboard(getStorePublicUrl())" class="btn btn-sm btn-link text-warning p-0" title="نسخ الرابط">
+        <i class="bi bi-copy"></i>
+      </button>
+    </div>
+  </div>
 
   <!-- ============================================================ -->
-  <!-- TAB 1: PRODUCT LANDING PAGES -->
+  <!-- TAB 1: PRODUCT LANDING PAGES MANAGEMENT -->
   <!-- ============================================================ -->
   <div *ngIf="activeTab === 'pages'">
+    
+    <!-- Filter & Search Toolbar -->
+    <div class="card border-0 shadow-sm rounded-4 p-3 mb-4 bg-dark bg-opacity-40 border border-white border-opacity-10">
+      <div class="row g-3 align-items-center justify-content-between">
+        <!-- Search -->
+        <div class="col-12 col-md-5">
+          <div class="position-relative">
+            <i class="bi bi-search position-absolute top-50 translate-middle-y end-0 pe-3 text-white-50"></i>
+            <input type="text" 
+                   [(ngModel)]="searchTerm" 
+                   class="form-control rounded-pill bg-dark text-white border-slate-700 pe-5 text-sm" 
+                   placeholder="ابحث باسم الصفحة أو المنتج أو الرابط...">
+          </div>
+        </div>
+
+        <!-- Status Filter Pills -->
+        <div class="col-12 col-md-4">
+          <div class="d-flex gap-1 bg-dark bg-opacity-75 p-1 rounded-pill border border-white border-opacity-10">
+            <button type="button" 
+                    (click)="statusFilter = 'all'" 
+                    class="btn btn-sm rounded-pill flex-fill fw-bold text-xs" 
+                    [class.btn-primary]="statusFilter === 'all'" 
+                    [class.text-white-50]="statusFilter !== 'all'">
+              الكل ({{ landingPages().length }})
+            </button>
+            <button type="button" 
+                    (click)="statusFilter = 'published'" 
+                    class="btn btn-sm rounded-pill flex-fill fw-bold text-xs" 
+                    [class.btn-success]="statusFilter === 'published'" 
+                    [class.text-white-50]="statusFilter !== 'published'">
+              المنشورة ({{ publishedPagesCount }})
+            </button>
+            <button type="button" 
+                    (click)="statusFilter = 'draft'" 
+                    class="btn btn-sm rounded-pill flex-fill fw-bold text-xs" 
+                    [class.btn-secondary]="statusFilter === 'draft'" 
+                    [class.text-white-50]="statusFilter !== 'draft'">
+              المسودات ({{ draftPagesCount }})
+            </button>
+          </div>
+        </div>
+
+        <!-- Create Button -->
+        <div class="col-12 col-md-3 text-md-end">
+          <button (click)="openAiWizard()" class="btn btn-warning text-dark rounded-pill px-4 py-2 fw-bold text-sm shadow-sm w-100 w-md-auto d-flex align-items-center justify-content-center gap-2">
+            <i class="bi bi-plus-lg"></i>
+            <span>صفحة هبوط جديدة</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Empty State -->
-    <div *ngIf="!loading() && landingPages().length === 0" 
+    <div *ngIf="!loading() && filteredLandingPages.length === 0" 
          class="card border-0 shadow-sm rounded-4 text-center py-5 px-3 bg-dark bg-opacity-25 border border-white border-opacity-10">
       <div class="card-body py-5">
         <div class="ai-sparkle-circle mx-auto mb-4">
-          <i class="bi bi-magic display-5 text-warning"></i>
+          <i class="bi bi-file-earmark-plus display-5 text-warning"></i>
         </div>
-        <h4 class="fw-bold text-white mb-2">لم تنشئ أي صفحة هبوط بعد</h4>
+        <h4 class="fw-bold text-white mb-2">لا توجد صفحات هبوط مطابقة</h4>
         <p class="text-white-50 max-w-md mx-auto mb-4">
-          استخدم الذكاء الاصطناعي الآن لتوليد صفحة هبوط لمنتجك جاهزة بفورم البيع المباشر والشحن في ثوانٍ معدودة.
+          {{ searchTerm ? 'لا توجد نتائج تطابق بحثك الحالي.' : 'لم تقم بإنشاء أي صفحات هبوط حتى الآن. أنشئ صفحتك الأولى بالذكاء الاصطناعي في ثوانٍ.' }}
         </p>
         <button (click)="openAiWizard()" class="btn btn-warning text-dark rounded-pill px-4 py-2 fw-bold shadow">
-          <i class="bi bi-plus-lg me-1"></i>
-          إنشاء أول صفحة هبوط بالـ AI 🪄
+          <i class="bi bi-magic me-1"></i>
+          إنشاء صفحة هبوط بالـ AI 🪄
         </button>
       </div>
     </div>
 
-    <!-- Pages Grid -->
-    <div *ngIf="landingPages().length > 0" class="row g-4">
-      <div *ngFor="let page of landingPages()" class="col-12 col-md-6 col-xl-4">
+    <!-- Pages Cards Grid -->
+    <div *ngIf="filteredLandingPages.length > 0" class="row g-4">
+      <div *ngFor="let page of filteredLandingPages" class="col-12 col-md-6 col-xl-4">
         <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden landing-card transition-all bg-dark bg-opacity-40 border border-white border-opacity-10">
-          <!-- Thumbnail & Badges -->
+          
+          <!-- Thumbnail & Header Badges -->
           <div class="position-relative page-thumb-box bg-slate-900 overflow-hidden">
-            <img [src]="getCoverImage(page)" class="w-100 h-100 object-fit-cover" alt="{{ page.title }}">
+            <img [src]="getCoverImage(page)" class="w-100 h-100 object-fit-contain p-3" alt="{{ page.title }}">
             
-            <div class="position-absolute top-0 start-0 m-2 d-flex gap-1 flex-wrap">
-              <span *ngIf="page.badge" class="badge bg-danger rounded-pill px-2.5 py-1">
+            <!-- Top Badges -->
+            <div class="position-absolute top-0 start-0 m-2.5 d-flex gap-1.5 flex-wrap z-2">
+              <span *ngIf="page.badge" class="badge bg-danger rounded-pill px-3 py-1 shadow-sm font-bold text-xs">
                 {{ page.badge }}
               </span>
-              <span class="badge rounded-pill px-2.5 py-1" 
+              <span class="badge rounded-pill px-3 py-1 shadow-sm font-bold text-xs" 
                     [class.bg-success]="page.isPublished" 
                     [class.bg-secondary]="!page.isPublished">
-                {{ page.isPublished ? 'منشورة ومتاحة' : 'مسودة' }}
+                <i class="bi" [class.bi-check-circle-fill]="page.isPublished" [class.bi-pause-circle]="!page.isPublished"></i>
+                {{ page.isPublished ? 'منشورة ونشطة' : 'مسودة معطلة' }}
               </span>
             </div>
 
-            <div class="position-absolute bottom-0 start-0 end-0 p-3 bg-gradient-dark text-white">
-              <div class="fw-bold fs-5 text-warning">{{ page.sellingPrice | currency:'EGP':'symbol':'1.0-0' }}</div>
-              <small class="text-white-50">{{ page.isFreeShipping ? 'شحن مجاني' : 'شحن محدد' }}</small>
+            <!-- Price Overlay -->
+            <div class="position-absolute bottom-0 start-0 end-0 p-3 bg-gradient-dark text-white d-flex items-center justify-between">
+              <div>
+                <div class="fw-bold fs-5 text-warning">{{ page.sellingPrice | currency:'EGP':'symbol':'1.0-0' }}</div>
+                <small class="text-white-50">{{ page.isFreeShipping ? 'شحن مجاني' : 'شحن محدد' }}</small>
+              </div>
+              <span class="badge bg-white bg-opacity-20 text-white rounded-pill px-2.5 py-1 text-xs font-monospace">
+                /{{ page.slug }}
+              </span>
             </div>
           </div>
 
-          <!-- Body -->
-          <div class="card-body p-3 d-flex flex-column text-white">
+          <!-- Card Body -->
+          <div class="card-body p-4 d-flex flex-column text-white">
             <h5 class="fw-bold mb-1 text-truncate" title="{{ page.title }}">{{ page.title }}</h5>
             <p class="text-white-50 small mb-3 text-truncate-2">{{ page.headline }}</p>
 
-            <!-- Links bar -->
-            <div class="bg-dark bg-opacity-75 p-2 rounded-3 mb-3 border border-white border-opacity-10 small" dir="ltr">
-              <div class="d-flex align-items-center justify-content-between mb-1">
-                <code class="text-info text-truncate me-2">/store/{{ page.storeSubdomain }}/{{ page.slug }}</code>
-                <button (click)="copyToClipboard(getDirectPageUrl(page))" class="btn btn-sm btn-outline-info rounded-pill px-2 py-0" title="نسخ الرابط المباشر">
-                  <i class="bi bi-clipboard"></i>
-                </button>
-              </div>
-              <div class="d-flex align-items-center justify-content-between text-white-50" style="font-size: 0.75rem;">
-                <span class="text-truncate me-2">{{ page.storeSubdomain }}.besnesy.com/{{ page.slug }}</span>
-                <button (click)="copyToClipboard(getSubdomainPageUrl(page))" class="btn btn-sm btn-link text-warning p-0" title="نسخ رابط Subdomain">
-                  <i class="bi bi-copy"></i>
-                </button>
-              </div>
-            </div>
-
-            <!-- Stats -->
-            <div class="row g-2 text-center border-top border-white border-opacity-10 pt-2 mb-3 mt-auto">
-              <div class="col-6">
-                <small class="text-white-50 d-block">المشاهدات</small>
-                <span class="fw-bold text-white">{{ page.viewsCount }}</span>
-              </div>
-              <div class="col-6">
-                <small class="text-white-50 d-block">الطلبات</small>
-                <span class="fw-bold text-success">{{ page.ordersCount }}</span>
+            <!-- Direct Subdomain Link Box -->
+            <div class="bg-dark bg-opacity-75 p-2.5 rounded-3 mb-3 border border-white border-opacity-10 small" dir="ltr">
+              <div class="d-flex align-items-center justify-content-between">
+                <span class="text-info text-truncate font-monospace me-2" style="font-size: 0.8rem;">
+                  {{ page.storeSubdomain }}.besnesy.com/{{ page.slug }}
+                </span>
+                <div class="d-flex gap-1 flex-shrink-0">
+                  <button (click)="copyToClipboard(getPagePublicUrl(page))" 
+                          class="btn btn-sm btn-outline-info rounded-pill px-2 py-0.5" 
+                          title="نسخ الرابط المباشر">
+                    <i class="bi bi-clipboard"></i>
+                  </button>
+                  <a [href]="getPagePublicUrl(page)" 
+                     target="_blank" 
+                     class="btn btn-sm btn-outline-light rounded-pill px-2 py-0.5" 
+                     title="فتح الصفحة">
+                    <i class="bi bi-box-arrow-up-right"></i>
+                  </a>
+                </div>
               </div>
             </div>
 
-            <!-- Actions -->
-            <div class="d-flex gap-2">
-              <a [routerLink]="['/store', page.storeSubdomain, page.slug]" target="_blank" class="btn btn-sm btn-outline-light rounded-pill flex-fill">
-                <i class="bi bi-eye me-1"></i> معاينة
-              </a>
-              <button (click)="openAiWizard(page)" class="btn btn-sm btn-primary rounded-pill flex-fill">
-                <i class="bi bi-pencil-square me-1"></i> تعديل
+            <!-- Metrics -->
+            <div class="row g-2 text-center border-top border-white border-opacity-10 py-2.5 mb-3 mt-auto bg-white bg-opacity-5 rounded-3">
+              <div class="col-4 border-end border-white border-opacity-10">
+                <small class="text-white-50 d-block text-xs">المشاهدات</small>
+                <span class="fw-bold text-white fs-6">{{ page.viewsCount }}</span>
+              </div>
+              <div class="col-4 border-end border-white border-opacity-10">
+                <small class="text-white-50 d-block text-xs">الطلبات</small>
+                <span class="fw-bold text-success fs-6">{{ page.ordersCount }}</span>
+              </div>
+              <div class="col-4">
+                <small class="text-white-50 d-block text-xs">التحويل</small>
+                <span class="fw-bold text-warning fs-6">
+                  {{ page.viewsCount ? ((page.ordersCount / page.viewsCount) * 100 | number:'1.0-1') : '0' }}%
+                </span>
+              </div>
+            </div>
+
+            <!-- Action Controls -->
+            <div class="d-flex gap-2 align-items-center pt-2 border-top border-white border-opacity-10">
+              <!-- Edit Button -->
+              <button (click)="openAiWizard(page)" 
+                      class="btn btn-sm btn-primary rounded-pill flex-fill fw-bold py-2 d-flex align-items-center justify-content-center gap-1.5 shadow-sm">
+                <i class="bi bi-pencil-square"></i>
+                <span>تعديل المحتوى</span>
               </button>
-              <button (click)="togglePagePublish(page)" class="btn btn-sm btn-outline-secondary rounded-pill" [title]="page.isPublished ? 'إلغاء النشر' : 'نشر'">
+
+              <!-- Live Preview -->
+              <a [href]="getPagePublicUrl(page)" 
+                 target="_blank" 
+                 class="btn btn-sm btn-outline-light rounded-pill px-3 py-2" 
+                 title="معاينة حية للمنتج">
+                <i class="bi bi-eye"></i>
+              </a>
+
+              <!-- Toggle Publish Switch Button -->
+              <button (click)="togglePagePublish(page)" 
+                      class="btn btn-sm rounded-pill px-3 py-2" 
+                      [class.btn-outline-success]="!page.isPublished" 
+                      [class.btn-outline-secondary]="page.isPublished" 
+                      [title]="page.isPublished ? 'إيقاف نشر الصفحة مؤقتاً' : 'تفعيل ونشر الصفحة'">
                 <i class="bi" [class.bi-pause-circle]="page.isPublished" [class.bi-play-circle]="!page.isPublished"></i>
               </button>
-              <button (click)="deleteLandingPage(page)" class="btn btn-sm btn-outline-danger rounded-pill" title="حذف">
+
+              <!-- Delete Button -->
+              <button (click)="deleteLandingPage(page)" 
+                      class="btn btn-sm btn-outline-danger rounded-pill px-3 py-2" 
+                      title="حذف صفحة الهبوط نهائياً">
                 <i class="bi bi-trash"></i>
               </button>
             </div>
+
           </div>
         </div>
       </div>
@@ -210,19 +317,21 @@
   </div>
 
   <!-- ============================================================ -->
-  <!-- TAB 2: STORE SETTINGS & AI IDENTITY -->
+  <!-- TAB 2: STORE SETTINGS & BRAND IDENTITY -->
   <!-- ============================================================ -->
   <div *ngIf="activeTab === 'settings'" class="row g-4">
+    
     <div class="col-12 col-lg-8">
-      <!-- AI STORE GENERATOR CARD -->
-      <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-gradient-to-r from-indigo-950/40 via-purple-950/30 to-slate-900 border border-indigo-500/30">
+      
+      <!-- AI STORE GENERATOR HELPER CARD -->
+      <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-gradient-to-r from-indigo-950/50 via-purple-950/40 to-slate-900 border border-indigo-500/30">
         <div class="d-flex align-items-center gap-3 mb-3">
-          <div class="w-10 h-10 rounded-circle bg-indigo-500/20 text-indigo-400 d-flex align-items-center justify-content-center fs-4">
+          <div class="w-10 h-10 rounded-circle bg-indigo-500/20 text-indigo-400 d-flex align-items-center justify-content-center fs-4 shadow-sm">
             <i class="bi bi-stars"></i>
           </div>
           <div>
-            <h5 class="fw-bold text-white mb-0">توليد بيانات وهوية المتجر بالذكاء الاصطناعي 🤖✨</h5>
-            <small class="text-white-50">اكتب فكرة متجرك وسيقوم الذكاء الاصطناعي بإنشاء الاسم، الرابط، النبذة التسويقية والألوان المتناسقة تلقائياً</small>
+            <h5 class="fw-bold text-white mb-0">مساعد توليد هوية المتجر بالذكاء الاصطناعي 🤖✨</h5>
+            <small class="text-white-50">اكتب فكرة متجرك أو نشاطك، وسيقوم الذكاء الاصطناعي باقتراح الاسم، والرابط، والنبذة، والألوان تلقائياً</small>
           </div>
         </div>
 
@@ -230,7 +339,7 @@
           <textarea [(ngModel)]="storeAiPrompt" 
                     rows="2" 
                     class="form-control rounded-3 bg-dark text-white border-slate-700" 
-                    placeholder="مثال: متجر لبيع الإلكترونيات والهواتف الذكية وساعات ذكية باسم Seven"></textarea>
+                    placeholder="مثال: متجر لبيع الأحذية الرياضية الفاخرة والموضة العصرية باسم Seven"></textarea>
         </div>
 
         <div class="d-flex justify-content-end">
@@ -239,739 +348,593 @@
                   class="btn btn-warning text-dark fw-bold rounded-pill px-4 py-2 shadow-sm d-flex align-items-center gap-2">
             <span *ngIf="isGeneratingStoreAi()" class="spinner-border spinner-border-sm"></span>
             <i *ngIf="!isGeneratingStoreAi()" class="bi bi-magic"></i>
-            <span>{{ isGeneratingStoreAi() ? 'جاري التوليد بالـ AI...' : 'توليد هوية المتجر بالـ AI 🪄' }}</span>
+            <span>{{ isGeneratingStoreAi() ? 'جاري التوليد بالـ AI...' : 'توليد بيانات المتجر بالـ AI 🪄' }}</span>
           </button>
         </div>
       </div>
 
-      <!-- MAIN STORE PROFILE FORM -->
-      <div class="card border-0 shadow-sm rounded-4 p-4 bg-dark bg-opacity-40 border border-white border-opacity-10 text-white">
-        <h5 class="fw-bold mb-4 d-flex align-items-center gap-2">
-          <i class="bi bi-shop text-warning"></i> إعدادات متجر البيع وهوية البراند
-        </h5>
+      <!-- MAIN STORE SETTINGS FORM -->
+      <div class="card border-0 shadow-sm rounded-4 p-4 bg-dark bg-opacity-40 border border-white border-opacity-10 text-white space-y-6">
+        
+        <!-- Section 1: Basic Info & Subdomain -->
+        <div>
+          <h5 class="fw-bold mb-3 d-flex align-items-center gap-2 text-warning border-bottom border-white border-opacity-10 pb-2">
+            <i class="bi bi-globe"></i> 1. اسم المتجر والرابط الفرعي (Subdomain)
+          </h5>
 
-        <form (ngSubmit)="saveSettings()">
-          <!-- Store Display Name -->
-          <div class="mb-3">
-            <label class="form-label fw-bold small">اسم المتجر التجاري (Brand Name) *</label>
-            <input type="text" 
-                   [(ngModel)]="settingsForm.storeDisplayName" 
-                   name="storeDisplayName" 
-                   class="form-control rounded-3 bg-dark text-white border-slate-700" 
-                   placeholder="مثال: Seven Store | متجر سڤن" 
-                   required>
-          </div>
-
-          <!-- Subdomain & Live URLs Preview -->
-          <div class="mb-4">
-            <label class="form-label fw-bold small">رابط الـ Subdomain المخصص للمتجر *</label>
-            <div class="input-group" dir="ltr">
-              <span class="input-group-text bg-slate-800 text-slate-300 border-slate-700">besnesy.com/store/</span>
+          <div class="row g-3">
+            <!-- Store Display Name -->
+            <div class="col-12 col-md-6">
+              <label class="form-label text-xs fw-bold text-white-50">اسم المتجر المعروض *</label>
               <input type="text" 
-                     [(ngModel)]="settingsForm.subdomain" 
-                     (input)="onSubdomainInput()" 
-                     name="subdomain" 
-                     class="form-control bg-dark text-white border-slate-700 font-monospace" 
-                     placeholder="seven" 
-                     required>
-              <span class="input-group-text bg-slate-800 border-slate-700">
-                <span *ngIf="subdomainChecking" class="spinner-border spinner-border-sm text-primary"></span>
-                <i *ngIf="!subdomainChecking && subdomainAvailable === true" class="bi bi-check-circle-fill text-success" title="متاح للاستخدام"></i>
-                <i *ngIf="!subdomainChecking && subdomainAvailable === false" class="bi bi-x-circle-fill text-danger" title="محجوز مسبقاً"></i>
-              </span>
+                     [(ngModel)]="settingsForm.storeDisplayName" 
+                     class="form-control bg-dark text-white border-slate-700 rounded-3" 
+                     placeholder="مثال: متجر Seven الرسمي">
             </div>
-            <div class="form-text small mt-2">
-              <span *ngIf="subdomainAvailable === false" class="text-danger fw-bold d-block mb-1">عذراً، هذا الاسم محجوز بالفعل! يرجى اختيار اسم آخر.</span>
-              <span *ngIf="subdomainAvailable === true" class="text-success fw-bold d-block mb-1">الاسم متاح ويمكنك استخدامه فوراً!</span>
-              <div class="bg-slate-900 p-3 rounded-3 border border-slate-800 mt-2">
-                <span class="text-white-50 font-bold d-block mb-1">روابط متجرك المفعلة تلقائياً:</span>
-                <div class="d-flex align-items-center justify-content-between mb-1" dir="ltr">
-                  <code class="text-info">{{ settingsForm.subdomain || 'seven' }}.besnesy.com</code>
-                  <button type="button" (click)="copyToClipboard('https://' + (settingsForm.subdomain || 'seven') + '.besnesy.com')" class="btn btn-sm btn-outline-secondary py-0 px-2 text-xs">نسخ</button>
-                </div>
-                <div class="d-flex align-items-center justify-content-between" dir="ltr">
-                  <code class="text-info">besnesy.com/store/{{ settingsForm.subdomain || 'seven' }}</code>
-                  <button type="button" (click)="copyToClipboard('https://besnesy.com/store/' + (settingsForm.subdomain || 'seven'))" class="btn btn-sm btn-outline-secondary py-0 px-2 text-xs">نسخ</button>
-                </div>
-              </div>
-            </div>
-          </div>
 
-          <!-- LOGO AND COVER IMAGE UPLOADS -->
-          <div class="row g-3 mb-4">
-            <!-- LOGO UPLOAD -->
+            <!-- Niche -->
             <div class="col-12 col-md-6">
-              <label class="form-label fw-bold small d-flex justify-content-between align-items-center">
-                <span>شعار المتجر (Logo)</span>
-                <span *ngIf="uploadingLogo()" class="text-warning small"><span class="spinner-border spinner-border-sm me-1"></span>جاري الرفع...</span>
-              </label>
-              <div class="d-flex gap-3 align-items-center mb-2">
-                <img [src]="settingsForm.logoUrl || 'https://ui-avatars.com/api/?name=' + (settingsForm.storeDisplayName || 'Store') + '&background=0284c7&color=fff&size=150'" 
-                     class="rounded-circle border border-white border-opacity-20 shadow-sm" 
-                     style="width: 60px; height: 60px; object-fit: cover;" 
-                     alt="Logo Preview">
-                <div class="flex-fill">
-                  <input type="file" #logoFileInput (change)="onLogoFileSelected($event)" accept="image/*" class="d-none">
-                  <button type="button" (click)="logoFileInput.click()" [disabled]="uploadingLogo()" class="btn btn-outline-primary btn-sm rounded-pill w-100 mb-1">
-                    <i class="bi bi-upload me-1"></i> رفع صورة اللوجو
-                  </button>
-                  <input type="url" [(ngModel)]="settingsForm.logoUrl" name="logoUrl" class="form-control form-control-sm bg-dark text-white border-slate-700" placeholder="أو الصق رابط الصورة مباشر">
+              <label class="form-label text-xs fw-bold text-white-50">تصنيف ونشاط المتجر *</label>
+              <select [(ngModel)]="settingsForm.niche" class="form-select bg-dark text-white border-slate-700 rounded-3">
+                <option *ngFor="let n of niches" [value]="n.name">{{ n.name }}</option>
+              </select>
+            </div>
+
+            <!-- Subdomain Input with Live Checker -->
+            <div class="col-12">
+              <label class="form-label text-xs fw-bold text-white-50">رابط المتجر الفرعي (Subdomain) *</label>
+              <div class="input-group" dir="ltr">
+                <span class="input-group-text bg-slate-800 text-slate-300 border-slate-700">https://</span>
+                <input type="text" 
+                       [(ngModel)]="settingsForm.subdomain" 
+                       (input)="onSubdomainInput()" 
+                       class="form-control bg-dark text-white border-slate-700 font-monospace" 
+                       placeholder="seven">
+                <span class="input-group-text bg-slate-800 text-warning border-slate-700 font-bold">.besnesy.com</span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center mt-1.5">
+                <div *ngIf="subdomainChecking" class="text-info text-xs">
+                  <span class="spinner-border spinner-border-sm me-1"></span> جاري فحص توفر الرابط...
                 </div>
+                <div *ngIf="!subdomainChecking && subdomainAvailable === true" class="text-success text-xs fw-bold">
+                  <i class="bi bi-check-circle-fill me-1"></i> الرابط متاح وجاهز للاستخدام الفوري!
+                </div>
+                <div *ngIf="!subdomainChecking && subdomainAvailable === false" class="text-danger text-xs fw-bold">
+                  <i class="bi bi-x-circle-fill me-1"></i> هذا الرابط محجوز لمتجر آخر، اختر اسماً مختلفاً.
+                </div>
+                <div class="text-white-50 text-xs ms-auto">حروف إنجليزية وأرقام وعلامة (-) فقط</div>
               </div>
             </div>
 
-            <!-- COVER UPLOAD -->
+            <!-- Bio -->
+            <div class="col-12">
+              <label class="form-label text-xs fw-bold text-white-50">النبذة التعريفية للمتجر (Bio)</label>
+              <textarea [(ngModel)]="settingsForm.bio" 
+                        rows="2" 
+                        class="form-control bg-dark text-white border-slate-700 rounded-3" 
+                        placeholder="نبذة تسويقية تظهر للعملاء في أعلى واجهة المتجر..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Visual Branding & Media -->
+        <div class="pt-3 border-top border-white border-opacity-10">
+          <h5 class="fw-bold mb-3 d-flex align-items-center gap-2 text-warning border-bottom border-white border-opacity-10 pb-2">
+            <i class="bi bi-palette"></i> 2. الهوية البصرية وشعار المتجر
+          </h5>
+
+          <div class="row g-4">
+            <!-- Logo Upload -->
             <div class="col-12 col-md-6">
-              <label class="form-label fw-bold small d-flex justify-content-between align-items-center">
-                <span>غلاف المتجر (Cover Banner)</span>
-                <span *ngIf="uploadingCover()" class="text-warning small"><span class="spinner-border spinner-border-sm me-1"></span>جاري الرفع...</span>
-              </label>
-              <div class="d-flex gap-3 align-items-center mb-2">
-                <img [src]="settingsForm.coverUrl || 'https://placehold.co/600x200/1e293b/64748b?text=Cover+Banner'" 
-                     class="rounded-3 border border-white border-opacity-20 shadow-sm" 
-                     style="width: 100px; height: 60px; object-fit: cover;" 
-                     alt="Cover Preview">
+              <label class="form-label text-xs fw-bold text-white-50">شعار المتجر (Logo)</label>
+              <div class="d-flex align-items-center gap-3 mb-2">
+                <img [src]="settingsForm.logoUrl || 'https://ui-avatars.com/api/?name=Store&background=0284c7&color=fff'" 
+                     class="w-16 h-16 rounded-circle border border-slate-600 object-cover shadow" 
+                     alt="Logo preview">
                 <div class="flex-fill">
-                  <input type="file" #coverFileInput (change)="onCoverFileSelected($event)" accept="image/*" class="d-none">
-                  <button type="button" (click)="coverFileInput.click()" [disabled]="uploadingCover()" class="btn btn-outline-primary btn-sm rounded-pill w-100 mb-1">
-                    <i class="bi bi-image me-1"></i> رفع صورة الغلاف
-                  </button>
-                  <input type="url" [(ngModel)]="settingsForm.coverUrl" name="coverUrl" class="form-control form-control-sm bg-dark text-white border-slate-700" placeholder="أو الصق رابط الغلاف مباشر">
+                  <label class="btn btn-sm btn-outline-info rounded-pill px-3 py-1.5 cursor-pointer w-100 text-center mb-1">
+                    <span *ngIf="uploadingLogo()" class="spinner-border spinner-border-sm me-1"></span>
+                    <i *ngIf="!uploadingLogo()" class="bi bi-cloud-arrow-up me-1"></i>
+                    <span>رفع لوجو من جهازك</span>
+                    <input type="file" (change)="onLogoFileSelected($event)" accept="image/*" class="d-none">
+                  </label>
+                  <input type="text" [(ngModel)]="settingsForm.logoUrl" class="form-control form-control-sm bg-dark text-white border-slate-700 text-xs" placeholder="أو الصق رابط صورة الشعار">
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- Bio / Description -->
-          <div class="mb-3">
-            <label class="form-label fw-bold small">نبذة عن المتجر والشعار التسويقي (Bio)</label>
-            <textarea [(ngModel)]="settingsForm.bio" 
-                      name="bio" 
-                      rows="2" 
-                      class="form-control rounded-3 bg-dark text-white border-slate-700" 
-                      placeholder="متخصصون في أرقى المنتجات بأعلى جودة وضمان حقيقي والدفع عند الاستلام..."></textarea>
-          </div>
-
-          <!-- Niche Selection -->
-          <div class="mb-4">
-            <label class="form-label fw-bold small">مجال وتصنيف المتجر (Niche)</label>
-            <div class="row g-2">
-              <div *ngFor="let n of niches" class="col-6 col-md-3">
-                <div class="border rounded-3 p-2 text-center cursor-pointer transition-all niche-badge"
-                     [class.border-primary]="settingsForm.niche === n.name"
-                     [class.bg-primary]="settingsForm.niche === n.name"
-                     [class.bg-opacity-25]="settingsForm.niche === n.name"
-                     (click)="settingsForm.niche = n.name; settingsForm.themeColor = n.color">
-                  <i class="bi {{ n.icon }} fs-4 d-block mb-1" [style.color]="n.color"></i>
-                  <small class="fw-semibold">{{ n.name }}</small>
+            <!-- Cover Upload -->
+            <div class="col-12 col-md-6">
+              <label class="form-label text-xs fw-bold text-white-50">صورة غلاف المتجر (Banner)</label>
+              <div class="d-flex align-items-center gap-3 mb-2">
+                <img [src]="settingsForm.coverUrl || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=300'" 
+                     class="w-24 h-16 rounded-3 border border-slate-600 object-cover shadow" 
+                     alt="Cover preview">
+                <div class="flex-fill">
+                  <label class="btn btn-sm btn-outline-info rounded-pill px-3 py-1.5 cursor-pointer w-100 text-center mb-1">
+                    <span *ngIf="uploadingCover()" class="spinner-border spinner-border-sm me-1"></span>
+                    <i *ngIf="!uploadingCover()" class="bi bi-cloud-arrow-up me-1"></i>
+                    <span>رفع غلاف من جهازك</span>
+                    <input type="file" (change)="onCoverFileSelected($event)" accept="image/*" class="d-none">
+                  </label>
+                  <input type="text" [(ngModel)]="settingsForm.coverUrl" class="form-control form-control-sm bg-dark text-white border-slate-700 text-xs" placeholder="أو الصق رابط صورة الغلاف">
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- Theme Color -->
-          <div class="mb-4">
-            <label class="form-label fw-bold small">لون وهوية المتجر الأساسي</label>
-            <div class="d-flex align-items-center gap-3">
-              <input type="color" [(ngModel)]="settingsForm.themeColor" name="themeColor" class="form-control form-control-color rounded-circle p-0" style="width: 48px; height: 48px;">
-              <div class="d-flex flex-wrap gap-2">
-                <button *ngFor="let preset of themePresets" 
+            <!-- Theme Color Selection -->
+            <div class="col-12">
+              <label class="form-label text-xs fw-bold text-white-50">لون البراند الرئيسي</label>
+              <div class="d-flex flex-wrap items-center gap-2 mb-2">
+                <button *ngFor="let p of themePresets" 
                         type="button" 
-                        class="btn btn-sm btn-outline-secondary rounded-pill py-1 px-2 d-flex align-items-center gap-1 text-white-50"
-                        (click)="settingsForm.themeColor = preset.color">
-                  <span class="rounded-circle d-inline-block" [style.background]="preset.color" style="width: 14px; height: 14px;"></span>
-                  <span>{{ preset.name.split(' ')[0] }}</span>
+                        (click)="settingsForm.themeColor = p.color" 
+                        class="btn btn-sm rounded-pill px-3 py-1 d-flex align-items-center gap-2 text-xs border"
+                        [style.borderColor]="p.color"
+                        [class.bg-white]="settingsForm.themeColor === p.color"
+                        [class.text-dark]="settingsForm.themeColor === p.color"
+                        [class.text-white]="settingsForm.themeColor !== p.color">
+                  <span class="w-3 h-3 rounded-circle d-inline-block" [style.backgroundColor]="p.color"></span>
+                  <span>{{ p.name }}</span>
                 </button>
               </div>
             </div>
           </div>
+        </div>
 
-          <!-- Contact & Pixels -->
-          <div class="row g-3 mb-4">
+        <!-- Section 3: Contact & Tracking Pixels -->
+        <div class="pt-3 border-top border-white border-opacity-10">
+          <h5 class="fw-bold mb-3 d-flex align-items-center gap-2 text-warning border-bottom border-white border-opacity-10 pb-2">
+            <i class="bi bi-whatsapp"></i> 3. بيانات التواصل وأكواد التتبع التسويقي
+          </h5>
+
+          <div class="row g-3">
+            <!-- WhatsApp -->
             <div class="col-12 col-md-6">
-              <label class="form-label fw-bold small">رقم واتساب الطلبات (للتواصل السريع)</label>
-              <input type="text" [(ngModel)]="settingsForm.whatsAppNumber" name="whatsAppNumber" class="form-control rounded-3 bg-dark text-white border-slate-700" placeholder="2010xxxxxxxx" dir="ltr">
+              <label class="form-label text-xs fw-bold text-white-50">رقم واتساب خدمة العملاء</label>
+              <div class="input-group" dir="ltr">
+                <span class="input-group-text bg-slate-800 text-success border-slate-700"><i class="bi bi-whatsapp"></i></span>
+                <input type="text" [(ngModel)]="settingsForm.whatsAppNumber" class="form-control bg-dark text-white border-slate-700 text-sm" placeholder="201012345678">
+              </div>
+              <small class="text-white-50 text-xs">اكتب الرقم بالكود الدولي (مثال: 201012345678)</small>
             </div>
+
+            <!-- Phone -->
             <div class="col-12 col-md-6">
-              <label class="form-label fw-bold small">هاتف الاتصال بالمتجر</label>
-              <input type="text" [(ngModel)]="settingsForm.contactPhone" name="contactPhone" class="form-control rounded-3 bg-dark text-white border-slate-700" placeholder="010xxxxxxxx" dir="ltr">
+              <label class="form-label text-xs fw-bold text-white-50">رقم الهاتف للاتصال</label>
+              <div class="input-group" dir="ltr">
+                <span class="input-group-text bg-slate-800 text-info border-slate-700"><i class="bi bi-telephone"></i></span>
+                <input type="text" [(ngModel)]="settingsForm.contactPhone" class="form-control bg-dark text-white border-slate-700 text-sm" placeholder="01012345678">
+              </div>
+            </div>
+
+            <!-- Facebook Pixel -->
+            <div class="col-12 col-md-6">
+              <label class="form-label text-xs fw-bold text-white-50">Facebook Pixel ID</label>
+              <input type="text" [(ngModel)]="settingsForm.facebookPixelId" class="form-control bg-dark text-white border-slate-700 text-sm" placeholder="مثال: 123456789012345">
+              <small class="text-white-50 text-xs">لتتبع حملات الشراء على فيسبوك وإنستجرام تلقائياً</small>
+            </div>
+
+            <!-- TikTok Pixel -->
+            <div class="col-12 col-md-6">
+              <label class="form-label text-xs fw-bold text-white-50">TikTok Pixel ID</label>
+              <input type="text" [(ngModel)]="settingsForm.tiktokPixelId" class="form-control bg-dark text-white border-slate-700 text-sm" placeholder="مثال: C1234567890ABC">
+              <small class="text-white-50 text-xs">لتتبع تحويلات إعلانات تيك توك</small>
             </div>
           </div>
+        </div>
 
-          <div class="row g-3 mb-4">
-            <div class="col-12 col-md-6">
-              <label class="form-label fw-bold small">Facebook Pixel ID (اختياري)</label>
-              <input type="text" [(ngModel)]="settingsForm.facebookPixelId" name="facebookPixelId" class="form-control rounded-3 bg-dark text-white border-slate-700" placeholder="مثال: 123456789012345" dir="ltr">
-            </div>
-            <div class="col-12 col-md-6">
-              <label class="form-label fw-bold small">TikTok Pixel ID (اختياري)</label>
-              <input type="text" [(ngModel)]="settingsForm.tiktokPixelId" name="tiktokPixelId" class="form-control rounded-3 bg-dark text-white border-slate-700" placeholder="مثال: C6XXXXXXXXXX" dir="ltr">
-            </div>
-          </div>
-
-          <!-- Save Button -->
-          <button type="submit" 
+        <!-- Submit Button -->
+        <div class="pt-4 border-top border-white border-opacity-10 d-flex justify-content-end">
+          <button (click)="saveSettings()" 
                   [disabled]="savingSettings()" 
-                  class="btn btn-primary rounded-pill px-5 py-2.5 fw-bold shadow-lg d-inline-flex align-items-center gap-2">
+                  class="btn btn-success rounded-pill px-5 py-3 fw-bold shadow-lg d-flex align-items-center gap-2">
             <span *ngIf="savingSettings()" class="spinner-border spinner-border-sm"></span>
-            <i *ngIf="!savingSettings()" class="bi bi-check2-circle fs-5"></i>
-            <span>{{ savingSettings() ? 'جاري الحفظ...' : 'حفظ إعدادات المتجر' }}</span>
+            <i *ngIf="!savingSettings()" class="bi bi-check-circle-fill"></i>
+            <span>{{ savingSettings() ? 'جاري حفظ الإعدادات...' : 'حفظ كافة إعدادات المتجر 💾' }}</span>
           </button>
-        </form>
+        </div>
+
       </div>
     </div>
 
-    <!-- Live Preview Sidebar Card -->
+    <!-- SIDE PREVIEW PANEL -->
     <div class="col-12 col-lg-4">
-      <div class="card border-0 shadow-sm rounded-4 overflow-hidden sticky-top bg-dark bg-opacity-40 border border-white border-opacity-10 text-white" style="top: 24px;">
-        <div class="card-header bg-slate-800 text-white p-3 border-0">
-          <h6 class="fw-bold mb-0 d-flex align-items-center gap-2">
-            <i class="bi bi-phone"></i> معاينة بطاقة المتجر الحية
-          </h6>
-        </div>
-        <!-- Cover preview -->
-        <div class="position-relative bg-slate-900" style="height: 120px;">
-          <img [src]="settingsForm.coverUrl || 'https://placehold.co/600x200/1e293b/475569?text=Cover+Banner'" 
-               class="w-100 h-100 object-fit-cover" alt="Cover">
-          <div class="position-absolute start-0 end-0 bottom-0 p-2" style="background: linear-gradient(to top, rgba(15,23,42,0.9), transparent);"></div>
-        </div>
-        <!-- Logo & Details -->
-        <div class="card-body p-3 text-center" style="margin-top: -45px;">
-          <img [src]="settingsForm.logoUrl || 'https://ui-avatars.com/api/?name=' + (settingsForm.storeDisplayName || 'Store') + '&background=0284c7&color=fff&size=150'" 
-               class="rounded-circle border border-3 border-dark shadow mb-2" 
-               style="width: 80px; height: 80px; object-fit: cover;" alt="Logo">
-          <h5 class="fw-bold mb-1 text-white">{{ settingsForm.storeDisplayName || 'اسم متجرك' }}</h5>
-          <span class="badge rounded-pill text-white px-3 py-1 mb-2 d-inline-block" [style.background]="settingsForm.themeColor || '#0284c7'">
-            {{ settingsForm.niche || 'عام' }}
-          </span>
-          <p class="text-white-50 small mb-3">{{ settingsForm.bio || 'نبذة عن المتجر تظهر للعملاء في الصفحة العامة...' }}</p>
+      <div class="card border-0 shadow-sm rounded-4 p-4 bg-dark bg-opacity-40 border border-white border-opacity-10 text-white sticky-top" style="top: 1rem;">
+        <h6 class="fw-bold mb-3 text-warning flex items-center gap-2">
+          <i class="bi bi-display"></i> معاينة بطاقة المتجر
+        </h6>
 
-          <div class="d-grid gap-2">
-            <a *ngIf="settingsForm.subdomain" 
-               [routerLink]="['/store', settingsForm.subdomain]" 
-               target="_blank" 
-               class="btn btn-outline-light btn-sm rounded-pill">
-              <i class="bi bi-box-arrow-up-right me-1"></i> فتح المتجر الآن
-            </a>
-          </div>
+        <!-- Mini Profile Card Preview -->
+        <div class="bg-white rounded-3xl p-4 text-dark text-center shadow-md mb-3">
+          <img [src]="settingsForm.logoUrl || 'https://ui-avatars.com/api/?name=' + (settingsForm.storeDisplayName || 'Store') + '&background=0284c7&color=fff'" 
+               class="w-16 h-16 rounded-circle mx-auto mb-2 border-2 border-primary object-cover shadow-sm" 
+               alt="logo">
+          <h6 class="fw-bold mb-1 text-slate-900">{{ settingsForm.storeDisplayName || 'اسم المتجر' }}</h6>
+          <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-2.5 py-0.5 text-xs mb-2">
+            {{ settingsForm.niche || 'متجر رسمي' }}
+          </span>
+          <p class="text-slate-600 text-xs mb-3 line-clamp-2">{{ settingsForm.bio || 'النبذة التعريفية للمتجر تظهر هنا...' }}</p>
+
+          <a *ngIf="settingsForm.subdomain" 
+             [href]="getStorePublicUrl()" 
+             target="_blank" 
+             class="btn btn-sm btn-dark w-100 rounded-pill py-2 text-xs fw-bold">
+            <i class="bi bi-box-arrow-up-right me-1"></i> فتح المتجر الحي
+          </a>
+        </div>
+
+        <div class="bg-slate-900 p-3 rounded-3 text-xs text-white-50 space-y-1">
+          <div><strong class="text-white">الرابط المباشر:</strong></div>
+          <div class="text-info font-monospace">{{ settingsForm.subdomain || 'yourstore' }}.besnesy.com</div>
         </div>
       </div>
     </div>
+
   </div>
 
   <!-- ============================================================ -->
-  <!-- AI LANDING PAGE BUILDER MODAL (WIZARD) - FIXED OVERLAY -->
+  <!-- VISUAL LANDING PAGE STUDIO MODAL -->
   <!-- ============================================================ -->
   <div *ngIf="showAiWizardModal" class="app-modal-overlay">
-    <div class="modal-dialog-custom">
+    <div class="modal-dialog-custom text-white">
+      
       <!-- Modal Header -->
-      <div class="bg-slate-900 text-white p-3 p-md-4 border-b border-slate-800 flex items-center justify-between">
+      <div class="p-4 border-b border-slate-700/80 d-flex align-items-center justify-content-between bg-slate-900">
         <div>
-          <div class="d-flex align-items-center gap-2 mb-1">
-            <span class="badge bg-warning text-dark fw-bold rounded-pill">
-              <i class="bi bi-magic"></i> AI Landing Page Engine
-            </span>
-            <span class="text-white-50 small">الخطوة {{ wizardStep }} من 3</span>
-          </div>
-          <h5 class="modal-title fw-bold mb-0 text-white">
-            {{ editingPageId ? 'تعديل صفحة الهبوط' : 'توليد صفحة هبوط لمنتجك بالذكاء الاصطناعي' }}
-          </h5>
+          <span class="badge bg-warning text-dark font-bold text-xs px-3 py-1 rounded-pill mb-1">
+            {{ editingPageId ? 'محرر صفحة الهبوط' : 'استوديو التوليد بالذكاء الاصطناعي 🪄' }}
+          </span>
+          <h4 class="fw-black mb-0 text-white">
+            {{ editingPageId ? 'تعديل صفحة: ' + (generatedPreview.title || '') : 'إنشاء وتوليد صفحة هبوط لمنتجك' }}
+          </h4>
         </div>
-        <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle" (click)="closeAiWizard()" style="width: 36px; height: 36px;">
+        <button (click)="closeAiWizard()" type="button" class="btn btn-sm btn-outline-secondary rounded-circle w-9 h-9 d-flex align-items-center justify-content-center text-white">
           <i class="bi bi-x-lg"></i>
         </button>
       </div>
 
-      <!-- Wizard Stepper Indicator -->
-      <div class="bg-slate-950 p-3 border-b border-slate-800">
-        <div class="d-flex justify-content-between position-relative stepper-wrapper mx-auto" style="max-width: 500px;">
-          <div class="step-item text-center cursor-pointer" [class.active]="wizardStep >= 1" (click)="wizardStep = 1">
-            <div class="step-circle mx-auto mb-1">1</div>
-            <small class="fw-semibold text-xs">بيانات المنتج</small>
+      <!-- Modal Body -->
+      <div class="p-4 overflow-y-auto flex-fill" style="max-height: calc(90vh - 140px);">
+        
+        <!-- STEP 1 & 2 (Creation flow when not editing) -->
+        <div *ngIf="!editingPageId && wizardStep !== 3">
+          <!-- Step Indicator -->
+          <div class="d-flex items-center justify-center gap-4 mb-4 pb-3 border-b border-slate-800">
+            <div class="d-flex align-items-center gap-2" [class.text-warning]="wizardStep === 1" [class.text-white-50]="wizardStep !== 1">
+              <span class="w-7 h-7 rounded-circle border d-flex align-items-center justify-center font-bold text-xs" [class.border-warning]="wizardStep === 1" [class.bg-warning]="wizardStep === 1" [class.text-dark]="wizardStep === 1">1</span>
+              <span class="fw-bold text-sm">بيانات المنتج والصور</span>
+            </div>
+            <i class="bi bi-arrow-left text-white-50"></i>
+            <div class="d-flex align-items-center gap-2" [class.text-warning]="wizardStep === 2" [class.text-white-50]="wizardStep !== 2">
+              <span class="w-7 h-7 rounded-circle border d-flex align-items-center justify-center font-bold text-xs" [class.border-warning]="wizardStep === 2" [class.bg-warning]="wizardStep === 2" [class.text-dark]="wizardStep === 2">2</span>
+              <span class="fw-bold text-sm">التسعير والشحن</span>
+            </div>
           </div>
-          <div class="step-item text-center cursor-pointer" [class.active]="wizardStep >= 2" (click)="wizardStep = 2">
-            <div class="step-circle mx-auto mb-1">2</div>
-            <small class="fw-semibold text-xs">الشحن والمخزن</small>
-          </div>
-          <div class="step-item text-center cursor-pointer" [class.active]="wizardStep === 3" (click)="wizardStep = 3">
-            <div class="step-circle mx-auto mb-1">3</div>
-            <small class="fw-semibold text-xs">المحتوى والتصميم</small>
-          </div>
-        </div>
-      </div>
 
-      <!-- Modal Body (Scrollable) -->
-      <div class="p-4 overflow-y-auto text-white" style="max-height: calc(90vh - 180px);">
-        <!-- ================= STEP 1: PRODUCT INFO ================= -->
-        <div *ngIf="wizardStep === 1">
-          <div class="row g-4">
-            <div class="col-12 col-md-6">
-              <!-- Option to select existing product -->
-              <div class="mb-3">
-                <label class="form-label fw-bold small">اختر من المنتجات المسجلة لديك بالمخزن (اختياري)</label>
-                <select [(ngModel)]="aiRequest.selectedProductId" 
-                        (change)="onProductSelect()" 
-                        class="form-select rounded-3 bg-dark text-white border-slate-700">
-                  <option [ngValue]="null">-- منتج جديد تماماً (سيتم إضافته للمخزن تلقائياً) --</option>
-                  <option *ngFor="let p of products()" [ngValue]="p.id">
-                    {{ p.name }} - (سعر البيع: {{ p.sellingPrice }} ج.م | المخزون: {{ p.stockQuantity }})
-                  </option>
+          <!-- Step 1 Content -->
+          <div *ngIf="wizardStep === 1" class="space-y-4">
+            <!-- Product selection or manual -->
+            <div *ngIf="products().length > 0">
+              <label class="form-label text-xs fw-bold text-white-50">اختر منتجاً موجوداً من مخزنك (اختياري)</label>
+              <select [(ngModel)]="aiRequest.selectedProductId" (change)="onProductSelect()" class="form-select bg-dark text-white border-slate-700 rounded-3">
+                <option [ngValue]="null">-- أو اكتب بيانات منتج جديد بالأسفل --</option>
+                <option *ngFor="let p of products()" [value]="p.id">{{ p.name }} (سعر: {{ p.sellingPrice }} ج.م)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="form-label text-xs fw-bold text-white-50">اسم المنتج *</label>
+              <input type="text" [(ngModel)]="aiRequest.productName" class="form-control bg-dark text-white border-slate-700 rounded-3" placeholder="مثال: كوتشي نايكي اير جوردان أوريجينال">
+            </div>
+
+            <div>
+              <label class="form-label text-xs fw-bold text-white-50">وصف أو مواصفات المنتج التي ترغب بإبرازها</label>
+              <textarea [(ngModel)]="aiRequest.productDescription" rows="3" class="form-control bg-dark text-white border-slate-700 rounded-3" placeholder="اكتب أي تفاصيل، خامات، مميزات، أو اتركها للذكاء الاصطناعي ليبحث عنها ويستخرجها..."></textarea>
+            </div>
+
+            <!-- Image Upload & Preview -->
+            <div>
+              <label class="form-label text-xs fw-bold text-white-50">صور المنتج</label>
+              <div class="d-flex flex-wrap gap-2 mb-2">
+                <div *ngFor="let img of aiRequest.images; let i = index" class="position-relative w-16 h-16 rounded-2 border border-slate-600 overflow-hidden bg-slate-900">
+                  <img [src]="img" class="w-100 h-100 object-fit-contain" alt="preview">
+                  <button type="button" (click)="removeImageFromWizard(i)" class="position-absolute top-0 end-0 bg-danger text-white border-0 rounded-circle w-4 h-4 p-0 text-xs d-flex align-items-center justify-content-center">×</button>
+                </div>
+              </div>
+              <div class="input-group">
+                <input type="text" [(ngModel)]="aiRequest.newImageUrl" class="form-control form-control-sm bg-dark text-white border-slate-700" placeholder="أدخل رابط صورة واضغط إضافة">
+                <button type="button" (click)="addImageToWizard()" class="btn btn-sm btn-outline-info">إضافة صورة</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2 Content -->
+          <div *ngIf="wizardStep === 2" class="space-y-4">
+            <div class="row g-3">
+              <div class="col-12 col-md-6">
+                <label class="form-label text-xs fw-bold text-white-50">سعر البيع المستهدف (ج.م)</label>
+                <input type="number" [(ngModel)]="aiRequest.targetSellingPrice" class="form-control bg-dark text-white border-slate-700 rounded-3" placeholder="مثال: 450">
+              </div>
+
+              <div class="col-12 col-md-6">
+                <label class="form-label text-xs fw-bold text-white-50">شركة الشحن المسؤولة</label>
+                <select [(ngModel)]="aiRequest.shippingCompanyId" class="form-select bg-dark text-white border-slate-700 rounded-3">
+                  <option *ngFor="let s of shippingCompanies()" [value]="s.id">{{ s.name }}</option>
                 </select>
               </div>
 
-              <!-- Product Name -->
-              <div class="mb-3">
-                <label class="form-label fw-bold small">اسم المنتج أو عنوان العرض *</label>
-                <input type="text" 
-                       [(ngModel)]="aiRequest.productName" 
-                       class="form-control rounded-3 bg-dark text-white border-slate-700" 
-                       placeholder="مثال: سماعات بلوتوث لاسلكية Ultra Pods Pro">
-              </div>
-
-              <!-- Product Description -->
-              <div class="mb-3">
-                <label class="form-label fw-bold small">تفاصيل ومميزات المنتج (أو اتركه وسيكمله الـ AI)</label>
-                <textarea [(ngModel)]="aiRequest.productDescription" 
-                          rows="3" 
-                          class="form-control rounded-3 bg-dark text-white border-slate-700" 
-                          placeholder="عازل للضوضاء، بطارية تدوم 24 ساعة، مقاوم للماء، متوافق مع جميع الهواتف..."></textarea>
-              </div>
-
-              <!-- Target Price -->
-              <div class="mb-3">
-                <label class="form-label fw-bold small">سعر البيع المقترح للعميل (ج.م) *</label>
-                <input type="number" 
-                       [(ngModel)]="aiRequest.targetSellingPrice" 
-                       class="form-control rounded-3 bg-dark text-white border-slate-700" 
-                       placeholder="350">
-              </div>
-            </div>
-
-            <div class="col-12 col-md-6">
-              <!-- Images section -->
-              <div class="mb-3">
-                <label class="form-label fw-bold small">صور المنتج (المعروضة في صفحة الهبوط)</label>
-                <div class="input-group mb-2">
-                  <input type="url" 
-                         [(ngModel)]="aiRequest.newImageUrl" 
-                         class="form-control rounded-start-3 bg-dark text-white border-slate-700" 
-                         placeholder="أدخل رابط صورة المنتج (https://...)">
-                  <button (click)="addImageUrl()" type="button" class="btn btn-outline-primary">
-                    <i class="bi bi-plus-lg"></i> إضافة
-                  </button>
-                </div>
-
-                <!-- Images preview grid -->
-                <div class="d-flex flex-wrap gap-2 mt-2">
-                  <div *ngFor="let img of aiRequest.images; let i = index" class="position-relative" style="width: 70px; height: 70px;">
-                    <img [src]="img" class="w-100 h-100 rounded-3 object-fit-cover border border-slate-700">
-                    <button (click)="removeImage(i)" class="btn btn-danger btn-sm position-absolute top-0 start-0 p-0 rounded-circle" style="width: 20px; height: 20px; font-size: 10px; margin: -5px;">
-                      ×
-                    </button>
-                  </div>
-                  <div *ngIf="aiRequest.images.length === 0" class="text-white-50 small p-3 border border-dashed border-slate-700 rounded-3 w-100 text-center">
-                    لم تتم إضافة صور بعد. سيقوم الذكاء الاصطناعي باقتراح صور احترافية مناسبة تلقائياً! 📸
-                  </div>
-                </div>
-              </div>
-
-              <!-- Niche -->
-              <div class="mb-3">
-                <label class="form-label fw-bold small">تصنيف المنتج</label>
-                <select [(ngModel)]="aiRequest.niche" class="form-select rounded-3 bg-dark text-white border-slate-700">
-                  <option *ngFor="let n of niches" [value]="n.name">{{ n.name }}</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ================= STEP 2: SHIPPING & FULFILLMENT ================= -->
-        <div *ngIf="wizardStep === 2">
-          <div class="row g-4">
-            <div class="col-12 col-md-6">
-              <div class="card p-3 rounded-4 bg-slate-900 border border-slate-800 mb-3">
-                <h6 class="fw-bold mb-3 text-warning">
-                  <i class="bi bi-truck me-1"></i> إعدادات الشحن للطلبات الواردة
-                </h6>
-
-                <!-- Shipping Company -->
-                <div class="mb-3">
-                  <label class="form-label fw-bold small">شركة الشحن المعتمدة لهذا المنتج</label>
-                  <select [(ngModel)]="aiRequest.shippingCompanyId" class="form-select rounded-3 bg-dark text-white border-slate-700">
-                    <option [ngValue]="null">-- بدون شركة شحن محددة حالياً --</option>
-                    <option *ngFor="let c of shippingCompanies()" [ngValue]="c.id">{{ c.name }}</option>
-                  </select>
-                </div>
-
-                <!-- Free Shipping Toggle -->
-                <div class="form-check form-switch mb-3">
-                  <input class="form-check-input" type="checkbox" [(ngModel)]="aiRequest.isFreeShipping" id="freeShippingCheck">
-                  <label class="form-check-label fw-bold small" for="freeShippingCheck">
-                    عرض "شحن مجاني لكافة المحافظات" (أعلى معدل تحويل 🔥)
-                  </label>
-                </div>
-
-                <!-- Custom shipping cost if not free -->
-                <div *ngIf="!aiRequest.isFreeShipping" class="mb-3">
-                  <label class="form-label fw-bold small">تكلفة الشحن الثابتة المضافة للطلب (ج.م)</label>
-                  <input type="number" [(ngModel)]="aiRequest.customShippingCost" class="form-control rounded-3 bg-dark text-white border-slate-700" placeholder="50">
-                </div>
-              </div>
-            </div>
-
-            <div class="col-12 col-md-6">
-              <div class="card p-3 rounded-4 bg-slate-900 border border-slate-800 mb-3">
-                <h6 class="fw-bold mb-3 text-warning">
-                  <i class="bi bi-box-seam me-1"></i> مصدر تنفيذ المخزون (Fulfillment)
-                </h6>
-
-                <div class="mb-3">
-                  <div class="form-check mb-2">
-                    <input class="form-check-input" type="radio" [(ngModel)]="aiRequest.fulfillmentSource" [value]="FulfillmentSource.MerchantWarehouse" id="fSourceMerchant">
-                    <label class="form-check-label" for="fSourceMerchant">
-                      <strong>مخزن التاجر الخاص</strong>
-                      <small class="d-block text-white-50">يتم خصم الكميات من مخزنك المحلي ومتابعتها من لوحة المنتجات.</small>
-                    </label>
-                  </div>
-
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" [(ngModel)]="aiRequest.fulfillmentSource" [value]="FulfillmentSource.BostaWarehouse" id="fSourceBosta">
-                    <label class="form-check-label" for="fSourceBosta">
-                      <strong>مخازن بوسطة (Bosta Fulfillment)</strong>
-                      <small class="d-block text-white-50">التخزين والتغليف والشحن يتم بالكامل من خلال مستودعات بوسطة.</small>
-                    </label>
-                  </div>
-                </div>
-
-                <!-- Initial stock if new product -->
-                <div *ngIf="!aiRequest.selectedProductId" class="mb-3 pt-2 border-top border-slate-800">
-                  <label class="form-label fw-bold small">الكمية الافتتاحية للمخزون (للمنتج الجديد)</label>
-                  <input type="number" [(ngModel)]="aiRequest.initialStock" class="form-control rounded-3 bg-dark text-white border-slate-700" placeholder="100">
+              <div class="col-12">
+                <div class="form-check form-switch pt-2">
+                  <input class="form-check-input" type="checkbox" [(ngModel)]="aiRequest.isFreeShipping" id="freeShipCheck">
+                  <label class="form-check-label text-sm fw-bold text-white" for="freeShipCheck">شحن مجاني لكافة المحافظات (موصى به لتحقيق أعلى نسبة تحويل)</label>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- ================= STEP 3: CONTENT & AI PREVIEW ================= -->
+        <!-- STEP 3 / VISUAL EDITOR STUDIO (Full Control for Editing & Customization) -->
         <div *ngIf="wizardStep === 3">
-          <div *ngIf="generatingAi()" class="text-center py-5">
-            <div class="spinner-border text-warning mb-3" style="width: 3rem; height: 3rem;"></div>
-            <h5 class="fw-bold text-white">جاري كتابة وتوليد صفحة الهبوط بالذكاء الاصطناعي...</h5>
-            <p class="text-white-50 small">نقوم بصياغة نصوص تسويقية مقنعة، مميزات المنتج، آراء العملاء، وتصميم متناسق 🪄</p>
+          
+          <!-- Editor Sub-Tabs -->
+          <ul class="nav nav-pills gap-1.5 p-1 bg-slate-900 rounded-3 border border-slate-800 mb-4 overflow-x-auto text-nowrap">
+            <li class="nav-item">
+              <button class="nav-link rounded-pill py-1.5 px-3 text-xs fw-bold" [class.active]="editorTab === 'general'" (click)="editorTab = 'general'">
+                📝 الأساسيات والتسعير
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link rounded-pill py-1.5 px-3 text-xs fw-bold" [class.active]="editorTab === 'images'" (click)="editorTab = 'images'">
+                🖼️ معرض الصور ({{ generatedPreview.images?.length || 0 }})
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link rounded-pill py-1.5 px-3 text-xs fw-bold" [class.active]="editorTab === 'features'" (click)="editorTab = 'features'">
+                ⭐ المميزات ({{ editableFeatures.length }})
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link rounded-pill py-1.5 px-3 text-xs fw-bold" [class.active]="editorTab === 'why'" (click)="editorTab = 'why'">
+                🎯 المشاكل والحلول ({{ editableWhyChooseUs.length }})
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link rounded-pill py-1.5 px-3 text-xs fw-bold" [class.active]="editorTab === 'reviews'" (click)="editorTab = 'reviews'">
+                💬 آراء العملاء ({{ editableReviews.length }})
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link rounded-pill py-1.5 px-3 text-xs fw-bold" [class.active]="editorTab === 'faq'" (click)="editorTab = 'faq'">
+                ❓ الأسئلة الشائعة ({{ editableFaqs.length }})
+              </button>
+            </li>
+          </ul>
+
+          <!-- Editor Tab 1: General & Pricing -->
+          <div *ngIf="editorTab === 'general'" class="space-y-4">
+            <div class="row g-3">
+              <div class="col-12 col-md-8">
+                <label class="form-label text-xs fw-bold text-white-50">عنوان المنتج الرئيسي *</label>
+                <input type="text" [(ngModel)]="generatedPreview.title" class="form-control bg-dark text-white border-slate-700 rounded-3">
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label class="form-label text-xs fw-bold text-white-50">رابط الصفحة (Slug) *</label>
+                <div class="input-group" dir="ltr">
+                  <span class="input-group-text bg-slate-800 text-slate-400 border-slate-700 text-xs">/</span>
+                  <input type="text" [(ngModel)]="generatedPreview.slug" class="form-control bg-dark text-white border-slate-700 font-monospace text-xs">
+                </div>
+              </div>
+
+              <div class="col-12">
+                <label class="form-label text-xs fw-bold text-white-50">العنوان التسويقي الجذاب (Headline)</label>
+                <input type="text" [(ngModel)]="generatedPreview.headline" class="form-control bg-dark text-white border-slate-700 rounded-3">
+              </div>
+
+              <div class="col-12">
+                <label class="form-label text-xs fw-bold text-white-50">النص الإقناعي التوضيحي (Subheadline)</label>
+                <textarea [(ngModel)]="generatedPreview.subheadline" rows="2" class="form-control bg-dark text-white border-slate-700 rounded-3"></textarea>
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label class="form-label text-xs fw-bold text-white-50">سعر البيع الحالي (ج.م) *</label>
+                <input type="number" [(ngModel)]="generatedPreview.suggestedPrice" class="form-control bg-dark text-white border-slate-700 rounded-3 text-emerald-400 font-bold">
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label class="form-label text-xs fw-bold text-white-50">السعر قبل الخصم (مشطوب)</label>
+                <input type="number" [(ngModel)]="generatedPreview.suggestedOriginalPrice" class="form-control bg-dark text-white border-slate-700 rounded-3 text-slate-400">
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label class="form-label text-xs fw-bold text-white-50">شارة تسويقية (Badge)</label>
+                <input type="text" [(ngModel)]="generatedPreview.badge" class="form-control bg-dark text-white border-slate-700 rounded-3" placeholder="مثال: الأكثر مبيعاً 🔥">
+              </div>
+            </div>
           </div>
 
-          <div *ngIf="!generatingAi()">
-            <div class="alert alert-success d-flex align-items-center justify-content-between gap-2 rounded-3 border-0 bg-success bg-opacity-20 text-success mb-3 p-3">
-              <div class="d-flex align-items-center gap-2">
-                <i class="bi bi-check-circle-fill fs-5"></i>
-                <span class="fw-bold">تم تجهيز صفحة الهبوط بالذكاء الاصطناعي! يمكنك تعديل كل تفصيلة فيها بحرية تامة:</span>
-              </div>
-              <span class="badge bg-success rounded-pill px-3 py-1">محرر تفاعلي كامل 🎨</span>
+          <!-- Editor Tab 2: Images Gallery -->
+          <div *ngIf="editorTab === 'images'" class="space-y-4">
+            <div class="d-flex items-center justify-between">
+              <label class="form-label text-xs fw-bold text-white-50 mb-0">صور المنتج (انقر لتعيين الغلاف أو الحذف)</label>
+              <label class="btn btn-sm btn-outline-info rounded-pill px-3 py-1 cursor-pointer">
+                <span *ngIf="uploadingProductImage()" class="spinner-border spinner-border-sm me-1"></span>
+                <i *ngIf="!uploadingProductImage()" class="bi bi-cloud-arrow-up me-1"></i>
+                <span>رفع صورة جديدة من جهازك</span>
+                <input type="file" (change)="onProductImageUploaded($event)" accept="image/*" class="d-none">
+              </label>
             </div>
 
-            <!-- Visual Editor Sub-Tabs -->
-            <ul class="nav nav-pills nav-fill mb-3 bg-slate-900 p-1 rounded-3 border border-slate-800">
-              <li class="nav-item">
-                <button type="button" (click)="editorTab = 'general'" class="nav-link rounded-pill py-2 small fw-bold" [class.active]="editorTab === 'general'" [class.text-white]="editorTab !== 'general'">
-                  <i class="bi bi-pencil-square me-1"></i> البيانات والأسعار
-                </button>
-              </li>
-              <li class="nav-item">
-                <button type="button" (click)="editorTab = 'images'" class="nav-link rounded-pill py-2 small fw-bold position-relative" [class.active]="editorTab === 'images'" [class.text-white]="editorTab !== 'images'">
-                  <i class="bi bi-images me-1"></i> الصور والسلايدر
-                  <span *ngIf="generatedPreview.images?.length" class="badge bg-info text-dark rounded-pill ms-1">{{ generatedPreview.images?.length }}</span>
-                </button>
-              </li>
-              <li class="nav-item">
-                <button type="button" (click)="editorTab = 'features'" class="nav-link rounded-pill py-2 small fw-bold" [class.active]="editorTab === 'features'" [class.text-white]="editorTab !== 'features'">
-                  <i class="bi bi-stars me-1"></i> المميزات والمواصفات
-                </button>
-              </li>
-              <li class="nav-item">
-                <button type="button" (click)="editorTab = 'why'" class="nav-link rounded-pill py-2 small fw-bold" [class.active]="editorTab === 'why'" [class.text-white]="editorTab !== 'why'">
-                  <i class="bi bi-lightbulb me-1"></i> المشكلة والحل
-                </button>
-              </li>
-              <li class="nav-item">
-                <button type="button" (click)="editorTab = 'reviews'" class="nav-link rounded-pill py-2 small fw-bold" [class.active]="editorTab === 'reviews'" [class.text-white]="editorTab !== 'reviews'">
-                  <i class="bi bi-chat-heart me-1"></i> آراء المشترين
-                </button>
-              </li>
-              <li class="nav-item">
-                <button type="button" (click)="editorTab = 'faq'" class="nav-link rounded-pill py-2 small fw-bold" [class.active]="editorTab === 'faq'" [class.text-white]="editorTab !== 'faq'">
-                  <i class="bi bi-question-circle me-1"></i> الأسئلة الشائعة
-                </button>
-              </li>
-            </ul>
-
-            <!-- TAB 1: GENERAL & PRICING -->
-            <div *ngIf="editorTab === 'general'" class="row g-4">
-              <div class="col-12 col-md-6">
-                <div class="mb-3">
-                  <label class="form-label fw-bold small">عنوان صفحة الهبوط (Title)</label>
-                  <input type="text" [(ngModel)]="generatedPreview.title" class="form-control rounded-3 bg-dark text-white border-slate-700">
-                </div>
-
-                <div class="mb-3">
-                  <label class="form-label fw-bold small">الرابط المخصص للمنتج (Slug)</label>
-                  <div class="input-group" dir="ltr">
-                    <span class="input-group-text bg-slate-800 text-slate-300 border-slate-700">/store/{{ settings()?.subdomain }}/</span>
-                    <input type="text" [(ngModel)]="generatedPreview.slug" class="form-control bg-dark text-white border-slate-700">
-                  </div>
-                </div>
-
-                <div class="mb-3">
-                  <label class="form-label fw-bold small">العنوان التسويقي الرئيسي (Headline)</label>
-                  <textarea [(ngModel)]="generatedPreview.headline" rows="2" class="form-control rounded-3 bg-dark text-white border-slate-700"></textarea>
-                </div>
-
-                <div class="mb-3">
-                  <label class="form-label fw-bold small">السطر الفرعي المقنع (Subheadline)</label>
-                  <textarea [(ngModel)]="generatedPreview.subheadline" rows="2" class="form-control rounded-3 bg-dark text-white border-slate-700"></textarea>
-                </div>
-
-                <div class="mb-3">
-                  <label class="form-label fw-bold small">بادج العرض التسويقي (Badge)</label>
-                  <input type="text" [(ngModel)]="generatedPreview.badge" class="form-control rounded-3 bg-dark text-white border-slate-700" placeholder="🔥 عرض خاص لفترة محدودة">
-                </div>
-              </div>
-
-              <div class="col-12 col-md-6">
-                <div class="row g-2 mb-3">
-                  <div class="col-6">
-                    <label class="form-label fw-bold small">سعر البيع (ج.م)</label>
-                    <input type="number" [(ngModel)]="generatedPreview.suggestedPrice" class="form-control rounded-3 bg-dark text-white border-slate-700">
-                  </div>
-                  <div class="col-6">
-                    <label class="form-label fw-bold small">السعر الأصلي قبل الخصم</label>
-                    <input type="number" [(ngModel)]="generatedPreview.suggestedOriginalPrice" class="form-control rounded-3 bg-dark text-white border-slate-700">
-                  </div>
-                </div>
-
-                <div class="card p-3 rounded-4 bg-slate-900 border border-slate-800 mb-3">
-                  <h6 class="fw-bold mb-2 text-warning">روابط الصفحة بعد النشر:</h6>
-                  <div class="small" dir="ltr">
-                    <div class="text-info text-truncate mb-1">
-                      {{ settings()?.subdomain }}.besnesy.com/{{ generatedPreview.slug }}
-                    </div>
-                    <div class="text-white-50 text-truncate">
-                      besnesy.com/store/{{ settings()?.subdomain }}/{{ generatedPreview.slug }}
-                    </div>
-                  </div>
-                </div>
-
-                <div class="card p-3 rounded-4 bg-slate-900 border border-slate-800">
-                  <h6 class="fw-bold mb-2 text-white">إعدادات الشحن:</h6>
-                  <div class="d-flex items-center gap-2 mb-2">
-                    <input class="form-check-input" type="checkbox" [(ngModel)]="aiRequest.isFreeShipping" id="freeShipEditor">
-                    <label class="form-check-label text-white small" for="freeShipEditor">شحن مجاني لكافة المحافظات</label>
-                  </div>
-                  <div *ngIf="!aiRequest.isFreeShipping">
-                    <label class="form-label small text-white-50">قيمة مصاريف الشحن (ج.م)</label>
-                    <input type="number" [(ngModel)]="aiRequest.customShippingCost" class="form-control form-control-sm bg-dark text-white border-slate-700" placeholder="مثال: 45">
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- TAB 2: IMAGES MANAGER (CAROUSEL SLIDER) -->
-            <div *ngIf="editorTab === 'images'">
-              <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-                <p class="text-white-50 small mb-0">يمكنك رفع صور إضافية من جهازك أو لصق روابط، وحذف أو تعيين صورة كغلاف رئيسي للسلايدر.</p>
-                <div class="d-flex gap-2">
-                  <input type="file" #editorImageInput (change)="onProductImageUploaded($event)" accept="image/*" class="d-none">
-                  <button type="button" (click)="editorImageInput.click()" [disabled]="uploadingProductImage()" class="btn btn-primary btn-sm rounded-pill">
-                    <span *ngIf="uploadingProductImage()" class="spinner-border spinner-border-sm me-1"></span>
-                    <i *ngIf="!uploadingProductImage()" class="bi bi-cloud-arrow-up me-1"></i>
-                    <span>رفع صورة من الجهاز</span>
-                  </button>
-                </div>
-              </div>
-
-              <!-- Paste image link row -->
-              <div class="input-group mb-4">
-                <input type="url" [(ngModel)]="manualImageUrl" class="form-control bg-dark text-white border-slate-700" placeholder="أو أدخل رابط صورة مباشر (URL)...">
-                <button (click)="addManualProductImage()" type="button" class="btn btn-outline-info">
-                  <i class="bi bi-plus-lg me-1"></i> إضافة الرابط
-                </button>
-              </div>
-
-              <!-- Images Grid -->
-              <div class="row g-3">
-                <div *ngFor="let img of generatedPreview.images; let idx = index" class="col-6 col-md-3">
-                  <div class="card h-100 bg-slate-900 border border-slate-800 rounded-3 overflow-hidden position-relative group">
-                    <img [src]="img" class="card-img-top object-fit-cover" style="height: 140px;" alt="product thumb">
-                    
-                    <span *ngIf="idx === 0" class="position-absolute top-0 start-0 m-2 badge bg-success">
-                      الرئيسية ⭐
-                    </span>
-
-                    <div class="card-body p-2 d-flex justify-content-between align-items-center">
-                      <button *ngIf="idx > 0" (click)="setAsMainImage(idx)" type="button" class="btn btn-xs btn-outline-light py-0 px-2 small text-xs" title="تعيين كصورة رئيسية">
-                        تعيين كرئيسية
-                      </button>
-                      <div *ngIf="idx === 0"></div>
-                      <button (click)="removeProductImage(idx)" type="button" class="btn btn-xs btn-outline-danger py-0 px-2 text-xs" title="حذف">
-                        <i class="bi bi-trash"></i>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <div *ngIf="!generatedPreview.images?.length" class="col-12 text-center py-4 bg-slate-900 rounded-3 border border-slate-800">
-                  <i class="bi bi-image text-white-50 fs-2 d-block mb-2"></i>
-                  <span class="text-white-50 small">لا توجد صور مضافة، يرجى رفع صورة أو إضافة رابط.</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- TAB 3: FEATURES & SPECS -->
-            <div *ngIf="editorTab === 'features'">
-              <div class="d-flex align-items-center justify-content-between mb-3">
-                <p class="text-white-50 small mb-0">المميزات والمواصفات الفنية المستخرجة بالذكاء الاصطناعي والتي تعرض في بطاقات الصفحة:</p>
-                <button (click)="addFeature()" type="button" class="btn btn-outline-success btn-sm rounded-pill">
-                  <i class="bi bi-plus-lg me-1"></i> إضافة ميزة جديدة
-                </button>
-              </div>
-
-              <div class="row g-3">
-                <div *ngFor="let feat of editableFeatures; let i = index" class="col-12 col-md-6">
-                  <div class="card bg-slate-900 border border-slate-800 rounded-3 p-3 position-relative">
-                    <button (click)="removeFeature(i)" type="button" class="btn btn-sm btn-link text-danger position-absolute top-0 end-0 m-2 p-1" title="حذف الميزة">
+            <div class="row g-3">
+              <div *ngFor="let img of generatedPreview.images; let i = index" class="col-4 col-md-3">
+                <div class="position-relative rounded-3 border border-slate-700 overflow-hidden bg-slate-900 group" style="height: 120px;">
+                  <img [src]="img" class="w-100 h-100 object-fit-contain p-1" alt="gallery">
+                  <span *ngIf="i === 0" class="position-absolute top-1 start-1 badge bg-primary text-[10px] px-1.5 py-0.5 rounded">غلاف رئيسي</span>
+                  
+                  <div class="position-absolute bottom-0 start-0 end-0 p-1 bg-dark bg-opacity-80 d-flex justify-content-between">
+                    <button *ngIf="i !== 0" type="button" (click)="setAsMainImage(i)" class="btn btn-xs btn-link text-warning p-0 text-[11px]" title="تعيين كغلاف رئيسي">
+                      غلاف
+                    </button>
+                    <button type="button" (click)="removeProductImage(i)" class="btn btn-xs btn-link text-danger p-0 text-[11px]" title="حذف">
                       <i class="bi bi-trash"></i>
                     </button>
-                    <div class="mb-2 pe-4">
-                      <label class="form-label text-white-50 small mb-1">عنوان الميزة</label>
-                      <input type="text" [(ngModel)]="feat.title" class="form-control form-control-sm bg-dark text-white border-slate-700">
-                    </div>
-                    <div>
-                      <label class="form-label text-white-50 small mb-1">الشرح التفصيلي</label>
-                      <textarea [(ngModel)]="feat.description" rows="2" class="form-control form-control-sm bg-dark text-white border-slate-700"></textarea>
-                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- TAB 4: PAIN POINTS / WHY CHOOSE US -->
-            <div *ngIf="editorTab === 'why'">
-              <div class="d-flex align-items-center justify-content-between mb-3">
-                <p class="text-white-50 small mb-0">نقاط "المشكلة والحل" لإقناع العميل بأهمية الشراء وتفوق منتجك:</p>
-                <button (click)="addWhyItem()" type="button" class="btn btn-outline-warning btn-sm rounded-pill text-white">
-                  <i class="bi bi-plus-lg me-1"></i> إضافة مقارنة
-                </button>
-              </div>
-
-              <div class="space-y-3">
-                <div *ngFor="let w of editableWhyChooseUs; let i = index" class="card bg-slate-900 border border-slate-800 rounded-3 p-3 position-relative mb-2">
-                  <button (click)="removeWhyItem(i)" type="button" class="btn btn-sm btn-link text-danger position-absolute top-0 end-0 m-2 p-1">
-                    <i class="bi bi-trash"></i>
-                  </button>
-                  <div class="mb-2 pe-4">
-                    <label class="form-label text-white-50 small mb-1">العنوان أو المشكلة</label>
-                    <input type="text" [(ngModel)]="w.title" class="form-control form-control-sm bg-dark text-white border-slate-700">
-                  </div>
-                  <div>
-                    <label class="form-label text-white-50 small mb-1">الحل وميزة المنتج</label>
-                    <textarea [(ngModel)]="w.text" rows="2" class="form-control form-control-sm bg-dark text-white border-slate-700"></textarea>
-                  </div>
-                </div>
-              </div>
+            <div class="input-group">
+              <input type="text" [(ngModel)]="manualImageUrl" class="form-control form-control-sm bg-dark text-white border-slate-700" placeholder="أو أدخل رابط صورة خارجي واضغط إضافة">
+              <button type="button" (click)="addManualImage()" class="btn btn-sm btn-outline-primary">إضافة صورة بالرابط</button>
             </div>
-
-            <!-- TAB 5: CUSTOMER REVIEWS -->
-            <div *ngIf="editorTab === 'reviews'">
-              <div class="d-flex align-items-center justify-content-between mb-3">
-                <p class="text-white-50 small mb-0">تجارب وتقييمات المشترين (تظهر مع 5 نجوم وعلامة مشتري معتمد):</p>
-                <button (click)="addReview()" type="button" class="btn btn-outline-success btn-sm rounded-pill">
-                  <i class="bi bi-plus-lg me-1"></i> إضافة تقييم عميل
-                </button>
-              </div>
-
-              <div class="row g-3">
-                <div *ngFor="let rev of editableReviews; let i = index" class="col-12 col-md-4">
-                  <div class="card bg-slate-900 border border-slate-800 rounded-3 p-3 position-relative">
-                    <button (click)="removeReview(i)" type="button" class="btn btn-sm btn-link text-danger position-absolute top-0 end-0 m-1 p-1">
-                      <i class="bi bi-trash"></i>
-                    </button>
-                    <div class="mb-2 pe-3">
-                      <label class="form-label text-white-50 small mb-1">اسم العميل</label>
-                      <input type="text" [(ngModel)]="rev.name" class="form-control form-control-sm bg-dark text-white border-slate-700">
-                    </div>
-                    <div class="mb-2">
-                      <label class="form-label text-white-50 small mb-1">المدينة</label>
-                      <input type="text" [(ngModel)]="rev.city" class="form-control form-control-sm bg-dark text-white border-slate-700">
-                    </div>
-                    <div>
-                      <label class="form-label text-white-50 small mb-1">الرأي / التعليق</label>
-                      <textarea [(ngModel)]="rev.comment" rows="2" class="form-control form-control-sm bg-dark text-white border-slate-700"></textarea>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- TAB 6: FAQS -->
-            <div *ngIf="editorTab === 'faq'">
-              <div class="d-flex align-items-center justify-content-between mb-3">
-                <p class="text-white-50 small mb-0">الأسئلة الشائعة وإجاباتها لتبديد مخاوف العميل وتأكيد سهولة المعاينة والشحن:</p>
-                <button (click)="addFaq()" type="button" class="btn btn-outline-info btn-sm rounded-pill">
-                  <i class="bi bi-plus-lg me-1"></i> إضافة سؤال جديد
-                </button>
-              </div>
-
-              <div class="space-y-3">
-                <div *ngFor="let q of editableFaqs; let i = index" class="card bg-slate-900 border border-slate-800 rounded-3 p-3 position-relative mb-2">
-                  <button (click)="removeFaq(i)" type="button" class="btn btn-sm btn-link text-danger position-absolute top-0 end-0 m-2 p-1">
-                    <i class="bi bi-trash"></i>
-                  </button>
-                  <div class="mb-2 pe-4">
-                    <label class="form-label text-white-50 small mb-1">السؤال</label>
-                    <input type="text" [(ngModel)]="q.question" class="form-control form-control-sm bg-dark text-white border-slate-700">
-                  </div>
-                  <div>
-                    <label class="form-label text-white-50 small mb-1">الإجابة</label>
-                    <textarea [(ngModel)]="q.answer" rows="2" class="form-control form-control-sm bg-dark text-white border-slate-700"></textarea>
-                  </div>
-                </div>
-              </div>
-            </div>
-
           </div>
+
+          <!-- Editor Tab 3: Features -->
+          <div *ngIf="editorTab === 'features'" class="space-y-3">
+            <div class="d-flex items-center justify-between mb-2">
+              <span class="text-xs fw-bold text-white-50">قائمة المميزات والمواصفات</span>
+              <button (click)="addFeature()" type="button" class="btn btn-xs btn-outline-warning rounded-pill px-3 py-1">
+                + إضافة ميزة
+              </button>
+            </div>
+
+            <div *ngFor="let feat of editableFeatures; let i = index" class="bg-slate-900 p-3 rounded-3 border border-slate-800 space-y-2">
+              <div class="d-flex items-center justify-between">
+                <span class="text-xs font-bold text-warning">ميزة #{{ i + 1 }}</span>
+                <button (click)="removeFeature(i)" type="button" class="btn btn-xs btn-link text-danger p-0">حذف</button>
+              </div>
+              <input type="text" [(ngModel)]="feat.title" class="form-control form-control-sm bg-dark text-white border-slate-700" placeholder="عنوان الميزة">
+              <textarea [(ngModel)]="feat.description" rows="2" class="form-control form-control-sm bg-dark text-white border-slate-700" placeholder="تفاصيل الميزة"></textarea>
+            </div>
+          </div>
+
+          <!-- Editor Tab 4: Why Choose Us -->
+          <div *ngIf="editorTab === 'why'" class="space-y-3">
+            <div class="d-flex items-center justify-between mb-2">
+              <span class="text-xs fw-bold text-white-50">المشاكل والحلول المقنعة</span>
+              <button (click)="addWhyItem()" type="button" class="btn btn-xs btn-outline-warning rounded-pill px-3 py-1">
+                + إضافة نقطة
+              </button>
+            </div>
+
+            <div *ngFor="let item of editableWhyChooseUs; let i = index" class="bg-slate-900 p-3 rounded-3 border border-slate-800 space-y-2">
+              <div class="d-flex items-center justify-between">
+                <span class="text-xs font-bold text-warning">نقطة إقناع #{{ i + 1 }}</span>
+                <button (click)="removeWhyItem(i)" type="button" class="btn btn-xs btn-link text-danger p-0">حذف</button>
+              </div>
+              <input type="text" [(ngModel)]="item.title" class="form-control form-control-sm bg-dark text-white border-slate-700" placeholder="المشكلة أو العنوان">
+              <textarea [(ngModel)]="item.text" rows="2" class="form-control form-control-sm bg-dark text-white border-slate-700" placeholder="الحل الذي يقدمه منتجك"></textarea>
+            </div>
+          </div>
+
+          <!-- Editor Tab 5: Reviews -->
+          <div *ngIf="editorTab === 'reviews'" class="space-y-3">
+            <div class="d-flex items-center justify-between mb-2">
+              <span class="text-xs fw-bold text-white-50">آراء وتجارب العملاء (Social Proof)</span>
+              <button (click)="addReview()" type="button" class="btn btn-xs btn-outline-warning rounded-pill px-3 py-1">
+                + إضافة تقييم عميل
+              </button>
+            </div>
+
+            <div *ngFor="let rev of editableReviews; let i = index" class="bg-slate-900 p-3 rounded-3 border border-slate-800 space-y-2">
+              <div class="d-flex items-center justify-between">
+                <span class="text-xs font-bold text-warning">تقييم #{{ i + 1 }}</span>
+                <button (click)="removeReview(i)" type="button" class="btn btn-xs btn-link text-danger p-0">حذف</button>
+              </div>
+              <div class="row g-2">
+                <div class="col-6">
+                  <input type="text" [(ngModel)]="rev.name" class="form-control form-control-sm bg-dark text-white border-slate-700" placeholder="اسم العميل">
+                </div>
+                <div class="col-6">
+                  <input type="text" [(ngModel)]="rev.city" class="form-control form-control-sm bg-dark text-white border-slate-700" placeholder="المدينة / المحافظة">
+                </div>
+              </div>
+              <textarea [(ngModel)]="rev.comment" rows="2" class="form-control form-control-sm bg-dark text-white border-slate-700" placeholder="نص التقييم"></textarea>
+            </div>
+          </div>
+
+          <!-- Editor Tab 6: FAQs -->
+          <div *ngIf="editorTab === 'faq'" class="space-y-3">
+            <div class="d-flex items-center justify-between mb-2">
+              <span class="text-xs fw-bold text-white-50">الأسئلة الشائعة وإجاباتها</span>
+              <button (click)="addFaq()" type="button" class="btn btn-xs btn-outline-warning rounded-pill px-3 py-1">
+                + إضافة سؤال
+              </button>
+            </div>
+
+            <div *ngFor="let q of editableFaqs; let i = index" class="bg-slate-900 p-3 rounded-3 border border-slate-800 space-y-2">
+              <div class="d-flex items-center justify-between">
+                <span class="text-xs font-bold text-warning">سؤال #{{ i + 1 }}</span>
+                <button (click)="removeFaq(i)" type="button" class="btn btn-xs btn-link text-danger p-0">حذف</button>
+              </div>
+              <input type="text" [(ngModel)]="q.question" class="form-control form-control-sm bg-dark text-white border-slate-700" placeholder="السؤال؟">
+              <textarea [(ngModel)]="q.answer" rows="2" class="form-control form-control-sm bg-dark text-white border-slate-700" placeholder="الإجابة المطمئنة..."></textarea>
+            </div>
+          </div>
+
         </div>
+
       </div>
 
       <!-- Modal Footer -->
-      <div class="bg-slate-900 border-t border-slate-800 p-3 flex items-center justify-between">
-        <button *ngIf="wizardStep > 1" (click)="prevStep()" type="button" class="btn btn-outline-secondary rounded-pill px-4 text-white">
-          السابق
-        </button>
-        <div *ngIf="wizardStep === 1"></div>
-
-        <div class="d-flex gap-2">
-          <button *ngIf="wizardStep < 2" (click)="wizardStep = 2" type="button" class="btn btn-primary rounded-pill px-4">
-            التالي: الشحن والمخزن
-          </button>
-
-          <button *ngIf="wizardStep === 2" (click)="triggerAiGeneration()" type="button" class="btn btn-warning text-dark fw-bold rounded-pill px-4 shadow">
-            <span>توليد المحتوى بالذكاء الاصطناعي 🪄</span>
-          </button>
-
-          <button *ngIf="wizardStep === 3" (click)="saveLandingPage(false)" [disabled]="savingPage()" type="button" class="btn btn-outline-light rounded-pill px-4">
-            حفظ كمسودة
-          </button>
-
-          <button *ngIf="wizardStep === 3" (click)="saveLandingPage(true)" [disabled]="savingPage()" type="button" class="btn btn-success fw-bold rounded-pill px-5 shadow">
-            <span *ngIf="savingPage()" class="spinner-border spinner-border-sm me-2"></span>
-            <span>نشر الصفحة فوراً 🚀</span>
+      <div class="p-4 border-t border-slate-700/80 bg-slate-900 d-flex justify-content-between align-items-center">
+        <!-- Back button (for wizard flow) -->
+        <div>
+          <button *ngIf="!editingPageId && wizardStep === 2" (click)="prevStep()" type="button" class="btn btn-outline-secondary rounded-pill px-4">
+            السابق
           </button>
         </div>
+
+        <!-- Next / Trigger / Save buttons -->
+        <div class="d-flex gap-2">
+          <!-- Step 1 -> Step 2 -->
+          <button *ngIf="!editingPageId && wizardStep === 1" 
+                  (click)="nextStep()" 
+                  type="button" 
+                  class="btn btn-primary rounded-pill px-5 fw-bold">
+            التالي: التسعير والشحن
+          </button>
+
+          <!-- Step 2 -> Trigger AI Generation -->
+          <button *ngIf="!editingPageId && wizardStep === 2" 
+                  (click)="triggerAiGeneration()" 
+                  [disabled]="generatingAi()" 
+                  type="button" 
+                  class="btn btn-warning text-dark rounded-pill px-5 fw-bold shadow-sm d-flex align-items-center gap-2">
+            <span *ngIf="generatingAi()" class="spinner-border spinner-border-sm"></span>
+            <i *ngIf="!generatingAi()" class="bi bi-magic"></i>
+            <span>{{ generatingAi() ? 'جاري التوليد بالذكاء الاصطناعي...' : 'توليد الصفحة بالـ AI 🪄' }}</span>
+          </button>
+
+          <!-- Step 3 / Edit mode -> Save controls -->
+          <div *ngIf="wizardStep === 3" class="d-flex gap-2">
+            <button (click)="saveLandingPage(false)" 
+                    [disabled]="savingPage()" 
+                    type="button" 
+                    class="btn btn-outline-light rounded-pill px-4">
+              حفظ كمسودة
+            </button>
+            <button (click)="saveLandingPage(true)" 
+                    [disabled]="savingPage()" 
+                    type="button" 
+                    class="btn btn-success rounded-pill px-5 fw-bold shadow-md d-flex align-items-center gap-2">
+              <span *ngIf="savingPage()" class="spinner-border spinner-border-sm"></span>
+              <i *ngIf="!savingPage()" class="bi bi-rocket-takeoff-fill"></i>
+              <span>{{ savingPage() ? 'جاري الحفظ...' : 'حفظ ونشر الصفحة 🚀' }}</span>
+            </button>
+          </div>
+        </div>
       </div>
+
     </div>
   </div>
 
-  <!-- Upgrade Modal for non-VIP users -->
-  <app-upgrade-modal [isOpen]="showUpgradeModal" (close)="showUpgradeModal = false" [preselectedPlanName]="'خطة مميزة'"></app-upgrade-modal>
+  <!-- Upgrade Modal for non-VIP plans -->
+  <app-upgrade-modal [isOpen]="showUpgradeModal" 
+                     (close)="showUpgradeModal = false"
+                     featureName="استوديو متجر البيع وصفحات الهبوط بالذكاء الاصطناعي" 
+                     requiredPlanName="الباقة المميزة (VIP)">
+  </app-upgrade-modal>
+
 </div>
