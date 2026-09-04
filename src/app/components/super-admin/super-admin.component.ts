@@ -88,7 +88,7 @@ export class SuperAdminComponent implements OnInit {
   };
   sendingEmail = signal<boolean>(false);
 
-  constructor(private saasService: SaasService, private authService: AuthService, private router: Router) {}
+  constructor(private saasService: SaasService, private authService: AuthService, private router: Router) { }
 
   ngOnInit(): void {
     this.loadData();
