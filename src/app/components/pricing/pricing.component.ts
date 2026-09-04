@@ -45,6 +45,7 @@ export interface ComparisonCategory {
   templateUrl: './pricing.component.html'
 })
 export class PricingComponent implements OnInit {
+  imageError = false;
   isDarkMode = true;
   isAnnual = false;
   isLoggedIn = false;

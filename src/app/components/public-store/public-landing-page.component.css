@@ -1,0 +1,50 @@
+.landing-wrapper {
+  font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #1e293b;
+}
+
+.cta-pulse-btn {
+  animation: pulse-shadow 2s infinite;
+}
+
+@keyframes pulse-shadow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 14px rgba(220, 38, 38, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
+  }
+}
+
+.active-thumb {
+  border: 3px solid #0284c7 !important;
+  opacity: 1 !important;
+}
+
+.thumb-item {
+  opacity: 0.7;
+  transition: all 0.2s ease-in-out;
+}
+
+.thumb-item:hover {
+  opacity: 1;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+}
+
+.transition-all {
+  transition: all 0.3s ease;
+}
+
+.leading-relaxed {
+  line-height: 1.8;
+}
+
+.mobile-sticky-bar {
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+}

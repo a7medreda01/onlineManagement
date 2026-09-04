@@ -29,6 +29,9 @@ import { UnauthorizedComponent } from './components/shared/unauthorized/unauthor
 
 import { StoreSettingsComponent } from './components/store-settings/store-settings.component';
 import { PricingComponent } from './components/pricing/pricing.component';
+import { StorefrontComponent } from './components/storefront/storefront.component';
+import { PublicStoreComponent } from './components/public-store/public-store.component';
+import { PublicLandingPageComponent } from './components/public-store/public-landing-page.component';
 
 export const routes: Routes = [
   { path: '', component: LandingComponent },
@@ -40,12 +43,16 @@ export const routes: Routes = [
   { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'super-admin/login', component: SuperAdminLoginComponent },
   { path: 'super-admin', component: SuperAdminComponent, canActivate: [superAdminGuard] },
+  // Public Storefront & AI Landing Pages (Accessible without login)
+  { path: 'store/:subdomain', component: PublicStoreComponent },
+  { path: 'store/:subdomain/:slug', component: PublicLandingPageComponent },
   {
     path: '',
     component: LayoutComponent,
     canActivate: [authGuard],
     children: [
       { path: 'dashboard', component: DashboardComponent },
+      { path: 'storefront', component: StorefrontComponent },
       { path: 'orders', component: OrdersComponent },
       { path: 'orders/create', component: CreateOrderComponent },
       { path: 'orders/:id', component: OrderDetailComponent },
@@ -64,5 +71,7 @@ export const routes: Routes = [
       { path: 'unauthorized', component: UnauthorizedComponent }
     ]
   },
+  // Direct subdomain & slug route fallback (e.g. besnesy.com/storename/product-slug)
+  { path: ':subdomain/:slug', component: PublicLandingPageComponent },
   { path: '**', redirectTo: '' }
 ];

@@ -99,6 +99,11 @@ export class LayoutComponent implements OnInit, OnDestroy {
     return this.authService.canAccessBosta();
   }
 
+  canAccessStorefront(): boolean {
+    const user = this.authService.currentUser();
+    return user?.allowAiLandingPages ?? false;
+  }
+
   openUpgradeModal(planName?: string): void {
     if (!this.authService.isLoggedIn()) {
       this.router.navigate(['/login']);

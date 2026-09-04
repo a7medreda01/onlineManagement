@@ -71,6 +71,23 @@
         <span>المنتجات والمخزون</span>
       </a>
 
+      <!-- متجر البيع وصفحات الهبوط (AI Storefront VIP) -->
+      <a [routerLink]="canAccessStorefront() ? '/storefront' : null" 
+         (click)="!canAccessStorefront() ? openUpgradeModal('خطة مميزة') : null" 
+         routerLinkActive="bg-gradient-to-r from-amber-500/20 to-sky-600/20 text-amber-300 font-bold border-r-4 border-amber-400" 
+         class="flex items-center justify-between px-3 py-2 text-slate-300 rounded-lg hover:bg-slate-700/60 transition cursor-pointer group">
+        <div class="flex items-center gap-2.5">
+          <i class="bi bi-shop-window text-sm w-5 text-amber-400"></i>
+          <span class="font-bold flex items-center gap-1.5">
+            متجر البيع 🛍️
+            <span class="text-[9px] bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-full px-1.5 py-0.2 font-mono">VIP</span>
+          </span>
+        </div>
+        <span *ngIf="!canAccessStorefront()" (click)="openUpgradeModal('خطة مميزة'); $event.stopPropagation(); $event.preventDefault()" class="upgrade-badge-icon" title="ميزة حصرية للخطة المميزة - اضغط للترقية">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="#f59e0b"><path d="M7.247 1.141a1 1 0 0 1 1.506 0l4.5 5.5A1 1 0 0 1 12.5 8.25h-9a1 1 0 0 1-.753-1.609l4.5-5.5z"/><path d="M2 10.5h12v1.5H2v-1.5zm0 3h12V15H2v-1.5z"/></svg>
+        </span>
+      </a>
+
       <a routerLink="/customers" routerLinkActive="bg-sky-600/25 text-sky-300 font-bold border-r-4 border-sky-500" class="flex items-center gap-2.5 px-3 py-2 text-slate-300 rounded-lg hover:bg-slate-700/60 transition">
         <i class="bi bi-people-fill text-sm w-5 text-purple-400"></i>
         <span>دليل العملاء</span>
@@ -243,6 +260,16 @@
         <a routerLink="/profile" class="btn btn-secondary btn-sm py-1.5 px-3 text-xs flex items-center gap-1.5 border-slate-700" title="ملفي الشخصي">
           <i class="bi bi-person-circle text-sky-400"></i>
           <span>ملفي الشخصي</span>
+        </a>
+
+        <!-- Storefront VIP Quick Action -->
+        <a [routerLink]="canAccessStorefront() ? '/storefront' : null" 
+           (click)="!canAccessStorefront() ? openUpgradeModal('خطة مميزة') : null" 
+           class="btn btn-secondary btn-sm py-1.5 px-3 text-xs flex items-center gap-1.5 border-amber-500/40 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 cursor-pointer transition" 
+           title="متجر البيع وصفحات الهبوط بالذكاء الاصطناعي">
+          <i class="bi bi-shop-window text-amber-400"></i>
+          <span class="font-bold">متجر البيع 🛍️</span>
+          <span class="text-[9px] bg-amber-500/20 text-amber-200 border border-amber-500/40 rounded-full px-1.5 py-0.2 font-mono">VIP</span>
         </a>
 
         <!-- Upgrade Plan Button (Image 4) -->
@@ -469,6 +496,24 @@
             <i class="bi bi-people-fill text-purple-400 text-sm"></i>
           </div>
           <span class="font-semibold">دليل العملاء</span>
+        </a>
+
+        <!-- Mobile Storefront VIP -->
+        <a (click)="canAccessStorefront() ? closeMoreMenu() : openUpgradeModal('خطة مميزة')" 
+           [routerLink]="canAccessStorefront() ? '/storefront' : null" 
+           class="flex items-center justify-between p-2.5 rounded-xl text-slate-300 hover:bg-slate-800 transition-colors cursor-pointer">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-amber-500/15 flex items-center justify-center shrink-0">
+              <i class="bi bi-shop-window text-amber-400 text-sm"></i>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="font-semibold">متجر البيع 🛍️</span>
+              <span class="text-[9px] bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-full px-1.5 py-0.2 font-mono">VIP</span>
+            </div>
+          </div>
+          <span *ngIf="!canAccessStorefront()" class="upgrade-badge-icon" title="ميزة حصرية للخطة المميزة - اضغط للترقية">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="#f59e0b"><path d="M7.247 1.141a1 1 0 0 1 1.506 0l4.5 5.5A1 1 0 0 1 12.5 8.25h-9a1 1 0 0 1-.753-1.609l4.5-5.5z"/><path d="M2 10.5h12v1.5H2v-1.5zm0 3h12V15H2v-1.5z"/></svg>
+          </span>
         </a>
         <a (click)="closeMoreMenu()" routerLink="/shipping" class="flex items-center gap-3 p-2.5 rounded-xl text-slate-300 hover:bg-slate-800 transition-colors">
           <div class="w-8 h-8 rounded-lg bg-blue-500/15 flex items-center justify-center shrink-0">

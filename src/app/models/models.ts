@@ -80,6 +80,8 @@ export interface AuthResponse {
   mustChangePassword: boolean;
   subscriptionStatus?: SubscriptionStatus;
   daysRemainingInSubscription?: number;
+  planName?: string;
+  allowAiLandingPages?: boolean;
 }
 
 export interface Product {
@@ -463,6 +465,7 @@ export interface Plan {
   allowFinancialReports: boolean;
   allowPurchasesManagement?: boolean;
   allowPayrollAndShifts?: boolean;
+  allowAiLandingPages?: boolean;
   isActive: boolean;
   createdAt?: string;
 }
@@ -763,4 +766,117 @@ export interface WalletSummaryDto {
   totalDepositsThisMonth: number;
   activeWalletsCount: number;
   wallets: Wallet[];
+}
+
+// ==========================================
+// Storefront & Landing Pages Interfaces
+// ==========================================
+
+export interface StorefrontSettings {
+  id: number;
+  tenantId: number;
+  subdomain: string;
+  storeDisplayName: string;
+  bio: string;
+  niche: string;
+  themeColor: string;
+  logoUrl?: string;
+  coverUrl?: string;
+  faviconUrl?: string;
+  whatsAppNumber?: string;
+  contactPhone?: string;
+  facebookPixelId?: string;
+  tiktokPixelId?: string;
+  googleAnalyticsId?: string;
+  isActive: boolean;
+  totalLandingPagesCount: number;
+  totalViewsCount: number;
+  totalOrdersCount: number;
+}
+
+export enum FulfillmentSource {
+  MerchantWarehouse = 1,
+  BostaWarehouse = 2
+}
+
+export interface ProductLandingPage {
+  id: number;
+  tenantId: number;
+  storefrontSettingsId?: number;
+  storeSubdomain: string;
+  storeDisplayName: string;
+  storeLogoUrl?: string;
+  storeWhatsApp?: string;
+  storeFacebookPixelId?: string;
+  storeTikTokPixelId?: string;
+  productId?: number;
+  productName?: string;
+  productStock?: number;
+  slug: string;
+  title: string;
+  headline: string;
+  subheadline?: string;
+  badge?: string;
+  niche: string;
+  themeConfigJson: string;
+  contentJson: string;
+  mediaUrlsJson: string;
+  sellingPrice: number;
+  originalPrice?: number;
+  offerCountdownEnd?: string;
+  shippingCompanyId?: number;
+  shippingCompanyName?: string;
+  fulfillmentSource: FulfillmentSource;
+  isFreeShipping: boolean;
+  customShippingCost?: number;
+  salesPlatformId?: number;
+  isPublished: boolean;
+  viewsCount: number;
+  ordersCount: number;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface AiGenerateLandingPageRequest {
+  productName: string;
+  productDescription?: string;
+  niche?: string;
+  targetSellingPrice?: number;
+  existingImages?: string[];
+  existingProductId?: number;
+}
+
+export interface AiGeneratedLandingPageResponse {
+  title: string;
+  slug: string;
+  headline: string;
+  subheadline: string;
+  badge: string;
+  niche: string;
+  suggestedPrice: number;
+  suggestedOriginalPrice: number;
+  themeConfigJson: string;
+  contentJson: string;
+  suggestedMediaUrls: string[];
+}
+
+export interface PublicLandingOrderRequest {
+  customerName: string;
+  phone: string;
+  alternativePhone?: string;
+  governorateId: number;
+  districtId?: string;
+  districtName?: string;
+  address: string;
+  quantity: number;
+  selectedVariant?: string;
+  notes?: string;
+}
+
+export interface PublicLandingOrderResponse {
+  success: boolean;
+  orderNumber: string;
+  totalAmount: number;
+  message: string;
+  whatsAppFollowupUrl?: string;
 }

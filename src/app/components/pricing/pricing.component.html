@@ -7,14 +7,18 @@
     <div class="landing-orb landing-orb-3"></div>
   </div>
 
-  <!-- Header -->
+  <!-- ========== HEADER ========== -->
   <header class="lp-header border-b backdrop-blur-xl sticky top-0 z-40">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+
       <!-- Logo -->
-      <a routerLink="/" class="flex items-center gap-2.5 group">
-        <div class="w-9 h-9 sm:w-10 sm:h-10 lp-logo-bg border rounded-xl flex items-center justify-center overflow-hidden shadow-sm">
-          <img src="assets/besnesy_logo.jpg" alt="Besnesy" class="w-full h-full object-cover" onerror="this.style.display='none'" />
-          <span class="font-black text-sky-500 text-lg">B</span>
+      <a routerLink="/" class="flex items-center gap-2.5">
+        <div class="relative">
+          <div class="absolute -inset-1 bg-gradient-to-r from-sky-500 to-indigo-600 rounded-xl blur opacity-20"></div>
+          <div class="relative w-9 h-9 sm:w-10 sm:h-10 lp-logo-bg border rounded-xl flex items-center justify-center overflow-hidden">
+            <img src="assets/besnesy_logo.jpg" alt="Besnesy" class="w-full h-full object-cover" (error)="imageError = true" *ngIf="!imageError" />
+            <span *ngIf="imageError" class="font-black text-sky-500 text-lg">B</span>
+          </div>
         </div>
         <div>
           <div class="font-black text-base sm:text-lg lp-brand-name tracking-wide leading-tight">Besnesy</div>
@@ -22,10 +26,10 @@
         </div>
       </a>
 
-      <!-- Navigation Links -->
+      <!-- Nav Links -->
       <nav class="hidden md:flex items-center gap-6 text-xs font-semibold lp-muted">
-        <a routerLink="/" class="lp-nav-link">الرئيسية</a>
-        <a routerLink="/pricing" class="text-sky-400 font-bold border-b-2 border-sky-400 pb-0.5">الخطط والأسعار</a>
+        <a routerLink="/" fragment="features" class="lp-nav-link">المميزات</a>
+        <a routerLink="/pricing" class="lp-nav-link text-sky-400 font-bold border-b-2 border-sky-400 pb-0.5">الخطط والأسعار</a>
         <a href="https://wa.me/201080225502" target="_blank" class="lp-nav-link-green">تواصل معنا</a>
       </nav>
 
@@ -40,9 +44,10 @@
             <i class="bi bi-box-arrow-in-right text-sky-500"></i>
             <span>دخول</span>
           </a>
-          <a routerLink="/signup" class="px-3.5 py-1.5 rounded-lg text-white bg-gradient-to-r from-sky-500 to-indigo-600 hover:opacity-90 font-bold text-xs shadow-lg transition flex items-center gap-1.5">
+          <a routerLink="/signup" class="px-3 py-1.5 rounded-lg text-white bg-gradient-to-r from-sky-500 to-indigo-600 hover:opacity-90 font-bold text-xs shadow-lg transition flex items-center gap-1.5">
             <i class="bi bi-rocket-takeoff-fill"></i>
-            <span>ابدأ مجاناً</span>
+            <span class="hidden sm:inline">ابدأ مجاناً</span>
+            <span class="sm:hidden">مجاناً</span>
           </a>
         </ng-container>
 
@@ -467,14 +472,22 @@
 
   </main>
 
-  <!-- Footer -->
-  <footer class="border-t border-slate-800/80 py-6 text-center text-xs lp-muted mt-12">
-    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-      <div>Besnesy SaaS Platform &copy; 2026 — منصة إدارة المتاجر المتكاملة</div>
-      <div class="flex items-center gap-4">
-        <a routerLink="/" class="hover:text-sky-400">الرئيسية</a>
-        <a routerLink="/pricing" class="hover:text-sky-400">الخطط والأسعار</a>
-        <a href="https://wa.me/201080225502" target="_blank" class="hover:text-emerald-400">الدعم الفني عبر واتساب</a>
+  <!-- ========== FOOTER ========== -->
+  <footer class="mt-auto lp-footer border-t py-8 px-6 text-xs">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex flex-wrap items-center justify-center sm:justify-start gap-3">
+        <span class="font-extrabold lp-brand-name text-sm">Besnesy</span>
+        <span class="lp-divider">•</span>
+        <a href="https://www.facebook.com/RunXTech" target="_blank" rel="noopener noreferrer" class="text-sky-500 hover:text-sky-400 font-bold transition">
+          Developed by RunX
+        </a>
+        <span class="lp-divider">•</span>
+        <span class="lp-muted">جميع الحقوق محفوظة © 2026</span>
+      </div>
+      <div class="flex items-center gap-5 font-semibold lp-muted">
+        <a routerLink="/signup" class="hover:text-sky-500 transition">إنشاء متجر</a>
+        <a routerLink="/login" class="hover:text-sky-500 transition">تسجيل الدخول</a>
+        <a routerLink="/super-admin/login" class="hover:text-amber-500 transition">بوابة Admin</a>
       </div>
     </div>
   </footer>

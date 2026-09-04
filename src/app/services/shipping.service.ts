@@ -16,6 +16,10 @@ export class ShippingService {
     return this.http.get<ShippingCompany[]>(this.apiUrl);
   }
 
+  getShippingCompanies(): Observable<ShippingCompany[]> {
+    return this.getAll();
+  }
+
   getById(id: number): Observable<ShippingCompany> {
     return this.http.get<ShippingCompany>(`${this.apiUrl}/${id}`);
   }
