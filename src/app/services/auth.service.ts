@@ -78,6 +78,22 @@ export class AuthService {
     return this.http.get<SubscriptionDetails>(`${this.apiUrl}/subscription-details`).pipe(
       tap((sub) => {
         this.currentSubscription.set(sub);
+        const user = this.currentUser();
+        if (user && sub) {
+          const isVip = !!sub.allowAiLandingPages || (sub.planName?.includes('مميزة') ?? false) || (sub.badge?.includes('VIP') ?? false);
+          if (user.allowAiLandingPages !== isVip || user.planName !== sub.planName) {
+            user.allowAiLandingPages = isVip;
+            user.planName = sub.planName;
+            this.currentUser.set({ ...user });
+            try {
+              const isRemembered = localStorage.getItem('remember_me') === 'true';
+              const storage = isRemembered ? localStorage : (sessionStorage.getItem('user_data') ? sessionStorage : localStorage);
+              storage.setItem('user_data', JSON.stringify(user));
+            } catch (e) {
+              console.error('Failed to sync user_data storage', e);
+            }
+          }
+        }
       })
     );
   }
@@ -116,6 +132,19 @@ export class AuthService {
     const sub = this.currentSubscription();
     if (!sub) return false;
     return !!sub.allowBostaIntegration;
+  }
+
+  canAccessStorefront(): boolean {
+    const sub = this.currentSubscription();
+    if (sub) {
+      if (sub.allowAiLandingPages) return true;
+      if (sub.planName && (sub.planName.includes('مميزة') || sub.planName.includes('VIP') || sub.planName.toLowerCase().includes('vip'))) return true;
+      if (sub.badge && (sub.badge.includes('VIP') || sub.badge.includes('مميزة'))) return true;
+    }
+    const user = this.currentUser();
+    if (user?.allowAiLandingPages) return true;
+    if (user?.planName && (user.planName.includes('مميزة') || user.planName.includes('VIP') || user.planName.toLowerCase().includes('vip'))) return true;
+    return false;
   }
 
   getPublicPlans(): Observable<Plan[]> {

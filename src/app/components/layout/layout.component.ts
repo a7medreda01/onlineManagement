@@ -100,6 +100,12 @@ export class LayoutComponent implements OnInit, OnDestroy {
   }
 
   canAccessStorefront(): boolean {
+    if (this.authService.canAccessStorefront()) return true;
+    if (this.subscriptionData) {
+      if (this.subscriptionData.allowAiLandingPages) return true;
+      if (this.subscriptionData.planName && (this.subscriptionData.planName.includes('مميزة') || this.subscriptionData.planName.includes('VIP') || this.subscriptionData.planName.toLowerCase().includes('vip'))) return true;
+      if (this.subscriptionData.badge && (this.subscriptionData.badge.includes('VIP') || this.subscriptionData.badge.includes('مميزة'))) return true;
+    }
     const user = this.authService.currentUser();
     return user?.allowAiLandingPages ?? false;
   }

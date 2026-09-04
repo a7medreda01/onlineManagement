@@ -134,11 +134,21 @@ export class StorefrontComponent implements OnInit {
   }
 
   checkPlanAccess(): void {
-    const user = this.authService.currentUser();
-    if (user) {
-      // In VIP plan, allowAiLandingPages is true
-      this.isVip.set(user.allowAiLandingPages ?? false);
+    if (this.authService.canAccessStorefront()) {
+      this.isVip.set(true);
+      return;
     }
+    this.authService.getSubscriptionDetails().subscribe({
+      next: (sub) => {
+        const hasAccess = !!sub.allowAiLandingPages ||
+          (sub.planName?.includes('مميزة') ?? false) ||
+          (sub.badge?.includes('VIP') ?? false);
+        this.isVip.set(hasAccess);
+      },
+      error: () => {
+        this.isVip.set(this.authService.canAccessStorefront());
+      }
+    });
   }
 
   // ==========================================

@@ -494,6 +494,7 @@ export interface SubscriptionDetails {
   allowFinancialReports?: boolean;
   allowPurchasesManagement?: boolean;
   allowPayrollAndShifts?: boolean;
+  allowAiLandingPages?: boolean;
 }
 
 export interface StaffMemberPayrollSummary {
