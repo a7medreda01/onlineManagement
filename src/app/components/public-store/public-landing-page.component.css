@@ -1,50 +1,84 @@
-.landing-wrapper {
-  font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #1e293b;
+/* Luxury High-Converting Product Landing Page Styles */
+:host {
+  display: block;
+  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+  color: #f8fafc;
+  background-color: #090d16;
+}
+
+.landing-page-root {
+  background: radial-gradient(circle at 50% 0%, #1e293b 0%, #090d16 60%, #030712 100%);
+  color: #f8fafc;
+  min-height: 100vh;
+  overflow-x: hidden;
+  direction: rtl;
+  text-align: right;
+}
+
+/* Animations */
+@keyframes pulse-glow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 16px rgba(239, 68, 68, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
 }
 
 .cta-pulse-btn {
-  animation: pulse-shadow 2s infinite;
+  animation: pulse-glow 2s infinite;
 }
 
-@keyframes pulse-shadow {
-  0% {
-    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
-  }
-  70% {
-    box-shadow: 0 0 0 14px rgba(220, 38, 38, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
-  }
-}
-
-.active-thumb {
-  border: 3px solid #0284c7 !important;
+/* Gallery & Thumbnails */
+.thumb-active {
+  border-color: #0ea5e9 !important;
+  box-shadow: 0 0 12px rgba(14, 165, 233, 0.5);
   opacity: 1 !important;
 }
 
-.thumb-item {
-  opacity: 0.7;
-  transition: all 0.2s ease-in-out;
+.thumb-inactive {
+  opacity: 0.6;
+  transition: all 0.2s ease;
 }
 
-.thumb-item:hover {
+.thumb-inactive:hover {
   opacity: 1;
 }
 
-.feature-card:hover {
-  transform: translateY(-5px);
+/* Modern Card Hover Effects */
+.luxury-card {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.transition-all {
-  transition: all 0.3s ease;
+.luxury-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(14, 165, 233, 0.4);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
 }
 
-.leading-relaxed {
-  line-height: 1.8;
+/* Custom Scrollbar for Thumbnails */
+.thumb-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+.thumb-scroll::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 9999px;
+}
+.thumb-scroll::-webkit-scrollbar-thumb {
+  background: rgba(14, 165, 233, 0.4);
+  border-radius: 9999px;
 }
 
-.mobile-sticky-bar {
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+/* Mobile Sticky Bar */
+.mobile-sticky-order-bar {
+  box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }

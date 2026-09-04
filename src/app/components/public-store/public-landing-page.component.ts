@@ -146,11 +146,79 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
           this.theme = { primaryColor: '#0284c7', accentColor: '#f59e0b' };
         }
 
-        // Parse content
+        // Parse and normalize content
         try {
-          this.content = JSON.parse(page.contentJson || '{}');
+          const raw = JSON.parse(page.contentJson || '{}');
+
+          let features = raw.features || raw.benefits || [];
+          if (!Array.isArray(features) || features.length === 0) {
+            features = [
+              { title: 'خامات أصلية وتصنيع فائق الجودة', description: `تم تصنيع ${page.title} بأعلى المعايير لتحمل الاستخدام اليومي الشاق وتقديم كفاءة استثنائية.`, icon: 'bi-shield-check' },
+              { title: 'أداء عالي وسرعة استجابة', description: 'تقنيات حديثة مصممة لتوفير وقتك ومجهودك وتمنحك أفضل تجربة استخدام.', icon: 'bi-lightning-charge-fill' },
+              { title: 'ضمان ذهبي للاستبدال والمعاينة', description: 'حق فحص ومعاينة المنتج بالكامل مع المندوب قبل دفع أي مليم للتأكد من سلامته.', icon: 'bi-patch-check-fill' },
+              { title: 'أفضل قيمة حقيقية مقابل السعر', description: 'سعر اقتصادي استثنائي ومباشر من المورد دون أي وسيط أو تكاليف إضافية.', icon: 'bi-tag-fill' }
+            ];
+          }
+
+          let whyChooseUs = raw.whyChooseUs || raw.painPoints || [];
+          if (!Array.isArray(whyChooseUs) || whyChooseUs.length === 0) {
+            whyChooseUs = [
+              { title: 'تجنب المنتجات الرديئة والمقلدة', text: 'نوفر لك النسخة الأصلية 100% مع ضمان حقيقي واسترجاع مجاني.', problem: 'الخوف من شراء منتج مخالف للصور والوصف؟', solution: 'نضمن تطابق المنتج بنسبة 100% مع صور الإعلان والمعاينة قبل الدفع.' },
+              { title: 'شحن فوري لباب بيتك بدون مفاجآت', text: 'شحن آمن مع متابعة مستمرة عبر واتساب حتى استلامك للشحنة.', problem: 'تأخر الشحن أو مصاريف توصيل مخفية؟', solution: 'شحن سريع ومجاني حتى باب بيتك مع التزام تام بموعد التسليم.' }
+            ];
+          } else {
+            whyChooseUs = whyChooseUs.map((w: any) => ({
+              title: w.title || w.problem || 'ميزة استثنائية',
+              text: w.text || w.solution || 'أفضل تجربة شراء متكاملة.',
+              problem: w.problem || w.title,
+              solution: w.solution || w.text
+            }));
+          }
+
+          let reviews = raw.customerReviews || raw.testimonials || [];
+          if (!Array.isArray(reviews) || reviews.length === 0) {
+            reviews = [
+              { name: 'كريم سامي', city: 'القاهرة', rating: 5, comment: 'بصراحة المنتج طلع أحسن من الصور بكتير، وخامته ممتازة جداً وتغليفه شيك جداً، شكراً ليكم.' },
+              { name: 'منى عبد العزيز', city: 'الجيزة', rating: 5, comment: 'وصلني في أقل من 24 ساعة، والمندوب كان محترم وانتظرني لحد ما عاينت المنتج. خدمة 10 على 10.' },
+              { name: 'عمر هشام', city: 'الإسكندرية', rating: 5, comment: 'أفضل تجربة شراء أونلاين، جودة وسعر ممتازين ومكمل معاكوا دايماً.' }
+            ];
+          } else {
+            reviews = reviews.map((r: any) => ({
+              name: r.name || 'عميل معتمد',
+              city: r.city || 'مصر',
+              rating: r.rating || 5,
+              comment: r.comment || r.review || 'منتج ممتاز وتوصيل سريع، أنصح به بشدة.'
+            }));
+          }
+
+          let faq = raw.faq || raw.faqs || [];
+          if (!Array.isArray(faq) || faq.length === 0) {
+            faq = [
+              { question: 'هل يمكنني معاينة المنتج قبل الاستلام والدفع؟', answer: 'بالتأكيد! يمكنك فتح الشحنة ومعاينة المنتج والتأكد التام منه قبل دفع أي مبلغ للمندوب.' },
+              { question: 'كم تستغرق مدة التوصيل؟', answer: 'يصلك الطلب خلال 24 إلى 48 ساعة كحد أقصى لجميع محافظات جمهورية مصر العربية.' },
+              { question: 'ما هي سياسة الاسترجاع أو الاستبدال؟', answer: 'نوفر لك ضمان استبدال واسترجاع مجاني لمدة 14 يوماً في حالة وجود أي ملاحظة أو عيب صناعة.' },
+              { question: 'هل الشحن مجاني فعلاً؟', answer: 'نعم، الشحن مجاني بالكامل لفترة محدودة ولن تدفع أي رسوم إضافية غير سعر المنتج المعروض.' }
+            ];
+          }
+
+          this.content = {
+            features,
+            whyChooseUs,
+            customerReviews: reviews,
+            faq,
+            guarantees: raw.guarantees || []
+          };
         } catch {
-          this.content = {};
+          this.content = {
+            features: [
+              { title: 'خامات أصلية وتصنيع فائق الجودة', description: 'مصنوع بأعلى المعايير لتحمل الاستخدام اليومي الشاق.', icon: 'bi-shield-check' },
+              { title: 'أداء عالي وسرعة استجابة', description: 'تقنيات حديثة مصممة لتوفير وقتك ومجهودك.', icon: 'bi-lightning-charge-fill' }
+            ],
+            whyChooseUs: [],
+            customerReviews: [],
+            faq: [],
+            guarantees: []
+          };
         }
 
         // Parse images
@@ -163,7 +231,7 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
         if (this.images.length > 0) {
           this.selectedImage = this.images[0];
         } else {
-          this.selectedImage = 'https://placehold.co/600x500/f1f5f9/475569?text=' + encodeURIComponent(page.title);
+          this.selectedImage = 'https://placehold.co/600x500/1e293b/f8fafc?text=' + encodeURIComponent(page.title);
         }
 
         this.injectPixels(page.storeFacebookPixelId, page.storeTikTokPixelId);
@@ -175,6 +243,18 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
         this.error.set(err?.error?.Message || 'عذراً، صفحة الهبوط المطلوبة غير موجودة أو تم إيقاف نشرها.');
       }
     });
+  }
+
+  activeFaqIndex: number | null = 0;
+
+  toggleFaq(index: number): void {
+    this.activeFaqIndex = this.activeFaqIndex === index ? null : index;
+  }
+
+  get discountPercentage(): number {
+    const p = this.pageData();
+    if (!p || !p.originalPrice || p.originalPrice <= p.sellingPrice) return 0;
+    return Math.round(((p.originalPrice - p.sellingPrice) / p.originalPrice) * 100);
   }
 
   startCountdown(): void {

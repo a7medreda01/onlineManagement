@@ -440,6 +440,7 @@ export class StorefrontComponent implements OnInit {
     }
 
     this.generatingAi.set(true);
+    this.wizardStep = 3;
 
     this.storefrontService.generateAi({
       productName: this.aiRequest.productName.trim(),
@@ -450,6 +451,10 @@ export class StorefrontComponent implements OnInit {
       existingProductId: this.aiRequest.selectedProductId || undefined
     }).subscribe({
       next: (res) => {
+        const productImages = (this.aiRequest.images && this.aiRequest.images.length > 0)
+          ? this.aiRequest.images
+          : (res.suggestedMediaUrls && res.suggestedMediaUrls.length > 0 ? res.suggestedMediaUrls : []);
+
         this.generatedPreview = {
           title: res.title,
           slug: res.slug,
@@ -461,14 +466,14 @@ export class StorefrontComponent implements OnInit {
           suggestedOriginalPrice: res.suggestedOriginalPrice,
           themeConfigJson: res.themeConfigJson,
           contentJson: res.contentJson,
-          images: res.suggestedMediaUrls && res.suggestedMediaUrls.length > 0 ? res.suggestedMediaUrls : this.aiRequest.images
+          images: productImages
         };
         this.generatingAi.set(false);
-        this.wizardStep = 3;
         this.notificationService.success('تم توليد محتوى صفحة الهبوط وتصميمها بنجاح 🪄');
       },
       error: () => {
         this.generatingAi.set(false);
+        this.wizardStep = 2;
         this.notificationService.error('حدث خطأ أثناء توليد الصفحة بالذكاء الاصطناعي');
       }
     });
@@ -637,5 +642,10 @@ export class StorefrontComponent implements OnInit {
 
   onSubdomainChange(): void {
     this.onSubdomainInput();
+  }
+
+  getSubdomainPageUrl(page: ProductLandingPage): string {
+    const sub = page.storeSubdomain || this.settings()?.subdomain || 'seven';
+    return `https://${sub}.besnesy.com/${page.slug}`;
   }
 }

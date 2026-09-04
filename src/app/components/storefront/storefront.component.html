@@ -161,11 +161,17 @@
             <p class="text-white-50 small mb-3 text-truncate-2">{{ page.headline }}</p>
 
             <!-- Links bar -->
-            <div class="bg-dark bg-opacity-50 p-2 rounded-3 mb-3 border border-white border-opacity-5 small" dir="ltr">
-              <div class="d-flex align-items-center justify-content-between">
+            <div class="bg-dark bg-opacity-75 p-2 rounded-3 mb-3 border border-white border-opacity-10 small" dir="ltr">
+              <div class="d-flex align-items-center justify-content-between mb-1">
                 <code class="text-info text-truncate me-2">/store/{{ page.storeSubdomain }}/{{ page.slug }}</code>
-                <button (click)="copyToClipboard(getDirectPageUrl(page))" class="btn btn-sm btn-outline-info rounded-pill px-2 py-0" title="نسخ الرابط">
+                <button (click)="copyToClipboard(getDirectPageUrl(page))" class="btn btn-sm btn-outline-info rounded-pill px-2 py-0" title="نسخ الرابط المباشر">
                   <i class="bi bi-clipboard"></i>
+                </button>
+              </div>
+              <div class="d-flex align-items-center justify-content-between text-white-50" style="font-size: 0.75rem;">
+                <span class="text-truncate me-2">{{ page.storeSubdomain }}.besnesy.com/{{ page.slug }}</span>
+                <button (click)="copyToClipboard(getSubdomainPageUrl(page))" class="btn btn-sm btn-link text-warning p-0" title="نسخ رابط Subdomain">
+                  <i class="bi bi-copy"></i>
                 </button>
               </div>
             </div>
