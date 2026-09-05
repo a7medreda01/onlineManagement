@@ -1,69 +1,70 @@
 <div *ngIf="isOpen" class="fixed inset-0 z-[999999] flex items-center justify-center p-3 bg-slate-950/85 backdrop-blur-md fade-in font-cairo">
-  <div class="glass-card w-full max-w-lg bg-slate-900 border border-slate-700/80 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+  <div class="glass-card w-full max-w-xl bg-slate-900 border border-slate-700/80 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
     
     <!-- Modal Header -->
-    <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/90 shrink-0">
-      <div class="flex items-center gap-2.5">
-        <div class="w-9 h-9 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold shadow-inner">
-          <i class="fa-solid fa-magnifying-glass text-sm"></i>
+    <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/95 shrink-0">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center font-bold shadow-inner">
+          <i class="fa-solid fa-map-location-dot text-base"></i>
         </div>
         <div>
-          <h3 class="font-extrabold text-sm text-slate-100">بحث شامل في المدن والمناطق (Bosta Zones)</h3>
-          <p class="text-[11px] text-slate-400">ابحث باسم المنطقة، الحي، أو المحافظة للاختيار التلقائي</p>
+          <h3 class="font-extrabold text-sm sm:text-base text-slate-100 tracking-wide">بحث شامل في المدن والمناطق (Bosta Zones)</h3>
+          <p class="text-xs text-slate-400 font-medium mt-0.5">اختر المنطقة والحي لتحديد المحافظة والعنوان تلقائياً للأوردر</p>
         </div>
       </div>
-      <button type="button" (click)="onCloseModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-sm transition-colors">
+      <button type="button" (click)="onCloseModal()" class="w-9 h-9 rounded-xl bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 flex items-center justify-center text-sm transition-all">
         <i class="fa-solid fa-xmark"></i>
       </button>
     </div>
 
     <!-- Search Input -->
-    <div class="p-3.5 bg-slate-800/40 border-b border-slate-800 shrink-0">
+    <div class="p-3.5 bg-slate-850/60 border-b border-slate-800 shrink-0">
       <div class="relative">
-        <i class="fa-solid fa-magnifying-glass absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+        <i class="fa-solid fa-magnifying-glass absolute right-3.5 top-1/2 -translate-y-1/2 text-amber-400 text-sm"></i>
         <input type="text" 
                [ngModel]="zoneSearchQuery()" 
                (ngModelChange)="zoneSearchQuery.set($event)"
                [ngModelOptions]="{standalone: true}" 
-               placeholder="البحث عن المحافظات أو المناطق..."
-               class="form-control text-xs py-2.5 pr-9 pl-4 rounded-xl bg-slate-950 border-slate-700 text-amber-300 font-bold focus:border-amber-500 w-full" />
+               placeholder="ابحث باسم المحافظة، المدينة، أو المنطقة..."
+               class="form-control text-xs sm:text-sm py-2.5 pr-10 pl-4 rounded-xl bg-slate-950 border-slate-700 text-amber-300 font-bold focus:border-amber-400 focus:ring-1 focus:ring-amber-400/40 w-full placeholder:text-slate-500 shadow-inner" />
       </div>
     </div>
 
     <!-- Grouped Accordion List by Governorate -->
     <div class="p-3 overflow-y-auto space-y-2.5 flex-1 max-h-[60vh]">
-      <div *ngIf="getGroupedZoneItems().length === 0" class="p-8 text-center text-slate-400 text-xs">
+      <div *ngIf="groupedZoneItems().length === 0" class="p-8 text-center text-slate-400 text-xs sm:text-sm font-medium">
+        <i class="fa-solid fa-folder-open text-2xl text-slate-600 block mb-2"></i>
         لا توجد نتائج مطابقة لـ "{{ zoneSearchQuery() }}"
       </div>
 
       <!-- Governorate Accordion Card Loop -->
-      <div *ngFor="let group of getGroupedZoneItems()" 
+      <div *ngFor="let group of groupedZoneItems()" 
            class="rounded-2xl border transition-all overflow-hidden"
-           [ngClass]="group.isSelectedGov ? 'border-amber-500/60 bg-amber-500/5 shadow-md' : 'border-slate-800 bg-slate-900/60'">
+           [ngClass]="group.isSelectedGov ? 'border-amber-500/60 bg-amber-500/5 shadow-md shadow-amber-500/5' : 'border-slate-800 bg-slate-900/80'">
         
         <!-- Accordion Header (Click to toggle expand/collapse!) -->
         <div (click)="toggleGovAccordion(group.city.cityId, group.isSelectedGov, $event)"
-             class="p-3 cursor-pointer flex items-center justify-between gap-3 hover:bg-slate-800/50 transition-colors select-none">
+             class="p-3 cursor-pointer flex items-center justify-between gap-3 hover:bg-slate-800/60 transition-colors select-none">
           
-          <div class="flex items-center gap-2.5 min-w-0">
-            <div class="w-8 h-8 rounded-xl flex items-center justify-center text-xs shrink-0"
-                 [ngClass]="group.isSelectedGov ? 'bg-amber-500/20 text-amber-400 font-bold border border-amber-500/30' : 'bg-slate-800 text-slate-400'">
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center text-xs shrink-0"
+                 [ngClass]="group.isSelectedGov ? 'bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40 shadow-inner' : 'bg-slate-800 text-slate-400 border border-slate-700/60'">
               <i class="fa-solid fa-location-dot"></i>
             </div>
             <div class="min-w-0">
-              <div class="flex items-center gap-2">
-                <span class="font-bold text-xs sm:text-sm text-slate-100 truncate">{{ group.city.cityOtherName || group.govName }}</span>
-                <span *ngIf="group.isSelectedGov" class="badge bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[9px] px-2 font-bold shrink-0">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="font-black text-xs sm:text-sm text-slate-100 truncate tracking-wide">{{ group.city.cityOtherName || group.govName }}</span>
+                <span *ngIf="group.isSelectedGov" class="badge bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] px-2.5 py-0.5 font-extrabold shrink-0 rounded-full shadow-sm">
                   المحافظة المحددة للأوردر ⭐
                 </span>
               </div>
-              <span class="text-[10px] text-slate-400 block dir-ltr text-right truncate">{{ group.city.cityName }}</span>
+              <span class="text-[11px] text-slate-400 block dir-ltr text-right truncate font-mono mt-0.5">{{ group.city.cityName }}</span>
             </div>
           </div>
 
           <div class="flex items-center gap-2 shrink-0">
-            <span class="badge bg-slate-800 text-slate-300 border border-slate-700 text-[10px] py-0.5 px-2 font-semibold">
-              {{ group.districtCount }} مناطق
+            <span class="badge bg-slate-800/90 text-slate-200 border border-slate-700 text-[10px] sm:text-xs py-0.5 px-2.5 font-bold rounded-lg">
+              {{ group.districtCount }} منطقة
             </span>
             <i class="fa-solid text-xs text-slate-400 transition-transform duration-200"
                [class.fa-chevron-up]="group.isExpanded"
@@ -72,15 +73,17 @@
         </div>
 
         <!-- Accordion Content: Districts Grid -->
-        <div *ngIf="group.isExpanded" class="p-2 border-t border-slate-800/60 bg-slate-950/60 grid grid-cols-1 sm:grid-cols-2 gap-1.5 fade-in">
+        <div *ngIf="group.isExpanded" class="p-2.5 border-t border-slate-800/80 bg-slate-950/70 grid grid-cols-1 sm:grid-cols-2 gap-2 fade-in">
           <div *ngFor="let dist of group.districts" 
                (click)="onSelectZone(group, dist, $event)"
-               class="p-2 rounded-xl bg-slate-900/80 hover:bg-amber-500/20 border border-slate-800 hover:border-amber-500/40 cursor-pointer transition-all flex items-center justify-between gap-2 text-xs group">
-            <div class="min-w-0">
-              <span class="font-bold text-slate-200 group-hover:text-amber-300 text-xs block truncate">📍 {{ dist.districtOtherName }}</span>
-              <span class="text-[10px] text-slate-400 block truncate dir-ltr text-right">{{ dist.districtName }}</span>
+               class="p-2.5 rounded-xl bg-slate-900/90 hover:bg-amber-500/15 border border-slate-700/70 hover:border-amber-500/60 cursor-pointer transition-all flex items-center justify-between gap-2 text-xs group shadow-sm hover:shadow-amber-500/10 active:scale-[0.98]">
+            <div class="min-w-0 flex-1">
+              <span class="font-extrabold text-slate-100 group-hover:text-amber-300 text-xs sm:text-sm block truncate tracking-wide">📍 {{ dist.districtOtherName }}</span>
+              <span class="text-[11px] text-slate-400 group-hover:text-slate-300 block truncate dir-ltr text-right font-mono mt-0.5">{{ dist.districtName }}</span>
             </div>
-            <i class="fa-solid fa-check text-amber-400 opacity-0 group-hover:opacity-100 text-xs shrink-0"></i>
+            <div class="w-6 h-6 rounded-lg bg-amber-500/10 text-amber-400 group-hover:bg-amber-500 group-hover:text-slate-950 flex items-center justify-center text-xs font-bold transition-all shrink-0">
+              <i class="fa-solid fa-check"></i>
+            </div>
           </div>
         </div>
 
@@ -88,8 +91,8 @@
     </div>
 
     <!-- Modal Footer -->
-    <div class="p-3 border-t border-slate-800 bg-slate-900/90 flex justify-end shrink-0">
-      <button type="button" (click)="onCloseModal()" class="btn btn-secondary text-xs px-4 py-1.5 rounded-xl font-bold">إغلاق</button>
+    <div class="p-3.5 border-t border-slate-800 bg-slate-900/95 flex justify-end shrink-0">
+      <button type="button" (click)="onCloseModal()" class="btn btn-secondary text-xs px-5 py-2 rounded-xl font-bold">إغلاق</button>
     </div>
 
   </div>

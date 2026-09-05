@@ -443,7 +443,7 @@
             <select [(ngModel)]="aiRequest.selectedProductId" (change)="onProductSelect()" class="form-input-text">
               <option [ngValue]="null">-- كتابة منتج جديد بالأسفل --</option>
               <option *ngFor="let p of products()" [ngValue]="p.id">
-                {{ p.name }} (سعر البيع: {{ p.sellingPrice }} ج.م - المخزون: {{ p.availableQuantity }})
+                {{ p.name }} ({{ (p.isFulfillment || (p.code && p.code.startsWith('BO-')) || (p.code && p.code.startsWith('BST-'))) ? '📦 مخزون بوسطة' : '🏠 مخزون التاجر' }} - سعر البيع: {{ p.sellingPrice }} ج.م - المخزون: {{ p.availableQuantity }})
               </option>
             </select>
           </div>
