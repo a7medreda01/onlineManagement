@@ -72,6 +72,10 @@ export class StorefrontService {
     return this.http.post<any>(`${this.baseUrl}/generate-store-identity`, request);
   }
 
+  recreateStoreWithAi(request: { storeDescriptionOrIdea: string; niche?: string; preferredName?: string; productTypes?: string; brandVibe?: string }): Observable<StorefrontSettings> {
+    return this.http.post<StorefrontSettings>(`${this.baseUrl}/recreate-store-ai`, request);
+  }
+
   uploadMedia(file: File): Observable<{ url: string; relativeUrl: string; fileName: string }> {
     const formData = new FormData();
     formData.append('file', file);

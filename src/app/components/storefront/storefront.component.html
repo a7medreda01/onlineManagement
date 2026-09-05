@@ -45,7 +45,14 @@
             <span>زيارة متجري المباشر</span>
           </a>
 
-          <!-- AI Wizard CTA -->
+          <!-- AI Full Store Generator CTA -->
+          <button (click)="openAiFullStoreModal()" 
+                  class="btn-hero-ai-wizard bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-600 hover:to-amber-800 border-amber-400/50 shadow-amber-500/25">
+            <i class="bi bi-magic text-white text-lg"></i>
+            <span>إعادة إنشاء المتجر بالكامل بالـ AI 🚀</span>
+          </button>
+
+          <!-- AI Landing Page Wizard CTA -->
           <button (click)="openAiWizard()" 
                   class="btn-hero-ai-wizard">
             <i class="bi bi-stars text-amber-300 text-lg"></i>
@@ -644,16 +651,108 @@
         تحذير هام: هذا الإجراء سيؤدي إلى <strong>حذف المتجر بالكامل</strong>، وإلغاء حجز رابط الـ Subdomain، وحذف <strong>كافة صفحات الهبوط ({{ landingPages().length }} صفحة)</strong> التابعة له نهائياً ولن يمكن استرجاعها.
       </p>
 
-      <div class="flex items-center justify-center gap-3">
-        <button (click)="closeDeleteStoreModal()" [disabled]="deletingStore()" class="btn-secondary-outline px-6">
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+        <button (click)="closeDeleteStoreModal()" [disabled]="deletingStore()" class="btn-secondary-outline px-6 w-full sm:w-auto">
           إلغاء والتراجع
         </button>
 
-        <button (click)="confirmDeleteStore()" [disabled]="deletingStore()" class="btn-danger-solid px-6">
+        <button (click)="closeDeleteStoreModal(); openAiFullStoreModal()" class="btn-primary-gradient px-6 w-full sm:w-auto bg-amber-600 hover:bg-amber-700">
+          <i class="bi bi-magic text-white"></i>
+          <span>إعادة بناء بالـ AI بدلاً من الحذف</span>
+        </button>
+
+        <button (click)="confirmDeleteStore()" [disabled]="deletingStore()" class="btn-danger-solid px-6 w-full sm:w-auto">
           <span *ngIf="deletingStore()" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
           <span>نعم، احذف المتجر والصفحات نهائياً</span>
         </button>
       </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 7. AI FULL STORE GENERATOR MODAL -->
+  <!-- ============================================================ -->
+  <div *ngIf="showAiFullStoreModal()" class="modal-backdrop-overlay" (click)="closeAiFullStoreModal()">
+    <div class="glass-card max-w-2xl w-full bg-slate-900 border border-slate-700/80 rounded-3xl shadow-2xl overflow-hidden font-cairo text-slate-100 p-6 space-y-5" (click)="$event.stopPropagation()">
+      
+      <!-- Header -->
+      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center justify-center text-xl font-bold shadow-inner">
+            <i class="bi bi-magic"></i>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-lg sm:text-xl text-slate-100 tracking-wide">مولّد المتجر الكامل بالذكاء الاصطناعي 🚀</h3>
+            <p class="text-xs text-slate-400 font-medium mt-0.5">أدخل تفاصيل نشاطك وقوم الـ AI بإنشاء اللوجو والبانرات والأنماط والتصاميم كاملة</p>
+          </div>
+        </div>
+        <button (click)="closeAiFullStoreModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <!-- Form Inputs -->
+      <div class="space-y-4 text-xs sm:text-sm">
+        
+        <div>
+          <label class="block font-bold text-slate-200 mb-1.5">اسم المتجر والبراند التجاري: <span class="text-rose-400">*</span></label>
+          <input type="text" 
+                 [(ngModel)]="aiStoreRequest.preferredName"
+                 placeholder="مثال: Vezzaro Silver | فيزارو للمجوهرات والفضة"
+                 class="form-control py-2.5 px-3.5 rounded-xl bg-slate-950 border-slate-700 text-amber-300 font-bold w-full focus:border-amber-400">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-bold text-slate-200 mb-1.5">تخصص ومجال المتجر (Niche):</label>
+            <input type="text" 
+                   [(ngModel)]="aiStoreRequest.niche"
+                   placeholder="مثال: مجوهرات وفضة فاخرة عيار 925"
+                   class="form-control py-2.5 px-3.5 rounded-xl bg-slate-950 border-slate-700 text-slate-100 font-medium w-full">
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-200 mb-1.5">طابع ورونق البراند الفني:</label>
+            <select [(ngModel)]="aiStoreRequest.brandVibe" class="form-control py-2.5 px-3.5 rounded-xl bg-slate-950 border-slate-700 text-slate-100 font-medium w-full">
+              <option value="فخم وملكي فاخر">فخم وملكي فاخر (Royal & Premium)</option>
+              <option value="عصري وسريع">عصري وشبابي (Modern & Trendy)</option>
+              <option value="كلاسيكي وأنيق">كلاسيكي وأنيق (Classic Elegance)</option>
+              <option value="تكنولوجي وسيبراني">تكنولوجي وسيبراني (Cyber Tech)</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-200 mb-1.5">أنواع المنتجات والتصنيفات المطلوبة:</label>
+          <input type="text" 
+                 [(ngModel)]="aiStoreRequest.productTypes"
+                 placeholder="مثال: سلاسل فضة 925، خواتم إيطالية، أساور، أنسيالات، هدايا رجالية ونسائية"
+                 class="form-control py-2.5 px-3.5 rounded-xl bg-slate-950 border-slate-700 text-slate-100 font-medium w-full">
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-200 mb-1.5">وصف وفكرة المتجر والميزات التنافسية:</label>
+          <textarea [(ngModel)]="aiStoreRequest.storeDescriptionOrIdea" 
+                    rows="3" 
+                    placeholder="اكتب أي ميزات إضافية تود إبرازها (مثلاً: معاينة قبل الدفع، ضمان أصالة الفضة، شحن مجاني، علبة هدايا ملكية)..."
+                    class="form-control py-2.5 px-3.5 rounded-xl bg-slate-950 border-slate-700 text-slate-100 font-medium w-full"></textarea>
+        </div>
+
+      </div>
+
+      <!-- Action Footer -->
+      <div class="pt-4 border-t border-slate-800 flex items-center justify-between gap-3">
+        <button (click)="closeAiFullStoreModal()" [disabled]="generatingFullStore()" class="btn-secondary-outline text-xs px-5 py-2">
+          إلغاء
+        </button>
+
+        <button (click)="confirmRecreateFullStoreWithAi()" [disabled]="generatingFullStore()" class="btn-primary-gradient bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 text-xs px-6 py-2.5 font-bold shadow-lg shadow-amber-500/20">
+          <span *ngIf="generatingFullStore()" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+          <i *ngIf="!generatingFullStore()" class="bi bi-magic"></i>
+          <span>{{ generatingFullStore() ? 'جاري تحليل الهوية وبناء البانرات...' : 'توليد وبناء المتجر بالذكاء الاصطناعي الآن 🚀' }}</span>
+        </button>
+      </div>
+
     </div>
   </div>
 

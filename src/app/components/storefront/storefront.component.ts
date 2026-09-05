@@ -112,6 +112,53 @@ export class StorefrontComponent implements OnInit {
   deletingStore = signal<boolean>(false);
   deleteStoreConfirmInput = '';
 
+  // Full AI Store Generator state
+  showAiFullStoreModal = signal<boolean>(false);
+  generatingFullStore = signal<boolean>(false);
+
+  aiStoreRequest = {
+    preferredName: 'فيزارو للمجوهرات Vezzaro Silver',
+    niche: 'مجوهرات وفضة فاخرة عيار 925',
+    productTypes: 'سلاسل، خواتم، أساور، أنسيالات، هدايا ملكية',
+    brandVibe: 'فخم وملكي فاخر',
+    storeDescriptionOrIdea: 'متجر متخصص في أرقى تشكيلات المجوهرات والفضة الإيطالية عيار 925 مع معاينة وفحص الشحنة قبل الدفع'
+  };
+
+  openAiFullStoreModal(): void {
+    if (this.settings()?.storeDisplayName) {
+      this.aiStoreRequest.preferredName = this.settings()!.storeDisplayName;
+    }
+    this.showAiFullStoreModal.set(true);
+  }
+
+  closeAiFullStoreModal(): void {
+    this.showAiFullStoreModal.set(false);
+  }
+
+  confirmRecreateFullStoreWithAi(): void {
+    if (!this.aiStoreRequest.preferredName && !this.aiStoreRequest.storeDescriptionOrIdea) {
+      this.notificationService.error('يرجى كتابة اسم المتجر أو وصف الفكرة');
+      return;
+    }
+
+    this.generatingFullStore.set(true);
+    this.storefrontService.recreateStoreWithAi(this.aiStoreRequest).subscribe({
+      next: (newSettings) => {
+        this.generatingFullStore.set(false);
+        this.showAiFullStoreModal.set(false);
+        this.showDeleteStoreModal.set(false);
+        this.settings.set(newSettings);
+        this.settingsForm = { ...newSettings };
+        this.landingPages.set([]);
+        this.notificationService.success(`تم إنشاء وبناء متجر (${newSettings.storeDisplayName}) بالذكاء الاصطناعي بنجاح! 🚀✨`);
+      },
+      error: (err) => {
+        this.generatingFullStore.set(false);
+        this.notificationService.error(err?.error?.Message || 'فشل توليد المتجر بالذكاء الاصطناعي');
+      }
+    });
+  }
+
   // AI Wizard Modal state
   showAiWizardModal = false;
   wizardStep: 1 | 2 | 3 = 1;

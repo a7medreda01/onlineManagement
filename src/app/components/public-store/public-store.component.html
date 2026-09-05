@@ -7,9 +7,9 @@
       <span *ngIf="settings()?.announcementText" class="ticker-item font-bold text-amber-300">
         <i class="bi bi-megaphone-fill"></i> {{ settings()?.announcementText }}
       </span>
-      <span class="ticker-item"><i class="bi bi-shield-check text-emerald-400"></i> معاينة المنتج وفحصه قبل الدفع 100%</span>
-      <span class="ticker-item hidden sm:inline"><i class="bi bi-truck text-sky-400"></i> شحن سريع لجميع محافظات مصر</span>
-      <span class="ticker-item hidden md:inline"><i class="bi bi-cash-stack text-amber-400"></i> الدفع عند الاستلام (COD) بدون أي مصاريف خفية</span>
+      <span class="ticker-item"><i class="bi bi-shield-check text-emerald-400"></i> معاينة وفحص الشحنة قبل الدفع 100%</span>
+      <span class="ticker-item hidden sm:inline"><i class="bi bi-truck text-sky-400"></i> شحن سريع لجميع المحافظات</span>
+      <span class="ticker-item hidden md:inline"><i class="bi bi-cash-stack text-amber-400"></i> الدفع عند الاستلام (COD) بدون مصاريف خفية</span>
     </div>
     <div class="ticker-status flex items-center gap-2 flex-shrink-0">
       <span class="status-dot"></span>
@@ -19,27 +19,27 @@
 </div>
 
 <!-- ============================================================ -->
-<!-- 2. STICKY TOP BRAND BAR -->
+<!-- 2. STICKY TOP BRAND NAVBAR -->
 <!-- ============================================================ -->
 <nav *ngIf="!loading() && !error() && settings()" class="store-top-navbar sticky top-0 z-40">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-4 py-3">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-4 py-2.5">
     <!-- Brand Info -->
     <div class="flex items-center gap-3">
-      <img [src]="settings()?.logoUrl || 'https://ui-avatars.com/api/?name=' + (settings()?.storeDisplayName || 'Store') + '&background=1e40af&color=fff&size=100'"
-           class="w-10 h-10 rounded-full object-cover border-2 border-slate-200 shadow-sm"
+      <img [src]="settings()?.logoUrl || 'https://ui-avatars.com/api/?name=' + (settings()?.storeDisplayName || 'Vezzaro') + '&background=0f172a&color=fff&size=100'"
+           class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl object-cover border-2 border-amber-400/80 shadow-md"
            alt="Store Logo">
       <div>
         <div class="flex items-center gap-1.5">
-          <span class="font-black text-slate-900 text-base leading-tight">{{ settings()?.storeDisplayName }}</span>
-          <i class="bi bi-patch-check-fill text-blue-600 text-sm" title="متجر رسمي معتمد"></i>
+          <span class="font-black text-slate-900 text-sm sm:text-base leading-tight tracking-wide">{{ settings()?.storeDisplayName }}</span>
+          <i class="bi bi-patch-check-fill text-amber-500 text-sm" title="متجر رسمي معتمد"></i>
         </div>
-        <p class="text-[11px] text-slate-500 line-clamp-1 leading-none mt-0.5">{{ settings()?.niche || 'متجر رسمي معتمد' }}</p>
+        <p class="text-[11px] text-slate-500 line-clamp-1 leading-none mt-0.5 font-medium">{{ settings()?.niche || 'مجوهرات وفضة فاخرة' }}</p>
       </div>
     </div>
 
     <!-- Right Actions -->
     <div class="flex items-center gap-3">
-      <div class="hidden md:flex items-center gap-2 text-xs text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full border border-slate-200/80 font-medium">
+      <div class="hidden md:flex items-center gap-2 text-xs text-slate-700 bg-slate-100 px-3 py-1.5 rounded-full border border-slate-200 font-semibold">
         <i class="bi bi-geo-alt-fill text-rose-500"></i>
         <span>توصيل لكافة المحافظات</span>
       </div>
@@ -58,28 +58,28 @@
 <!-- ============================================================ -->
 <!-- LOADING STATE -->
 <!-- ============================================================ -->
-<div *ngIf="loading()" class="min-h-[70vh] flex flex-col items-center justify-center bg-slate-50 text-center p-6">
+<div *ngIf="loading()" class="min-h-[70vh] flex flex-col items-center justify-center bg-slate-50 text-center p-6 font-cairo">
   <div class="relative w-16 h-16 mb-5">
-    <div class="w-16 h-16 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin"></div>
-    <div class="absolute inset-0 flex items-center justify-center text-blue-600 font-bold text-sm">
-      <i class="bi bi-bag-heart"></i>
+    <div class="w-16 h-16 border-4 border-slate-200 border-t-amber-500 rounded-full animate-spin"></div>
+    <div class="absolute inset-0 flex items-center justify-center text-amber-600 font-bold text-sm">
+      <i class="bi bi-gem"></i>
     </div>
   </div>
-  <h5 class="font-black text-slate-900 text-2xl mb-2">جاري تجهيز المتجر...</h5>
-  <p class="text-slate-500 text-sm max-w-xs">نحمّل أحدث العروض والمنتجات بأفضل الأسعار وضمان المعاينة</p>
+  <h5 class="font-black text-slate-900 text-2xl mb-2">جاري تجهيز تشكيلة المتجر...</h5>
+  <p class="text-slate-500 text-sm max-w-xs">نحمّل أحدث العروض والمجوهرات الفاخرة مع ميزة المعاينة قبل الدفع</p>
 </div>
 
 <!-- ============================================================ -->
 <!-- ERROR STATE -->
 <!-- ============================================================ -->
-<div *ngIf="!loading() && error()" class="min-h-[70vh] flex flex-col items-center justify-center bg-slate-50 text-center p-6">
+<div *ngIf="!loading() && error()" class="min-h-[70vh] flex flex-col items-center justify-center bg-slate-50 text-center p-6 font-cairo">
   <div class="bg-white border border-slate-200 rounded-3xl p-10 max-w-md w-full shadow-xl">
     <div class="w-20 h-20 bg-rose-50 text-rose-500 rounded-full flex items-center justify-center mx-auto mb-5 text-4xl">
       <i class="bi bi-shop-window"></i>
     </div>
     <h4 class="font-black text-2xl text-slate-900 mb-2">المتجر غير متاح حالياً</h4>
     <p class="text-slate-500 text-sm mb-6">{{ error() }}</p>
-    <a href="/" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-full transition shadow-lg">
+    <a href="/" class="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold px-6 py-3 rounded-full transition shadow-lg">
       <i class="bi bi-house"></i>
       <span>العودة للرئيسية</span>
     </a>
@@ -89,7 +89,7 @@
 <!-- ============================================================ -->
 <!-- MAIN STOREFRONT EXPERIENCE -->
 <!-- ============================================================ -->
-<div *ngIf="!loading() && !error() && settings()" class="store-catalog-wrapper">
+<div *ngIf="!loading() && !error() && settings()" class="store-catalog-wrapper font-cairo">
 
   <!-- ─── 3. HERO & BRAND SHOWCASE ─── -->
   <header class="store-hero-banner">
@@ -111,34 +111,40 @@
           <!-- Left Info: Avatar + Meta -->
           <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-right w-full lg:w-auto">
             <div class="relative flex-shrink-0">
-              <img [src]="settings()?.logoUrl || 'https://ui-avatars.com/api/?name=' + (settings()?.storeDisplayName || 'Store') + '&background=1e40af&color=fff&size=200'"
-                   class="store-logo"
+              <img [src]="settings()?.logoUrl || 'https://ui-avatars.com/api/?name=' + (settings()?.storeDisplayName || 'Vezzaro') + '&background=0f172a&color=fff&size=200'"
+                   class="store-logo border-4 border-amber-400/80 shadow-2xl"
                    alt="Store Logo">
               <span class="store-verified-pill" title="متجر رسمي موثق">
-                <i class="bi bi-check-lg text-white text-xs"></i>
+                <i class="bi bi-check-lg text-white text-xs font-black"></i>
               </span>
             </div>
 
-            <div class="flex-1">
+            <div class="flex-1 min-w-0">
               <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2.5 mb-2">
                 <h1 class="store-title">{{ settings()?.storeDisplayName }}</h1>
                 <span class="badge-niche">
-                  <i class="bi bi-patch-check-fill text-blue-600"></i>
-                  {{ settings()?.niche || 'متجر رسمي معتمد' }}
+                  <i class="bi bi-patch-check-fill text-amber-500"></i>
+                  {{ settings()?.niche || 'مجوهرات وفضة فاخرة' }}
                 </span>
                 <span class="badge-status-live">
                   <span class="live-dot"></span>
                   متاح للطلب الآن
                 </span>
               </div>
-              <h2 *ngIf="settings()?.heroHeadline" class="text-base sm:text-xl font-bold text-slate-800 mt-2 mb-1">{{ settings()?.heroHeadline }}</h2>
-              <p class="store-bio">{{ settings()?.heroSubheadline || settings()?.bio || 'أهلاً بكم في متجرنا الرسمي. نوفر لكم أفضل المنتجات بأعلى معايير الجودة مع ميزة المعاينة قبل الدفع والدفع عند الاستلام بضمان 100%.' }}</p>
+
+              <h2 *ngIf="settings()?.heroHeadline" class="text-base sm:text-xl font-extrabold text-slate-900 mt-2 mb-1 tracking-wide leading-relaxed">
+                {{ settings()?.heroHeadline }}
+              </h2>
+
+              <p class="store-bio leading-relaxed">
+                {{ settings()?.heroSubheadline || settings()?.bio || 'أهلاً بكم في متجرنا الرسمي. نوفر لكم أفضل التشكيلات والمجوهرات الفاخرة بأعلى معايير الجودة مع ميزة المعاينة قبل الدفع والدفع عند الاستلام بضمان 100%.' }}
+              </p>
 
               <!-- Live Highlights Bar -->
-              <div class="store-stats-strip">
+              <div class="store-stats-strip mt-4">
                 <ng-container *ngFor="let st of storeStats; let isLast = last">
                   <div class="stat-pill">
-                    <span class="stat-num">{{ st.value }}</span>
+                    <span class="stat-num font-mono">{{ st.value }}</span>
                     <span class="stat-label">{{ st.label }}</span>
                   </div>
                   <div *ngIf="!isLast" class="stat-divider"></div>
@@ -172,14 +178,14 @@
 
   <!-- ─── 4. PILLARS OF TRUST (DYNAMIC 4-CARD GRID) ─── -->
   <section class="max-w-7xl mx-auto px-4 sm:px-6 my-10">
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
       <div *ngFor="let ft of storeFeatures" class="trust-card group">
-        <div class="trust-icon-box bg-slate-50 text-slate-800 group-hover:scale-110 transition-transform">
+        <div class="trust-icon-box bg-slate-900 text-amber-400 group-hover:bg-amber-500 group-hover:text-slate-950 transition-all shadow-md">
           <i [class]="'bi ' + (ft.icon || 'bi-patch-check-fill')"></i>
         </div>
         <div class="trust-card-body">
-          <h4 class="trust-title">{{ ft.title }}</h4>
-          <p class="trust-desc">{{ ft.description }}</p>
+          <h4 class="trust-title font-extrabold text-slate-900 text-sm sm:text-base">{{ ft.title }}</h4>
+          <p class="trust-desc text-slate-500 text-xs mt-1 leading-relaxed">{{ ft.description }}</p>
         </div>
       </div>
     </div>
@@ -189,29 +195,29 @@
   <main id="catalog" class="max-w-7xl mx-auto px-4 sm:px-6 pb-20">
 
     <!-- Catalog Control Bar -->
-    <div class="catalog-control-panel mb-8">
+    <div class="catalog-control-panel mb-8 bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm">
       <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
 
         <!-- Eyebrow & Title -->
         <div>
           <div class="section-eyebrow">
-            <i class="bi bi-stars"></i>
+            <i class="bi bi-stars text-amber-500"></i>
             <span>التشكيلة الرسمية</span>
           </div>
-          <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+          <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3 mt-1">
             <span>جميع المعروضات والمنتجات</span>
             <span class="count-badge font-mono">{{ filteredPages.length }} منتج</span>
           </h2>
-          <p class="text-slate-500 text-sm mt-1">اختر منتجك المفضل، اطلب في دقيقة، وعاين مجاناً قبل السداد</p>
+          <p class="text-slate-500 text-xs sm:text-sm mt-1">اختر منتجك المفضل، اطلب في دقيقة، وعاين مجاناً قبل السداد</p>
         </div>
 
-        <!-- Search Bar -->
+        <!-- Search Bar (Fixed Padding to prevent overlap with icon) -->
         <div class="w-full lg:w-96 relative">
-          <i class="bi bi-search absolute top-1/2 -translate-y-1/2 right-4 text-slate-400 pointer-events-none"></i>
+          <i class="bi bi-search absolute top-1/2 -translate-y-1/2 right-4 text-amber-500 pointer-events-none text-base"></i>
           <input type="text"
                  [(ngModel)]="searchTerm"
                  class="search-input-premium"
-                 placeholder="ابحث بالاسم أو المواصفات...">
+                 placeholder="ابحث باسم المنتج أو المواصفات...">
           <button *ngIf="searchTerm"
                   (click)="searchTerm = ''"
                   class="absolute top-1/2 -translate-y-1/2 left-4 text-slate-400 hover:text-slate-600 text-xs bg-slate-100 hover:bg-slate-200 rounded-full w-6 h-6 flex items-center justify-center transition">
@@ -229,7 +235,7 @@
                   class="filter-pill-btn"
                   [class.active]="activeFilter() === 'all'">
             <span>الكل</span>
-            <span class="pill-counter">{{ pages().length }}</span>
+            <span class="pill-counter font-mono">{{ pages().length }}</span>
           </button>
 
           <button *ngIf="dealsCount > 0"
@@ -237,7 +243,7 @@
                   class="filter-pill-btn"
                   [class.active]="activeFilter() === 'deals'">
             <span>🔥 أقوى التخفيضات</span>
-            <span class="pill-counter text-rose-600">{{ dealsCount }}</span>
+            <span class="pill-counter text-rose-600 font-mono">{{ dealsCount }}</span>
           </button>
 
           <button *ngIf="freeShippingCount > 0"
@@ -245,14 +251,14 @@
                   class="filter-pill-btn"
                   [class.active]="activeFilter() === 'free_shipping'">
             <span>🚚 شحن مجاني</span>
-            <span class="pill-counter text-emerald-600">{{ freeShippingCount }}</span>
+            <span class="pill-counter text-emerald-600 font-mono">{{ freeShippingCount }}</span>
           </button>
         </div>
 
         <!-- Sort Select -->
         <div class="flex items-center gap-2 self-end sm:self-auto">
           <span class="text-xs text-slate-500 font-bold whitespace-nowrap">الترتيب حسب:</span>
-          <select [(ngModel)]="sortBy" class="sort-select-premium">
+          <select [(ngModel)]="sortBy" class="sort-select-premium font-bold">
             <option value="default">الافتراضي (الموصى به)</option>
             <option value="price_asc">السعر: من الأقل للأعلى</option>
             <option value="price_desc">السعر: من الأعلى للأقل</option>
@@ -285,364 +291,101 @@
       </div>
     </div>
 
-    <!-- ─── 6. PRODUCTS GRID (ULTRA LUXURY CARDS) ─── -->
+    <!-- ─── 6. PRODUCTS GRID (ULTRA LUXURY CARDS - BALANCED SINGLE/MULTI PRODUCT LAYOUT) ─── -->
     <div *ngIf="filteredPages.length > 0"
-         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-7">
+         class="product-grid-layout grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-7"
+         [class.single-product-centered]="filteredPages.length <= 2">
 
       <div *ngFor="let page of filteredPages" class="product-luxury-card group">
 
         <!-- Card Image Stage -->
         <div class="card-media-stage">
-          <img [src]="parseImages(page.mediaUrlsJson)[0] || 'https://placehold.co/500x500/f8fafc/94a3b8?text=Product'"
+          <img [src]="parseImages(page.mediaUrlsJson)[0] || 'https://placehold.co/500x500/0f172a/ffffff?text=Product'"
                class="card-img-main"
                alt="{{ page.title }}"
                loading="lazy">
 
-          <!-- Badges Floating Bar -->
-          <div class="card-badges-container">
-            <div class="flex flex-col gap-1.5 items-start">
-              <!-- Discount Badge -->
-              <span *ngIf="page.originalPrice && page.originalPrice > page.sellingPrice" class="badge-save-discount">
-                <i class="bi bi-fire"></i>
-                وفر {{ getDiscountPercentage(page.originalPrice, page.sellingPrice) }}%
-              </span>
-
-              <!-- Custom Badge if present -->
-              <span *ngIf="page.badge" class="badge-custom-pill">
-                {{ page.badge }}
-              </span>
-            </div>
-
-            <!-- Free Shipping or Authenticity Pill -->
-            <div class="flex flex-col gap-1 items-end">
-              <span *ngIf="page.isFreeShipping" class="badge-free-ship">
-                <i class="bi bi-truck"></i>
-                شحن مجاني
-              </span>
-              <span class="badge-cod">
-                <i class="bi bi-shield-check text-emerald-600"></i>
-                معاينة قبل الدفع
-              </span>
-            </div>
+          <div class="card-badges-top">
+            <!-- Discount Badge -->
+            <span *ngIf="getDiscountPercentage(page.sellingPrice, page.originalPrice) as discount"
+                  class="badge-discount-luxury font-mono font-black">
+              🔥 وفر {{ discount }}%
+            </span>
+            <!-- Free Shipping Badge -->
+            <span *ngIf="page.isFreeShipping" class="badge-free-shipping">
+              <i class="bi bi-truck"></i> شحن مجاني
+            </span>
           </div>
 
-          <!-- Quick View Floating Button on Desktop Hover -->
-          <button (click)="openQuickView(page, $event)"
-                  class="quick-view-hover-btn"
-                  title="نظرة سريعة">
-            <i class="bi bi-eye"></i>
-            <span>نظرة سريعة</span>
-          </button>
-
-          <!-- Star Rating Rating Pill -->
-          <div class="rating-bottom-pill">
-            <i class="bi bi-star-fill text-amber-400 text-xs"></i>
-            <span class="font-bold text-slate-800">4.9</span>
-            <span class="text-slate-400 text-[10px]">(+100)</span>
+          <!-- Floating Inspection Badge -->
+          <div class="card-badges-bottom">
+            <span class="badge-inspection">
+              <i class="bi bi-eye"></i> معاينة قبل الدفع
+            </span>
           </div>
         </div>
 
-        <!-- Card Body Details -->
-        <div class="card-info-body">
-
-          <!-- Store / Category Tag -->
-          <div class="card-category-row">
-            <span class="text-[11px] font-bold text-blue-600 flex items-center gap-1">
-              <i class="bi bi-award-fill"></i>
-              منتج أصلي مضمون
-            </span>
-            <span class="text-[11px] text-emerald-600 font-bold flex items-center gap-1">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+        <!-- Card Content Body -->
+        <div class="card-body-content">
+          <div class="flex items-center justify-between text-xs text-slate-500 mb-1 font-semibold">
+            <span class="text-emerald-600 font-bold flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
               متوفر الآن
             </span>
+            <span class="text-amber-500 font-bold flex items-center gap-1 font-mono">
+              <i class="bi bi-star-fill text-xs"></i> 4.9 (100+)
+            </span>
           </div>
 
-          <!-- Product Title -->
-          <h3 class="card-product-title" title="{{ page.title }}">
-            <a [routerLink]="getProductRoute(page.slug)">{{ page.title }}</a>
-          </h3>
+          <h3 class="card-product-title">{{ page.title }}</h3>
+          <p class="card-product-headline line-clamp-2">{{ page.headline }}</p>
 
-          <!-- Headline / Short description -->
-          <p class="card-product-headline">{{ page.headline || 'تصميم عصري بخامات ممتازة تضمن لك أعلى أداء واستخدام طويل الأمد مع ضمان فحص كامل عند الاستلام.' }}</p>
-
-          <!-- Pricing Block -->
-          <div class="card-pricing-block">
-            <div class="flex items-baseline gap-2">
-              <span class="price-current-large">{{ page.sellingPrice | currency:'EGP':'symbol':'1.0-0' }}</span>
-              <span *ngIf="page.originalPrice && page.originalPrice > page.sellingPrice" class="price-original-slashed">
-                {{ page.originalPrice | currency:'EGP':'symbol':'1.0-0' }}
+          <!-- Price Engine -->
+          <div class="card-price-engine">
+            <div class="price-stack">
+              <span class="price-current font-mono">EGP {{ page.sellingPrice | number:'1.0-0' }}</span>
+              <span *ngIf="page.originalPrice && page.originalPrice > page.sellingPrice" class="price-original font-mono">
+                EGP {{ page.originalPrice | number:'1.0-0' }}
               </span>
             </div>
 
-            <div *ngIf="page.originalPrice && page.originalPrice > page.sellingPrice" class="price-save-note">
-              وفرت {{ getSavedAmount(page.originalPrice, page.sellingPrice) }} ج.م
-            </div>
-          </div>
-
-          <!-- Action Buttons Row -->
-          <div class="card-actions-row">
-            <!-- Main CTA to landing page -->
-            <a [routerLink]="getProductRoute(page.slug)" class="btn-order-direct">
-              <i class="bi bi-bag-check-fill text-sm"></i>
-              <span>اطلب الآن وعاين</span>
-              <i class="bi bi-arrow-left text-xs transition-transform group-hover:-translate-x-1"></i>
-            </a>
-
-            <!-- Quick WhatsApp Button -->
-            <a *ngIf="settings()?.whatsAppNumber"
-               [href]="getWhatsAppStoreUrl(page.title)"
-               target="_blank"
-               class="btn-whatsapp-icon"
-               title="طلب عبر واتساب مباشرة">
-              <i class="bi bi-whatsapp"></i>
-            </a>
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-  </main>
-
-  <!-- ─── 7. STORE REVIEWS & SOCIAL PROOF ─── -->
-  <section class="bg-gradient-to-b from-slate-100/60 to-white py-16 border-t border-slate-200/60">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6">
-      <div class="text-center max-w-xl mx-auto mb-12">
-        <div class="section-eyebrow">
-          <i class="bi bi-chat-quote-fill"></i>
-          <span>آراء موثقة</span>
-        </div>
-        <h3 class="text-2xl sm:text-3xl font-black text-slate-900">ماذا يقول عملاؤنا عنا؟</h3>
-        <p class="text-slate-500 text-sm mt-2">تجارب حقيقية من عملائنا بعد استلام ومعاينة المنتجات</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div *ngFor="let rev of storeReviews" class="review-box-card">
-          <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center gap-1 text-amber-400">
-              <i class="bi bi-star-fill text-sm" *ngFor="let s of [1,2,3,4,5]"></i>
-            </div>
-            <span class="text-xs text-slate-400 font-mono">{{ rev.date }}</span>
-          </div>
-          <p class="text-slate-700 text-sm leading-relaxed mb-6 font-medium">"{{ rev.comment }}"</p>
-          <div class="flex items-center justify-between pt-4 border-t border-slate-100">
-            <div class="flex items-center gap-2.5">
-              <div class="w-9 h-9 rounded-full bg-blue-100 text-blue-700 font-black flex items-center justify-center text-xs">
-                {{ rev.name.charAt(0) }}
-              </div>
-              <div>
-                <h5 class="text-xs font-bold text-slate-900">{{ rev.name }}</h5>
-                <span class="text-[11px] text-slate-400">{{ rev.city }}</span>
-              </div>
-            </div>
-            <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
-              <i class="bi bi-check-circle-fill text-[10px]"></i>
-              مشتري موثق
+            <span *ngIf="page.originalPrice && page.originalPrice > page.sellingPrice" class="savings-pill font-mono">
+              وفرت {{ (page.originalPrice - page.sellingPrice) | number:'1.0-0' }} ج.م
             </span>
           </div>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- ─── 8. STORE FAQS ─── -->
-  <section class="max-w-4xl mx-auto px-4 sm:px-6 py-16">
-    <div class="text-center mb-10">
-      <div class="section-eyebrow">
-        <i class="bi bi-question-circle-fill"></i>
-        <span>الأسئلة الشائعة</span>
+          <!-- Action CTA Button -->
+          <a [routerLink]="['/store', settings()?.subdomain || 'demo', page.slug]"
+             class="card-buy-btn">
+            <span>طلب معاينة وشراء الآن</span>
+            <i class="bi bi-arrow-left text-base"></i>
+          </a>
+        </div>
+
       </div>
-      <h3 class="text-2xl sm:text-3xl font-black text-slate-900">كل ما تريد معرفته قبل الطلب</h3>
-      <p class="text-slate-500 text-sm mt-2">إجابات واضحة وشفافة لضمان راحة بالك 100%</p>
+
     </div>
 
-    <div class="space-y-3">
-      <div *ngFor="let faq of storeFaqs; let i = index"
-           class="faq-accordion-card"
-           [class.active]="activeFaqIndex() === i">
-        <button (click)="toggleFaq(i)" class="faq-accordion-header">
-          <span class="font-bold text-slate-900 text-sm sm:text-base text-right flex-1">{{ faq.question }}</span>
-          <i class="bi" [class.bi-chevron-down]="activeFaqIndex() !== i" [class.bi-chevron-up]="activeFaqIndex() === i"></i>
-        </button>
-        <div *ngIf="activeFaqIndex() === i" class="faq-accordion-body">
-          <p class="text-slate-600 text-sm leading-relaxed">{{ faq.answer }}</p>
-        </div>
-      </div>
-    </div>
-  </section>
+  </main>
 
-  <!-- ─── 9. STORE FOOTER ─── -->
-  <footer class="store-footer-premium">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6">
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 pb-10 border-b border-slate-800">
-        <!-- Brand Col -->
-        <div class="md:col-span-6 text-center md:text-right">
-          <div class="flex items-center justify-center md:justify-start gap-3 mb-3">
-            <img [src]="settings()?.logoUrl || 'https://ui-avatars.com/api/?name=' + (settings()?.storeDisplayName || 'Store') + '&background=1e40af&color=fff&size=100'"
-                 class="w-9 h-9 rounded-full object-cover border border-slate-700"
-                 alt="Store Logo">
-            <h4 class="font-black text-xl text-white">{{ settings()?.storeDisplayName }}</h4>
-          </div>
-          <p class="text-slate-400 text-xs sm:text-sm max-w-md leading-relaxed mb-4">
-            {{ settings()?.bio || 'متجرك المفضل للتسوق الموثوق بأعلى معايير الأمان، والدفع عند الاستلام مع فحص ومعاينة مجانية لكافة الطلبات.' }}
-          </p>
-          <div class="flex flex-wrap items-center justify-center md:justify-start gap-2">
-            <span class="footer-guarantee-tag"><i class="bi bi-shield-check text-emerald-400"></i> منتجات أصلية 100%</span>
-            <span class="footer-guarantee-tag"><i class="bi bi-truck text-sky-400"></i> شحن لجميع المحافظات</span>
-            <span class="footer-guarantee-tag"><i class="bi bi-arrow-repeat text-amber-400"></i> استبدال 14 يوم</span>
-          </div>
-        </div>
-
-        <!-- Contact Col -->
-        <div class="md:col-span-6 flex flex-col items-center md:items-end justify-center text-center md:text-left gap-3">
-          <h5 class="text-xs font-bold text-slate-300 uppercase tracking-wider">هل تحتاج لمساعدة أو طلب خاص؟</h5>
-          <div class="flex flex-wrap gap-3 justify-center">
-            <a *ngIf="settings()?.whatsAppNumber"
-               [href]="getWhatsAppStoreUrl()"
-               target="_blank"
-               class="footer-cta-whatsapp">
-              <i class="bi bi-whatsapp text-base"></i>
-              <span>تواصل عبر واتساب</span>
-            </a>
-            <a *ngIf="settings()?.contactPhone"
-               [href]="'tel:' + settings()?.contactPhone"
-               class="footer-cta-phone">
-              <i class="bi bi-telephone text-base"></i>
-              <span>{{ settings()?.contactPhone }}</span>
-            </a>
-          </div>
-          <span class="text-[11px] text-slate-500">فريق خدمة العملاء متاح للرد يومياً</span>
-        </div>
-      </div>
-
-      <!-- Copyright Bottom -->
-      <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+  <!-- ─── 7. LUXURY FOOTER ─── -->
+  <footer class="store-footer">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-12 border-t border-slate-800">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-right">
         <div>
-          جميع الحقوق محفوظة © {{ settings()?.storeDisplayName }} {{ currentYear }}
+          <h4 class="font-black text-white text-lg sm:text-xl">{{ settings()?.storeDisplayName }}</h4>
+          <p class="text-xs text-slate-400 mt-1 max-w-md">{{ settings()?.bio || 'جميع الحقوق محفوظة للمتجر الرسمي. تسوق بأمان مع ضمان المعاينة قبل الدفع والدفع عند الاستلام.' }}</p>
         </div>
-        <div class="flex items-center gap-2">
-          <span>مدعوم بمنصة</span>
-          <span class="font-bold text-slate-300">Besnesy Commerce</span>
-          <span>🛍️</span>
+
+        <div class="flex items-center gap-4 text-xs text-slate-400">
+          <span><i class="bi bi-shield-lock-fill text-amber-400"></i> تسوق آمن 100%</span>
+          <span>•</span>
+          <span><i class="bi bi-truck text-sky-400"></i> شحن لجميع المحافظات</span>
+          <span>•</span>
+          <span><i class="bi bi-patch-check-fill text-emerald-400"></i> ضمان الاستبدال</span>
         </div>
       </div>
     </div>
   </footer>
-
-  <!-- ─── 10. QUICK VIEW MODAL ─── -->
-  <div *ngIf="quickViewProduct()" class="quick-view-overlay" (click)="closeQuickView()">
-    <div class="quick-view-dialog" (click)="$event.stopPropagation()">
-      <!-- Close Button -->
-      <button (click)="closeQuickView()" class="modal-close-btn" aria-label="إغلاق">
-        <i class="bi bi-x-lg"></i>
-      </button>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 sm:p-8">
-        <!-- Gallery in Modal -->
-        <div class="flex flex-col gap-3">
-          <div class="modal-main-img-box">
-            <img [src]="getQuickViewImages()[quickViewActiveImageIndex()] || parseImages(quickViewProduct()!.mediaUrlsJson)[0] || 'https://placehold.co/500x500/f8fafc/94a3b8?text=Product'"
-                 class="modal-main-img"
-                 alt="{{ quickViewProduct()?.title }}">
-            <span *ngIf="quickViewProduct()?.isFreeShipping" class="absolute top-3 right-3 bg-emerald-600 text-white font-bold text-xs px-3 py-1 rounded-full shadow">
-              🚚 شحن مجاني
-            </span>
-          </div>
-
-          <!-- Thumbnails -->
-          <div *ngIf="getQuickViewImages().length > 1" class="flex items-center gap-2 overflow-x-auto pb-1">
-            <button *ngFor="let img of getQuickViewImages(); let i = index"
-                    (click)="selectQuickViewImage(i)"
-                    class="w-14 h-14 rounded-xl border-2 overflow-hidden flex-shrink-0 transition"
-                    [class.border-blue-600]="quickViewActiveImageIndex() === i"
-                    [class.border-slate-200]="quickViewActiveImageIndex() !== i">
-              <img [src]="img" class="w-full h-full object-cover">
-            </button>
-          </div>
-        </div>
-
-        <!-- Details in Modal -->
-        <div class="flex flex-col justify-between">
-          <div>
-            <div class="flex items-center gap-2 mb-2">
-              <span class="badge-niche">{{ settings()?.storeDisplayName }}</span>
-              <span *ngIf="quickViewProduct()?.badge" class="badge-custom-pill">{{ quickViewProduct()?.badge }}</span>
-            </div>
-
-            <h3 class="text-xl sm:text-2xl font-black text-slate-900 mb-2 leading-snug">{{ quickViewProduct()?.title }}</h3>
-            <p class="text-slate-500 text-sm mb-5 leading-relaxed">{{ quickViewProduct()?.headline }}</p>
-
-            <!-- Pricing -->
-            <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100 mb-5">
-              <div class="flex items-baseline gap-3 mb-1">
-                <span class="text-3xl font-black text-emerald-600 font-mono">{{ quickViewProduct()?.sellingPrice | currency:'EGP':'symbol':'1.0-0' }}</span>
-                <span *ngIf="quickViewProduct()?.originalPrice && quickViewProduct()!.originalPrice! > quickViewProduct()!.sellingPrice"
-                      class="text-base text-slate-400 line-through font-semibold font-mono">
-                  {{ quickViewProduct()?.originalPrice | currency:'EGP':'symbol':'1.0-0' }}
-                </span>
-              </div>
-              <div *ngIf="quickViewProduct()?.originalPrice && quickViewProduct()!.originalPrice! > quickViewProduct()!.sellingPrice"
-                   class="text-xs font-bold text-rose-600">
-                🎉 توفير فوري بقيمة {{ getSavedAmount(quickViewProduct()?.originalPrice, quickViewProduct()?.sellingPrice) }} ج.م
-              </div>
-            </div>
-
-            <!-- Features Checklist -->
-            <div class="space-y-2 mb-6">
-              <div class="flex items-center gap-2 text-xs font-bold text-slate-700">
-                <i class="bi bi-check2-circle text-emerald-600 text-sm"></i>
-                <span>معاينة وفحص المنتج أمام المندوب قبل دفع ثمنه</span>
-              </div>
-              <div class="flex items-center gap-2 text-xs font-bold text-slate-700">
-                <i class="bi bi-check2-circle text-emerald-600 text-sm"></i>
-                <span>الدفع نقداً عند الاستلام (COD)</span>
-              </div>
-              <div class="flex items-center gap-2 text-xs font-bold text-slate-700">
-                <i class="bi bi-check2-circle text-emerald-600 text-sm"></i>
-                <span>ضمان استبدال أو استرجاع خلال 14 يوماً</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Actions -->
-          <div class="flex flex-col sm:flex-row gap-3">
-            <a [routerLink]="getProductRoute(quickViewProduct()!.slug)"
-               (click)="closeQuickView()"
-               class="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-black py-3.5 px-5 rounded-xl shadow-lg transition text-sm">
-              <i class="bi bi-bag-check-fill"></i>
-              <span>الانتقال لصفحة الطلب والشراء</span>
-            </a>
-
-            <a *ngIf="settings()?.whatsAppNumber"
-               [href]="getWhatsAppStoreUrl(quickViewProduct()?.title)"
-               target="_blank"
-               class="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-5 rounded-xl transition text-sm">
-              <i class="bi bi-whatsapp"></i>
-              <span>طلب بالواتساب</span>
-            </a>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ─── 11. MOBILE BOTTOM FLOATING BAR ─── -->
-  <div class="mobile-store-bottom-bar sm:hidden">
-    <div class="flex items-center justify-between gap-3">
-      <div class="flex items-center gap-2">
-        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span class="text-xs font-bold text-slate-800">متجر {{ settings()?.storeDisplayName }}</span>
-      </div>
-      <a *ngIf="settings()?.whatsAppNumber"
-         [href]="getWhatsAppStoreUrl()"
-         target="_blank"
-         class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-full flex items-center gap-1.5 shadow">
-        <i class="bi bi-whatsapp"></i>
-        <span>تواصل سريع</span>
-      </a>
-    </div>
-  </div>
 
 </div>
