@@ -22,40 +22,67 @@
 </div>
 
 <!-- ============================================================ -->
-<!-- 2. STICKY TOP BRAND NAVBAR -->
+<!-- 2. STICKY TOP BRAND & NAVIGATION NAVBAR -->
 <!-- ============================================================ -->
-<nav *ngIf="!loading() && !error() && settings()" class="store-top-navbar sticky top-0 z-40">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-4 py-2.5">
-    <!-- Brand Info -->
+<nav *ngIf="!loading() && !error() && settings()" class="store-top-navbar sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-4 py-3">
+    
+    <!-- Right: Brand Info (Logo + Name + Niche Badge) -->
     <div class="flex items-center gap-3">
-      <img
-        [src]="resolveUrl(settings()?.logoUrl) || 'https://ui-avatars.com/api/?name=' + (settings()?.storeDisplayName || 'Vezzaro') + '&background=0f172a&color=fff&size=100'"
-        class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl object-cover border-2 border-amber-400/80 shadow-md"
-        alt="Store Logo">
+      <div class="relative shrink-0">
+        <img
+          [src]="resolveUrl(settings()?.logoUrl) || 'https://ui-avatars.com/api/?name=' + (settings()?.storeDisplayName || 'Vezzaro') + '&background=0f172a&color=fff&size=100'"
+          class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl object-cover border-2 border-amber-400/90 shadow-md bg-slate-900"
+          alt="Store Logo">
+        <span class="store-verified-pill-sm" title="متجر رسمي معتمد">
+          <i class="bi bi-patch-check-fill text-amber-500 text-xs"></i>
+        </span>
+      </div>
       <div>
-        <div class="flex items-center gap-1.5">
-          <span class="font-black text-slate-900 text-sm sm:text-base leading-tight tracking-wide">{{
-            settings()?.storeDisplayName }}</span>
-          <i class="bi bi-patch-check-fill text-amber-500 text-sm" title="متجر رسمي معتمد"></i>
+        <div class="flex items-center gap-2">
+          <span class="font-black text-slate-900 text-sm sm:text-lg leading-tight tracking-wide">{{ settings()?.storeDisplayName }}</span>
+          <span class="badge-status-live-sm hidden sm:inline-flex">
+            <span class="live-dot"></span>
+            متاح للطلب
+          </span>
         </div>
-        <p class="text-[11px] text-slate-500 line-clamp-1 leading-none mt-0.5 font-medium">{{ settings()?.niche ||
-          'مجوهرات وفضة فاخرة' }}</p>
+        <p class="text-[11px] text-slate-500 line-clamp-1 leading-none mt-0.5 font-medium">{{ settings()?.niche || 'متجر إلكتروني فاخر' }}</p>
       </div>
     </div>
 
-    <!-- Right Actions -->
-    <div class="flex items-center gap-3">
-      <div
-        class="hidden md:flex items-center gap-2 text-xs text-slate-700 bg-slate-100 px-3 py-1.5 rounded-full border border-slate-200 font-semibold">
-        <i class="bi bi-geo-alt-fill text-rose-500"></i>
-        <span>توصيل لكافة المحافظات</span>
-      </div>
-
-      <a *ngIf="settings()?.whatsAppNumber" [href]="getWhatsAppStoreUrl()" target="_blank" class="nav-whatsapp-btn">
-        <i class="bi bi-whatsapp text-base"></i>
-        <span class="hidden sm:inline">مساعدة سريعة</span>
+    <!-- Center: Navigation Links (الرئيسية - المنتجات - المميزات - تواصل) -->
+    <div class="hidden lg:flex items-center gap-1 bg-slate-100/90 p-1.5 rounded-full border border-slate-200/80 shadow-inner">
+      <a href="#" class="nav-section-link active">
+        <i class="bi bi-house-door-fill text-amber-500"></i>
+        <span>الرئيسية</span>
+      </a>
+      <a href="#catalog" class="nav-section-link">
+        <i class="bi bi-bag-check-fill text-sky-500"></i>
+        <span>المنتجات</span>
+      </a>
+      <a href="#features" class="nav-section-link">
+        <i class="bi bi-shield-lock-fill text-emerald-500"></i>
+        <span>المميزات</span>
+      </a>
+      <a *ngIf="settings()?.whatsAppNumber" [href]="getWhatsAppStoreUrl()" target="_blank" class="nav-section-link">
+        <i class="bi bi-whatsapp text-emerald-500"></i>
+        <span>تواصل معنا</span>
       </a>
     </div>
+
+    <!-- Left: Direct Action CTAs -->
+    <div class="flex items-center gap-2">
+      <a *ngIf="settings()?.whatsAppNumber" [href]="getWhatsAppStoreUrl()" target="_blank" class="nav-whatsapp-btn shadow-md">
+        <i class="bi bi-whatsapp text-base"></i>
+        <span class="hidden sm:inline font-extrabold">تواصل سريـع</span>
+      </a>
+
+      <a *ngIf="settings()?.contactPhone" [href]="'tel:' + settings()?.contactPhone" class="nav-phone-btn shadow-md hidden sm:inline-flex">
+        <i class="bi bi-telephone-fill text-sm"></i>
+        <span class="font-bold">اتصال</span>
+      </a>
+    </div>
+
   </div>
 </nav>
 
@@ -98,81 +125,46 @@
 <!-- ============================================================ -->
 <div *ngIf="!loading() && !error() && settings()" class="store-catalog-wrapper font-cairo">
 
-  <!-- ─── 3. HERO & BRAND SHOWCASE ─── -->
-  <header class="store-hero-banner">
-    <!-- Ambient Gradient Cover -->
-    <div class="store-cover-box">
-      <img *ngIf="settings()?.coverUrl" [src]="resolveUrl(settings()!.coverUrl)" class="store-cover-img" alt="Store Cover">
-      <div class="store-cover-overlay"></div>
+  <!-- ─── 3. HERO SHOWCASE (AI COVER BANNER WITH GLASS OVERLAY) ─── -->
+  <header class="store-hero-banner relative overflow-hidden">
+    <!-- AI Generated Cover Banner Background -->
+    <div class="store-cover-box relative w-full h-[320px] sm:h-[420px] bg-slate-950 overflow-hidden">
+      <img *ngIf="settings()?.coverUrl" [src]="resolveUrl(settings()!.coverUrl)" class="store-cover-img w-full h-full object-cover" alt="Store Cover">
+      <div class="store-cover-overlay absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-slate-900/30"></div>
       <div class="store-cover-ambient-glow"></div>
-    </div>
 
-    <!-- Store Profile Box (Floating Over Cover) -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6">
-      <div class="store-profile-card">
-        <div class="flex flex-col lg:flex-row items-center lg:items-start justify-between gap-6">
-
-          <!-- Left Info: Avatar + Meta -->
-          <div
-            class="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-right w-full lg:w-auto">
-            <div class="relative flex-shrink-0">
-              <img
-                [src]="resolveUrl(settings()?.logoUrl) || 'https://ui-avatars.com/api/?name=' + (settings()?.storeDisplayName || 'Vezzaro') + '&background=0f172a&color=fff&size=200'"
-                class="store-logo border-4 border-amber-400/80 shadow-2xl" alt="Store Logo">
-              <span class="store-verified-pill" title="متجر رسمي موثق">
-                <i class="bi bi-check-lg text-white text-xs font-black"></i>
-              </span>
-            </div>
-
-            <div class="flex-1 min-w-0">
-              <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2.5 mb-2">
-                <h1 class="store-title">{{ settings()?.storeDisplayName }}</h1>
-                <span class="badge-niche">
-                  <i class="bi bi-patch-check-fill text-amber-500"></i>
-                  {{ settings()?.niche || 'مجوهرات وفضة فاخرة' }}
-                </span>
-                <span class="badge-status-live">
-                  <span class="live-dot"></span>
-                  متاح للطلب الآن
-                </span>
-              </div>
-
-              <h2 *ngIf="settings()?.heroHeadline"
-                class="text-base sm:text-xl font-extrabold text-slate-900 mt-2 mb-1 tracking-wide leading-relaxed">
-                {{ settings()?.heroHeadline }}
-              </h2>
-
-              <p class="store-bio leading-relaxed">
-                {{ settings()?.heroSubheadline || settings()?.bio || 'أهلاً بكم في متجرنا الرسمي. نوفر لكم أفضل
-                التشكيلات والمجوهرات الفاخرة بأعلى معايير الجودة مع ميزة المعاينة قبل الدفع والدفع عند الاستلام بضمان
-                100%.' }}
-              </p>
-
-              <!-- Live Highlights Bar -->
-              <div class="store-stats-strip mt-4">
-                <ng-container *ngFor="let st of storeStats; let isLast = last">
-                  <div class="stat-pill">
-                    <span class="stat-num font-mono">{{ st.value }}</span>
-                    <span class="stat-label">{{ st.label }}</span>
-                  </div>
-                  <div *ngIf="!isLast" class="stat-divider"></div>
-                </ng-container>
-              </div>
-            </div>
+      <!-- Content Overlay Direct on Cover (Sleek Glassmorphism Header) -->
+      <div class="absolute inset-0 flex items-center justify-center p-4 sm:p-8">
+        <div class="max-w-4xl mx-auto text-center text-white space-y-4">
+          
+          <div class="inline-flex flex-wrap items-center justify-center gap-2">
+            <span class="badge-niche-hero">
+              <i class="bi bi-gem text-amber-400"></i>
+              {{ settings()?.niche || 'أرقى المنتجات والتشكيلات الحصرية' }}
+            </span>
+            <span class="badge-status-hero">
+              <span class="live-dot"></span>
+              معاينة وفحص قبل السداد 100%
+            </span>
           </div>
 
-          <!-- Right: Direct CTA Buttons -->
-          <div class="flex flex-row lg:flex-col gap-3 w-full sm:w-auto justify-center flex-shrink-0">
-            <a *ngIf="settings()?.whatsAppNumber" [href]="getWhatsAppStoreUrl()" target="_blank"
-              class="store-whatsapp-hero-btn">
-              <i class="bi bi-whatsapp text-lg"></i>
-              <span>تواصل عبر واتساب</span>
-            </a>
+          <h1 *ngIf="settings()?.heroHeadline" class="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight drop-shadow-md">
+            {{ settings()?.heroHeadline }}
+          </h1>
 
-            <a *ngIf="settings()?.contactPhone" [href]="'tel:' + settings()?.contactPhone" class="store-call-hero-btn">
-              <i class="bi bi-telephone text-base"></i>
-              <span>اتصال هاتفي</span>
-            </a>
+          <p class="text-xs sm:text-base text-slate-200 max-w-2xl mx-auto font-medium leading-relaxed drop-shadow">
+            {{ settings()?.heroSubheadline || settings()?.bio || 'أهلاً بكم في متجرنا الرسمي. نوفر لكم أفضل التشكيلات والمجوهرات الفاخرة بأعلى معايير الجودة مع ميزة المعاينة قبل الدفع بضمان 100%.' }}
+          </p>
+
+          <!-- Live Highlights Bar -->
+          <div class="store-stats-strip-hero inline-flex flex-wrap items-center justify-center gap-4 sm:gap-6 bg-slate-900/80 backdrop-blur-md px-6 py-2.5 rounded-full border border-white/10 shadow-2xl mt-2">
+            <ng-container *ngFor="let st of storeStats; let isLast = last">
+              <div class="flex items-center gap-2">
+                <span class="stat-num font-mono font-black text-amber-400 text-sm sm:text-base">{{ st.value }}</span>
+                <span class="stat-label text-xs text-slate-300 font-semibold">{{ st.label }}</span>
+              </div>
+              <span *ngIf="!isLast" class="text-white/20">•</span>
+            </ng-container>
           </div>
 
         </div>
@@ -181,7 +173,7 @@
   </header>
 
   <!-- ─── 4. PILLARS OF TRUST (DYNAMIC 4-CARD GRID) ─── -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 my-10">
+  <section id="features" class="max-w-7xl mx-auto px-4 sm:px-6 my-10">
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
       <div *ngFor="let ft of storeFeatures" class="trust-card group">
         <div

@@ -829,8 +829,9 @@ export class StorefrontComponent implements OnInit {
         };
         this.initEditableContent(res.contentJson);
         this.editorTab = 'general';
-        this.generatingAi.set(false);
-        this.notificationService.success('تم توليد محتوى صفحة الهبوط وتصميمها بنجاح 🪄');
+        
+        // Auto save & publish the generated page to DB immediately!
+        this.saveLandingPage(true);
       },
       error: () => {
         this.generatingAi.set(false);
@@ -843,6 +844,7 @@ export class StorefrontComponent implements OnInit {
   saveLandingPage(isPublished: boolean = true): void {
     if (!this.generatedPreview.title || !this.generatedPreview.slug) {
       this.notificationService.error('يرجى استكمال عنوان ورابط الصفحة');
+      this.generatingAi.set(false);
       return;
     }
 
@@ -870,9 +872,17 @@ export class StorefrontComponent implements OnInit {
       ]
     };
 
+    let cleanSlug = (this.generatedPreview.slug || '').trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
+    if (!cleanSlug && this.generatedPreview.title) {
+      cleanSlug = this.generatedPreview.title.trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
+    }
+    if (!cleanSlug) {
+      cleanSlug = 'product-' + Math.floor(Math.random() * 100000);
+    }
+
     const payload = {
       productId: this.aiRequest.selectedProductId,
-      slug: this.generatedPreview.slug.trim().toLowerCase().replace(/[^a-z0-9-]/g, ''),
+      slug: cleanSlug,
       title: this.generatedPreview.title,
       headline: this.generatedPreview.headline,
       subheadline: this.generatedPreview.subheadline,
@@ -899,12 +909,14 @@ export class StorefrontComponent implements OnInit {
       this.storefrontService.updateLandingPage(this.editingPageId, payload).subscribe({
         next: () => {
           this.savingPage.set(false);
+          this.generatingAi.set(false);
           this.closeAiWizard();
           this.loadLandingPages();
           this.notificationService.success('تم تعديل صفحة الهبوط بنجاح');
         },
         error: (err) => {
           this.savingPage.set(false);
+          this.generatingAi.set(false);
           this.notificationService.error(err?.error?.Message || 'خطأ أثناء تعديل الصفحة');
         }
       });
@@ -912,12 +924,14 @@ export class StorefrontComponent implements OnInit {
       this.storefrontService.createLandingPage(payload).subscribe({
         next: () => {
           this.savingPage.set(false);
+          this.generatingAi.set(false);
           this.closeAiWizard();
           this.loadLandingPages();
           this.notificationService.success('تم إنشاء ونشر صفحة الهبوط بنجاح 🚀');
         },
         error: (err) => {
           this.savingPage.set(false);
+          this.generatingAi.set(false);
           this.notificationService.error(err?.error?.Message || 'خطأ أثناء إنشاء الصفحة');
         }
       });

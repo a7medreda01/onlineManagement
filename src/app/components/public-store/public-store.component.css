@@ -55,11 +55,31 @@
    2. STICKY BRAND HEADER
    ──────────────────────────────────────────────────────────── */
 .store-top-navbar {
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid #e2e8f0;
   transition: all 0.2s ease;
+}
+
+.nav-section-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.4rem 0.95rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #475569;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.nav-section-link:hover,
+.nav-section-link.active {
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 .nav-whatsapp-btn {
@@ -83,20 +103,62 @@
   box-shadow: 0 4px 12px rgba(5, 150, 105, 0.35);
 }
 
+.nav-phone-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #0f172a;
+  color: #ffffff !important;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.5rem 1.1rem;
+  border-radius: 9999px;
+  transition: all 0.25s ease;
+  text-decoration: none;
+}
+
+.nav-phone-btn:hover {
+  background: #1e293b;
+  transform: translateY(-1px);
+}
+
+.store-verified-pill-sm {
+  position: absolute;
+  bottom: -2px;
+  left: -2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.badge-status-live-sm {
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+  font-weight: 700;
+  padding: 0.15rem 0.6rem;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
 /* ────────────────────────────────────────────────────────────
-   3. HERO BANNER & STORE PROFILE
+   3. HERO BANNER SHOWCASE
    ──────────────────────────────────────────────────────────── */
 .store-hero-banner {
   position: relative;
-  background: #fff;
+  background: #090d16;
 }
 
 .store-cover-box {
   position: relative;
   width: 100%;
-  height: 280px;
-  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0369a1 100%);
-  overflow: hidden;
 }
 
 .store-cover-img {
@@ -109,30 +171,47 @@
 .store-cover-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(15, 23, 42, 0.15) 0%, rgba(15, 23, 42, 0.6) 65%, rgba(248, 250, 252, 1) 100%);
+  background: linear-gradient(to top, #090d16 0%, rgba(15, 23, 42, 0.75) 50%, rgba(9, 13, 22, 0.4) 100%);
 }
 
 .store-cover-ambient-glow {
   position: absolute;
-  top: -20%;
-  right: 15%;
-  width: 400px;
-  height: 400px;
+  top: 10%;
+  right: 25%;
+  width: 500px;
+  height: 500px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.25) 0%, rgba(0, 0, 0, 0) 70%);
-  filter: blur(40px);
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+  filter: blur(50px);
   pointer-events: none;
 }
 
-.store-profile-card {
-  position: relative;
-  margin-top: -100px;
-  z-index: 10;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 2rem;
-  padding: 2.25rem;
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.08), 0 20px 40px -20px rgba(30, 64, 175, 0.1);
+.badge-niche-hero {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  color: #fef08a;
+  border: 1px solid rgba(254, 240, 138, 0.3);
+  font-weight: 800;
+  padding: 0.3rem 0.9rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.badge-status-hero {
+  background: rgba(16, 185, 129, 0.15);
+  backdrop-filter: blur(12px);
+  color: #6ee7b7;
+  border: 1px solid rgba(110, 231, 183, 0.3);
+  font-weight: 800;
+  padding: 0.3rem 0.9rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .store-logo {
