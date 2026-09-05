@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
 import { StorefrontService } from '../../services/storefront.service';
 import { ProductService } from '../../services/product.service';
 import { ShippingService } from '../../services/shipping.service';
@@ -428,6 +429,51 @@ export class StorefrontComponent implements OnInit {
   uploadingLogo = signal<boolean>(false);
   uploadingCover = signal<boolean>(false);
 
+  resolveUrl(url?: string): string {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
+      return url;
+    }
+    const apiBase = environment.apiUrl.replace(/\/api\/?$/, '');
+    return `${apiBase}${url.startsWith('/') ? '' : '/'}${url}`;
+  }
+
+  onLogoFileSelected(event: any): void {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    this.uploadingLogo.set(true);
+    this.storefrontService.uploadImage(file).subscribe({
+      next: (res) => {
+        this.uploadingLogo.set(false);
+        this.settingsForm.logoUrl = res.url;
+        this.notificationService.success('تم رفع شعار المتجر بنجاح');
+      },
+      error: (err) => {
+        this.uploadingLogo.set(false);
+        this.notificationService.error(err?.error?.Message || 'فشل رفع الشعار');
+      }
+    });
+  }
+
+  onCoverFileSelected(event: any): void {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    this.uploadingCover.set(true);
+    this.storefrontService.uploadImage(file).subscribe({
+      next: (res) => {
+        this.uploadingCover.set(false);
+        this.settingsForm.coverUrl = res.url;
+        this.notificationService.success('تم رفع غلاف المتجر بنجاح');
+      },
+      error: (err) => {
+        this.uploadingCover.set(false);
+        this.notificationService.error(err?.error?.Message || 'فشل رفع الغلاف');
+      }
+    });
+  }
+
   generateStoreWithAi(): void {
     if (!this.storeAiPrompt.trim()) {
       this.notificationService.error('يرجى كتابة نبذة أو فكرة المتجر لتوليد هويته بالذكاء الاصطناعي');
@@ -455,42 +501,6 @@ export class StorefrontComponent implements OnInit {
       error: () => {
         this.isGeneratingStoreAi.set(false);
         this.notificationService.error('حدث خطأ أثناء التوليد، يرجى المحاولة مرة أخرى');
-      }
-    });
-  }
-
-  onLogoFileSelected(event: any): void {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    this.uploadingLogo.set(true);
-    this.storefrontService.uploadMedia(file).subscribe({
-      next: (res) => {
-        this.uploadingLogo.set(false);
-        this.settingsForm.logoUrl = res.url;
-        this.notificationService.success('تم رفع شعار المتجر (اللوجو) بنجاح');
-      },
-      error: (err) => {
-        this.uploadingLogo.set(false);
-        this.notificationService.error(err?.error?.Message || 'فشل رفع صورة الشعار');
-      }
-    });
-  }
-
-  onCoverFileSelected(event: any): void {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    this.uploadingCover.set(true);
-    this.storefrontService.uploadMedia(file).subscribe({
-      next: (res) => {
-        this.uploadingCover.set(false);
-        this.settingsForm.coverUrl = res.url;
-        this.notificationService.success('تم رفع صورة الغلاف بنجاح');
-      },
-      error: (err) => {
-        this.uploadingCover.set(false);
-        this.notificationService.error(err?.error?.Message || 'فشل رفع صورة الغلاف');
       }
     });
   }

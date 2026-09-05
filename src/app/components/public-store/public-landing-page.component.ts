@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { Title, Meta, DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { environment } from '../../../environments/environment';
 import { StorefrontService } from '../../services/storefront.service';
 import {
   ProductLandingPage,
@@ -88,6 +89,15 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
     if (found?.image) {
       this.selectedImage = found.image;
     }
+  }
+
+  resolveUrl(url?: string): string {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
+      return url;
+    }
+    const apiBase = environment.apiUrl.replace(/\/api\/?$/, '');
+    return `${apiBase}${url.startsWith('/') ? '' : '/'}${url}`;
   }
 
   isVideoEmbed(url?: string): boolean {

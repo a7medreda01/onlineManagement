@@ -29,7 +29,7 @@
     <!-- Brand Info -->
     <div class="flex items-center gap-3">
       <img
-        [src]="settings()?.logoUrl || 'https://ui-avatars.com/api/?name=' + (settings()?.storeDisplayName || 'Vezzaro') + '&background=0f172a&color=fff&size=100'"
+        [src]="resolveUrl(settings()?.logoUrl) || 'https://ui-avatars.com/api/?name=' + (settings()?.storeDisplayName || 'Vezzaro') + '&background=0f172a&color=fff&size=100'"
         class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl object-cover border-2 border-amber-400/80 shadow-md"
         alt="Store Logo">
       <div>
@@ -102,7 +102,7 @@
   <header class="store-hero-banner">
     <!-- Ambient Gradient Cover -->
     <div class="store-cover-box">
-      <img *ngIf="settings()?.coverUrl" [src]="settings()!.coverUrl" class="store-cover-img" alt="Store Cover">
+      <img *ngIf="settings()?.coverUrl" [src]="resolveUrl(settings()!.coverUrl)" class="store-cover-img" alt="Store Cover">
       <div class="store-cover-overlay"></div>
       <div class="store-cover-ambient-glow"></div>
     </div>
@@ -117,7 +117,7 @@
             class="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-right w-full lg:w-auto">
             <div class="relative flex-shrink-0">
               <img
-                [src]="settings()?.logoUrl || 'https://ui-avatars.com/api/?name=' + (settings()?.storeDisplayName || 'Vezzaro') + '&background=0f172a&color=fff&size=200'"
+                [src]="resolveUrl(settings()?.logoUrl) || 'https://ui-avatars.com/api/?name=' + (settings()?.storeDisplayName || 'Vezzaro') + '&background=0f172a&color=fff&size=200'"
                 class="store-logo border-4 border-amber-400/80 shadow-2xl" alt="Store Logo">
               <span class="store-verified-pill" title="متجر رسمي موثق">
                 <i class="bi bi-check-lg text-white text-xs font-black"></i>

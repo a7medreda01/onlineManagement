@@ -127,7 +127,7 @@
       <div class="max-w-6xl mx-auto flex items-center justify-between">
         <a [routerLink]="getStoreCatalogLink()" class="flex items-center gap-3 no-underline group">
           <img *ngIf="pageData()?.storeLogoUrl" 
-               [src]="pageData()?.storeLogoUrl" 
+               [src]="resolveUrl(pageData()?.storeLogoUrl)" 
                class="w-10 h-10 rounded-full border border-slate-200 object-cover shadow-sm" 
                alt="logo">
           <div *ngIf="!pageData()?.storeLogoUrl" class="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center text-white font-black text-base shadow-sm">

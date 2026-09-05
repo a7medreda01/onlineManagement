@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Title, Meta } from '@angular/platform-browser';
+import { environment } from '../../../environments/environment';
 import { StorefrontService } from '../../services/storefront.service';
 import { StorefrontSettings, ProductLandingPage } from '../../models/models';
 import { getSubdomain } from '../../utils/subdomain.util';
@@ -85,6 +86,15 @@ export class PublicStoreComponent implements OnInit {
       { label: 'دفع باستلام', value: 'COD' },
       { label: 'معاينة وفحص', value: '100%' }
     ];
+  }
+
+  resolveUrl(url?: string): string {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
+      return url;
+    }
+    const apiBase = environment.apiUrl.replace(/\/api\/?$/, '');
+    return `${apiBase}${url.startsWith('/') ? '' : '/'}${url}`;
   }
 
   ngOnInit(): void {
