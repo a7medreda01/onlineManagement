@@ -52,15 +52,15 @@
 
     <!-- Center: Navigation Links (الرئيسية - المنتجات - المميزات - تواصل) -->
     <div class="hidden lg:flex items-center gap-1 bg-slate-100/90 p-1.5 rounded-full border border-slate-200/80 shadow-inner">
-      <a href="#" class="nav-section-link active">
+      <a href="#top" (click)="scrollToSection('top', $event)" class="nav-section-link active">
         <i class="bi bi-house-door-fill text-amber-500"></i>
         <span>الرئيسية</span>
       </a>
-      <a href="#catalog" class="nav-section-link">
+      <a href="#catalog" (click)="scrollToSection('catalog', $event)" class="nav-section-link">
         <i class="bi bi-bag-check-fill text-sky-500"></i>
         <span>المنتجات</span>
       </a>
-      <a href="#features" class="nav-section-link">
+      <a href="#features" (click)="scrollToSection('features', $event)" class="nav-section-link">
         <i class="bi bi-shield-lock-fill text-emerald-500"></i>
         <span>المميزات</span>
       </a>
@@ -191,71 +191,43 @@
   <!-- ─── 5. PRODUCTS CATALOG & FILTER ENGINE ─── -->
   <main id="catalog" class="max-w-7xl mx-auto px-4 sm:px-6 pb-20">
 
-    <!-- Catalog Control Bar -->
-    <div class="catalog-control-panel mb-8 bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm">
-      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-
-        <!-- Eyebrow & Title -->
-        <div>
-          <div class="section-eyebrow">
-            <i class="bi bi-stars text-amber-500"></i>
-            <span>التشكيلة الرسمية</span>
-          </div>
-          <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3 mt-1">
-            <span>جميع المعروضات والمنتجات</span>
-            <span class="count-badge font-mono">{{ filteredPages.length }} منتج</span>
-          </h2>
-          <p class="text-slate-500 text-xs sm:text-sm mt-1">اختر منتجك المفضل، اطلب في دقيقة، وعاين مجاناً قبل السداد
-          </p>
-        </div>
-
-        <!-- Search Bar (Fixed Padding to prevent overlap with icon) -->
-        <div class="w-full lg:w-96 relative">
-          <i
-            class="bi bi-search absolute top-1/2 -translate-y-1/2 right-4 text-amber-500 pointer-events-none text-base"></i>
-          <input type="text" [(ngModel)]="searchTerm" class="search-input-premium"
-            placeholder="ابحث باسم المنتج أو المواصفات...">
-          <button *ngIf="searchTerm" (click)="searchTerm = ''"
-            class="absolute top-1/2 -translate-y-1/2 left-4 text-slate-400 hover:text-slate-600 text-xs bg-slate-100 hover:bg-slate-200 rounded-full w-6 h-6 flex items-center justify-center transition">
-            <i class="bi bi-x"></i>
-          </button>
-        </div>
-
+    <!-- Catalog Header (Clean & Minimal) -->
+    <div class="catalog-simple-header mb-8 flex flex-col md:flex-row items-center justify-between gap-4 border-b border-slate-200/80 pb-6">
+      
+      <!-- Title & Count -->
+      <div class="text-center md:text-right">
+        <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center justify-center md:justify-start gap-3">
+          <span>تشكيلة المعروضات والمنتجات</span>
+          <span class="count-badge-simple font-mono font-bold">{{ filteredPages.length }} منتج</span>
+        </h2>
+        <p class="text-slate-500 text-xs sm:text-sm mt-1">اختر منتجك المفضل واطلب فوراً مع ميزة المعاينة قبل الدفع</p>
       </div>
 
-      <!-- Secondary Filter Pills Row -->
-      <div class="flex flex-wrap items-center justify-between gap-4 mt-6 pt-5 border-t border-slate-100">
-        <!-- Filter Tabs -->
-        <div class="flex flex-wrap items-center gap-2">
-          <button (click)="activeFilter.set('all')" class="filter-pill-btn" [class.active]="activeFilter() === 'all'">
-            <span>الكل</span>
-            <span class="pill-counter font-mono">{{ pages().length }}</span>
-          </button>
-
-          <button *ngIf="dealsCount > 0" (click)="activeFilter.set('deals')" class="filter-pill-btn"
-            [class.active]="activeFilter() === 'deals'">
-            <span>🔥 أقوى التخفيضات</span>
-            <span class="pill-counter text-rose-600 font-mono">{{ dealsCount }}</span>
-          </button>
-
-          <button *ngIf="freeShippingCount > 0" (click)="activeFilter.set('free_shipping')" class="filter-pill-btn"
-            [class.active]="activeFilter() === 'free_shipping'">
-            <span>🚚 شحن مجاني</span>
-            <span class="pill-counter text-emerald-600 font-mono">{{ freeShippingCount }}</span>
+      <!-- Search & Filters Row -->
+      <div class="flex flex-wrap items-center justify-center gap-3 w-full md:w-auto">
+        <!-- Search Input -->
+        <div class="relative w-full sm:w-64">
+          <i class="bi bi-search absolute top-1/2 -translate-y-1/2 right-3.5 text-slate-400 pointer-events-none text-xs"></i>
+          <input type="text" [(ngModel)]="searchTerm" class="search-input-simple" placeholder="ابحث باسم المنتج...">
+          <button *ngIf="searchTerm" (click)="searchTerm = ''" class="absolute top-1/2 -translate-y-1/2 left-3 text-slate-400 hover:text-slate-600 text-xs">
+            <i class="bi bi-x-circle-fill"></i>
           </button>
         </div>
 
-        <!-- Sort Select -->
-        <div class="flex items-center gap-2 self-end sm:self-auto">
-          <span class="text-xs text-slate-500 font-bold whitespace-nowrap">الترتيب حسب:</span>
-          <select [(ngModel)]="sortBy" class="sort-select-premium font-bold">
-            <option value="default">الافتراضي (الموصى به)</option>
-            <option value="price_asc">السعر: من الأقل للأعلى</option>
-            <option value="price_desc">السعر: من الأعلى للأقل</option>
-            <option value="discount">أكبر نسبة خصم 🔥</option>
-          </select>
+        <!-- Filter Pills (الكل / تخفيضات / شحن مجاني) -->
+        <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-full border border-slate-200">
+          <button (click)="activeFilter.set('all')" class="filter-btn-simple" [class.active]="activeFilter() === 'all'">
+            الكل ({{ pages().length }})
+          </button>
+          <button *ngIf="dealsCount > 0" (click)="activeFilter.set('deals')" class="filter-btn-simple" [class.active]="activeFilter() === 'deals'">
+            🔥 تخفيضات ({{ dealsCount }})
+          </button>
+          <button *ngIf="freeShippingCount > 0" (click)="activeFilter.set('free_shipping')" class="filter-btn-simple" [class.active]="activeFilter() === 'free_shipping'">
+            🚚 شحن مجاني ({{ freeShippingCount }})
+          </button>
         </div>
       </div>
+
     </div>
 
     <!-- ─── EMPTY RESULTS ─── -->

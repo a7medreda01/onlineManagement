@@ -174,10 +174,7 @@
 
             <!-- Badge Strip -->
             <div class="badge-strip">
-              <div class="flex flex-col gap-1.5">
-                <span *ngIf="pageData()?.badge" class="badge-hot">{{ pageData()?.badge }}</span>
-                <span *ngIf="discountPercentage > 0" class="badge-save">وفّر {{ discountPercentage }}%</span>
-              </div>
+              <span *ngIf="discountPercentage > 0" class="badge-save">وفّر {{ discountPercentage }}%</span>
               <span class="badge-verified">
                 <i class="bi bi-patch-check-fill"></i>
                 أصلي 100%
@@ -194,19 +191,6 @@
 
             <!-- Counter -->
             <div *ngIf="images.length > 1" class="img-counter">{{ activeImageIndex() + 1 }} / {{ images.length }}</div>
-
-            <!-- Luxury Pointer Callouts (Image 2 Rolex Style) -->
-            <div *ngIf="specs().length > 0" class="specs-overlay-pins hidden md:block pointer-events-none">
-              <div *ngFor="let sp of specs().slice(0, 3); let idx = index"
-                   class="spec-pin-item"
-                   [ngClass]="'spec-pin-' + idx">
-                <span class="spec-pin-dot"></span>
-                <div class="spec-pin-tag">
-                  <span class="spec-pin-badge" *ngIf="sp.badge">{{ sp.badge }}</span>
-                  <span class="spec-pin-title">{{ sp.title }}</span>
-                </div>
-              </div>
-            </div>
           </div>
 
           <!-- Thumbnails -->
@@ -255,7 +239,14 @@
             </div>
             <span class="text-slate-900 font-bold text-sm">4.9 / 5.0</span>
             <span class="text-slate-500 text-xs">({{ content?.customerReviews?.length || 24 }}+ تقييم موثق)</span>
-            <span class="text-xs bg-rose-50 text-rose-600 border border-rose-200 px-2.5 py-0.5 rounded-full font-bold">🔥 الأكثر مبيعاً</span>
+          </div>
+
+          <!-- Offer Badge Tag -->
+          <div *ngIf="pageData()?.badge" class="mb-1">
+            <span class="inline-flex items-center gap-1.5 bg-rose-50 text-rose-700 border border-rose-200 text-xs font-black px-3.5 py-1.5 rounded-full shadow-sm">
+              <i class="bi bi-fire text-rose-600"></i>
+              {{ pageData()?.badge }}
+            </span>
           </div>
 
           <!-- Title -->

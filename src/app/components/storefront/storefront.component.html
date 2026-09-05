@@ -414,6 +414,154 @@
         </div>
       </div>
 
+      <!-- ============================================================ -->
+      <!-- CUSTOM DOMAIN & DNS CONFIGURATION CARD -->
+      <!-- ============================================================ -->
+      <div class="custom-domain-box bg-slate-900 text-slate-100 p-6 rounded-3xl border border-slate-800 space-y-6 shadow-xl">
+        
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center text-xl shrink-0">
+              <i class="bi bi-globe"></i>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h4 class="font-extrabold text-base sm:text-lg text-white">إعدادات الدومين المخصص (Custom Domain)</h4>
+                <span class="badge-vip-sm bg-gradient-to-r from-amber-500 to-amber-600 text-white font-bold text-[10px] px-2 py-0.5 rounded-full shadow">VIP</span>
+              </div>
+              <p class="text-xs text-slate-400 mt-0.5">ربط متجرك برابطك الخاص (مثل store.mybrand.com أو mybrand.com)</p>
+            </div>
+          </div>
+
+          <!-- Status Badge -->
+          <div>
+            <span *ngIf="!settingsForm.customDomain" class="inline-flex items-center gap-1.5 bg-slate-800 text-slate-400 border border-slate-700 px-3 py-1 rounded-full text-xs font-semibold">
+              <span class="w-2 h-2 rounded-full bg-slate-500"></span>
+              غير مفعّل
+            </span>
+            <span *ngIf="settingsForm.customDomain && (settingsForm.customDomainStatus === 'PendingDns' || !settingsForm.customDomainStatus)" class="inline-flex items-center gap-1.5 bg-amber-500/20 text-amber-300 border border-amber-500/30 px-3 py-1 rounded-full text-xs font-semibold animate-pulse">
+              <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+              بانتظار توجيه سجلات الـ DNS
+            </span>
+            <span *ngIf="settingsForm.customDomain && (settingsForm.customDomainStatus === 'Active' || settingsForm.customDomainStatus === 'Verified')" class="inline-flex items-center gap-1.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3 py-1 rounded-full text-xs font-semibold">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              نشط وموثق بشهادة SSL 🔒
+            </span>
+          </div>
+        </div>
+
+        <!-- Domain Input & Main Controls -->
+        <div class="space-y-4">
+          <label class="block font-bold text-xs text-slate-300">أدخل عنوان الدومين المخصص الخاص بك:</label>
+          <div class="flex flex-col sm:flex-row items-stretch gap-3">
+            <div class="relative flex-1">
+              <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-mono">https://</span>
+              <input type="text"
+                     [(ngModel)]="settingsForm.customDomain"
+                     class="w-full bg-slate-950 border border-slate-700 focus:border-amber-400 text-amber-300 font-mono font-bold text-sm rounded-xl py-2.5 pr-16 pl-4 text-left outline-none transition"
+                     placeholder="store.mybrand.com">
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button (click)="verifyDnsSetup()" [disabled]="verifyingDns()" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black text-xs px-5 py-2.5 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 shrink-0">
+                <span *ngIf="verifyingDns()" class="w-3.5 h-3.5 border-2 border-slate-950 border-t-transparent rounded-full animate-spin"></span>
+                <i *ngIf="!verifyingDns()" class="bi bi-shield-check"></i>
+                <span>{{ verifyingDns() ? 'جاري الفحص...' : 'حفظ والتحقق من الـ DNS' }}</span>
+              </button>
+
+              <button *ngIf="settingsForm.customDomain" (click)="removeCustomDomain()" class="bg-rose-500/20 hover:bg-rose-500/30 text-rose-400 border border-rose-500/40 text-xs font-bold px-3 py-2.5 rounded-xl transition" title="إزالة الدومين">
+                <i class="bi bi-trash3"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- DNS Verification Result Alert -->
+          <div *ngIf="dnsStatusResult" [class]="'p-3.5 rounded-xl text-xs font-medium border flex items-start gap-2.5 ' + (dnsStatusResult.success ? 'bg-emerald-950/60 border-emerald-800/80 text-emerald-200' : 'bg-rose-950/60 border-rose-800/80 text-rose-200')">
+            <i [class]="'bi text-base shrink-0 mt-0.5 ' + (dnsStatusResult.success ? 'bi-check-circle-fill text-emerald-400' : 'bi-exclamation-triangle-fill text-rose-400')"></i>
+            <div>{{ dnsStatusResult.message }}</div>
+          </div>
+        </div>
+
+        <!-- DNS Records Guide Box -->
+        <div *ngIf="getCleanCustomDomain()" class="bg-slate-950/90 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-4 font-cairo">
+          <div class="flex items-center justify-between">
+            <h5 class="font-bold text-xs sm:text-sm text-slate-200 flex items-center gap-2">
+              <i class="bi bi-diagram-3-fill text-sky-400"></i>
+              <span>سجلات الـ DNS المطلوب إضافتها عند مزود الدومين الخاص بك:</span>
+            </h5>
+            <span class="text-[11px] text-slate-400 font-mono">(Cloudflare / GoDaddy / Namecheap)</span>
+          </div>
+
+          <!-- Table of DNS Records -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-right text-xs text-slate-300">
+              <thead>
+                <tr class="border-b border-slate-800 text-slate-400 font-bold text-[11px]">
+                  <th class="py-2 px-3">نوع السجل (Type)</th>
+                  <th class="py-2 px-3">الاسم / المضيف (Name/Host)</th>
+                  <th class="py-2 px-3">القيمة / الهدف (Value/Target)</th>
+                  <th class="py-2 px-3 text-center">نسخ</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60 font-mono text-[12px]">
+                <!-- Record 1: CNAME -->
+                <tr class="hover:bg-slate-900/50">
+                  <td class="py-2.5 px-3">
+                    <span class="bg-sky-500/20 text-sky-300 border border-sky-500/30 px-2 py-0.5 rounded font-bold">CNAME</span>
+                  </td>
+                  <td class="py-2.5 px-3 text-amber-300">{{ getCnameHost() }}</td>
+                  <td class="py-2.5 px-3 text-emerald-300">{{ getCnameTarget() }}</td>
+                  <td class="py-2.5 px-3 text-center">
+                    <button (click)="copyToClipboard(getCnameTarget(), 'تم نسخ قيمة الـ CNAME')" class="text-slate-400 hover:text-white transition">
+                      <i class="bi bi-clipboard"></i>
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- Record 2: A Record -->
+                <tr class="hover:bg-slate-900/50">
+                  <td class="py-2.5 px-3">
+                    <span class="bg-purple-500/20 text-purple-300 border border-purple-500/30 px-2 py-0.5 rounded font-bold">A Record</span>
+                  </td>
+                  <td class="py-2.5 px-3 text-amber-300">@</td>
+                  <td class="py-2.5 px-3 text-emerald-300">13.38.112.50</td>
+                  <td class="py-2.5 px-3 text-center">
+                    <button (click)="copyToClipboard('13.38.112.50', 'تم نسخ قيمة الـ IP')" class="text-slate-400 hover:text-white transition">
+                      <i class="bi bi-clipboard"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Step-by-Step Instructions -->
+          <div class="pt-3 border-t border-slate-800/80 space-y-2 text-[11px] text-slate-400 font-sans leading-relaxed">
+            <div class="font-bold text-slate-300 flex items-center gap-1.5">
+              <i class="bi bi-list-check text-amber-400"></i>
+              <span>خطوات الربط والتفعيل في أقل من دقيقتين:</span>
+            </div>
+            <ol class="list-decimal list-inside space-y-1 text-slate-300 pr-2">
+              <li>ادخل إلى حسابك في موقع شراء الدومين (Cloudflare, GoDaddy, Namecheap, Hostinger...).</li>
+              <li>انتقل إلى صفحة **إدارة الـ DNS (DNS Management / DNS Zone)** الخاصة بدومينك.</li>
+              <li>قم بإنشاء سجل **CNAME** واكتب في الاسم `<code class="text-amber-300 font-mono">{{ getCnameHost() }}</code>` وفي القيمة/الهدف `<code class="text-emerald-300 font-mono">{{ getCnameTarget() }}</code>`.</li>
+              <li>عد إلى هذه الصفحة واضغط على زر **"حفظ والتحقق من الـ DNS"** لتأكيد الربط وتفعيل شهادة الحماية SSL تلقائياً 🔒.</li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- SSL Certificate Guarantee Footer -->
+        <div class="flex items-center gap-3 bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-300">
+          <i class="bi bi-shield-lock-fill text-emerald-400 text-lg shrink-0"></i>
+          <div>
+            <strong class="text-white block">حماية وتشفير مجاني SSL/HTTPS:</strong>
+            سيتم إصدار شهادة حماية مشفرة مجاناً لمجموعتك وحماية بيانات عملائك فور اكتمال التوجيه.
+          </div>
+        </div>
+
+      </div>
+
       <!-- Save Button -->
       <div class="pt-4 border-t border-slate-100 flex items-center justify-end">
         <button (click)="saveSettings()" [disabled]="savingSettings()" class="btn-primary-gradient px-8">
