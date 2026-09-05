@@ -82,6 +82,12 @@ export class StorefrontService {
     return this.http.post<{ url: string; relativeUrl: string; fileName: string }>(`${environment.apiUrl}/uploads/storefront-media`, formData);
   }
 
+  uploadImage(file: File): Observable<{ url: string; relativeUrl: string; fileName: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<{ url: string; relativeUrl: string; fileName: string }>(`${this.baseUrl}/upload-image`, formData);
+  }
+
   // ==========================================
   // Public Customer Facing APIs
   // ==========================================
