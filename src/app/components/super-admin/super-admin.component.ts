@@ -116,7 +116,7 @@ export class SuperAdminComponent implements OnInit {
   }
 
   loadPlans(): void {
-    this.saasService.getPlans().subscribe({
+    this.saasService.getSuperAdminPlans().subscribe({
       next: (res) => this.plans.set(res),
       error: (err) => console.error(err)
     });

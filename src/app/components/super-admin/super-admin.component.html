@@ -1,16 +1,47 @@
-<div class="min-h-screen bg-slate-950 text-slate-100 p-4 sm:p-6 lg:p-8 font-cairo" dir="rtl">
-  <div class="max-w-7xl mx-auto space-y-6">
+<div class="min-h-screen bg-slate-950 text-slate-100 flex flex-col lg:flex-row font-cairo" dir="rtl">
 
-    <!-- SuperAdmin Sticky Responsive Toolbar Component -->
-    <app-super-admin-toolbar
-      [activeTab]="activeTab"
-      [totalStores]="tenants().length"
-      [pendingRequests]="overview()?.pendingPaymentRequestsCount || 0"
-      [totalRevenue]="overview()?.totalPlatformRevenue || 0"
-      (tabChange)="activeTab = $event"
-      (refresh)="refreshAll()"
-      (logout)="logout()">
-    </app-super-admin-toolbar>
+  <!-- SuperAdmin Lateral Sidebar Toolbar Component -->
+  <app-super-admin-toolbar
+    [activeTab]="activeTab"
+    [totalStores]="tenants().length"
+    [pendingRequests]="overview()?.pendingPaymentRequestsCount || 0"
+    [totalRevenue]="overview()?.totalPlatformRevenue || 0"
+    (tabChange)="activeTab = $event"
+    (refresh)="refreshAll()"
+    (logout)="logout()">
+  </app-super-admin-toolbar>
+
+  <!-- Main Content Area -->
+  <main class="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 space-y-6">
+
+    <!-- Top Header Title Bar for Active Tab -->
+    <div class="glass-card bg-slate-900/80 border-slate-800 p-4 sm:p-5 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-lg">
+      <div>
+        <h1 class="font-black text-xl text-slate-100 flex items-center gap-2.5">
+          <i *ngIf="activeTab === 'stores'" class="bi bi-shop text-sky-400"></i>
+          <i *ngIf="activeTab === 'requests'" class="bi bi-credit-card-fill text-emerald-400"></i>
+          <i *ngIf="activeTab === 'plans'" class="bi bi-sliders text-indigo-400"></i>
+          <i *ngIf="activeTab === 'email'" class="bi bi-envelope-fill text-amber-400"></i>
+          <span>
+            {{ activeTab === 'stores' ? 'إدارة المتاجر والاشتراكات' :
+               activeTab === 'requests' ? 'طلبات التحويل والمعاملات' :
+               activeTab === 'plans' ? 'إدارة وتخصيص الباقات' : 'حملات البريد الإلكتروني' }}
+          </span>
+        </h1>
+        <p class="text-xs text-slate-400 mt-1">
+          {{ activeTab === 'stores' ? 'عرض واستعراض كل المتاجر والتحكم في حالات الاشتراك والحسابات' :
+             activeTab === 'requests' ? 'مراجعة طلبات التحويل البنكي و InstaPay والموافقة الفورية عليها' :
+             activeTab === 'plans' ? 'إدارة وإنشاء وتخصيص كافة الباقات المتاحة بالمنصة (المفعلة والمعطلة)' : 'إرسال حملات إعلانية وتنبيهات بريدية مباشرة لجميع أصحاب المتاجر' }}
+        </p>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button (click)="refreshAll()" class="btn btn-secondary btn-sm py-2 px-3 text-xs text-sky-400 border-slate-700 flex items-center gap-1.5 font-bold">
+          <i class="bi bi-arrow-clockwise"></i>
+          <span>تحديث البيانات</span>
+        </button>
+      </div>
+    </div>
 
     <!-- Modular Overview & Revenue Cards Component -->
     <app-super-admin-overview-cards [overview]="overview()"></app-super-admin-overview-cards>
@@ -60,7 +91,7 @@
       </app-super-admin-broadcast-email>
     </div>
 
-  </div>
+  </main>
 
   <!-- Modular Modals Component (Suspend, Extend, Reject, Change Plan) -->
   <app-super-admin-modals
