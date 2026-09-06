@@ -62,6 +62,9 @@ import { Tenant } from '../../../models/models';
                     <button (click)="exportCustomers.emit(t)" class="btn btn-secondary btn-sm text-sky-400" title="استخراج عملاء المتجر CSV">
                       <i class="bi bi-file-earmark-spreadsheet"></i>
                     </button>
+                    <button (click)="changePlan.emit(t)" class="btn btn-secondary btn-sm text-amber-400" title="تغيير الباقة">
+                      <i class="bi bi-arrow-repeat"></i>
+                    </button>
                     <button (click)="extendTenant.emit(t)" class="btn btn-secondary btn-sm text-emerald-400" title="تمديد الاشتراك">
                       <i class="bi bi-calendar-plus"></i>
                     </button>
@@ -91,6 +94,7 @@ export class SuperAdminTenantsListComponent {
   @Output() search = new EventEmitter<string>();
   @Output() exportCustomers = new EventEmitter<Tenant>();
   @Output() extendTenant = new EventEmitter<Tenant>();
+  @Output() changePlan = new EventEmitter<Tenant>();
   @Output() suspendTenant = new EventEmitter<Tenant>();
   @Output() reactivateTenant = new EventEmitter<Tenant>();
 

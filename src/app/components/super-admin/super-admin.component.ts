@@ -46,6 +46,7 @@ export class SuperAdminComponent implements OnInit {
   showSuspendModal = false;
   showExtendModal = false;
   showRejectModal = false;
+  showChangePlanModal = false;
 
   selectedTenant: Tenant | null = null;
   selectedRequest: SubscriptionPaymentRequest | null = null;
@@ -67,6 +68,9 @@ export class SuperAdminComponent implements OnInit {
     maxModerators: 3,
     maxProducts: undefined as number | undefined,
     maxOrdersPerMonth: undefined as number | undefined,
+    allowOnlineStorefront: true,
+    allowManualLandingPages: true,
+    allowAiLandingPages: false,
     allowBostaIntegration: false,
     allowWalletsAndDeposits: true,
     allowExpensesTracking: true,
@@ -232,6 +236,9 @@ export class SuperAdminComponent implements OnInit {
       maxModerators: plan.maxModerators,
       maxProducts: plan.maxProducts,
       maxOrdersPerMonth: plan.maxOrdersPerMonth,
+      allowOnlineStorefront: plan.allowOnlineStorefront ?? true,
+      allowManualLandingPages: plan.allowManualLandingPages ?? true,
+      allowAiLandingPages: plan.allowAiLandingPages ?? false,
       allowBostaIntegration: plan.allowBostaIntegration,
       allowWalletsAndDeposits: plan.allowWalletsAndDeposits ?? true,
       allowExpensesTracking: plan.allowExpensesTracking,
@@ -256,6 +263,9 @@ export class SuperAdminComponent implements OnInit {
       maxModerators: 3,
       maxProducts: undefined,
       maxOrdersPerMonth: undefined,
+      allowOnlineStorefront: true,
+      allowManualLandingPages: true,
+      allowAiLandingPages: false,
       allowBostaIntegration: false,
       allowWalletsAndDeposits: true,
       allowExpensesTracking: true,
@@ -307,6 +317,28 @@ export class SuperAdminComponent implements OnInit {
         }
       });
     }
+  }
+
+  // ==========================
+  // Tenant Suspension / Extension / Plan Change
+  // ==========================
+
+  openChangePlanModal(tenant: Tenant): void {
+    this.selectedTenant = tenant;
+    this.showChangePlanModal = true;
+  }
+
+  confirmChangePlan(event: { planId: number; additionalDays: number }): void {
+    if (!this.selectedTenant || !event.planId) return;
+
+    this.saasService.changeTenantPlan(this.selectedTenant.id, event.planId, event.additionalDays).subscribe({
+      next: (res) => {
+        this.showChangePlanModal = false;
+        alert(res?.Message || 'تم تغيير باقة المتجر واشتراكه بنجاح');
+        this.loadData();
+      },
+      error: (err) => alert(err?.error?.Message || 'خطأ أثناء تغيير الباقة')
+    });
   }
 
   // ==========================

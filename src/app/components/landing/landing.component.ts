@@ -19,6 +19,9 @@ export interface PlanDto {
   maxModerators: number;
   maxProducts: number | null;
   maxOrdersPerMonth: number | null;
+  allowOnlineStorefront?: boolean;
+  allowManualLandingPages?: boolean;
+  allowAiLandingPages?: boolean;
   allowBostaIntegration: boolean;
   allowWalletsAndDeposits: boolean;
   allowExpensesTracking: boolean;
@@ -44,6 +47,24 @@ export class LandingComponent implements OnInit {
 
   // Feature list for the system
   systemFeatures = [
+    {
+      icon: 'bi-shop',
+      color: 'cyan',
+      title: 'متجر إلكتروني أونلاين كامل',
+      desc: 'واجهة متجر أونلاين احترافية بهوية متجرك لعرض المنتجات واستقبال طلبات الشراء أوتوماتيكياً.'
+    },
+    {
+      icon: 'bi-magic',
+      color: 'purple',
+      title: 'صفحات هبوط بالـ AI',
+      desc: 'توليد صفحات هبوط احترافية ومقنعة للبيع بضغطة زر باستعمال الذكاء الاصطناعي الذكي.'
+    },
+    {
+      icon: 'bi-file-earmark-code',
+      color: 'blue',
+      title: 'صفحات هبوط يدوية',
+      desc: 'مصمم صفحات هبوط مرن لبناء العروض والتصاميم المخصصة لمنتجاتك بدون تعقيدات برمجة.'
+    },
     {
       icon: 'bi-box-seam-fill',
       color: 'sky',

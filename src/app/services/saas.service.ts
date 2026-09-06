@@ -41,6 +41,10 @@ export class SaasService {
     return this.http.post(`${this.superAdminUrl}/tenants/${id}/extend`, { additionalDays });
   }
 
+  changeTenantPlan(id: number, planId: number, additionalDays: number = 365): Observable<any> {
+    return this.http.post(`${this.superAdminUrl}/tenants/${id}/change-plan`, { planId, additionalDays });
+  }
+
   reactivateTenant(id: number): Observable<any> {
     return this.http.post(`${this.superAdminUrl}/tenants/${id}/reactivate`, {});
   }

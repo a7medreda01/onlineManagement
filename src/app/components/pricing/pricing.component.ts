@@ -109,6 +109,33 @@ export class PricingComponent implements OnInit {
 
   comparisonCategories: ComparisonCategory[] = [
     {
+      categoryName: 'المتاجر الإلكترونية وصفحات الهبوط',
+      categoryIcon: 'bi-shop text-cyan-400',
+      items: [
+        {
+          title: 'متجر إلكتروني أونلاين كامل للعملاء',
+          subtext: 'واجهة متجر أونلاين عامة بهوية علامتك التجارية لاستقبال طلبات الشراء تلقائياً',
+          free: 'check',
+          standard: 'check',
+          premium: 'check'
+        },
+        {
+          title: 'إنشاء وتصميم صفحات هبوط يدوياً',
+          subtext: 'مصمم صفحات هبوط مرن لبناء العروض والتصاميم المخصصة لمنتجاتك',
+          free: 'check',
+          standard: 'check',
+          premium: 'check'
+        },
+        {
+          title: 'توليد صفحات هبوط بالذكاء الاصطناعي (AI)',
+          subtext: 'مولد AI ذكي لكتابة وتصميم صفحات هبوط احترافية بضغطة زر',
+          free: 'cross',
+          standard: 'cross',
+          premium: 'check'
+        }
+      ]
+    },
+    {
       categoryName: 'إدارة الأوردرات والمبيعات',
       categoryIcon: 'bi-box-seam-fill text-sky-400',
       items: [
@@ -524,6 +551,33 @@ export class PricingComponent implements OnInit {
 
   private updateComparisonCategories(free: Plan, standard: Plan, premium: Plan): void {
     this.comparisonCategories = [
+      {
+        categoryName: 'المتاجر الإلكترونية وصفحات الهبوط',
+        categoryIcon: 'bi-shop text-cyan-400',
+        items: [
+          {
+            title: 'متجر إلكتروني أونلاين كامل للعملاء',
+            subtext: 'واجهة متجر أونلاين عامة بهوية علامتك التجارية لاستقبال طلبات الشراء تلقائياً',
+            free: free?.allowOnlineStorefront !== false ? 'check' : 'cross',
+            standard: standard?.allowOnlineStorefront !== false ? 'check' : 'cross',
+            premium: premium?.allowOnlineStorefront !== false ? 'check' : 'cross'
+          },
+          {
+            title: 'إنشاء وتصميم صفحات هبوط يدوياً',
+            subtext: 'مصمم صفحات هبوط مرن لبناء العروض والتصاميم المخصصة لمنتجاتك',
+            free: free?.allowManualLandingPages !== false ? 'check' : 'cross',
+            standard: standard?.allowManualLandingPages !== false ? 'check' : 'cross',
+            premium: premium?.allowManualLandingPages !== false ? 'check' : 'cross'
+          },
+          {
+            title: 'توليد صفحات هبوط بالذكاء الاصطناعي (AI)',
+            subtext: 'مولد AI ذكي لكتابة وتصميم صفحات هبوط احترافية بضغطة زر',
+            free: free?.allowAiLandingPages ? 'check' : 'cross',
+            standard: standard?.allowAiLandingPages ? 'check' : 'cross',
+            premium: premium?.allowAiLandingPages ? 'check' : 'cross'
+          }
+        ]
+      },
       {
         categoryName: 'إدارة الأوردرات والمبيعات',
         categoryIcon: 'bi-box-seam-fill text-sky-400',

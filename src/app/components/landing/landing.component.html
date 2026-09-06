@@ -245,6 +245,18 @@
                 <i class="bi bi-check-circle-fill text-emerald-500 shrink-0"></i>
                 <span>{{ plan.maxOrdersPerMonth ? 'حتى ' + plan.maxOrdersPerMonth + ' أوردر/شهر' : 'أوردرات بلا حدود' }}</span>
               </li>
+              <li class="lp-feature-row flex items-center gap-2.5" [class.lp-feature-on]="plan.allowOnlineStorefront !== false" [class.lp-feature-off]="plan.allowOnlineStorefront === false">
+                <i class="bi shrink-0" [class.bi-check-circle-fill]="plan.allowOnlineStorefront !== false" [class.bi-x-circle]="plan.allowOnlineStorefront === false"></i>
+                <span>متجر إلكتروني أونلاين كامل للعملاء</span>
+              </li>
+              <li class="lp-feature-row flex items-center gap-2.5" [class.lp-feature-on]="plan.allowManualLandingPages !== false" [class.lp-feature-off]="plan.allowManualLandingPages === false">
+                <i class="bi shrink-0" [class.bi-check-circle-fill]="plan.allowManualLandingPages !== false" [class.bi-x-circle]="plan.allowManualLandingPages === false"></i>
+                <span>إنشاء وتصميم صفحات هبوط يدوياً</span>
+              </li>
+              <li class="lp-feature-row flex items-center gap-2.5" [class.lp-feature-on]="plan.allowAiLandingPages" [class.lp-feature-off]="!plan.allowAiLandingPages">
+                <i class="bi shrink-0" [class.bi-check-circle-fill]="plan.allowAiLandingPages" [class.bi-x-circle]="!plan.allowAiLandingPages"></i>
+                <span>توليد صفحات هبوط بالذكاء الاصطناعي AI</span>
+              </li>
               <li class="lp-feature-row flex items-center gap-2.5" [class.lp-feature-on]="plan.allowBostaIntegration" [class.lp-feature-off]="!plan.allowBostaIntegration">
                 <i class="bi shrink-0" [class.bi-check-circle-fill]="plan.allowBostaIntegration" [class.bi-x-circle]="!plan.allowBostaIntegration"></i>
                 <span>ربط آلي Bosta API وشحن جماعي</span>

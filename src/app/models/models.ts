@@ -459,6 +459,8 @@ export interface Plan {
   maxModerators: number;
   maxProducts?: number;
   maxOrdersPerMonth?: number;
+  allowOnlineStorefront?: boolean;
+  allowManualLandingPages?: boolean;
   allowBostaIntegration: boolean;
   allowWalletsAndDeposits: boolean;
   allowExpensesTracking: boolean;
@@ -488,6 +490,8 @@ export interface SubscriptionDetails {
   daysRemaining: number;
   suspendedReason?: string;
   maxModerators?: number;
+  allowOnlineStorefront?: boolean;
+  allowManualLandingPages?: boolean;
   allowBostaIntegration?: boolean;
   allowWalletsAndDeposits?: boolean;
   allowExpensesTracking?: boolean;

@@ -23,6 +23,7 @@
         (search)="onSearch($event)"
         (exportCustomers)="exportCustomers($event)"
         (extendTenant)="openExtendModal($event)"
+        (changePlan)="openChangePlanModal($event)"
         (suspendTenant)="openSuspendModal($event)"
         (reactivateTenant)="reactivateTenant($event)">
       </app-super-admin-tenants-list>
@@ -61,7 +62,7 @@
 
   </div>
 
-  <!-- Modular Modals Component (Suspend, Extend, Reject) -->
+  <!-- Modular Modals Component (Suspend, Extend, Reject, Change Plan) -->
   <app-super-admin-modals
     [showSuspendModal]="showSuspendModal"
     [selectedTenant]="selectedTenant"
@@ -78,7 +79,12 @@
     [selectedRequest]="selectedRequest"
     [rejectReason]="rejectReason"
     (closeReject)="showRejectModal = false"
-    (confirmReject)="confirmRejectRequest($event)">
+    (confirmReject)="confirmRejectRequest($event)"
+
+    [showChangePlanModal]="showChangePlanModal"
+    [plans]="plans()"
+    (closeChangePlan)="showChangePlanModal = false"
+    (confirmChangePlan)="confirmChangePlan($event)">
   </app-super-admin-modals>
 
 </div>

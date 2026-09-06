@@ -135,6 +135,31 @@ import { Plan } from '../../../models/models';
                 </div>
               </label>
 
+              <!-- New Feature Toggles -->
+              <label class="flex items-center gap-3 p-2.5 rounded-lg bg-slate-900/60 border border-slate-700/50 cursor-pointer text-xs text-slate-200 hover:border-cyan-500/40 transition">
+                <input type="checkbox" [(ngModel)]="planForm.allowOnlineStorefront" name="allowOnlineStorefront" class="rounded w-4 h-4 text-cyan-500 bg-slate-800 border-slate-600" />
+                <div>
+                  <div class="font-bold flex items-center gap-1.5"><i class="bi bi-shop text-cyan-400"></i> متجر إلكتروني متكامل للعملاء</div>
+                  <div class="text-[10px] text-slate-400">واجهة متجر أونلاين خاصة بعلامة تجارية كاملة واستقبال الطلبات</div>
+                </div>
+              </label>
+
+              <label class="flex items-center gap-3 p-2.5 rounded-lg bg-slate-900/60 border border-slate-700/50 cursor-pointer text-xs text-slate-200 hover:border-blue-500/40 transition">
+                <input type="checkbox" [(ngModel)]="planForm.allowManualLandingPages" name="allowManualLandingPages" class="rounded w-4 h-4 text-blue-500 bg-slate-800 border-slate-600" />
+                <div>
+                  <div class="font-bold flex items-center gap-1.5"><i class="bi bi-file-earmark-code text-blue-400"></i> إنشاء صفحات هبوط يدوياً</div>
+                  <div class="text-[10px] text-slate-400">أداة مصمم واجهات صفحات الهبوط اليدوية</div>
+                </div>
+              </label>
+
+              <label class="flex items-center gap-3 p-2.5 rounded-lg bg-slate-900/60 border border-slate-700/50 cursor-pointer text-xs text-slate-200 hover:border-purple-500/40 transition">
+                <input type="checkbox" [(ngModel)]="planForm.allowAiLandingPages" name="allowAiLandingPages" class="rounded w-4 h-4 text-purple-500 bg-slate-800 border-slate-600" />
+                <div>
+                  <div class="font-bold flex items-center gap-1.5"><i class="bi bi-magic text-purple-400"></i> إنشاء صفحات هبوط بالـ AI</div>
+                  <div class="text-[10px] text-slate-400">مولد الذكاء الاصطناعي لتصميم وصياغة صفحات البيع بضغطة زر</div>
+                </div>
+              </label>
+
               <label class="flex items-center gap-3 p-2.5 rounded-lg bg-slate-900/60 border border-slate-700/50 cursor-pointer text-xs text-slate-200 hover:border-sky-500/40 transition sm:col-span-2 lg:col-span-3">
                 <input type="checkbox" [(ngModel)]="planForm.isActive" name="isActive" class="rounded w-4 h-4 text-sky-500 bg-slate-800 border-slate-600" />
                 <div>
@@ -184,6 +209,18 @@ import { Plan } from '../../../models/models';
             <div class="flex justify-between">
               <span class="text-slate-400">حسابات الموظفين:</span>
               <span class="font-bold" [class.text-emerald-400]="p.maxModerators > 0" [class.text-slate-500]="p.maxModerators === 0">{{ p.maxModerators > 0 ? (p.maxModerators > 100 ? 'غير محدود' : p.maxModerators + ' موظف') : 'معطل' }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">متجر إلكتروني متكامل:</span>
+              <span class="font-bold" [ngClass]="p.allowOnlineStorefront !== false ? 'text-emerald-400' : 'text-slate-500'">{{ p.allowOnlineStorefront !== false ? 'مفعل ✅' : 'معطل ❌' }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">صفحات هبوط يدوية:</span>
+              <span class="font-bold" [ngClass]="p.allowManualLandingPages !== false ? 'text-emerald-400' : 'text-slate-500'">{{ p.allowManualLandingPages !== false ? 'مفعل ✅' : 'معطل ❌' }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">صفحات هبوط بالـ AI:</span>
+              <span class="font-bold" [ngClass]="p.allowAiLandingPages ? 'text-emerald-400' : 'text-slate-500'">{{ p.allowAiLandingPages ? 'مفعل ✅' : 'معطل ❌' }}</span>
             </div>
             <div class="flex justify-between">
               <span class="text-slate-400">الخزائن والمحافظ:</span>

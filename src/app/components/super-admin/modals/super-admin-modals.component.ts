@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Tenant, SubscriptionPaymentRequest } from '../../../models/models';
+import { Tenant, SubscriptionPaymentRequest, Plan } from '../../../models/models';
 
 @Component({
   selector: 'app-super-admin-modals',
@@ -86,6 +86,44 @@ import { Tenant, SubscriptionPaymentRequest } from '../../../models/models';
         </div>
       </div>
     </div>
+    <!-- Change Plan Modal -->
+    <div *ngIf="showChangePlanModal" class="app-modal-overlay">
+      <div class="glass-card w-full max-w-md p-6 fade-in my-auto max-h-[90vh] overflow-y-auto shadow-2xl border-amber-500/30 bg-slate-900/95 rounded-2xl">
+        <div class="flex items-center justify-between border-b border-slate-700 pb-4 mb-4">
+          <h3 class="font-bold text-base text-slate-100 flex items-center gap-2">
+            <i class="bi bi-arrow-repeat text-amber-400 text-lg"></i>
+            <span>تغيير باقة متجر: {{ selectedTenant?.storeName }}</span>
+          </h3>
+          <button (click)="closeChangePlan.emit()" class="text-slate-400 hover:text-white p-1"><i class="bi bi-x-lg"></i></button>
+        </div>
+
+        <div class="space-y-4">
+          <div class="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-xs text-amber-300">
+            الباقة الحالية: <strong class="text-white">{{ selectedTenant?.activeSubscription?.planName || 'Free Gift' }}</strong>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">اختر الباقة الجديدة للمتجر</label>
+            <select [(ngModel)]="selectedPlanId" class="form-control" required>
+              <option [ngValue]="0" disabled>اختر الباقة...</option>
+              <option *ngFor="let p of plans" [ngValue]="p.id">
+                {{ p.name }} — ({{ p.price }} ج.م/شهر) {{ p.badge ? '[' + p.badge + ']' : '' }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">مدة الاشتراك بالأيام (الافتراضي = 365 يوم)</label>
+            <input type="number" [(ngModel)]="changePlanDays" min="1" max="3650" class="form-control" placeholder="365" required />
+          </div>
+
+          <div class="flex justify-end gap-3 pt-2">
+            <button type="button" (click)="closeChangePlan.emit()" class="btn btn-secondary text-xs">إلغاء</button>
+            <button type="button" (click)="onConfirmChangePlan()" [disabled]="!selectedPlanId" class="btn bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold px-5 disabled:opacity-50">تغيير الباقة وتحديث الاشتراك 🔄</button>
+          </div>
+        </div>
+      </div>
+    </div>
   `
 })
 export class SuperAdminModalsComponent {
@@ -100,6 +138,12 @@ export class SuperAdminModalsComponent {
   @Input() selectedRequest: SubscriptionPaymentRequest | null = null;
   @Input() rejectReason = '';
 
+  @Input() showChangePlanModal = false;
+  @Input() plans: Plan[] = [];
+
+  selectedPlanId = 0;
+  changePlanDays = 365;
+
   @Output() closeSuspend = new EventEmitter<void>();
   @Output() confirmSuspend = new EventEmitter<string>();
 
@@ -108,4 +152,13 @@ export class SuperAdminModalsComponent {
 
   @Output() closeReject = new EventEmitter<void>();
   @Output() confirmReject = new EventEmitter<string>();
+
+  @Output() closeChangePlan = new EventEmitter<void>();
+  @Output() confirmChangePlan = new EventEmitter<{ planId: number; additionalDays: number }>();
+
+  onConfirmChangePlan(): void {
+    if (this.selectedPlanId > 0) {
+      this.confirmChangePlan.emit({ planId: this.selectedPlanId, additionalDays: this.changePlanDays });
+    }
+  }
 }
