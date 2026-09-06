@@ -8,7 +8,7 @@ import { RouterModule } from '@angular/router';
   imports: [CommonModule, RouterModule],
   template: `
     <!-- Mobile Sticky Top Header (Visible only on mobile lg:hidden) -->
-    <header class="lg:hidden sticky top-0 z-40 bg-slate-900/95 border-b border-slate-800 backdrop-blur-md px-4 py-3 flex items-center justify-between">
+    <header class="lg:hidden sticky top-0 z-40 bg-slate-900/95 border-b border-slate-800 backdrop-blur-md px-4 py-3 flex items-center justify-between shadow-xl">
       <div class="flex items-center gap-3">
         <button (click)="mobileMenuOpen = !mobileMenuOpen" class="p-2 text-slate-300 hover:text-white bg-slate-800 rounded-xl border border-slate-700">
           <i class="bi" [ngClass]="mobileMenuOpen ? 'bi-x-lg text-rose-400' : 'bi-list text-sky-400'"></i>
@@ -31,14 +31,22 @@ import { RouterModule } from '@angular/router';
       </div>
     </header>
 
-    <!-- Sidebar Backdrop Overlay for Mobile -->
-    <div *ngIf="mobileMenuOpen" (click)="mobileMenuOpen = false" class="lg:hidden fixed inset-0 z-40 bg-slate-950/80 backdrop-blur-sm transition-opacity"></div>
+    <!-- Mobile Drawer Overlay & Sidebar (Visible on Mobile when Opened) -->
+    <div *ngIf="mobileMenuOpen" class="lg:hidden fixed inset-0 z-50 flex">
+      <div (click)="mobileMenuOpen = false" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm"></div>
+      <aside class="relative w-72 h-full bg-slate-900 border-l border-slate-800 p-4 flex flex-col justify-between shadow-2xl z-50 overflow-y-auto mr-auto rtl:mr-0 rtl:ml-auto">
+        <!-- Reusable Sidebar Content -->
+        <ng-container *ngTemplateOutlet="sidebarContent"></ng-container>
+      </aside>
+    </div>
 
-    <!-- Lateral Sidebar Toolbar (Sticky on Desktop, Drawer on Mobile) -->
-    <aside [ngClass]="mobileMenuOpen ? 'translate-x-0' : 'rtl:translate-x-full -translate-x-full lg:translate-x-0'"
-           class="fixed lg:sticky top-0 right-0 lg:right-auto z-50 lg:z-30 w-72 h-screen bg-slate-900/95 border-r rtl:border-r-0 rtl:border-l border-slate-800/80 flex flex-col justify-between p-4 shadow-2xl backdrop-blur-xl transition-transform duration-300 ease-in-out shrink-0 overflow-y-auto">
-      
-      <!-- Top Section: Brand & Quick Stats -->
+    <!-- Permanent Desktop Lateral Sidebar Toolbar (Visible on Desktop lg:flex) -->
+    <aside class="hidden lg:flex flex-col justify-between w-72 shrink-0 h-screen sticky top-0 bg-slate-900/95 border-l border-slate-800/80 p-4 shadow-2xl backdrop-blur-xl z-30 overflow-y-auto">
+      <ng-container *ngTemplateOutlet="sidebarContent"></ng-container>
+    </aside>
+
+    <!-- Shared Sidebar Content Template -->
+    <ng-template #sidebarContent>
       <div class="space-y-5">
         
         <!-- Logo & SuperAdmin Badge -->
@@ -94,7 +102,7 @@ import { RouterModule } from '@angular/router';
               </div>
               <div class="text-right">
                 <div class="font-bold">المتاجر والاشتراكات</div>
-                <div class="text-[10px] opacity-75 font-normal">إدارة وتمديد حسابات التنافس</div>
+                <div class="text-[10px] opacity-75 font-normal">إدارة وتمديد حسابات المتجر</div>
               </div>
             </div>
             <span class="text-[10px] px-2 py-0.5 rounded-full font-mono font-bold bg-slate-950/60 text-slate-300 border border-slate-700/60">{{ totalStores }}</span>
@@ -173,8 +181,7 @@ import { RouterModule } from '@angular/router';
           </button>
         </div>
       </div>
-
-    </aside>
+    </ng-template>
   `
 })
 export class SuperAdminToolbarComponent {
