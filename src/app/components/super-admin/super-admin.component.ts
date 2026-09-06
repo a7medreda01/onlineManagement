@@ -293,6 +293,22 @@ export class SuperAdminComponent implements OnInit {
     }
   }
 
+  deletePlan(plan: Plan): void {
+    if (confirm(`هل أنت تأكد من حذف باقة '${plan.name}'؟`)) {
+      this.saasService.deletePlan(plan.id).subscribe({
+        next: (res) => {
+          alert(res?.Message || 'تم حذف الباقة بنجاح');
+          this.loadPlans();
+          this.loadData();
+        },
+        error: (err) => {
+          alert(err?.error?.Message || 'حدث خطأ أثناء حذف الباقة');
+          this.loadPlans();
+        }
+      });
+    }
+  }
+
   // ==========================
   // Tenant Suspension / Extension
   // ==========================

@@ -65,6 +65,10 @@ export class SaasService {
     return this.http.put<Plan>(`${this.superAdminUrl}/plans/${id}`, data);
   }
 
+  deletePlan(id: number): Observable<any> {
+    return this.http.delete(`${this.superAdminUrl}/plans/${id}`);
+  }
+
   // InstaPay Subscription Payment Requests
   submitPaymentRequest(data: { planId: number; senderPhone: string; amount: number; transferDate?: string; referenceNumber?: string; notes?: string }): Observable<any> {
     return this.http.post(`${this.superAdminUrl}/subscription-requests/submit`, data);

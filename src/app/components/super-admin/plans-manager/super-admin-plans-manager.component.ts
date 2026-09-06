@@ -166,9 +166,14 @@ import { Plan } from '../../../models/models';
               <h4 class="font-black text-slate-100 text-base">{{ p.name }}</h4>
               <span class="text-[10px] px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-400 font-bold">{{ p.badge }}</span>
             </div>
-            <button (click)="editPlan.emit(p)" class="btn btn-secondary btn-sm py-1 px-2.5 text-xs text-sky-400 flex items-center gap-1 font-bold border-slate-700 hover:border-sky-500">
-              <i class="bi bi-pencil"></i> تعديل
-            </button>
+            <div class="flex items-center gap-1.5">
+              <button (click)="editPlan.emit(p)" class="btn btn-secondary btn-sm py-1 px-2.5 text-xs text-sky-400 flex items-center gap-1 font-bold border-slate-700 hover:border-sky-500">
+                <i class="bi bi-pencil"></i> تعديل
+              </button>
+              <button (click)="deletePlan.emit(p)" class="btn btn-secondary btn-sm py-1 px-2.5 text-xs text-rose-400 flex items-center gap-1 font-bold border-slate-700 hover:border-rose-500 hover:bg-rose-500/10">
+                <i class="bi bi-trash"></i> حذف
+              </button>
+            </div>
           </div>
 
           <div class="space-y-1.5 text-xs text-slate-300">
@@ -213,5 +218,6 @@ export class SuperAdminPlansManagerComponent {
   @Input() editingPlanId: number | null = null;
   @Output() submitPlan = new EventEmitter<void>();
   @Output() editPlan = new EventEmitter<Plan>();
+  @Output() deletePlan = new EventEmitter<Plan>();
   @Output() cancelEdit = new EventEmitter<void>();
 }
