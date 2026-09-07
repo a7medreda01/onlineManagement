@@ -137,12 +137,12 @@ export class AuthService {
   canAccessStorefront(): boolean {
     const sub = this.currentSubscription();
     if (sub) {
-      if (sub.allowAiLandingPages) return true;
+      if (sub.allowOnlineStorefront !== false || sub.allowManualLandingPages !== false || sub.allowAiLandingPages) return true;
       if (sub.planName && (sub.planName.includes('مميزة') || sub.planName.includes('VIP') || sub.planName.toLowerCase().includes('vip'))) return true;
       if (sub.badge && (sub.badge.includes('VIP') || sub.badge.includes('مميزة'))) return true;
     }
     const user = this.currentUser();
-    if (user?.allowAiLandingPages) return true;
+    if (user?.allowOnlineStorefront !== false || user?.allowManualLandingPages !== false || user?.allowAiLandingPages) return true;
     if (user?.planName && (user.planName.includes('مميزة') || user.planName.includes('VIP') || user.planName.toLowerCase().includes('vip'))) return true;
     return false;
   }

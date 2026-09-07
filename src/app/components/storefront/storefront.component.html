@@ -50,6 +50,7 @@
                   class="btn-hero-ai-wizard bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-600 hover:to-amber-800 border-amber-400/50 shadow-amber-500/25">
             <i class="bi bi-magic text-white text-lg"></i>
             <span>إعادة إنشاء المتجر بالكامل بالـ AI 🚀</span>
+            <span *ngIf="!allowAiLandingPages()" class="text-[9px] bg-amber-950/60 text-amber-200 px-1.5 py-0.5 rounded border border-amber-400/40 font-bold">VIP 👑</span>
           </button>
 
           <!-- AI Landing Page Wizard CTA -->
@@ -57,6 +58,7 @@
                   class="btn-hero-ai-wizard">
             <i class="bi bi-stars text-amber-300 text-lg"></i>
             <span>إنشاء صفحة هبوط بالـ AI</span>
+            <span *ngIf="!allowAiLandingPages()" class="text-[9px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded border border-emerald-500/30 font-bold">VIP 👑</span>
           </button>
 
           <!-- Delete Store Danger Button -->

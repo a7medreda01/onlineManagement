@@ -40,8 +40,9 @@ export class StorefrontComponent implements OnInit {
   generatingAi = signal<boolean>(false);
   savingPage = signal<boolean>(false);
 
-  // VIP Plan control
+  // VIP & AI Plan control
   isVip = signal<boolean>(true);
+  allowAiLandingPages = signal<boolean>(true);
   showUpgradeModal = false;
   FulfillmentSource = FulfillmentSource;
 
@@ -126,6 +127,11 @@ export class StorefrontComponent implements OnInit {
   };
 
   openAiFullStoreModal(): void {
+    if (!this.allowAiLandingPages()) {
+      this.notificationService.info('توليد وإنشاء المتجر بالذكاء الاصطناعي متاح في الباقة المميزة VIP. يمكنك الترقية الآن للاستفادة من الميزة!');
+      this.showUpgradeModal = true;
+      return;
+    }
     if (this.settings()?.storeDisplayName) {
       this.aiStoreRequest.preferredName = this.settings()!.storeDisplayName;
     }
@@ -305,15 +311,14 @@ export class StorefrontComponent implements OnInit {
   }
 
   checkPlanAccess(): void {
-    if (this.authService.canAccessStorefront()) {
-      this.isVip.set(true);
-      return;
-    }
     this.authService.getSubscriptionDetails().subscribe({
       next: (sub) => {
-        const hasAccess = !!sub.allowAiLandingPages ||
+        const allowAi = !!sub.allowAiLandingPages ||
           (sub.planName?.includes('مميزة') ?? false) ||
           (sub.badge?.includes('VIP') ?? false);
+        this.allowAiLandingPages.set(allowAi);
+
+        const hasAccess = (sub.allowOnlineStorefront !== false) || (sub.allowManualLandingPages !== false) || allowAi;
         this.isVip.set(hasAccess);
       },
       error: () => {
@@ -743,7 +748,8 @@ export class StorefrontComponent implements OnInit {
   }
 
   openAiWizard(existingPage?: ProductLandingPage): void {
-    if (!this.isVip()) {
+    if (!existingPage && !this.allowAiLandingPages()) {
+      this.notificationService.info('إنشاء صفحات الهبوط بالذكاء الاصطناعي متاح في الباقة المميزة VIP. يمكنك الترقية الآن للاستفادة من الميزة!');
       this.showUpgradeModal = true;
       return;
     }

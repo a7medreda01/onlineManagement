@@ -255,10 +255,10 @@ export class UpgradeModalComponent implements OnInit, OnChanges {
               name: d.name,
               badge: d.badge || fallback.badge,
               description: d.description || fallback.description,
-              price: d.price,
-              originalPrice: d.originalPrice,
-              annualPrice: d.annualPrice || d.price * 12,
-              annualOfferPrice: d.annualOfferPrice > 0 ? d.annualOfferPrice : (d.annualPrice || d.price * 10),
+              price: d.price || 0,
+              originalPrice: d.originalPrice || 0,
+              annualPrice: d.annualPrice || 0,
+              annualOfferPrice: d.annualOfferPrice || 0,
               icon: fallback.icon,
               color: fallback.color,
               badgeBg: fallback.badgeBg,
@@ -276,17 +276,35 @@ export class UpgradeModalComponent implements OnInit, OnChanges {
     });
   }
 
-  isLimitedFreeOffer(p: any): boolean {
-    if (!p) return false;
+  getPlanDisplayPrice(p: PlanOption | any): number {
+    if (!p) return 0;
     if (this.isAnnual) {
-      return ((p.annualPrice ?? 0) > 0 || (p.originalPrice ?? 0) > 0) && (p.annualOfferPrice === 0);
+      if (p.annualOfferPrice && p.annualOfferPrice > 0) return p.annualOfferPrice;
+      if (p.annualPrice && p.annualPrice > 0) return p.annualPrice;
+      if (p.price && p.price > 0) return p.price * 12;
+      if (p.originalPrice && p.originalPrice > 0) return p.originalPrice * 12;
+      return 0;
+    } else {
+      if (p.price && p.price > 0) return p.price;
+      if (p.originalPrice && p.originalPrice > 0) return p.originalPrice;
+      if (p.annualOfferPrice && p.annualOfferPrice > 0) return Math.round(p.annualOfferPrice / 12);
+      if (p.annualPrice && p.annualPrice > 0) return Math.round(p.annualPrice / 12);
+      return 0;
     }
-    return ((p.originalPrice ?? 0) > 0 || (p.annualPrice ?? 0) > 0) && p.price === 0;
+  }
+
+  isLimitedFreeOffer(p: any): boolean {
+    return false;
   }
 
   getOriginalPrice(p: any): number {
     if (!p) return 0;
-    if (this.isAnnual) return p.annualPrice || (p.originalPrice ? p.originalPrice * 12 : 0);
+    if (this.isAnnual) {
+      if (p.annualPrice && p.annualOfferPrice && p.annualOfferPrice > 0 && p.annualPrice > p.annualOfferPrice) {
+        return p.annualPrice;
+      }
+      return p.originalPrice ? p.originalPrice * 12 : 0;
+    }
     return p.originalPrice || 0;
   }
 
@@ -327,14 +345,12 @@ export class UpgradeModalComponent implements OnInit, OnChanges {
 
   getAmount(): number {
     if (!this.selectedPlan) return 0;
-    if (this.isAnnual) {
-      return this.selectedPlan.annualOfferPrice > 0 ? this.selectedPlan.annualOfferPrice : this.selectedPlan.annualPrice;
-    }
-    return this.selectedPlan.price;
+    return this.getPlanDisplayPrice(this.selectedPlan);
   }
 
   isFreePlan(): boolean {
-    return this.getAmount() === 0;
+    if (!this.selectedPlan) return false;
+    return this.getPlanDisplayPrice(this.selectedPlan) === 0;
   }
 
   copyNumber(): void {
