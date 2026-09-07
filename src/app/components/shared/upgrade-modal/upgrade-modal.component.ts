@@ -246,7 +246,15 @@ export class UpgradeModalComponent implements OnInit, OnChanges {
             }
           });
 
-          const uniqueList = Array.from(map.values()).sort((a, b) => a.price - b.price);
+          const getSortKey = (p: any) => {
+            if (p.annualOfferPrice && p.annualOfferPrice > 0) return p.annualOfferPrice;
+            if (p.annualPrice && p.annualPrice > 0) return p.annualPrice;
+            if (p.price && p.price > 0) return p.price * 12;
+            if (p.originalPrice && p.originalPrice > 0) return p.originalPrice * 12;
+            return 0;
+          };
+
+          const uniqueList = Array.from(map.values()).sort((a, b) => getSortKey(a) - getSortKey(b));
 
           this.plans = uniqueList.map((d, index) => {
             const fallback = this.defaultPlans[index] || this.defaultPlans[0];
@@ -286,9 +294,9 @@ export class UpgradeModalComponent implements OnInit, OnChanges {
       return 0;
     } else {
       if (p.price && p.price > 0) return p.price;
-      if (p.originalPrice && p.originalPrice > 0) return p.originalPrice;
       if (p.annualOfferPrice && p.annualOfferPrice > 0) return Math.round(p.annualOfferPrice / 12);
       if (p.annualPrice && p.annualPrice > 0) return Math.round(p.annualPrice / 12);
+      if (p.originalPrice && p.originalPrice > 0) return p.originalPrice;
       return 0;
     }
   }
@@ -300,12 +308,19 @@ export class UpgradeModalComponent implements OnInit, OnChanges {
   getOriginalPrice(p: any): number {
     if (!p) return 0;
     if (this.isAnnual) {
-      if (p.annualPrice && p.annualOfferPrice && p.annualOfferPrice > 0 && p.annualPrice > p.annualOfferPrice) {
+      if (p.annualPrice && p.annualPrice > 0) {
+        if (p.originalPrice && p.originalPrice * 12 > p.annualPrice) {
+          return p.originalPrice * 12;
+        }
         return p.annualPrice;
       }
-      return p.originalPrice ? p.originalPrice * 12 : 0;
+      if (p.originalPrice && p.originalPrice > 0) return p.originalPrice * 12;
+      return 0;
+    } else {
+      if (p.originalPrice && p.originalPrice > 0) return p.originalPrice;
+      if (p.annualPrice && p.annualPrice > 0) return Math.round(p.annualPrice / 12);
+      return 0;
     }
-    return p.originalPrice || 0;
   }
 
   selectPlan(plan: PlanOption): void {
