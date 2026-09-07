@@ -81,6 +81,8 @@ export interface AuthResponse {
   subscriptionStatus?: SubscriptionStatus;
   daysRemainingInSubscription?: number;
   planName?: string;
+  allowOnlineStorefront?: boolean;
+  allowManualLandingPages?: boolean;
   allowAiLandingPages?: boolean;
 }
 
