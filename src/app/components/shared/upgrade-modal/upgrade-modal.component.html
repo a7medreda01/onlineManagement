@@ -177,20 +177,43 @@
               <div class="font-bold text-[11px] sm:text-xs text-white leading-tight line-clamp-1">{{ p.name }}</div>
             </div>
 
-            <div class="mt-2 pt-1.5 border-t border-slate-800/80">
-              <!-- Free Plan -->
-              <div *ngIf="getPlanDisplayPrice(p) === 0" class="text-emerald-400 font-black text-xs sm:text-sm">مجاناً</div>
+            <div class="mt-2 pt-1.5 border-t border-slate-800/80 text-center">
+              <!-- Case 1: Limited-time Free Offer -->
+              <ng-container *ngIf="isLimitedFreeOffer(p)">
+                <div class="space-y-0.5">
+                  <div class="inline-flex items-center gap-1 px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[9px] font-black animate-pulse">
+                    <i class="bi bi-gift-fill"></i>
+                    <span>عرض مجاناً لاول 100 مشترك</span>
+                  </div>
+                  <div class="text-emerald-400 font-black text-xs sm:text-sm">
+                    0 <span class="text-[9px] text-slate-400 font-normal">ج.م</span>
+                  </div>
+                  <div *ngIf="getOriginalPrice(p) > 0" class="text-[9px] text-rose-400 line-through font-bold">
+                    {{ getOriginalPrice(p) | number:'1.0-0' }} ج.م
+                  </div>
+                </div>
+              </ng-container>
 
-              <!-- Paid Plan -->
-              <div *ngIf="getPlanDisplayPrice(p) > 0" class="space-y-0.5">
-                <div class="text-white font-black text-xs sm:text-sm">
-                  {{ getPlanDisplayPrice(p) | number:'1.0-0' }}
-                  <span class="text-[10px] text-slate-400 font-normal">ج.م</span>
+              <!-- Case 2: Permanent Free Plan -->
+              <ng-container *ngIf="!isLimitedFreeOffer(p) && isPermanentFree(p)">
+                <div class="text-emerald-400 font-black text-xs sm:text-sm">مجاناً</div>
+              </ng-container>
+
+              <!-- Case 3: Regular Paid Plan -->
+              <ng-container *ngIf="!isLimitedFreeOffer(p) && !isPermanentFree(p)">
+                <div class="space-y-0.5">
+                  <div class="text-white font-black text-xs sm:text-sm">
+                    {{ getActivePrice(p) | number:'1.0-0' }}
+                    <span class="text-[10px] text-slate-400 font-normal">ج.م</span>
+                  </div>
+                  <div *ngIf="getOriginalPrice(p) > 0 && getOriginalPrice(p) > getActivePrice(p)" class="text-[9px] text-rose-400 line-through font-bold">
+                    {{ getOriginalPrice(p) | number:'1.0-0' }} ج.م
+                  </div>
+                  <div *ngIf="isAnnual && p.yearlyMonthlyEquivalent > 0" class="text-[8px] text-emerald-400 font-bold">
+                    ({{ p.yearlyMonthlyEquivalent | number:'1.0-0' }} ج.م/شهر)
+                  </div>
                 </div>
-                <div *ngIf="getOriginalPrice(p) > getPlanDisplayPrice(p)" class="text-[9px] text-rose-400 line-through font-bold">
-                  {{ getOriginalPrice(p) | number:'1.0-0' }} ج.م
-                </div>
-              </div>
+              </ng-container>
 
               <div class="text-[9px] text-slate-400 mt-0.5">/ {{ isAnnual ? 'سنة' : 'شهر' }}</div>
 
