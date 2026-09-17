@@ -290,18 +290,28 @@ export class OrderDetailComponent implements OnInit {
     const currentOrder = this.order();
     if (!currentOrder) return;
     this.showHistoryModal = true;
-    this.historyLoading = true;
     this.orderHistories = [];
+
+    if (currentOrder.statusHistories && currentOrder.statusHistories.length > 0) {
+      this.orderHistories = currentOrder.statusHistories;
+      this.historyLoading = false;
+    } else {
+      this.historyLoading = true;
+    }
 
     this.orderService.getStatusHistories(currentOrder.id).subscribe({
       next: (res) => {
-        this.orderHistories = res;
+        if (res && res.length > 0) {
+          this.orderHistories = res;
+        }
         this.historyLoading = false;
       },
       error: (err) => {
         console.error(err);
         this.historyLoading = false;
-        this.notificationService.error('فشل تحميل سجل الحالات');
+        if (this.orderHistories.length === 0) {
+          this.notificationService.error('فشل تحميل سجل الحالات');
+        }
       }
     });
   }
