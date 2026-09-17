@@ -187,10 +187,10 @@
                   <button (click)="openAdvanceModal(p)" class="btn bg-amber-600 hover:bg-amber-500 text-white btn-sm py-1 px-2.5 text-xs flex items-center gap-1" title="إعطاء سلفة">
                     <i class="bi bi-wallet2"></i> سلفة
                   </button>
-                  <button (click)="openBonusPenaltyModal(p, 1)" class="btn btn-secondary btn-sm py-1 px-2 text-xs text-emerald-400" title="إضافة مكافأة">
+                  <button (click)="openBonusPenaltyModal(p, 3)" class="btn btn-secondary btn-sm py-1 px-2 text-xs text-emerald-400" title="إضافة مكافأة">
                     <i class="bi bi-plus-circle"></i>
                   </button>
-                  <button (click)="openBonusPenaltyModal(p, 3)" class="btn btn-secondary btn-sm py-1 px-2 text-xs text-rose-400" title="تسجيل جزاء/خصم">
+                  <button (click)="openBonusPenaltyModal(p, 4)" class="btn btn-secondary btn-sm py-1 px-2 text-xs text-rose-400" title="تسجيل جزاء/خصم">
                     <i class="bi bi-dash-circle"></i>
                   </button>
                 </div>
@@ -246,12 +246,12 @@
             <span>إعطاء سلفة</span>
           </button>
 
-          <button (click)="openBonusPenaltyModal(p, 1)" class="btn bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 btn-sm py-2 px-2.5 text-xs flex items-center justify-center gap-1.5 font-bold rounded-xl">
+          <button (click)="openBonusPenaltyModal(p, 3)" class="btn bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 btn-sm py-2 px-2.5 text-xs flex items-center justify-center gap-1.5 font-bold rounded-xl">
             <i class="bi bi-plus-circle-fill text-emerald-400"></i>
             <span>مكافأة (+)</span>
           </button>
 
-          <button (click)="openBonusPenaltyModal(p, 3)" class="btn bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 btn-sm py-2 px-2.5 text-xs flex items-center justify-center gap-1.5 font-bold rounded-xl">
+          <button (click)="openBonusPenaltyModal(p, 4)" class="btn bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 btn-sm py-2 px-2.5 text-xs flex items-center justify-center gap-1.5 font-bold rounded-xl">
             <i class="bi bi-dash-circle-fill text-rose-400"></i>
             <span>خصم (-)</span>
           </button>
@@ -528,8 +528,8 @@
     <div class="glass-card w-full max-w-md p-6 fade-in my-auto max-h-[90vh] overflow-y-auto shadow-2xl border-slate-700">
       <div class="flex items-center justify-between border-b border-slate-700 pb-4 mb-4">
         <h3 class="font-bold text-lg text-slate-100 flex items-center gap-2">
-          <i class="bi" [ngClass]="bonusPenaltyData.type === 1 ? 'bi-plus-circle-fill text-emerald-400' : 'bi-dash-circle-fill text-rose-400'"></i>
-          <span>{{ bonusPenaltyData.type === 1 ? 'تسجيل مكافأة / بونص' : 'تسجيل خصم / جزاء' }}</span>
+          <i class="bi" [ngClass]="bonusPenaltyData.type === 4 ? 'bi-dash-circle-fill text-rose-400' : 'bi-plus-circle-fill text-emerald-400'"></i>
+          <span>{{ bonusPenaltyData.type === 4 ? 'تسجيل خصم / جزاء' : 'تسجيل مكافأة / بونص' }}</span>
         </h3>
         <button (click)="showBonusPenaltyModal = false" class="text-slate-400 hover:text-white"><i class="bi bi-x-lg text-lg"></i></button>
       </div>
@@ -551,7 +551,7 @@
 
         <div class="flex justify-end gap-3 pt-4 border-t border-slate-700">
           <button type="button" (click)="showBonusPenaltyModal = false" class="btn btn-secondary">إلغاء</button>
-          <button type="submit" class="btn" [ngClass]="bonusPenaltyData.type === 1 ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-rose-600 hover:bg-rose-500 text-white'">
+          <button type="submit" class="btn" [ngClass]="bonusPenaltyData.type === 4 ? 'bg-rose-600 hover:bg-rose-500 text-white' : 'bg-emerald-600 hover:bg-emerald-500 text-white'">
             تأكيد التسجيل
           </button>
         </div>

@@ -77,7 +77,7 @@ export class UsersComponent implements OnInit {
   bonusPenaltyData = {
     userId: 0,
     userName: '',
-    type: 1, // 1 = ManualBonus, 3 = PenaltyDeduction
+    type: 3, // 3 = ManualBonus, 4 = PenaltyDeduction
     amount: 0,
     reason: ''
   };
@@ -305,14 +305,12 @@ export class UsersComponent implements OnInit {
   }
 
   openBonusPenaltyModal(staff: StaffMemberPayrollSummary, type: number): void {
-    // Business requirement: when adding a discount/deduction, add it as a bonus/reward
-    const effectiveType = type === 3 ? 1 : type;
     this.bonusPenaltyData = {
       userId: staff.userId,
       userName: staff.fullName,
-      type: effectiveType, // 1 = ManualBonus
+      type: type, // 3 = ManualBonus, 4 = PenaltyDeduction
       amount: 0,
-      reason: 'مكافأة أداء وتميز'
+      reason: type === 4 ? 'خصم / جزاء' : 'مكافأة أداء وتميز'
     };
     this.showBonusPenaltyModal = true;
   }
@@ -323,15 +321,13 @@ export class UsersComponent implements OnInit {
       return;
     }
 
-    // Ensure deduction type (3) is converted to bonus type (1)
-    if (this.bonusPenaltyData.type === 3) {
-      this.bonusPenaltyData.type = 1;
-    }
-
     this.payrollService.recordBonusPenalty(this.bonusPenaltyData).subscribe({
       next: () => {
         this.showBonusPenaltyModal = false;
-        this.notificationService.success('تم تسجيل المكافأة بنجاح');
+        const msg = (this.bonusPenaltyData.type === 4 || (this.bonusPenaltyData.type as any) === 'PenaltyDeduction')
+          ? 'تم تسجيل الخصم / الجزاء بنجاح'
+          : 'تم تسجيل المكافأة بنجاح';
+        this.notificationService.success(msg);
         this.loadPayrollSummaries();
       },
       error: (err) => this.notificationService.error(err?.error?.Message || 'فشل التسجيل')

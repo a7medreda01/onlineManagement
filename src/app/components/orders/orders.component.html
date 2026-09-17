@@ -197,9 +197,6 @@
                 <button (click)="openStatusModal(order)" class="btn btn-secondary btn-sm text-indigo-400" title="تغيير الحالة">
                   <i class="fa-solid fa-arrows-rotate"></i>
                 </button>
-                <button (click)="openHistoryModal(order, $event)" class="btn btn-secondary btn-sm text-amber-400" title="سجل الحالات والملاحظات">
-                  <i class="fa-solid fa-clock-rotate-left"></i>
-                </button>
               </div>
             </td>
           </tr>
@@ -259,12 +256,8 @@
         </div>
       </div>
 
-      <!-- Left side: Total Price & Clean Arabic Status Text + History Icon -->
+      <!-- Left side: Total Price & Clean Arabic Status Text -->
       <div class="flex items-center gap-2 shrink-0">
-        <button (click)="openHistoryModal(order, $event)" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-400 hover:text-amber-300 border border-slate-700/80 transition-colors" title="سجل الحالات والملاحظات">
-          <i class="fa-solid fa-clock-rotate-left text-xs"></i>
-        </button>
-
         <div (click)="goToDetail(order.id)" class="flex flex-col items-end cursor-pointer">
           <div class="font-black text-emerald-400 text-sm sm:text-base mb-0.5">{{ order.totalAmount | number:'1.0-2' }} ج.م</div>
           <span class="text-xs font-bold" [ngClass]="getStatusTextClass(order.status)">
