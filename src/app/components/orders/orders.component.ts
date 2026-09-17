@@ -5,7 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { OrderService } from '../../services/order.service';
 import { NotificationService } from '../../services/notification.service';
 import { BostaService } from '../../services/bosta.service';
-import { Order, OrderStatus, PagedResult } from '../../models/models';
+import { Order, OrderStatus, OrderStatusHistory, PagedResult } from '../../models/models';
 
 import { ShippingService } from '../../services/shipping.service';
 
@@ -49,6 +49,12 @@ export class OrdersComponent implements OnInit {
   selectedOrder: Order | null = null;
   newStatus: OrderStatus = OrderStatus.New;
   statusNotes = '';
+
+  // History Modal State
+  showHistoryModal = false;
+  historyLoading = false;
+  selectedOrderForHistory: Order | null = null;
+  orderHistories: OrderStatusHistory[] = [];
 
   // Bulk Bosta Result Modal State
   showBulkResultModal = false;
@@ -402,6 +408,34 @@ export class OrdersComponent implements OnInit {
   closeStatusModal(): void {
     this.showStatusModal = false;
     this.selectedOrder = null;
+  }
+
+  openHistoryModal(order: Order, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.selectedOrderForHistory = order;
+    this.showHistoryModal = true;
+    this.historyLoading = true;
+    this.orderHistories = [];
+
+    this.orderService.getStatusHistories(order.id).subscribe({
+      next: (res) => {
+        this.orderHistories = res;
+        this.historyLoading = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.historyLoading = false;
+        this.notificationService.error('فشل تحميل سجل الحالات');
+      }
+    });
+  }
+
+  closeHistoryModal(): void {
+    this.showHistoryModal = false;
+    this.selectedOrderForHistory = null;
+    this.orderHistories = [];
   }
 
   saveStatusUpdate(): void {

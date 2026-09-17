@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Order, OrderStatus, PagedResult, SalesPlatform } from '../models/models';
+import { Order, OrderStatus, OrderStatusHistory, PagedResult, SalesPlatform } from '../models/models';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -35,6 +35,10 @@ export class OrderService {
 
   getById(id: number): Observable<Order> {
     return this.http.get<Order>(`${this.apiUrl}/${id}`);
+  }
+
+  getStatusHistories(id: number): Observable<OrderStatusHistory[]> {
+    return this.http.get<OrderStatusHistory[]>(`${this.apiUrl}/${id}/status-histories`);
   }
 
   calculateCosts(req: { governorateId: number; shippingCompanyId: number; items: { productId: number; quantity: number }[] }): Observable<{ subTotal: number; shippingCost: number; totalAmount: number }> {

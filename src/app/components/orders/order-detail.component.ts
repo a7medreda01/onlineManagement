@@ -10,7 +10,7 @@ import { AuthService } from '../../services/auth.service';
 import { WalletService } from '../../services/wallet.service';
 import { NotificationService } from '../../services/notification.service';
 import { BostaService, BostaShipmentDto, BostaDeliveryType, BostaShipmentSource, CreateBostaShipmentDto } from '../../services/bosta.service';
-import { Order, OrderStatus, Product, ShippingCompany, Governorate, SalesPlatform, Wallet, BostaCity, BostaDistrict } from '../../models/models';
+import { Order, OrderStatus, OrderStatusHistory, Product, ShippingCompany, Governorate, SalesPlatform, Wallet, BostaCity, BostaDistrict } from '../../models/models';
 import { ZoneModalComponent } from '../shared/zone-modal/zone-modal.component';
 
 @Component({
@@ -28,6 +28,11 @@ export class OrderDetailComponent implements OnInit {
   newStatus: OrderStatus = OrderStatus.New;
   statusNotes = '';
   updating = false;
+
+  // History Modal State
+  showHistoryModal = false;
+  historyLoading = false;
+  orderHistories: OrderStatusHistory[] = [];
 
   // Edit Order Modal States
   showEditModal = false;
@@ -279,6 +284,31 @@ export class OrderDetailComponent implements OnInit {
         });
       }
     });
+  }
+
+  openHistoryModal(): void {
+    const currentOrder = this.order();
+    if (!currentOrder) return;
+    this.showHistoryModal = true;
+    this.historyLoading = true;
+    this.orderHistories = [];
+
+    this.orderService.getStatusHistories(currentOrder.id).subscribe({
+      next: (res) => {
+        this.orderHistories = res;
+        this.historyLoading = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.historyLoading = false;
+        this.notificationService.error('فشل تحميل سجل الحالات');
+      }
+    });
+  }
+
+  closeHistoryModal(): void {
+    this.showHistoryModal = false;
+    this.orderHistories = [];
   }
 
   // Open Full Order Edit Modal

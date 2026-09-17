@@ -197,6 +197,9 @@
                 <button (click)="openStatusModal(order)" class="btn btn-secondary btn-sm text-indigo-400" title="تغيير الحالة">
                   <i class="fa-solid fa-arrows-rotate"></i>
                 </button>
+                <button (click)="openHistoryModal(order, $event)" class="btn btn-secondary btn-sm text-amber-400" title="سجل الحالات والملاحظات">
+                  <i class="fa-solid fa-clock-rotate-left"></i>
+                </button>
               </div>
             </td>
           </tr>
@@ -256,12 +259,18 @@
         </div>
       </div>
 
-      <!-- Left side: Total Price & Clean Arabic Status Text -->
-      <div (click)="goToDetail(order.id)" class="flex flex-col items-end shrink-0 cursor-pointer">
-        <div class="font-black text-emerald-400 text-sm sm:text-base mb-0.5">{{ order.totalAmount | number:'1.0-2' }} ج.م</div>
-        <span class="text-xs font-bold" [ngClass]="getStatusTextClass(order.status)">
-          {{ getStatusArabic(order.status) }}
-        </span>
+      <!-- Left side: Total Price & Clean Arabic Status Text + History Icon -->
+      <div class="flex items-center gap-2 shrink-0">
+        <button (click)="openHistoryModal(order, $event)" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-400 hover:text-amber-300 border border-slate-700/80 transition-colors" title="سجل الحالات والملاحظات">
+          <i class="fa-solid fa-clock-rotate-left text-xs"></i>
+        </button>
+
+        <div (click)="goToDetail(order.id)" class="flex flex-col items-end cursor-pointer">
+          <div class="font-black text-emerald-400 text-sm sm:text-base mb-0.5">{{ order.totalAmount | number:'1.0-2' }} ج.م</div>
+          <span class="text-xs font-bold" [ngClass]="getStatusTextClass(order.status)">
+            {{ getStatusArabic(order.status) }}
+          </span>
+        </div>
       </div>
     </div>
 
@@ -376,6 +385,72 @@
           <button type="submit" class="btn btn-primary">تحديث الحالة</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Order Status History Modal -->
+  <div *ngIf="showHistoryModal" class="app-modal-overlay">
+    <div class="glass-card w-full max-w-lg p-5 md:p-6 fade-in my-auto max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-700 rounded-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-700/80 pb-3.5">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg shrink-0">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-base text-slate-100">سجل حالات وملاحظات الأوردر</h3>
+            <p class="text-xs text-indigo-300 font-mono font-bold">#{{ getDisplayOrderNumber(selectedOrderForHistory?.orderNumber, selectedOrderForHistory?.id) }}</p>
+          </div>
+        </div>
+        <button (click)="closeHistoryModal()" class="w-8 h-8 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 flex items-center justify-center transition-all">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="historyLoading" class="py-8 text-center space-y-3">
+        <i class="fa-solid fa-circle-notch fa-spin text-2xl text-amber-400"></i>
+        <p class="text-xs text-slate-400">جاري تحميل سجل التغييرات والملاحظات...</p>
+      </div>
+
+      <!-- Timeline Content -->
+      <div *ngIf="!historyLoading" class="space-y-3">
+        <div *ngIf="orderHistories.length === 0" class="text-center py-8 text-slate-400 space-y-2">
+          <i class="fa-solid fa-file-invoice text-3xl text-slate-600"></i>
+          <p class="text-xs">لا يوجد سجل حالات مسجل لهذا الأوردر حتى الآن</p>
+        </div>
+
+        <div *ngIf="orderHistories.length > 0" class="space-y-3 max-h-[60vh] overflow-y-auto custom-scrollbar pe-1">
+          <div *ngFor="let h of orderHistories" class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800/90 space-y-2 relative">
+            <div class="flex items-center justify-between gap-2 flex-wrap border-b border-slate-800/80 pb-2">
+              <span class="badge" [ngClass]="getBadgeClass(h.status)">
+                {{ getStatusArabic(h.status) }}
+              </span>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5 font-mono">
+                <i class="fa-regular fa-clock text-slate-500"></i>
+                <span>{{ h.changedAt | date:'medium' }}</span>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between text-xs pt-1">
+              <span class="text-slate-400">تم التغيير بواسطة:</span>
+              <span class="font-bold text-sky-300">{{ h.changedByName || 'النظام' }}</span>
+            </div>
+
+            <div *ngIf="h.notes" class="mt-2 p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs">
+              <span class="font-bold text-amber-300 block text-[11px] mb-0.5"><i class="fa-solid fa-note-sticky text-amber-400"></i> ملاحظة:</span>
+              <p class="text-slate-200 leading-relaxed font-medium whitespace-pre-wrap">{{ h.notes }}</p>
+            </div>
+            <div *ngIf="!h.notes" class="text-[11px] text-slate-500 italic">
+              بدون ملاحظات مدونة
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Close Button -->
+      <div class="flex justify-end pt-3 border-t border-slate-700/80">
+        <button (click)="closeHistoryModal()" class="btn btn-secondary btn-sm py-2 px-5 text-xs font-bold rounded-xl">إغلاق</button>
+      </div>
     </div>
   </div>
 
