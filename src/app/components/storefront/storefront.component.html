@@ -1,4 +1,97 @@
-<div class="storefront-dashboard-root">
+<!-- ============================================================ -->
+<!-- UNDER DEVELOPMENT / LOCKED STATE SCREEN                      -->
+<!-- ============================================================ -->
+<div *ngIf="isUnderDevelopment()" class="space-y-6 fade-in font-cairo pb-12 max-w-4xl mx-auto">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-700/80 pb-4 gap-3">
+    <div>
+      <h1 class="text-xl sm:text-2xl font-black text-slate-100 mb-1 flex items-center gap-2">
+        <i class="bi bi-shop-window text-amber-400"></i>
+        <span>المتجر الإلكتروني وصفحات الهبوط</span>
+      </h1>
+      <p class="text-xs text-slate-400">نظام المتاجر الذكية وصفحات الهبوط فائقة التحويل بالذكاء الاصطناعي</p>
+    </div>
+    <span class="bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-bold py-1.5 px-3 rounded-xl flex items-center gap-2 self-start sm:self-auto shadow-sm">
+      <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+      <span>ميزة تحت التطوير 🚧</span>
+    </span>
+  </div>
+
+  <!-- Under Development Lock Banner Card -->
+  <div class="glass-card p-8 sm:p-12 text-center space-y-6 border-amber-500/30 bg-gradient-to-b from-slate-800/80 via-slate-900/90 to-slate-950/95 shadow-2xl relative overflow-hidden rounded-3xl">
+    <!-- Background Glows -->
+    <div class="absolute -top-24 -right-24 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <!-- Lock Icon with Glow -->
+    <div class="w-20 h-20 rounded-3xl bg-amber-500/15 border border-amber-500/40 text-amber-400 mx-auto flex items-center justify-center text-4xl shadow-xl shadow-amber-500/10">
+      <i class="bi bi-lock-fill"></i>
+    </div>
+
+    <div class="max-w-xl mx-auto space-y-2">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700/80 text-[11px] text-amber-300 font-bold mb-1">
+        <i class="bi bi-gear-wide-connected text-amber-400 animate-spin"></i>
+        <span>جاري ترقية وتجهيز النظام</span>
+      </div>
+      <h2 class="text-xl sm:text-2xl font-black text-slate-100">
+        قسم المتجر الإلكتروني وصفحات الهبوط قيد التطوير والتجهيز 🚧
+      </h2>
+      <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
+        نعمل حالياً على إطلاق أقوى تجربة للمتاجر الإلكترونية وصفحات الهبوط الذكية المدعومة بالذكاء الاصطناعي مع ربط مباشر لشركات الشحن وبوابات الدفع لتحقيق أعلى معدل تحويل لمبيعاتك.
+      </p>
+    </div>
+
+    <!-- Expected Features Cards Grid -->
+    <div class="pt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 max-w-3xl mx-auto text-right">
+      <div class="bg-slate-800/60 p-3.5 rounded-2xl border border-slate-700/60 text-slate-300 space-y-1 hover:border-amber-500/40 transition">
+        <div class="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center text-base mb-2">
+          <i class="bi bi-magic"></i>
+        </div>
+        <div class="font-bold text-xs text-white">متاجر ذكية بالكامل</div>
+        <p class="text-[11px] text-slate-400 leading-snug">تصميم وهوية وبانرات احترافية بضغطة زر واحدة</p>
+      </div>
+
+      <div class="bg-slate-800/60 p-3.5 rounded-2xl border border-slate-700/60 text-slate-300 space-y-1 hover:border-amber-500/40 transition">
+        <div class="w-8 h-8 rounded-xl bg-sky-500/15 text-sky-400 flex items-center justify-center text-base mb-2">
+          <i class="bi bi-lightning-charge-fill"></i>
+        </div>
+        <div class="font-bold text-xs text-white">صفحات هبوط فائقة السرعة</div>
+        <p class="text-[11px] text-slate-400 leading-snug">صفحات هبوط مخصصة لكل منتج ترفع نسبة التحويل</p>
+      </div>
+
+      <div class="bg-slate-800/60 p-3.5 rounded-2xl border border-slate-700/60 text-slate-300 space-y-1 hover:border-amber-500/40 transition">
+        <div class="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center text-base mb-2">
+          <i class="bi bi-graph-up-arrow"></i>
+        </div>
+        <div class="font-bold text-xs text-white">ربط البكسل والإعلانات</div>
+        <p class="text-[11px] text-slate-400 leading-snug">تتبع مباشر مع Facebook و TikTok و Google Analytics</p>
+      </div>
+
+      <div class="bg-slate-800/60 p-3.5 rounded-2xl border border-slate-700/60 text-slate-300 space-y-1 hover:border-amber-500/40 transition">
+        <div class="w-8 h-8 rounded-xl bg-purple-500/15 text-purple-400 flex items-center justify-center text-base mb-2">
+          <i class="bi bi-cart-check-fill"></i>
+        </div>
+        <div class="font-bold text-xs text-white">طلب فوري COD</div>
+        <p class="text-[11px] text-slate-400 leading-snug">نموذج دفع عند الاستلام فوري وسلس للعميل</p>
+      </div>
+    </div>
+
+    <!-- Actions Row -->
+    <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+      <button disabled class="btn btn-secondary py-2.5 px-6 opacity-70 cursor-not-allowed text-xs font-bold flex items-center gap-2 border-amber-500/30 text-amber-300 bg-amber-500/10">
+        <i class="bi bi-clock-history"></i>
+        <span>سوف يتاح في التحديث القادم قريباً</span>
+      </button>
+
+      <a routerLink="/dashboard" class="btn btn-primary py-2.5 px-6 text-xs font-bold flex items-center gap-2">
+        <i class="bi bi-arrow-right"></i>
+        <span>العودة للوحة التحكم الرئيسية</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!isUnderDevelopment()" class="storefront-dashboard-root">
   
   <!-- ============================================================ -->
   <!-- 1. HERO HEADER BANNER & BRAND IDENTITY -->

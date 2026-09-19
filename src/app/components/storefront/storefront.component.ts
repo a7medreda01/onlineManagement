@@ -26,6 +26,9 @@ import { UpgradeModalComponent } from '../shared/upgrade-modal/upgrade-modal.com
   styleUrls: ['./storefront.component.css']
 })
 export class StorefrontComponent implements OnInit {
+  // Under Development mode
+  isUnderDevelopment = signal<boolean>(true);
+
   activeTab: 'pages' | 'settings' = 'pages';
 
   // State signals
