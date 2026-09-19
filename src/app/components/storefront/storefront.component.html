@@ -809,6 +809,25 @@
                 <label class="text-xs font-bold text-slate-600">رابط الصفحة الفرعي (Slug):</label>
                 <input type="text" [(ngModel)]="generatedPreview.slug" class="form-input-text font-mono text-left">
               </div>
+
+              <!-- Generated Images Preview Grid -->
+              <div *ngIf="generatedPreview.images && generatedPreview.images.length > 0" class="pt-2">
+                <label class="text-xs font-bold text-slate-700 flex items-center justify-between mb-2">
+                  <span class="flex items-center gap-1.5">
+                    <i class="bi bi-images text-indigo-600"></i>
+                    <span>صور المنتج المقترحة والمولدة ({{ generatedPreview.images.length }} صور):</span>
+                  </span>
+                  <span class="text-[11px] text-slate-400">يمكنك حذف أي صورة بالنقر على ✕</span>
+                </label>
+                <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5">
+                  <div *ngFor="let img of generatedPreview.images; let i = index" class="relative group rounded-xl overflow-hidden border border-slate-200 bg-white aspect-square shadow-sm">
+                    <img [src]="resolveUrl(img)" class="w-full h-full object-contain p-1" alt="Product Preview">
+                    <button type="button" (click)="generatedPreview.images.splice(i, 1)" class="absolute top-1 left-1 bg-red-600 hover:bg-red-700 text-white w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition shadow text-xs" title="حذف الصورة">
+                      <i class="bi bi-x"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- Save Page CTA Buttons -->

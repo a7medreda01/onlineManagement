@@ -168,7 +168,7 @@
 
           <!-- Main Stage -->
           <div class="gallery-stage">
-            <img [src]="selectedImage"
+            <img [src]="resolveUrl(selectedImage)"
                  [alt]="pageData()?.title"
                  class="gallery-main-img">
 
@@ -201,29 +201,8 @@
                     class="thumb-btn"
                     [class.thumb-active]="activeImageIndex() === idx"
                     [class.thumb-inactive]="activeImageIndex() !== idx">
-              <img [src]="img" class="w-full h-full object-contain" alt="thumb">
+              <img [src]="resolveUrl(img)" class="w-full h-full object-contain" alt="thumb">
             </button>
-          </div>
-
-          <!-- Specs Highlight Strip (Image 2 Bottom Bar) -->
-          <div *ngIf="specs().length > 0" class="specs-bar-luxury">
-            <div *ngFor="let sp of specs()" class="spec-bar-item">
-              <div class="spec-bar-check">
-                <i class="bi bi-check-lg"></i>
-              </div>
-              <div class="spec-bar-text">
-                <span class="spec-bar-title">{{ sp.title }}</span>
-                <span *ngIf="sp.badge" class="spec-bar-badge">{{ sp.badge }}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Trust Badges Row -->
-          <div class="trust-badges-row">
-            <span class="trust-badge-item"><i class="bi bi-shield-check text-emerald-600"></i> جودة مضمونة</span>
-            <span class="trust-badge-item"><i class="bi bi-truck text-blue-600"></i> شحن سريع</span>
-            <span class="trust-badge-item"><i class="bi bi-cash-coin text-amber-600"></i> دفع باستلام</span>
-            <span class="trust-badge-item"><i class="bi bi-eye text-indigo-600"></i> معاينة أولاً</span>
           </div>
         </div>
 
@@ -289,7 +268,7 @@
                       class="variant-card-btn"
                       [class.variant-card-active]="selectedVariant() === v.name">
                 <div *ngIf="v.colorCode" class="variant-color-dot" [style.backgroundColor]="v.colorCode"></div>
-                <img *ngIf="v.image" [src]="v.image" class="w-7 h-7 object-contain rounded" alt="variant">
+                <img *ngIf="v.image" [src]="resolveUrl(v.image)" class="w-7 h-7 object-contain rounded" alt="variant">
                 <span class="text-xs font-bold truncate">{{ v.name }}</span>
               </button>
             </div>
