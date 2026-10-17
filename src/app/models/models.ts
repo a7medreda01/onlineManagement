@@ -433,6 +433,7 @@ export interface TeamActivitySummary {
   avatarUrl?: string;
   ordersCreatedCount: number;
   ordersConfirmedCount: number;
+  totalOrdersCount?: number;
 }
 
 export interface ModeratorPkWinner {
@@ -446,6 +447,7 @@ export interface ModeratorPkWinner {
 export interface ModeratorPkBattleResult {
   currentBattle: TeamActivitySummary[];
   previousWinner?: ModeratorPkWinner;
+  shiftName?: string;
 }
 
 export interface Plan {

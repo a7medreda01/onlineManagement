@@ -23,6 +23,17 @@ export class ModeratorPkBannerComponent {
     return this.pkBattleResult?.previousWinner;
   }
 
+  get shiftName(): string {
+    return this.pkBattleResult?.shiftName || 'شيفت الصباح (9 ص — 8 م)';
+  }
+
+  private getScore(mod: TeamActivitySummary | null): number {
+    if (!mod) return 0;
+    return mod.totalOrdersCount !== undefined && mod.totalOrdersCount !== null
+      ? mod.totalOrdersCount
+      : (mod.ordersCreatedCount + mod.ordersConfirmedCount);
+  }
+
   get moderatorsOnly(): TeamActivitySummary[] {
     const list = this.currentBattleData;
     if (!list) return [];
@@ -30,7 +41,7 @@ export class ModeratorPkBannerComponent {
       if (!t.userRole) return false;
       const role = t.userRole.toLowerCase();
       return role === 'moderator' || role.includes('مودريتور') || role.includes('mod');
-    }).sort((a, b) => (b.ordersCreatedCount + b.ordersConfirmedCount) - (a.ordersCreatedCount + a.ordersConfirmedCount));
+    }).sort((a, b) => this.getScore(b) - this.getScore(a));
   }
 
   get modA(): TeamActivitySummary | null {
@@ -42,13 +53,11 @@ export class ModeratorPkBannerComponent {
   }
 
   get modAScore(): number {
-    const a = this.modA;
-    return a ? (a.ordersCreatedCount + a.ordersConfirmedCount) : 0;
+    return this.getScore(this.modA);
   }
 
   get modBScore(): number {
-    const b = this.modB;
-    return b ? (b.ordersCreatedCount + b.ordersConfirmedCount) : 0;
+    return this.getScore(this.modB);
   }
 
   get modAPercent(): number {

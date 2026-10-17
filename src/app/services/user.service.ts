@@ -27,5 +27,9 @@ export class UserService {
   delete(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
+
+  toggleActive(id: number): Observable<{ message: string; isActive: boolean }> {
+    return this.http.patch<{ message: string; isActive: boolean }>(`${this.apiUrl}/${id}/toggle-active`, {});
+  }
 }
 

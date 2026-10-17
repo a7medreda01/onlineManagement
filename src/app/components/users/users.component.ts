@@ -49,6 +49,7 @@ export class UsersComponent implements OnInit {
     shiftEndTime: '17:00',
     shiftTargetOrders: 0,
     shiftBonusAmount: 0,
+    isActive: true,
     assignedSalesPlatformIds: []
   };
 
@@ -156,6 +157,7 @@ export class UsersComponent implements OnInit {
       shiftEndTime: '17:00',
       shiftTargetOrders: 0,
       shiftBonusAmount: 0,
+      isActive: true,
       assignedSalesPlatformIds: []
     };
     this.showModal = true;
@@ -177,7 +179,7 @@ export class UsersComponent implements OnInit {
       shiftEndTime: u.shiftEndTime || '17:00',
       shiftTargetOrders: u.shiftTargetOrders || 0,
       shiftBonusAmount: u.shiftBonusAmount || 0,
-      isActive: u.isActive,
+      isActive: u.isActive !== false,
       assignedSalesPlatformIds: assignedIds
     };
     this.showModal = true;
@@ -225,6 +227,24 @@ export class UsersComponent implements OnInit {
           const msg = err?.error?.Message || err?.error?.message || (typeof err?.error === 'string' ? err.error : null) || 'خطأ أثناء إنشاء حساب المستخدم';
           this.notificationService.error(msg);
         }
+      });
+    }
+  }
+
+  async toggleUserActive(u: User): Promise<void> {
+    const action = u.isActive ? 'إيقاف (تعطيل)' : 'تفعيل (تنشيط)';
+    const confirmed = await this.notificationService.confirm(
+      `هل أنت متأكد من ${action} حساب الموظف '${u.fullName}'؟`,
+      u.isActive ? 'تأكيد إيقاف الموظف' : 'تأكيد تنشيط الموظف'
+    );
+    if (confirmed) {
+      this.userService.toggleActive(u.id).subscribe({
+        next: (res) => {
+          this.notificationService.success(res.message || (u.isActive ? 'تم إيقاف حساب الموظف بنجاح' : 'تم تفعيل حساب الموظف بنجاح'));
+          this.loadUsers();
+          this.loadPayrollSummaries();
+        },
+        error: (err) => this.notificationService.error(err?.error?.Message || 'خطأ أثناء تغيير حالة الموظف')
       });
     }
   }
