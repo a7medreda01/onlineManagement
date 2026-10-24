@@ -40,8 +40,17 @@ export class ModeratorPkBannerComponent {
     return list.filter(t => {
       if (!t.userRole) return false;
       const role = t.userRole.toLowerCase();
-      return role === 'moderator' || role.includes('مودريتور') || role.includes('mod');
+      const isMod = role === 'moderator' || role.includes('مودريتور') || role.includes('mod');
+      const isManagerOrAdmin = role === 'manager' || role === 'admin' || role.includes('مدير') || role.includes('أدمن') || role.includes('ادمن');
+      const score = this.getScore(t);
+      return isMod || (isManagerOrAdmin && score > 0);
     }).sort((a, b) => this.getScore(b) - this.getScore(a));
+  }
+
+  isManagerRole(role?: string): boolean {
+    if (!role) return false;
+    const r = role.toLowerCase();
+    return r === 'manager' || r === 'admin' || r.includes('مدير') || r.includes('أدمن') || r.includes('ادمن');
   }
 
   get modA(): TeamActivitySummary | null {
