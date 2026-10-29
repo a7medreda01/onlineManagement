@@ -5,6 +5,21 @@
       "source": "/(.*)",
       "has": [
         {
+          "type": "host",
+          "value": "(?<subdomain>[^.]+)\\.besnesy\\.com"
+        },
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(facebookexternalhit|Facebot|WhatsApp|Twitterbot|TelegramBot|LinkedInBot|Pinterest|Slackbot|Discordbot|bingbot|Google-InspectionTool).*"
+        }
+      ],
+      "destination": "https://besnesy.runasp.net/api/public/store/bot-meta?subdomain=:subdomain&slug=$1&path=/$1"
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
           "type": "header",
           "key": "user-agent",
           "value": ".*(facebookexternalhit|Facebot|WhatsApp|Twitterbot|TelegramBot|LinkedInBot|Pinterest|Slackbot|Discordbot|bingbot|Google-InspectionTool).*"
