@@ -931,3 +931,78 @@
   border-color: #e2e8f0;
 }
 
+/* ─── MOBILE STICKY ORDER BAR ─── */
+.mobile-sticky-order-bar-light {
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+  padding: 10px 16px;
+  padding-bottom: max(10px, env(safe-area-inset-bottom));
+}
+
+/* ─── MOBILE RESPONSIVENESS OPTIMIZATIONS ─── */
+@media (max-width: 768px) {
+  .product-hero-section {
+    padding: 1rem 0.75rem 2rem;
+  }
+
+  .gallery-stage {
+    min-height: 280px;
+    border-radius: 1.25rem;
+  }
+
+  .gallery-main-img {
+    height: 270px;
+    padding: 12px;
+  }
+
+  .gallery-arrow {
+    width: 34px;
+    height: 34px;
+    font-size: 0.85rem;
+  }
+
+  .thumb-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 0.65rem;
+  }
+
+  .order-form-section {
+    padding: 1.5rem 0.75rem 4.5rem;
+  }
+
+  .order-form-card {
+    padding: 1.25rem;
+    border-radius: 1.25rem;
+  }
+
+  .order-form-input {
+    font-size: 0.85rem;
+    padding: 10px 14px;
+    border-radius: 0.75rem;
+  }
+
+  .features-list {
+    gap: 8px;
+    padding: 10px;
+    border-radius: 1rem;
+  }
+
+  .feature-item {
+    font-size: 0.8rem;
+    gap: 8px;
+  }
+
+  .urgency-bar {
+    padding: 6px 12px;
+  }
+
+  .brand-nav {
+    padding: 8px 12px;
+  }
+}
+
+

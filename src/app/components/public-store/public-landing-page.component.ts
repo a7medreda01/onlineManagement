@@ -409,7 +409,7 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
             this.specs.set(defaultSpecs.map(s => ({ title: s.key, description: s.value })));
           }
 
-          // 7. Parse Variants / Colors
+          // 7. Parse Variants / Colors (Only show if product actually has multiple options)
           let parsedVariants: any[] = [];
           try {
             parsedVariants = JSON.parse(page.variantOptionsJson || '[]');
@@ -417,9 +417,23 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
           if (!Array.isArray(parsedVariants) || parsedVariants.length === 0) {
             parsedVariants = raw.variantOptions || [];
           }
-          this.variantOptions.set(parsedVariants);
-          if (parsedVariants.length > 0) {
+          if (Array.isArray(parsedVariants)) {
+            parsedVariants = parsedVariants.filter((v: any) => {
+              const name = String(v?.name || '').trim();
+              return name &&
+                !name.includes('النسخة القياسية') &&
+                !name.includes('الافتراضية') &&
+                !name.includes('الأساسية') &&
+                name !== 'Standard' &&
+                name !== 'Default';
+            });
+          }
+          if (parsedVariants.length > 1) {
+            this.variantOptions.set(parsedVariants);
             this.selectedVariant.set(parsedVariants[0].name);
+          } else {
+            this.variantOptions.set([]);
+            this.selectedVariant.set('');
           }
 
           // 8. Parse Circular Feature Nodes
