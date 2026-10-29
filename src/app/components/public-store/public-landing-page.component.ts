@@ -148,6 +148,22 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
     return this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
   }
 
+  getFeatureIcon(title: string): string {
+    const t = (title || '').toLowerCase();
+    if (t.includes('تصوير') || t.includes('كاميرا') || t.includes('عدسة') || t.includes('رؤية') || t.includes('فيديو') || t.includes('ليلي')) return 'bi-camera-video-fill';
+    if (t.includes('واي فاي') || t.includes('wifi') || t.includes('اتصال') || t.includes('شبكة') || t.includes('هاتف') || t.includes('مباشر')) return 'bi-wifi';
+    if (t.includes('بطارية') || t.includes('شحن') || t.includes('طاقة') || t.includes('تسجيل') || t.includes('مستمر')) return 'bi-battery-charging';
+    if (t.includes('مغناطيس') || t.includes('تثبيت') || t.includes('حجم') || t.includes('مدمج') || t.includes('قوي')) return 'bi-magnet-fill';
+    if (t.includes('بلوتوث') || t.includes('سماعة') || t.includes('صوت') || t.includes('موسيقى')) return 'bi-bluetooth';
+    if (t.includes('شاشة') || t.includes('لمس') || t.includes('عرض') || t.includes('ألوان')) return 'bi-display';
+    if (t.includes('مقاوم') || t.includes('ماء') || t.includes('صدمات') || t.includes('غبار')) return 'bi-droplet-half';
+    if (t.includes('ضمان') || t.includes('أصل') || t.includes('جودة') || t.includes('خامات')) return 'bi-shield-check';
+    if (t.includes('سرعة') || t.includes('أداء') || t.includes('معالج') || t.includes('استجابة')) return 'bi-lightning-charge-fill';
+    if (t.includes('استشعار') || t.includes('حركة') || t.includes('تنبيه') || t.includes('إشعار')) return 'bi-bell-fill';
+    if (t.includes('شحن') || t.includes('توصيل')) return 'bi-truck';
+    return 'bi-patch-check-fill';
+  }
+
   // Conditional Size Selection (e.g. shoes, clothing, abayas)
   hasSizes = signal<boolean>(false);
   selectedSize = signal<string>('');
@@ -328,11 +344,26 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
           let features = raw.features || raw.benefits || [];
           if (!Array.isArray(features) || features.length === 0) {
             features = [
-              { title: 'خامات أصلية وتصنيع فائق الجودة', description: `تم تصنيع ${page.title} بأعلى المعايير لتحمل الاستخدام اليومي الشاق وتقديم كفاءة استثنائية.`, icon: 'bi-shield-check' },
-              { title: 'أداء عالي وسرعة استجابة', description: 'تقنيات حديثة مصممة لتوفير وقتك ومجهودك وتمنحك أفضل تجربة استخدام.', icon: 'bi-lightning-charge-fill' },
-              { title: 'ضمان ذهبي للاستبدال والمعاينة', description: 'حق فحص ومعاينة المنتج بالكامل مع المندوب قبل دفع أي مليم للتأكد من سلامته.', icon: 'bi-patch-check-fill' },
-              { title: 'أفضل قيمة حقيقية مقابل السعر', description: 'سعر اقتصادي استثنائي ومباشر من المورد دون أي وسيط أو تكاليف إضافية.', icon: 'bi-tag-fill' }
+              { title: 'دقة تصوير فائقة مع رؤية ليلية', description: `تم تصنيع ${page.title} بأعلى المعايير لتحمل الاستخدام اليومي الشاق وتقديم كفاءة استثنائية.`, icon: 'bi-camera-video-fill' },
+              { title: 'اتصال واي فاي وبث مباشر للهاتف', description: 'تقنيات حديثة مصممة لتوفير وقتك ومجهودك وتمنحك أفضل تجربة استخدام.', icon: 'bi-wifi' },
+              { title: 'حجم مدمج ومغناطيس قوي للتثبيت', description: 'تثبيت فوري في أي مكان وبكل سهولة دون الحاجة لأسلاك معقدة.', icon: 'bi-magnet-fill' },
+              { title: 'بطارية داخلية وتسجيل مستمر', description: 'سعة طاقة تدوم طويلاً مع أعلى كفاءة حفظ وتشغيل دائم.', icon: 'bi-battery-charging' }
             ];
+          } else {
+            features = features.map((f: any) => {
+              if (typeof f === 'string') {
+                return {
+                  title: f,
+                  description: 'مصنوع بأعلى معايير الدقة والجودة ليمنحك أفضل تجربة استخدام.',
+                  icon: this.getFeatureIcon(f)
+                };
+              }
+              return {
+                title: f.title || f.name || 'ميزة استثنائية',
+                description: f.description || f.desc || f.text || 'تقنيات متطورة مصممة لتوفر لك تجربة مريحة وعملية.',
+                icon: f.icon || this.getFeatureIcon(f.title || f.name || '')
+              };
+            });
           }
 
           let whyChooseUs = raw.whyChooseUs || raw.painPoints || [];

@@ -264,22 +264,6 @@
             </div>
           </div>
 
-          <!-- Features Quick Checklist -->
-          <div class="features-list">
-            <div *ngFor="let feat of (content?.features?.slice(0, 4) || [])" class="feature-item">
-              <i class="bi bi-check-circle-fill text-emerald-500"></i>
-              <span>{{ feat.title || feat }}</span>
-            </div>
-            <div class="feature-item">
-              <i class="bi bi-truck text-blue-600"></i>
-              <span>{{ pageData()?.isFreeShipping ? 'شحن مجاني لجميع محافظات مصر' : 'توصيل سريع لباب البيت' }}</span>
-            </div>
-            <div class="feature-item">
-              <i class="bi bi-shield-check text-emerald-600"></i>
-              <span>الدفع عند الاستلام بعد المعاينة الكاملة</span>
-            </div>
-          </div>
-
           <!-- Hero Direct Action (Scrolls straight down to order form where price & offers are) -->
           <div class="flex flex-col gap-3 mt-4">
             <button (click)="scrollToOrderForm()" class="cta-primary cta-pulse-btn cursor-pointer">
@@ -327,29 +311,33 @@
       </div>
     </section>
 
-    <!-- 5. UNIFIED TECHNICAL SPECIFICATIONS & GUARANTEES (Streamlined & Non-Repetitive) -->
-    <section *ngIf="sectionsConfig.showSpecs && technicalSpecs().length > 0" class="py-10 sm:py-14 px-4 bg-white border-y border-slate-200">
-      <div class="max-w-4xl mx-auto">
-        <div class="text-center mb-8">
-          <div class="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 text-xs font-black px-4 py-1.5 rounded-full mb-2 border border-indigo-200">
-            <i class="bi bi-cpu-fill"></i>
-            <span>المواصفات الفنية المعتمدة</span>
+    <!-- 5. PRODUCT FEATURES & SPECIFICATIONS WITH ICONS (الميزة مع الأيقونة) -->
+    <section *ngIf="(sectionsConfig.showFeatures || sectionsConfig.showSpecs) && content?.features?.length > 0" class="py-12 sm:py-16 px-4 bg-white border-y border-slate-200">
+      <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-10">
+          <div class="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 text-xs font-black px-4 py-1.5 rounded-full mb-2.5 border border-indigo-200 shadow-xs">
+            <i class="bi bi-stars"></i>
+            <span>مواصفات ومميزات استثنائية</span>
           </div>
-          <h2 class="text-xl sm:text-3xl font-black text-slate-900 mb-2">مواصفات وتفاصيل المنتج</h2>
-          <p class="text-slate-500 text-xs sm:text-sm">دقة متناهية وبيانات معتمدة لضمان أعلى أداء وكفاءة</p>
+          <h2 class="text-2xl sm:text-4xl font-black text-slate-900 mb-2">
+            أهم مواصفات ومميزات {{ pageData()?.title }}
+          </h2>
+          <p class="text-slate-500 text-xs sm:text-sm max-w-xl mx-auto">
+            تقنيات متطورة وخامات عالية الجودة صُممت لتمنحك أداءً فائقاً وتجربة استخدام لا تُنسى
+          </p>
         </div>
 
-        <div class="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
-          <div *ngFor="let spec of technicalSpecs(); let isEven = even"
-               class="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 sm:p-4 border-b border-slate-200 last:border-b-0 gap-1.5 sm:gap-2 transition hover:bg-slate-100/50"
-               [class.bg-white]="isEven">
-            <span class="text-xs sm:text-sm font-bold text-slate-700 flex items-center gap-2">
-              <i class="bi bi-check2-circle text-indigo-600 text-base"></i>
-              {{ spec.key }}
-            </span>
-            <span class="text-xs sm:text-sm font-black text-slate-900 bg-white sm:bg-transparent px-2.5 py-1 sm:p-0 rounded-lg border sm:border-0 border-slate-200">
-              {{ spec.value }}
-            </span>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+          <div *ngFor="let feat of content.features" class="p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:border-indigo-300 hover:bg-white hover:shadow-xl transition-all duration-300 flex flex-col items-center text-center group">
+            <div class="w-16 h-16 rounded-2xl bg-white border border-slate-200 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white group-hover:scale-110 flex items-center justify-center text-3xl mb-4 transition-all duration-300 shadow-sm">
+              <i [class]="'bi ' + (feat.icon || 'bi-patch-check-fill')"></i>
+            </div>
+            <h3 class="text-base sm:text-lg font-black text-slate-900 mb-2 group-hover:text-indigo-600 transition-colors">
+              {{ feat.title || feat }}
+            </h3>
+            <p class="text-slate-500 text-xs sm:text-sm leading-relaxed mb-0">
+              {{ feat.description || 'مصنوع بأعلى معايير الدقة لضمان أفضل تجربة استخدام.' }}
+            </p>
           </div>
         </div>
       </div>

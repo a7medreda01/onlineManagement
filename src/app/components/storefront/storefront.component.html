@@ -1314,28 +1314,16 @@
                   <input type="checkbox" [(ngModel)]="pageSectionsConfig.showVideo" class="w-5 h-5 text-indigo-600 rounded">
                 </div>
 
-                <!-- Technical Specs Table -->
-                <div class="p-3 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
+                <!-- Product Features with Icons -->
+                <div class="p-3 rounded-xl border border-slate-200 bg-white flex items-center justify-between sm:col-span-2">
                   <div class="flex items-center gap-2">
-                    <i class="bi bi-cpu-fill text-indigo-600 text-lg"></i>
+                    <i class="bi bi-stars text-indigo-600 text-lg"></i>
                     <div>
-                      <span class="text-xs font-bold text-slate-800 block">جدول المواصفات الفنية المعتمدة</span>
-                      <span class="text-[10px] text-slate-400">جدول وأيقونات المواصفات الفنية</span>
+                      <span class="text-xs font-bold text-slate-800 block">قسم مواصفات ومميزات المنتج (الميزة مع الأيقونة)</span>
+                      <span class="text-[10px] text-slate-400">إظهار أو إخفاء كروت المواصفات المميزة مع الأيقونة والوصف لكل ميزة</span>
                     </div>
                   </div>
-                  <input type="checkbox" [(ngModel)]="pageSectionsConfig.showSpecs" class="w-5 h-5 text-indigo-600 rounded">
-                </div>
-
-                <!-- Features Grid -->
-                <div class="p-3 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
-                  <div class="flex items-center gap-2">
-                    <i class="bi bi-stars text-emerald-500 text-lg"></i>
-                    <div>
-                      <span class="text-xs font-bold text-slate-800 block">شبكة المميزات والمواصفات</span>
-                      <span class="text-[10px] text-slate-400">كروت المميزات الرئيسية الأربعة</span>
-                    </div>
-                  </div>
-                  <input type="checkbox" [(ngModel)]="pageSectionsConfig.showFeatures" class="w-5 h-5 text-indigo-600 rounded">
+                  <input type="checkbox" [(ngModel)]="pageSectionsConfig.showFeatures" (ngModelChange)="pageSectionsConfig.showSpecs = pageSectionsConfig.showFeatures" class="w-5 h-5 text-indigo-600 rounded cursor-pointer">
                 </div>
 
                 <!-- Why Choose Us -->
