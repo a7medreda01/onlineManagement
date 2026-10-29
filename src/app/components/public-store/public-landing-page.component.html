@@ -213,7 +213,7 @@
             <button *ngFor="let img of images; let idx = index" (click)="selectImage(idx)" type="button"
               class="thumb-btn" [class.thumb-active]="activeImageIndex() === idx"
               [class.thumb-inactive]="activeImageIndex() !== idx">
-              <img [src]="resolveUrl(img)" class="w-full h-full object-contain" alt="thumb">
+              <img [src]="resolveUrl(img)" class="w-full h-full object-cover rounded-md" alt="thumb">
             </button>
           </div>
         </div>
