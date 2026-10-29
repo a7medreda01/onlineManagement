@@ -271,13 +271,6 @@
               <span>اطلب الآن — شحن سريع لباب بيتك 👇</span>
               <i class="bi bi-arrow-down text-sm opacity-70"></i>
             </button>
-            <a *ngIf="pageData()?.storeWhatsApp"
-               [href]="'https://wa.me/' + pageData()?.storeWhatsApp"
-               target="_blank"
-               class="cta-whatsapp">
-              <i class="bi bi-whatsapp text-xl"></i>
-              <span>استفسر عبر واتساب</span>
-            </a>
           </div>
 
         </div>
@@ -338,6 +331,43 @@
             <p class="text-slate-500 text-xs sm:text-sm leading-relaxed mb-0">
               {{ feat.description || 'مصنوع بأعلى معايير الدقة لضمان أفضل تجربة استخدام.' }}
             </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5.5. WHY CHOOSE US / PROBLEM & SOLUTION (المشكلة والحل) -->
+    <section *ngIf="sectionsConfig.showWhyChooseUs && content?.whyChooseUs?.length > 0" class="py-12 sm:py-16 px-4 bg-slate-900 text-white">
+      <div class="max-w-5xl mx-auto">
+        <div class="text-center mb-10">
+          <div class="inline-flex items-center gap-2 bg-amber-400/10 text-amber-400 border border-amber-400/20 text-xs font-black px-4 py-1.5 rounded-full mb-2.5 shadow-xs">
+            <i class="bi bi-shield-check"></i>
+            <span>المشكلة والحل</span>
+          </div>
+          <h2 class="text-2xl sm:text-4xl font-black text-white mb-2">
+            وداعاً للمشاكل التقليدية مع {{ pageData()?.title }}
+          </h2>
+          <p class="text-slate-400 text-xs sm:text-sm max-w-xl mx-auto">
+            صممنا هذا المنتج خصيصاً ليحل المشاكل الشائعة التي تواجهها مع البدائل الرديئة في السوق
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+          <div *ngFor="let item of content.whyChooseUs; let i = index" 
+               class="p-6 rounded-2xl bg-slate-800/90 border border-slate-700/80 hover:border-amber-400/50 transition-all duration-300 shadow-lg">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-xl bg-amber-400/10 border border-amber-400/20 text-amber-400 flex items-center justify-center text-2xl shrink-0">
+                <i class="bi bi-check-circle-fill"></i>
+              </div>
+              <div class="flex-1">
+                <h3 class="text-base sm:text-lg font-black text-white mb-2">
+                  {{ item.title || item.problem }}
+                </h3>
+                <p class="text-slate-300 text-xs sm:text-sm leading-relaxed mb-0">
+                  {{ item.text || item.solution }}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
