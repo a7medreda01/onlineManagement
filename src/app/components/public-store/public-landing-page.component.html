@@ -98,7 +98,7 @@
   <div *ngIf="!loading() && !error() && !orderSuccessData() && pageData()">
 
     <!-- 1. TOP URGENCY COUNTDOWN BAR (Behance Luxury Ribbon) -->
-    <div class="bg-slate-900 text-white py-2.5 px-4 sticky top-0 z-40 shadow-sm">
+    <div *ngIf="sectionsConfig.showCountdown" class="bg-slate-900 text-white py-2.5 px-4 sticky top-0 z-40 shadow-sm">
       <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm font-semibold">
         <div class="flex items-center gap-2">
           <span class="bg-rose-600 text-white text-[11px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
@@ -312,6 +312,61 @@
             </div>
           </div>
 
+          <!-- EasyOrders Quantity Bundles / Tier Offers -->
+          <div *ngIf="bundles().length > 0" class="bundle-selector-card mb-5">
+            <div class="flex items-center justify-between mb-2.5">
+              <span class="text-xs font-black text-slate-800 flex items-center gap-1.5">
+                <i class="bi bi-gift-fill text-rose-500"></i>
+                <span>اختر العرض الأنسب لك:</span>
+              </span>
+              <span class="text-[11px] font-bold text-rose-600 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-full">
+                وفر حتى 35% 🔥
+              </span>
+            </div>
+
+            <div class="flex flex-col gap-2.5">
+              <div *ngFor="let b of bundles(); let idx = index"
+                   (click)="selectBundle(idx)"
+                   class="bundle-option-row p-3 rounded-xl border-2 transition cursor-pointer flex items-center justify-between gap-3 relative"
+                   [class.bundle-row-active]="selectedBundleIndex() === idx"
+                   [class.bundle-row-inactive]="selectedBundleIndex() !== idx">
+
+                <div class="flex items-center gap-2.5">
+                  <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center text-xs flex-shrink-0"
+                       [class.border-indigo-600]="selectedBundleIndex() === idx"
+                       [class.bg-indigo-600]="selectedBundleIndex() === idx"
+                       [class.text-white]="selectedBundleIndex() === idx"
+                       [class.border-slate-300]="selectedBundleIndex() !== idx">
+                    <i *ngIf="selectedBundleIndex() === idx" class="bi bi-check font-black"></i>
+                  </div>
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <span class="text-xs sm:text-sm font-black text-slate-900">{{ b.title }}</span>
+                      <span *ngIf="b.discountBadge" 
+                            class="text-[10px] font-black px-2 py-0.5 rounded-full"
+                            [class.bg-rose-600]="b.isPopular"
+                            [class.text-white]="b.isPopular"
+                            [class.bg-slate-800]="!b.isPopular"
+                            [class.text-amber-300]="!b.isPopular">
+                        {{ b.discountBadge }}
+                      </span>
+                    </div>
+                    <span *ngIf="b.isFreeShipping" class="text-[11px] text-emerald-600 font-bold block mt-0.5">
+                      <i class="bi bi-truck"></i> شحن مجاني
+                    </span>
+                  </div>
+                </div>
+
+                <div class="text-left flex-shrink-0">
+                  <div class="text-sm sm:text-base font-black text-emerald-600">{{ b.price | currency:'EGP':'symbol':'1.0-0' }}</div>
+                  <div *ngIf="b.originalPrice && b.originalPrice > b.price" class="text-[11px] text-slate-400 line-through">
+                    {{ b.originalPrice | currency:'EGP':'symbol':'1.0-0' }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- CTA Buttons -->
           <div class="flex flex-col gap-3">
             <button (click)="scrollToOrderForm()" class="cta-primary cta-pulse-btn">
@@ -333,7 +388,7 @@
     </section>
 
     <!-- 3.5 CIRCULAR SERVICE & SPECIFICATION NODES (Image 1 Style) -->
-    <section *ngIf="circularFeatures().length > 0" class="py-12 sm:py-16 px-4 bg-gradient-to-b from-slate-50 via-white to-slate-50 border-y border-slate-200">
+    <section *ngIf="sectionsConfig.showSpecs && circularFeatures().length > 0" class="py-12 sm:py-16 px-4 bg-gradient-to-b from-slate-50 via-white to-slate-50 border-y border-slate-200">
       <div class="max-w-5xl mx-auto text-center">
         <div class="inline-flex items-center gap-2 bg-slate-900 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-3 shadow-sm">
           <i class="bi bi-gear-wide-connected text-amber-400"></i>
@@ -359,8 +414,36 @@
       </div>
     </section>
 
+    <!-- 3.55 TECHNICAL SPECIFICATIONS TABLE (EasyOrders Style) -->
+    <section *ngIf="sectionsConfig.showSpecs && technicalSpecs().length > 0" class="py-12 sm:py-16 px-4 bg-white border-b border-slate-200">
+      <div class="max-w-4xl mx-auto">
+        <div class="text-center mb-10">
+          <div class="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 text-xs font-black px-4 py-1.5 rounded-full mb-2 border border-indigo-200">
+            <i class="bi bi-cpu-fill"></i>
+            <span>المواصفات الفنية المعتمدة</span>
+          </div>
+          <h2 class="text-2xl sm:text-4xl font-black text-slate-900 mb-2">مواصفات وتفاصيل المنتج</h2>
+          <p class="text-slate-500 text-xs sm:text-sm">دقة متناهية وبيانات معتمدة من المصنع لضمان أعلى أداء</p>
+        </div>
+
+        <div class="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+          <div *ngFor="let spec of technicalSpecs(); let idx = index; let isEven = even"
+               class="flex flex-col sm:flex-row sm:items-center justify-between p-4 border-b border-slate-200 last:border-b-0 gap-2 transition hover:bg-slate-100/50"
+               [class.bg-white]="isEven">
+            <span class="text-xs sm:text-sm font-bold text-slate-700 flex items-center gap-2">
+              <i class="bi bi-check2-circle text-indigo-600 text-base"></i>
+              {{ spec.key }}
+            </span>
+            <span class="text-xs sm:text-sm font-black text-slate-900 bg-white sm:bg-transparent px-3 py-1.5 sm:p-0 rounded-lg border sm:border-0 border-slate-200">
+              {{ spec.value }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- 3.6 VIDEO SHOWCASE (Image 1 Style) -->
-    <section *ngIf="pageData()?.videoUrl" class="py-12 px-4 bg-slate-950 text-white">
+    <section *ngIf="sectionsConfig.showVideo && pageData()?.videoUrl" class="py-12 px-4 bg-slate-950 text-white">
       <div class="max-w-5xl mx-auto rounded-3xl overflow-hidden border border-slate-800 bg-gradient-to-br from-slate-900 to-slate-950 shadow-2xl p-6 sm:p-10 flex flex-col lg:flex-row items-center gap-8">
         <div class="flex-1 text-right">
           <div class="inline-flex items-center gap-2 bg-amber-400/10 text-amber-400 border border-amber-400/20 text-xs font-black px-3.5 py-1 rounded-full mb-3">
@@ -386,7 +469,7 @@
     </section>
 
     <!-- 4. WHY CHOOSE US -->
-    <section *ngIf="content?.whyChooseUs?.length > 0" class="content-section content-section-white">
+    <section *ngIf="sectionsConfig.showWhyChooseUs && content?.whyChooseUs?.length > 0" class="content-section content-section-white">
       <div class="max-w-5xl mx-auto">
         <div class="section-header">
           <div class="section-tag"><i class="bi bi-lightbulb-fill"></i> الحل الأمثل</div>
@@ -410,7 +493,7 @@
     </section>
 
     <!-- 5. FEATURES & HIGHLIGHTS GRID -->
-    <section *ngIf="content?.features?.length > 0" class="content-section content-section-gray">
+    <section *ngIf="sectionsConfig.showFeatures && content?.features?.length > 0" class="content-section content-section-gray">
       <div class="max-w-6xl mx-auto">
         <div class="section-header">
           <div class="section-tag"><i class="bi bi-stars"></i> مواصفات استثنائية</div>
@@ -434,7 +517,7 @@
     </section>
 
     <!-- 6. GUARANTEES & TRUST BADGES -->
-    <section class="py-12 px-4 bg-white border-y border-slate-200">
+    <section *ngIf="sectionsConfig.showGuarantees" class="py-12 px-4 bg-white border-y border-slate-200">
       <div class="max-w-6xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-6 text-center">
         <div class="p-4 flex flex-col items-center">
           <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-2xl mb-2">
@@ -468,7 +551,7 @@
     </section>
 
     <!-- 7. CUSTOMER REVIEWS -->
-    <section *ngIf="content?.customerReviews?.length > 0" class="content-section content-section-gray">
+    <section *ngIf="sectionsConfig.showReviews && content?.customerReviews?.length > 0" class="content-section content-section-gray">
       <div class="max-w-6xl mx-auto">
         <div class="section-header">
           <div class="section-tag"><i class="bi bi-chat-quote-fill"></i> تجارب حقيقية</div>
@@ -504,7 +587,7 @@
     </section>
 
     <!-- 8. FAQ -->
-    <section *ngIf="content?.faq?.length > 0" class="content-section content-section-white">
+    <section *ngIf="sectionsConfig.showFaq && content?.faq?.length > 0" class="content-section content-section-white">
       <div class="max-w-3xl mx-auto">
         <div class="section-header">
           <div class="section-tag"><i class="bi bi-question-circle-fill"></i> الأسئلة الشائعة</div>
@@ -559,6 +642,31 @@
               <button (click)="changeQuantity(-1)" type="button" class="qty-btn">−</button>
               <span class="qty-display">{{ orderForm.quantity }}</span>
               <button (click)="changeQuantity(1)" type="button" class="qty-btn">+</button>
+            </div>
+          </div>
+
+          <!-- Quantity Bundles in Order Form -->
+          <div *ngIf="bundles().length > 1" class="mb-5">
+            <label class="block text-xs font-bold text-slate-700 mb-2">اختر العرض المناسب لك:</label>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <div *ngFor="let b of bundles(); let idx = index"
+                   (click)="selectBundle(idx)"
+                   class="cursor-pointer p-3 rounded-xl border-2 transition text-center relative"
+                   [class.border-indigo-600]="selectedBundleIndex() === idx"
+                   [class.bg-indigo-50/60]="selectedBundleIndex() === idx"
+                   [class.border-slate-200]="selectedBundleIndex() !== idx"
+                   [class.bg-white]="selectedBundleIndex() !== idx">
+                <span *ngIf="b.discountBadge" 
+                      class="text-[9px] font-black px-1.5 py-0.5 rounded-full block mb-1 mx-auto max-w-max"
+                      [class.bg-rose-600]="b.isPopular"
+                      [class.text-white]="b.isPopular"
+                      [class.bg-slate-800]="!b.isPopular"
+                      [class.text-amber-300]="!b.isPopular">
+                  {{ b.discountBadge }}
+                </span>
+                <div class="text-xs font-black text-slate-900">{{ b.title }}</div>
+                <div class="text-sm font-black text-emerald-600 mt-1">{{ b.price | currency:'EGP':'symbol':'1.0-0' }}</div>
+              </div>
             </div>
           </div>
 
@@ -673,7 +781,7 @@
     </footer>
 
     <!-- 11. MOBILE STICKY CTA -->
-    <div class="mobile-sticky-order-bar-light lg:hidden fixed bottom-0 left-0 right-0 p-3 z-40 flex items-center justify-between gap-3">
+    <div *ngIf="sectionsConfig.showStickyBuyButton" class="mobile-sticky-order-bar-light lg:hidden fixed bottom-0 left-0 right-0 p-3 z-40 flex items-center justify-between gap-3">
       <div>
         <span class="text-xs text-slate-500 block">الإجمالي عند الاستلام</span>
         <span class="text-lg font-black text-emerald-600">{{ totalAmount | currency:'EGP':'symbol':'1.0-0' }}</span>

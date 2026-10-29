@@ -1,97 +1,4 @@
-<!-- ============================================================ -->
-<!-- UNDER DEVELOPMENT / LOCKED STATE SCREEN                      -->
-<!-- ============================================================ -->
-<div *ngIf="isUnderDevelopment()" class="space-y-6 fade-in font-cairo pb-12 max-w-4xl mx-auto">
-  <!-- Header -->
-  <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-700/80 pb-4 gap-3">
-    <div>
-      <h1 class="text-xl sm:text-2xl font-black text-slate-100 mb-1 flex items-center gap-2">
-        <i class="bi bi-shop-window text-amber-400"></i>
-        <span>المتجر الإلكتروني وصفحات الهبوط</span>
-      </h1>
-      <p class="text-xs text-slate-400">نظام المتاجر الذكية وصفحات الهبوط فائقة التحويل بالذكاء الاصطناعي</p>
-    </div>
-    <span class="bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-bold py-1.5 px-3 rounded-xl flex items-center gap-2 self-start sm:self-auto shadow-sm">
-      <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-      <span>ميزة تحت التطوير 🚧</span>
-    </span>
-  </div>
-
-  <!-- Under Development Lock Banner Card -->
-  <div class="glass-card p-8 sm:p-12 text-center space-y-6 border-amber-500/30 bg-gradient-to-b from-slate-800/80 via-slate-900/90 to-slate-950/95 shadow-2xl relative overflow-hidden rounded-3xl">
-    <!-- Background Glows -->
-    <div class="absolute -top-24 -right-24 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
-
-    <!-- Lock Icon with Glow -->
-    <div class="w-20 h-20 rounded-3xl bg-amber-500/15 border border-amber-500/40 text-amber-400 mx-auto flex items-center justify-center text-4xl shadow-xl shadow-amber-500/10">
-      <i class="bi bi-lock-fill"></i>
-    </div>
-
-    <div class="max-w-xl mx-auto space-y-2">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700/80 text-[11px] text-amber-300 font-bold mb-1">
-        <i class="bi bi-gear-wide-connected text-amber-400 animate-spin"></i>
-        <span>جاري ترقية وتجهيز النظام</span>
-      </div>
-      <h2 class="text-xl sm:text-2xl font-black text-slate-100">
-        قسم المتجر الإلكتروني وصفحات الهبوط قيد التطوير والتجهيز 🚧
-      </h2>
-      <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
-        نعمل حالياً على إطلاق أقوى تجربة للمتاجر الإلكترونية وصفحات الهبوط الذكية المدعومة بالذكاء الاصطناعي مع ربط مباشر لشركات الشحن وبوابات الدفع لتحقيق أعلى معدل تحويل لمبيعاتك.
-      </p>
-    </div>
-
-    <!-- Expected Features Cards Grid -->
-    <div class="pt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 max-w-3xl mx-auto text-right">
-      <div class="bg-slate-800/60 p-3.5 rounded-2xl border border-slate-700/60 text-slate-300 space-y-1 hover:border-amber-500/40 transition">
-        <div class="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center text-base mb-2">
-          <i class="bi bi-magic"></i>
-        </div>
-        <div class="font-bold text-xs text-white">متاجر ذكية بالكامل</div>
-        <p class="text-[11px] text-slate-400 leading-snug">تصميم وهوية وبانرات احترافية بضغطة زر واحدة</p>
-      </div>
-
-      <div class="bg-slate-800/60 p-3.5 rounded-2xl border border-slate-700/60 text-slate-300 space-y-1 hover:border-amber-500/40 transition">
-        <div class="w-8 h-8 rounded-xl bg-sky-500/15 text-sky-400 flex items-center justify-center text-base mb-2">
-          <i class="bi bi-lightning-charge-fill"></i>
-        </div>
-        <div class="font-bold text-xs text-white">صفحات هبوط فائقة السرعة</div>
-        <p class="text-[11px] text-slate-400 leading-snug">صفحات هبوط مخصصة لكل منتج ترفع نسبة التحويل</p>
-      </div>
-
-      <div class="bg-slate-800/60 p-3.5 rounded-2xl border border-slate-700/60 text-slate-300 space-y-1 hover:border-amber-500/40 transition">
-        <div class="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center text-base mb-2">
-          <i class="bi bi-graph-up-arrow"></i>
-        </div>
-        <div class="font-bold text-xs text-white">ربط البكسل والإعلانات</div>
-        <p class="text-[11px] text-slate-400 leading-snug">تتبع مباشر مع Facebook و TikTok و Google Analytics</p>
-      </div>
-
-      <div class="bg-slate-800/60 p-3.5 rounded-2xl border border-slate-700/60 text-slate-300 space-y-1 hover:border-amber-500/40 transition">
-        <div class="w-8 h-8 rounded-xl bg-purple-500/15 text-purple-400 flex items-center justify-center text-base mb-2">
-          <i class="bi bi-cart-check-fill"></i>
-        </div>
-        <div class="font-bold text-xs text-white">طلب فوري COD</div>
-        <p class="text-[11px] text-slate-400 leading-snug">نموذج دفع عند الاستلام فوري وسلس للعميل</p>
-      </div>
-    </div>
-
-    <!-- Actions Row -->
-    <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
-      <button disabled class="btn btn-secondary py-2.5 px-6 opacity-70 cursor-not-allowed text-xs font-bold flex items-center gap-2 border-amber-500/30 text-amber-300 bg-amber-500/10">
-        <i class="bi bi-clock-history"></i>
-        <span>سوف يتاح في التحديث القادم قريباً</span>
-      </button>
-
-      <a routerLink="/dashboard" class="btn btn-primary py-2.5 px-6 text-xs font-bold flex items-center gap-2">
-        <i class="bi bi-arrow-right"></i>
-        <span>العودة للوحة التحكم الرئيسية</span>
-      </a>
-    </div>
-  </div>
-</div>
-
-<div *ngIf="!isUnderDevelopment()" class="storefront-dashboard-root">
+<div class="storefront-dashboard-root">
   
   <!-- ============================================================ -->
   <!-- 1. HERO HEADER BANNER & BRAND IDENTITY -->
@@ -219,15 +126,30 @@
   <!-- 2. NAVIGATION TABS -->
   <!-- ============================================================ -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 my-6">
-    <div class="dashboard-tabs-bar w-full sm:w-auto">
-      <button class="tab-btn flex-1 sm:flex-none justify-center" [class.active]="activeTab === 'pages'" (click)="activeTab = 'pages'">
+    <div class="dashboard-tabs-bar w-full sm:w-auto overflow-x-auto flex flex-nowrap pb-1">
+      <button class="tab-btn shrink-0" [class.active]="activeTab === 'pages'" (click)="activeTab = 'pages'">
         <i class="bi bi-file-earmark-richtext"></i>
         <span>صفحات الهبوط ({{ landingPages().length }})</span>
       </button>
 
-      <button class="tab-btn flex-1 sm:flex-none justify-center" [class.active]="activeTab === 'settings'" (click)="activeTab = 'settings'">
+      <button class="tab-btn shrink-0" [class.active]="activeTab === 'settings'" (click)="activeTab = 'settings'">
         <i class="bi bi-palette2"></i>
-        <span>إعدادات وهُوِيّة المتجر</span>
+        <span>هوية وإعدادات المتجر</span>
+      </button>
+
+      <button class="tab-btn shrink-0" [class.active]="activeTab === 'pixels'" (click)="activeTab = 'pixels'">
+        <i class="bi bi-broadcast-pin text-sky-400"></i>
+        <span>بكسل السوشيال ميديا (Pixels)</span>
+      </button>
+
+      <button class="tab-btn shrink-0" [class.active]="activeTab === 'seo'" (click)="activeTab = 'seo'">
+        <i class="bi bi-search text-emerald-400"></i>
+        <span>سيو المتجر ومحركات البحث (SEO)</span>
+      </button>
+
+      <button class="tab-btn shrink-0" [class.active]="activeTab === 'sections'" (click)="activeTab = 'sections'">
+        <i class="bi bi-layout-text-window text-amber-400"></i>
+        <span>شريط الإعلانات والأقسام</span>
       </button>
     </div>
 
@@ -668,6 +590,390 @@
   </div>
 
   <!-- ============================================================ -->
+  <!-- 4.1 TAB: SOCIAL MEDIA PIXELS TRACKING                        -->
+  <!-- ============================================================ -->
+  <div *ngIf="activeTab === 'pixels'" class="space-y-6">
+    <div class="glass-card p-6 sm:p-8 rounded-3xl border border-slate-200/80 bg-white shadow-xl space-y-6">
+      
+      <!-- Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">تتبع الحملات الإعلانية ومعدل التحويل</span>
+          </div>
+          <h3 class="text-lg sm:text-xl font-black text-slate-900 flex items-center gap-2">
+            <i class="bi bi-broadcast-pin text-indigo-600"></i>
+            <span>بكسل السوشيال ميديا وتتبع الإعلانات (Ad Pixels)</span>
+          </h3>
+          <p class="text-xs text-slate-500 mt-1">
+            اربط بكسل فيسبوك، تيك توك، وسناب شات مع متجرك وصفحات الهبوط لتتبع الزيارات والطلبات وقيمة المبيعات بدقة 100%.
+          </p>
+        </div>
+
+        <button (click)="saveSettings()" [disabled]="savingSettings()" class="btn-primary-gradient px-6 py-2.5 text-xs font-bold self-start sm:self-auto shrink-0 shadow-md">
+          <span *ngIf="savingSettings()" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+          <i *ngIf="!savingSettings()" class="bi bi-check-lg"></i>
+          <span>حفظ إعدادات البكسل</span>
+        </button>
+      </div>
+
+      <!-- Auto-tracked Events Strip -->
+      <div class="p-4 rounded-2xl bg-indigo-50/70 border border-indigo-100 flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div class="flex items-center gap-2 text-indigo-900 font-bold">
+          <i class="bi bi-shield-check text-indigo-600 text-base"></i>
+          <span>الأحداث التي يتم إرسالها تلقائياً لكافة المنصات:</span>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="bg-white text-indigo-700 font-mono font-bold px-2.5 py-1 rounded-lg border border-indigo-200">PageView</span>
+          <span class="bg-white text-indigo-700 font-mono font-bold px-2.5 py-1 rounded-lg border border-indigo-200">ViewContent</span>
+          <span class="bg-white text-indigo-700 font-mono font-bold px-2.5 py-1 rounded-lg border border-indigo-200">InitiateCheckout</span>
+          <span class="bg-emerald-600 text-white font-mono font-black px-2.5 py-1 rounded-lg shadow-sm">Purchase (EGP Value)</span>
+        </div>
+      </div>
+
+      <!-- Pixels Inputs Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- 1. Meta / Facebook Pixel -->
+        <div class="p-5 rounded-2xl border-2 border-blue-100 bg-gradient-to-br from-blue-50/40 to-white hover:border-blue-300 transition space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center text-lg shadow-sm">
+                <i class="bi bi-meta"></i>
+              </div>
+              <div>
+                <h4 class="text-sm font-black text-slate-900 mb-0">Meta / Facebook Pixel</h4>
+                <span class="text-[11px] text-slate-500">فيسبوك وإنستجرام</span>
+              </div>
+            </div>
+            <span *ngIf="settingsForm.facebookPixelId" class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">
+              مفعّل ✓
+            </span>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">معرّف البكسل (Pixel ID):</label>
+            <input type="text"
+                   [(ngModel)]="settingsForm.facebookPixelId"
+                   class="form-input-text font-mono text-left"
+                   placeholder="مثال: 123456789012345">
+            <p class="text-[11px] text-slate-400 mt-1">انسخ الـ Pixel ID من مدير إعلانات ميتا (Events Manager)</p>
+          </div>
+        </div>
+
+        <!-- 2. TikTok Pixel -->
+        <div class="p-5 rounded-2xl border-2 border-slate-200 bg-gradient-to-br from-slate-50/60 to-white hover:border-slate-400 transition space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-xl bg-slate-950 text-white flex items-center justify-center text-lg shadow-sm">
+                <i class="bi bi-tiktok"></i>
+              </div>
+              <div>
+                <h4 class="text-sm font-black text-slate-900 mb-0">TikTok Pixel</h4>
+                <span class="text-[11px] text-slate-500">تيك توك للأعمال</span>
+              </div>
+            </div>
+            <span *ngIf="settingsForm.tiktokPixelId" class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">
+              مفعّل ✓
+            </span>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">معرّف بكسل تيك توك (TikTok Pixel ID):</label>
+            <input type="text"
+                   [(ngModel)]="settingsForm.tiktokPixelId"
+                   class="form-input-text font-mono text-left"
+                   placeholder="مثال: C1234567890ABCDEF">
+            <p class="text-[11px] text-slate-400 mt-1">تتبع التحويلات لجمهور التيك توك مباشرة</p>
+          </div>
+        </div>
+
+        <!-- 3. Snapchat Pixel -->
+        <div class="p-5 rounded-2xl border-2 border-amber-200 bg-gradient-to-br from-amber-50/40 to-white hover:border-amber-400 transition space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-xl bg-amber-400 text-slate-950 flex items-center justify-center text-lg shadow-sm">
+                <i class="bi bi-snapchat"></i>
+              </div>
+              <div>
+                <h4 class="text-sm font-black text-slate-900 mb-0">Snapchat Pixel</h4>
+                <span class="text-[11px] text-slate-500">سناب شات للأعمال (الأعلى تحويلاً للـ COD)</span>
+              </div>
+            </div>
+            <span *ngIf="settingsForm.snapchatPixelId" class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">
+              مفعّل ✓
+            </span>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">معرّف بكسل سناب شات (Snap Pixel ID):</label>
+            <input type="text"
+                   [(ngModel)]="settingsForm.snapchatPixelId"
+                   class="form-input-text font-mono text-left"
+                   placeholder="مثال: a1b2c3d4-e5f6-7890-abcd-1234567890ef">
+            <p class="text-[11px] text-slate-400 mt-1">مهم جداً لحملات سناب شات والدفع عند الاستلام</p>
+          </div>
+        </div>
+
+        <!-- 4. Google Analytics 4 (GA4) & GTM -->
+        <div class="p-5 rounded-2xl border-2 border-rose-100 bg-gradient-to-br from-rose-50/40 to-white hover:border-rose-300 transition space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-xl bg-orange-600 text-white flex items-center justify-center text-lg shadow-sm">
+                <i class="bi bi-google"></i>
+              </div>
+              <div>
+                <h4 class="text-sm font-black text-slate-900 mb-0">Google Analytics 4 & GTM</h4>
+                <span class="text-[11px] text-slate-500">إحصائيات جوجل وإدارة الوسوم</span>
+              </div>
+            </div>
+            <span *ngIf="settingsForm.googleAnalyticsId || settingsForm.googleTagManagerId" class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">
+              مفعّل ✓
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">معرّف GA4 (Measurement ID):</label>
+              <input type="text"
+                     [(ngModel)]="settingsForm.googleAnalyticsId"
+                     class="form-input-text font-mono text-left"
+                     placeholder="G-XXXXXXXXXX">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">معرّف GTM (Tag Manager):</label>
+              <input type="text"
+                     [(ngModel)]="settingsForm.googleTagManagerId"
+                     class="form-input-text font-mono text-left"
+                     placeholder="GTM-XXXXXXX">
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Save Button Footer -->
+      <div class="pt-4 border-t border-slate-100 flex items-center justify-end">
+        <button (click)="saveSettings()" [disabled]="savingSettings()" class="btn-primary-gradient px-8 py-3 font-bold text-sm">
+          <span *ngIf="savingSettings()" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+          <span>حفظ إعدادات البكسل</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 4.2 TAB: STORE SEO & SERP PREVIEW                            -->
+  <!-- ============================================================ -->
+  <div *ngIf="activeTab === 'seo'" class="space-y-6">
+    <div class="glass-card p-6 sm:p-8 rounded-3xl border border-slate-200/80 bg-white shadow-xl space-y-6">
+      
+      <!-- Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">الظهور في نتائج البحث وجوجل</span>
+          </div>
+          <h3 class="text-lg sm:text-xl font-black text-slate-900 flex items-center gap-2">
+            <i class="bi bi-search text-emerald-600"></i>
+            <span>سيو المتجر ومحركات البحث (Store SEO)</span>
+          </h3>
+          <p class="text-xs text-slate-500 mt-1">
+            تحسين ظهور متجرك في الصفحات الأولى في محرك بحث Google ومشاركة الروابط في واتساب وفيسبوك.
+          </p>
+        </div>
+
+        <button (click)="saveSettings()" [disabled]="savingSettings()" class="btn-primary-gradient px-6 py-2.5 text-xs font-bold self-start sm:self-auto shrink-0 shadow-md">
+          <span *ngIf="savingSettings()" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+          <i *ngIf="!savingSettings()" class="bi bi-check-lg"></i>
+          <span>حفظ إعدادات الـ SEO</span>
+        </button>
+      </div>
+
+      <!-- Live Google Search Result (SERP) Preview Card -->
+      <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-black text-slate-700 flex items-center gap-2">
+            <i class="bi bi-google text-blue-600"></i>
+            <span>معاينة حية لشكل متجرك في نتائج بحث Google:</span>
+          </span>
+          <span class="text-[11px] text-emerald-600 font-bold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+            Live SERP Preview ⚡
+          </span>
+        </div>
+
+        <!-- Google SERP Arabic Box -->
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm max-w-2xl font-sans text-right">
+          <div class="flex items-center gap-2 mb-1">
+            <div class="w-6 h-6 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-xs overflow-hidden shrink-0">
+              <img *ngIf="settingsForm.logoUrl" [src]="resolveUrl(settingsForm.logoUrl)" class="w-full h-full object-cover" alt="icon">
+              <i *ngIf="!settingsForm.logoUrl" class="bi bi-globe2 text-slate-500"></i>
+            </div>
+            <div class="flex flex-col text-[12px] leading-tight text-slate-700">
+              <span class="font-bold truncate">{{ settingsForm.storeDisplayName || 'متجر إلكتروني' }}</span>
+              <span class="text-[11px] text-emerald-700 font-mono" dir="ltr">https://{{ settingsForm.subdomain || 'store' }}.besnesy.com</span>
+            </div>
+          </div>
+
+          <h4 class="text-base sm:text-lg font-bold text-blue-800 hover:underline cursor-pointer mb-1 leading-snug">
+            {{ settingsForm.metaTitle || (settingsForm.storeDisplayName ? (settingsForm.storeDisplayName + ' | المتجر الرسمي والدفع عند الاستلام') : 'متجرك الإلكتروني | تسوق أفضل المنتجات') }}
+          </h4>
+
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-0">
+            {{ settingsForm.metaDescription || (settingsForm.bio ? settingsForm.bio : 'تسوق الآن أفضل المنتجات عبر متجرنا الرسمي. شحن سريع لكافة المحافظات، معاينة وفحص قبل الدفع، وضمان استبدال 14 يوم.') }}
+          </p>
+        </div>
+      </div>
+
+      <!-- SEO Fields -->
+      <div class="space-y-4">
+
+        <!-- Meta Title -->
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="text-xs font-bold text-slate-800">عنوان المتجر في محركات البحث (Meta Title):</label>
+            <span class="text-[11px] font-mono font-bold" [class.text-emerald-600]="(settingsForm.metaTitle?.length || 0) <= 60" [class.text-rose-600]="(settingsForm.metaTitle?.length || 0) > 60">
+              {{ settingsForm.metaTitle?.length || 0 }} / 60 حرف (الموصى به)
+            </span>
+          </div>
+          <input type="text"
+                 [(ngModel)]="settingsForm.metaTitle"
+                 class="form-input-text font-bold"
+                 placeholder="مثال: متجر فيزارو | أفضل الساعات والمجوهرات الفاخرة مع معاينة قبل الدفع">
+        </div>
+
+        <!-- Meta Description -->
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="text-xs font-bold text-slate-800">وصف المتجر في جوجل ومواقع التواصل (Meta Description):</label>
+            <span class="text-[11px] font-mono font-bold" [class.text-emerald-600]="(settingsForm.metaDescription?.length || 0) <= 160" [class.text-rose-600]="(settingsForm.metaDescription?.length || 0) > 160">
+              {{ settingsForm.metaDescription?.length || 0 }} / 160 حرف (الموصى به)
+            </span>
+          </div>
+          <textarea [(ngModel)]="settingsForm.metaDescription"
+                    rows="3"
+                    class="form-input-text resize-none"
+                    placeholder="مثال: تسوق أرقى الساعات والمجوهرات الإيطالية الأصلية. شحن سريع لكافة المحافظات خلال 24 ساعة، مع حق المعاينة والفحص الكامل قبل الدفع."></textarea>
+        </div>
+
+        <!-- Meta Keywords -->
+        <div>
+          <label class="block text-xs font-bold text-slate-800 mb-1.5">الكلمات الدلالية والوسوم (Keywords - مفصولة بفاصلة):</label>
+          <input type="text"
+                 [(ngModel)]="settingsForm.metaKeywords"
+                 class="form-input-text"
+                 placeholder="ساعات رجالية, مجوهرات فاخرة, دفع عند الاستلام, متجر أونلاين, شحن مجاني مصر">
+        </div>
+
+        <!-- Social Share Image (OG Image) -->
+        <div>
+          <label class="block text-xs font-bold text-slate-800 mb-1.5">صورة المشاركة على واتساب وفيسبوك (OpenGraph Image):</label>
+          <div class="flex items-center gap-3">
+            <div class="w-16 h-16 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden shrink-0">
+              <img *ngIf="settingsForm.socialShareImageUrl" [src]="resolveUrl(settingsForm.socialShareImageUrl)" class="w-full h-full object-cover" alt="og image">
+              <i *ngIf="!settingsForm.socialShareImageUrl" class="bi bi-image text-slate-400 text-xl"></i>
+            </div>
+            <div class="flex-1 space-y-1">
+              <input type="text" [(ngModel)]="settingsForm.socialShareImageUrl" class="form-input-text text-xs" placeholder="https://example.com/share-image.jpg">
+              <p class="text-[11px] text-slate-400">تظهر هذه الصورة كغلاف عندما يشارك أي شخص رابط متجرك في واتساب، تيليجرام، أو فيسبوك</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Save Button Footer -->
+      <div class="pt-4 border-t border-slate-100 flex items-center justify-end">
+        <button (click)="saveSettings()" [disabled]="savingSettings()" class="btn-primary-gradient px-8 py-3 font-bold text-sm">
+          <span *ngIf="savingSettings()" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+          <span>حفظ إعدادات الـ SEO</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 4.3 TAB: STORE SECTIONS & ANNOUNCEMENT BAR                    -->
+  <!-- ============================================================ -->
+  <div *ngIf="activeTab === 'sections'" class="space-y-6">
+    <div class="glass-card p-6 sm:p-8 rounded-3xl border border-slate-200/80 bg-white shadow-xl space-y-6">
+      
+      <!-- Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">التحكم في أقسام المتجر</span>
+          </div>
+          <h3 class="text-lg sm:text-xl font-black text-slate-900 flex items-center gap-2">
+            <i class="bi bi-layout-text-window text-amber-600"></i>
+            <span>شريط الإعلانات وأقسام واجهة المتجر</span>
+          </h3>
+          <p class="text-xs text-slate-500 mt-1">
+            تحكم في شريط الإعلانات العلوي، ونصوص الثقة، والمزايا المعروضة للعملاء في واجهة الكتالوج العام.
+          </p>
+        </div>
+
+        <button (click)="saveSettings()" [disabled]="savingSettings()" class="btn-primary-gradient px-6 py-2.5 text-xs font-bold self-start sm:self-auto shrink-0 shadow-md">
+          <span *ngIf="savingSettings()" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+          <i *ngIf="!savingSettings()" class="bi bi-check-lg"></i>
+          <span>حفظ الأقسام</span>
+        </button>
+      </div>
+
+      <!-- 1. Top Announcement Bar Box -->
+      <div class="p-5 rounded-2xl border-2 border-amber-100 bg-gradient-to-br from-amber-50/50 to-white space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-xl bg-amber-500 text-white flex items-center justify-center text-lg shadow-sm">
+              <i class="bi bi-megaphone-fill"></i>
+            </div>
+            <div>
+              <h4 class="text-sm font-black text-slate-900 mb-0">شريط الإعلانات العلوي (Announcement Bar)</h4>
+              <span class="text-[11px] text-slate-500">يظهر في أعلى صفحات المتجر لجذب الانتباه لعرض اليوم</span>
+            </div>
+          </div>
+
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" [(ngModel)]="settingsForm.showAnnouncementBar" class="sr-only peer">
+            <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-600"></div>
+          </label>
+        </div>
+
+        <div *ngIf="settingsForm.showAnnouncementBar !== false" class="space-y-3 pt-3 border-t border-amber-200/60">
+          <div>
+            <label class="block text-xs font-bold text-slate-800 mb-1">نص الإعلان أو العرض الحصري:</label>
+            <input type="text"
+                   [(ngModel)]="settingsForm.announcementText"
+                   class="form-input-text font-bold"
+                   placeholder="مثال: خصم حصري 20% لفترة محدودة بمناسبة العام الجديد + شحن مجاني لكافة المحافظات 🔥">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-800 mb-1">رابط التحويل عند النقر (اختياري):</label>
+            <input type="text"
+                   [(ngModel)]="settingsForm.announcementLink"
+                   class="form-input-text font-mono text-left"
+                   placeholder="مثال: /special-offer أو https://...">
+          </div>
+        </div>
+      </div>
+
+      <!-- Save Button Footer -->
+      <div class="pt-4 border-t border-slate-100 flex items-center justify-end">
+        <button (click)="saveSettings()" [disabled]="savingSettings()" class="btn-primary-gradient px-8 py-3 font-bold text-sm">
+          <span *ngIf="savingSettings()" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+          <span>حفظ التغييرات</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
   <!-- 5. AI GENERATION WIZARD MODAL (COMPLETELY REDESIGNED!) -->
   <!-- ============================================================ -->
   <div *ngIf="showAiWizardModal" class="modal-backdrop-overlay" (click)="closeAiWizard()">
@@ -881,42 +1187,457 @@
               </h4>
             </div>
 
-            <!-- Page Title & Headline -->
-            <div class="space-y-3">
-              <div>
-                <label class="text-xs font-bold text-slate-600">عنوان الصفحة الرئيسي:</label>
-                <input type="text" [(ngModel)]="generatedPreview.title" class="form-input-text font-bold">
+            <!-- Sub-Tabs Navigation for EasyOrders Visual Editor -->
+            <div class="flex items-center gap-1.5 border-b border-slate-200 overflow-x-auto pb-2 mb-4 text-xs font-bold whitespace-nowrap">
+              <button type="button" (click)="editorTab = 'general'" class="px-3.5 py-2 rounded-xl transition flex items-center gap-1.5" [class.bg-slate-900]="editorTab === 'general'" [class.text-white]="editorTab === 'general'" [class.bg-slate-100]="editorTab !== 'general'" [class.text-slate-700]="editorTab !== 'general'">
+                <i class="bi bi-info-circle"></i>
+                <span>البيانات الأساسية</span>
+              </button>
+              <button type="button" (click)="editorTab = 'sections'" class="px-3.5 py-2 rounded-xl transition flex items-center gap-1.5" [class.bg-slate-900]="editorTab === 'sections'" [class.text-white]="editorTab === 'sections'" [class.bg-slate-100]="editorTab !== 'sections'" [class.text-slate-700]="editorTab !== 'sections'">
+                <i class="bi bi-layout-wtf text-amber-400"></i>
+                <span>أقسام الصفحة (EasyOrders)</span>
+              </button>
+              <button type="button" (click)="editorTab = 'bundles'" class="px-3.5 py-2 rounded-xl transition flex items-center gap-1.5" [class.bg-slate-900]="editorTab === 'bundles'" [class.text-white]="editorTab === 'bundles'" [class.bg-slate-100]="editorTab !== 'bundles'" [class.text-slate-700]="editorTab !== 'bundles'">
+                <i class="bi bi-gift-fill text-rose-500"></i>
+                <span>عروض الكميات والتوفير ({{ editableBundles.length }})</span>
+              </button>
+              <button type="button" (click)="editorTab = 'specs'" class="px-3.5 py-2 rounded-xl transition flex items-center gap-1.5" [class.bg-slate-900]="editorTab === 'specs'" [class.text-white]="editorTab === 'specs'" [class.bg-slate-100]="editorTab !== 'specs'" [class.text-slate-700]="editorTab !== 'specs'">
+                <i class="bi bi-cpu text-indigo-500"></i>
+                <span>المواصفات الفنية ({{ editableSpecs.length }})</span>
+              </button>
+              <button type="button" (click)="editorTab = 'features'" class="px-3.5 py-2 rounded-xl transition flex items-center gap-1.5" [class.bg-slate-900]="editorTab === 'features'" [class.text-white]="editorTab === 'features'" [class.bg-slate-100]="editorTab !== 'features'" [class.text-slate-700]="editorTab !== 'features'">
+                <i class="bi bi-stars text-emerald-500"></i>
+                <span>المميزات ({{ editableFeatures.length }})</span>
+              </button>
+              <button type="button" (click)="editorTab = 'why'" class="px-3.5 py-2 rounded-xl transition flex items-center gap-1.5" [class.bg-slate-900]="editorTab === 'why'" [class.text-white]="editorTab === 'why'" [class.bg-slate-100]="editorTab !== 'why'" [class.text-slate-700]="editorTab !== 'why'">
+                <i class="bi bi-lightbulb text-amber-500"></i>
+                <span>المشكلة والحل ({{ editableWhyChooseUs.length }})</span>
+              </button>
+              <button type="button" (click)="editorTab = 'reviews'" class="px-3.5 py-2 rounded-xl transition flex items-center gap-1.5" [class.bg-slate-900]="editorTab === 'reviews'" [class.text-white]="editorTab === 'reviews'" [class.bg-slate-100]="editorTab !== 'reviews'" [class.text-slate-700]="editorTab !== 'reviews'">
+                <i class="bi bi-chat-heart text-rose-400"></i>
+                <span>التقييمات ({{ editableReviews.length }})</span>
+              </button>
+              <button type="button" (click)="editorTab = 'faq'" class="px-3.5 py-2 rounded-xl transition flex items-center gap-1.5" [class.bg-slate-900]="editorTab === 'faq'" [class.text-white]="editorTab === 'faq'" [class.bg-slate-100]="editorTab !== 'faq'" [class.text-slate-700]="editorTab !== 'faq'">
+                <i class="bi bi-question-circle text-sky-400"></i>
+                <span>الأسئلة الشائعة ({{ editableFaqs.length }})</span>
+              </button>
+              <button type="button" (click)="editorTab = 'pixels_seo'" class="px-3.5 py-2 rounded-xl transition flex items-center gap-1.5" [class.bg-slate-900]="editorTab === 'pixels_seo'" [class.text-white]="editorTab === 'pixels_seo'" [class.bg-slate-100]="editorTab !== 'pixels_seo'" [class.text-slate-700]="editorTab !== 'pixels_seo'">
+                <i class="bi bi-broadcast text-blue-500"></i>
+                <span>بكسل وسيو الصفحة</span>
+              </button>
+              <button type="button" (click)="editorTab = 'images'" class="px-3.5 py-2 rounded-xl transition flex items-center gap-1.5" [class.bg-slate-900]="editorTab === 'images'" [class.text-white]="editorTab === 'images'" [class.bg-slate-100]="editorTab !== 'images'" [class.text-slate-700]="editorTab !== 'images'">
+                <i class="bi bi-images text-purple-500"></i>
+                <span>معرض الصور ({{ generatedPreview.images?.length || 0 }})</span>
+              </button>
+            </div>
+
+            <!-- PANEL 1: GENERAL -->
+            <div *ngIf="editorTab === 'general'" class="space-y-4">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="text-xs font-bold text-slate-700 mb-1 block">عنوان الصفحة والمنتج الرئيسي *</label>
+                  <input type="text" [(ngModel)]="generatedPreview.title" class="form-input-text font-bold">
+                </div>
+                <div>
+                  <label class="text-xs font-bold text-slate-700 mb-1 block">الرابط المخصص (Slug) *</label>
+                  <input type="text" [(ngModel)]="generatedPreview.slug" class="form-input-text font-mono text-left">
+                </div>
               </div>
 
               <div>
-                <label class="text-xs font-bold text-slate-600">العنوان الإعلاني الجذاب (Headline):</label>
+                <label class="text-xs font-bold text-slate-700 mb-1 block">العنوان الإعلاني الجذاب (Headline) *</label>
                 <input type="text" [(ngModel)]="generatedPreview.headline" class="form-input-text">
               </div>
 
               <div>
-                <label class="text-xs font-bold text-slate-600">السطر الفرعي المقنع (Subheadline):</label>
+                <label class="text-xs font-bold text-slate-700 mb-1 block">السطر الإقناعي الفرعي (Subheadline):</label>
                 <textarea [(ngModel)]="generatedPreview.subheadline" rows="2" class="form-input-text"></textarea>
               </div>
 
-              <div>
-                <label class="text-xs font-bold text-slate-600">رابط الصفحة الفرعي (Slug):</label>
-                <input type="text" [(ngModel)]="generatedPreview.slug" class="form-input-text font-mono text-left">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label class="text-xs font-bold text-slate-700 mb-1 block">سعر البيع الأساسي (ج.م):</label>
+                  <input type="number" [(ngModel)]="generatedPreview.suggestedPrice" class="form-input-text font-bold font-mono">
+                </div>
+                <div>
+                  <label class="text-xs font-bold text-slate-700 mb-1 block">السعر قبل الخصم (مشطوب):</label>
+                  <input type="number" [(ngModel)]="generatedPreview.suggestedOriginalPrice" class="form-input-text font-mono text-slate-500">
+                </div>
+                <div>
+                  <label class="text-xs font-bold text-slate-700 mb-1 block">شارة العرض (Badge):</label>
+                  <input type="text" [(ngModel)]="generatedPreview.badge" class="form-input-text" placeholder="عرض اليوم 🔥">
+                </div>
               </div>
 
-              <!-- Generated Images Preview Grid -->
-              <div *ngIf="generatedPreview.images && generatedPreview.images.length > 0" class="pt-2">
-                <label class="text-xs font-bold text-slate-700 flex items-center justify-between mb-2">
-                  <span class="flex items-center gap-1.5">
-                    <i class="bi bi-images text-indigo-600"></i>
-                    <span>صور المنتج المقترحة والمولدة ({{ generatedPreview.images.length }} صور):</span>
-                  </span>
-                  <span class="text-[11px] text-slate-400">يمكنك حذف أي صورة بالنقر على ✕</span>
+              <div>
+                <label class="text-xs font-bold text-slate-700 mb-1 block">رابط فيديو معاينة المنتج (YouTube أو MP4 مباشر):</label>
+                <input type="text" [(ngModel)]="generatedPreview.videoUrl" class="form-input-text font-mono text-left" placeholder="https://www.youtube.com/watch?v=... أو رابط فيديو مباشر">
+              </div>
+
+              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
+                <div>
+                  <span class="text-xs font-bold text-slate-800 block">شحن مجاني لهذا المنتج:</span>
+                  <span class="text-[11px] text-slate-500">يظهر وسم "شحن مجاني لجميع المحافظات" في الصفحة</span>
+                </div>
+                <input type="checkbox" [(ngModel)]="aiRequest.isFreeShipping" class="w-5 h-5 text-indigo-600 rounded">
+              </div>
+            </div>
+
+            <!-- PANEL 2: SECTIONS CONTROLS (EasyOrders SHOW/HIDE) -->
+            <div *ngIf="editorTab === 'sections'" class="space-y-4">
+              <div class="p-3 bg-indigo-50 border border-indigo-100 rounded-xl text-xs text-indigo-900 font-medium">
+                تحكم كامل في ظهور أو إخفاء أقسام صفحة المنتج كما في منصة <strong>EasyOrders</strong> لتحقيق أفضل تحويل.
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <!-- Urgency Countdown -->
+                <div class="p-3 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <i class="bi bi-stopwatch-fill text-rose-500 text-lg"></i>
+                    <div>
+                      <span class="text-xs font-bold text-slate-800 block">شريط العد التنازلي وعرض اليوم</span>
+                      <span class="text-[10px] text-slate-400">شريط العرض الحصري أعلى الصفحة</span>
+                    </div>
+                  </div>
+                  <input type="checkbox" [(ngModel)]="pageSectionsConfig.showCountdown" class="w-5 h-5 text-indigo-600 rounded">
+                </div>
+
+                <!-- Video Showcase -->
+                <div class="p-3 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <i class="bi bi-play-circle-fill text-amber-500 text-lg"></i>
+                    <div>
+                      <span class="text-xs font-bold text-slate-800 block">فيديو المعاينة الحية</span>
+                      <span class="text-[10px] text-slate-400">قسم مشاهدة المنتج أثناء الاستخدام</span>
+                    </div>
+                  </div>
+                  <input type="checkbox" [(ngModel)]="pageSectionsConfig.showVideo" class="w-5 h-5 text-indigo-600 rounded">
+                </div>
+
+                <!-- Technical Specs Table -->
+                <div class="p-3 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <i class="bi bi-cpu-fill text-indigo-600 text-lg"></i>
+                    <div>
+                      <span class="text-xs font-bold text-slate-800 block">جدول المواصفات الفنية المعتمدة</span>
+                      <span class="text-[10px] text-slate-400">جدول وأيقونات المواصفات الفنية</span>
+                    </div>
+                  </div>
+                  <input type="checkbox" [(ngModel)]="pageSectionsConfig.showSpecs" class="w-5 h-5 text-indigo-600 rounded">
+                </div>
+
+                <!-- Features Grid -->
+                <div class="p-3 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <i class="bi bi-stars text-emerald-500 text-lg"></i>
+                    <div>
+                      <span class="text-xs font-bold text-slate-800 block">شبكة المميزات والمواصفات</span>
+                      <span class="text-[10px] text-slate-400">كروت المميزات الرئيسية الأربعة</span>
+                    </div>
+                  </div>
+                  <input type="checkbox" [(ngModel)]="pageSectionsConfig.showFeatures" class="w-5 h-5 text-indigo-600 rounded">
+                </div>
+
+                <!-- Why Choose Us -->
+                <div class="p-3 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <i class="bi bi-lightbulb-fill text-amber-500 text-lg"></i>
+                    <div>
+                      <span class="text-xs font-bold text-slate-800 block">المشكلة والحل (لماذا تختارنا)</span>
+                      <span class="text-[10px] text-slate-400">ودّع المشاكل السابقة واستمتع بالجودة</span>
+                    </div>
+                  </div>
+                  <input type="checkbox" [(ngModel)]="pageSectionsConfig.showWhyChooseUs" class="w-5 h-5 text-indigo-600 rounded">
+                </div>
+
+                <!-- Customer Reviews -->
+                <div class="p-3 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <i class="bi bi-chat-quote-fill text-blue-500 text-lg"></i>
+                    <div>
+                      <span class="text-xs font-bold text-slate-800 block">آراء وتقييمات العملاء الموثقة</span>
+                      <span class="text-[10px] text-slate-400">تجارب حقيقية لزيادة ثقة العميل</span>
+                    </div>
+                  </div>
+                  <input type="checkbox" [(ngModel)]="pageSectionsConfig.showReviews" class="w-5 h-5 text-indigo-600 rounded">
+                </div>
+
+                <!-- FAQ Section -->
+                <div class="p-3 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <i class="bi bi-question-circle-fill text-sky-500 text-lg"></i>
+                    <div>
+                      <span class="text-xs font-bold text-slate-800 block">الأسئلة الشائعة والإجابات</span>
+                      <span class="text-[10px] text-slate-400">أكورديون الإجابة عن مخاوف الشراء</span>
+                    </div>
+                  </div>
+                  <input type="checkbox" [(ngModel)]="pageSectionsConfig.showFaq" class="w-5 h-5 text-indigo-600 rounded">
+                </div>
+
+                <!-- Trust Guarantees -->
+                <div class="p-3 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <i class="bi bi-shield-check text-emerald-600 text-lg"></i>
+                    <div>
+                      <span class="text-xs font-bold text-slate-800 block">شارات الضمان والثقة الأربعة</span>
+                      <span class="text-[10px] text-slate-400">أصالة 100%، شحن سريع، معاينة قبل الدفع</span>
+                    </div>
+                  </div>
+                  <input type="checkbox" [(ngModel)]="pageSectionsConfig.showGuarantees" class="w-5 h-5 text-indigo-600 rounded">
+                </div>
+
+                <!-- Mobile Sticky Buy Button -->
+                <div class="p-3 rounded-xl border border-slate-200 bg-white flex items-center justify-between sm:col-span-2">
+                  <div class="flex items-center gap-2">
+                    <i class="bi bi-phone-fill text-indigo-600 text-lg"></i>
+                    <div>
+                      <span class="text-xs font-bold text-slate-800 block">شريط الطلب الثابت أسفل شاشات الموبايل (Sticky CTA)</span>
+                      <span class="text-[10px] text-slate-400">يبقى ظاهراً أثناء التمرير في الموبايل لمضاعفة سرعة الطلب</span>
+                    </div>
+                  </div>
+                  <input type="checkbox" [(ngModel)]="pageSectionsConfig.showStickyBuyButton" class="w-5 h-5 text-indigo-600 rounded">
+                </div>
+              </div>
+            </div>
+
+            <!-- PANEL 3: QUANTITY BUNDLES / TIER OFFERS (EasyOrders Style) -->
+            <div *ngIf="editorTab === 'bundles'" class="space-y-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h4 class="text-xs font-bold text-slate-800">باقات وعروض الكميات (EasyOrders Bundles):</h4>
+                  <p class="text-[11px] text-slate-400">عروض مضاعفة الكمية بخصومات مغرية لرفع متوسط قيمة السلة (AOV)</p>
+                </div>
+                <button type="button" (click)="addBundle()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1.5">
+                  <i class="bi bi-plus-circle"></i>
+                  <span>إضافة عرض جديد</span>
+                </button>
+              </div>
+
+              <div class="space-y-3">
+                <div *ngFor="let b of editableBundles; let i = index" class="p-4 rounded-2xl border border-slate-200 bg-slate-50 space-y-3">
+                  <div class="flex items-center justify-between">
+                    <span class="text-xs font-black text-indigo-900 bg-indigo-100 px-2.5 py-0.5 rounded-full">العرض رقم {{ i + 1 }}</span>
+                    <button type="button" (click)="removeBundle(i)" class="text-rose-600 hover:text-rose-700 text-xs font-bold flex items-center gap-1">
+                      <i class="bi bi-trash"></i> حذف
+                    </button>
+                  </div>
+
+                  <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5">
+                    <div>
+                      <label class="text-[11px] font-bold text-slate-600 block mb-1">الكمية بالقطع:</label>
+                      <input type="number" [(ngModel)]="b.quantity" class="form-input-text font-mono font-bold text-xs" min="1">
+                    </div>
+                    <div class="sm:col-span-2">
+                      <label class="text-[11px] font-bold text-slate-600 block mb-1">عنوان العرض:</label>
+                      <input type="text" [(ngModel)]="b.title" class="form-input-text text-xs" placeholder="مثال: قطعتين (وفّر 150 ج.م)">
+                    </div>
+                    <div>
+                      <label class="text-[11px] font-bold text-slate-600 block mb-1">شارة التمييز:</label>
+                      <input type="text" [(ngModel)]="b.discountBadge" class="form-input-text text-xs" placeholder="الأكثر طلباً 🔥">
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5 items-center">
+                    <div>
+                      <label class="text-[11px] font-bold text-slate-600 block mb-1">السعر الإجمالي (ج.م):</label>
+                      <input type="number" [(ngModel)]="b.price" class="form-input-text font-mono font-bold text-emerald-600 text-xs">
+                    </div>
+                    <div>
+                      <label class="text-[11px] font-bold text-slate-600 block mb-1">السعر المشطوب (ج.م):</label>
+                      <input type="number" [(ngModel)]="b.originalPrice" class="form-input-text font-mono text-xs text-slate-400">
+                    </div>
+                    <div class="flex items-center gap-2 pt-4">
+                      <input type="checkbox" [(ngModel)]="b.isPopular" id="popular_{{i}}" class="w-4 h-4 text-rose-600 rounded">
+                      <label for="popular_{{i}}" class="text-xs font-bold text-slate-700 cursor-pointer">تمييز كـ "الأكثر طلباً"</label>
+                    </div>
+                    <div class="flex items-center gap-2 pt-4">
+                      <input type="checkbox" [(ngModel)]="b.isFreeShipping" id="free_{{i}}" class="w-4 h-4 text-emerald-600 rounded">
+                      <label for="free_{{i}}" class="text-xs font-bold text-slate-700 cursor-pointer">شحن مجاني</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- PANEL 4: TECHNICAL SPECS TABLE -->
+            <div *ngIf="editorTab === 'specs'" class="space-y-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h4 class="text-xs font-bold text-slate-800">جدول المواصفات والتفاصيل الفنية:</h4>
+                  <p class="text-[11px] text-slate-400">تظهر في جدول المواصفات الفنية المعتمدة بتصميم راقي</p>
+                </div>
+                <button type="button" (click)="addSpec()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1.5">
+                  <i class="bi bi-plus-circle"></i>
+                  <span>إضافة مواصفة</span>
+                </button>
+              </div>
+
+              <div class="space-y-2.5">
+                <div *ngFor="let s of editableSpecs; let i = index" class="flex items-center gap-2 p-2 bg-slate-50 border border-slate-200 rounded-xl">
+                  <input type="text" [(ngModel)]="s.key" class="form-input-text text-xs font-bold w-1/3" placeholder="المواصفة (مثال: خامة التصنيع)">
+                  <input type="text" [(ngModel)]="s.value" class="form-input-text text-xs flex-1" placeholder="القيمة (مثال: ستانلس ستيل إيطالي 316L)">
+                  <button type="button" (click)="removeSpec(i)" class="text-rose-500 hover:text-rose-700 p-2 text-base shrink-0">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- PANEL 5: FEATURES -->
+            <div *ngIf="editorTab === 'features'" class="space-y-4">
+              <div class="flex items-center justify-between">
+                <h4 class="text-xs font-bold text-slate-800">مميزات المنتج الرئيسية (Highlights):</h4>
+                <button type="button" (click)="addFeature()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1.5 rounded-xl border border-indigo-200 transition">
+                  <i class="bi bi-plus-circle"></i> إضافة ميزة
+                </button>
+              </div>
+              <div class="space-y-3">
+                <div *ngFor="let f of editableFeatures; let i = index" class="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                  <div class="flex items-center justify-between">
+                    <input type="text" [(ngModel)]="f.title" class="form-input-text font-bold text-xs" placeholder="عنوان الميزة">
+                    <button type="button" (click)="removeFeature(i)" class="text-rose-600 text-xs font-bold shrink-0 mr-2">حذف</button>
+                  </div>
+                  <textarea [(ngModel)]="f.description" rows="2" class="form-input-text text-xs" placeholder="شرح تفصيلي للميزة"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- PANEL 6: WHY CHOOSE US -->
+            <div *ngIf="editorTab === 'why'" class="space-y-4">
+              <div class="flex items-center justify-between">
+                <h4 class="text-xs font-bold text-slate-800">المشكلة والحل (لماذا نحن خيارك الأول):</h4>
+                <button type="button" (click)="addWhyItem()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1.5 rounded-xl border border-indigo-200 transition">
+                  <i class="bi bi-plus-circle"></i> إضافة عنصر
+                </button>
+              </div>
+              <div class="space-y-3">
+                <div *ngFor="let w of editableWhyChooseUs; let i = index" class="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                  <div class="flex items-center justify-between">
+                    <input type="text" [(ngModel)]="w.title" class="form-input-text font-bold text-xs" placeholder="عنوان الميزة / الحل">
+                    <button type="button" (click)="removeWhyItem(i)" class="text-rose-600 text-xs font-bold shrink-0 mr-2">حذف</button>
+                  </div>
+                  <textarea [(ngModel)]="w.text" rows="2" class="form-input-text text-xs" placeholder="النص المقنع للعميل"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- PANEL 7: REVIEWS -->
+            <div *ngIf="editorTab === 'reviews'" class="space-y-4">
+              <div class="flex items-center justify-between">
+                <h4 class="text-xs font-bold text-slate-800">تقييمات وتجارب المشترين:</h4>
+                <button type="button" (click)="addReview()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1.5 rounded-xl border border-indigo-200 transition">
+                  <i class="bi bi-plus-circle"></i> إضافة تقييم
+                </button>
+              </div>
+              <div class="space-y-3">
+                <div *ngFor="let r of editableReviews; let i = index" class="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                  <div class="flex items-center gap-2">
+                    <input type="text" [(ngModel)]="r.name" class="form-input-text font-bold text-xs w-1/3" placeholder="اسم العميل">
+                    <input type="text" [(ngModel)]="r.city" class="form-input-text text-xs w-1/4" placeholder="المدينة">
+                    <select [(ngModel)]="r.rating" class="form-input-text text-xs w-24">
+                      <option [ngValue]="5">5 نجوم ★</option>
+                      <option [ngValue]="4">4 نجوم ★</option>
+                    </select>
+                    <button type="button" (click)="removeReview(i)" class="text-rose-600 text-xs font-bold shrink-0 mr-auto">حذف</button>
+                  </div>
+                  <textarea [(ngModel)]="r.comment" rows="2" class="form-input-text text-xs" placeholder="تعليق العميل وتجربته"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- PANEL 8: FAQ -->
+            <div *ngIf="editorTab === 'faq'" class="space-y-4">
+              <div class="flex items-center justify-between">
+                <h4 class="text-xs font-bold text-slate-800">الأسئلة الشائعة والأجوبة:</h4>
+                <button type="button" (click)="addFaq()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1.5 rounded-xl border border-indigo-200 transition">
+                  <i class="bi bi-plus-circle"></i> إضافة سؤال
+                </button>
+              </div>
+              <div class="space-y-3">
+                <div *ngFor="let q of editableFaqs; let i = index" class="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                  <div class="flex items-center justify-between">
+                    <input type="text" [(ngModel)]="q.question" class="form-input-text font-bold text-xs" placeholder="السؤال الشائع؟">
+                    <button type="button" (click)="removeFaq(i)" class="text-rose-600 text-xs font-bold shrink-0 mr-2">حذف</button>
+                  </div>
+                  <textarea [(ngModel)]="q.answer" rows="2" class="form-input-text text-xs" placeholder="الإجابة المقنعة والمطمئنة"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- PANEL 9: PIXELS & SEO (PAGE LEVEL) -->
+            <div *ngIf="editorTab === 'pixels_seo'" class="space-y-4">
+              <div class="p-3 bg-blue-50 border border-blue-100 rounded-xl text-xs text-blue-900">
+                يمكنك تخصيص بكسلات وسيو مستقل لهذه الصفحة تحديداً، أو تركها فارغة لاستخدام الإعدادات العامة للمتجر تلقائياً.
+              </div>
+
+              <!-- Page Pixels -->
+              <div class="space-y-3">
+                <h5 class="text-xs font-black text-slate-800 flex items-center gap-1.5">
+                  <i class="bi bi-broadcast text-indigo-600"></i> معرّفات البكسل المخصصة لهذه الصفحة:
+                </h5>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label class="text-[11px] font-bold text-slate-600 block mb-1">Facebook Pixel ID:</label>
+                    <input type="text" [(ngModel)]="generatedPreview.facebookPixelId" class="form-input-text font-mono text-xs" placeholder="افتراضي من المتجر">
+                  </div>
+                  <div>
+                    <label class="text-[11px] font-bold text-slate-600 block mb-1">TikTok Pixel ID:</label>
+                    <input type="text" [(ngModel)]="generatedPreview.tiktokPixelId" class="form-input-text font-mono text-xs" placeholder="افتراضي من المتجر">
+                  </div>
+                  <div>
+                    <label class="text-[11px] font-bold text-slate-600 block mb-1">Snapchat Pixel ID:</label>
+                    <input type="text" [(ngModel)]="generatedPreview.snapchatPixelId" class="form-input-text font-mono text-xs" placeholder="افتراضي من المتجر">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Page SEO -->
+              <div class="space-y-3 pt-3 border-t border-slate-200">
+                <h5 class="text-xs font-black text-slate-800 flex items-center gap-1.5">
+                  <i class="bi bi-search text-emerald-600"></i> سيو وعنوان الصفحة في محركات البحث (Page SEO):
+                </h5>
+                <div>
+                  <label class="text-[11px] font-bold text-slate-600 block mb-1">عنوان الصفحة في جوجل (Meta Title):</label>
+                  <input type="text" [(ngModel)]="generatedPreview.metaTitle" class="form-input-text text-xs" placeholder="{{ generatedPreview.title }}">
+                </div>
+                <div>
+                  <label class="text-[11px] font-bold text-slate-600 block mb-1">وصف الصفحة في جوجل ومواقع التواصل (Meta Description):</label>
+                  <textarea [(ngModel)]="generatedPreview.metaDescription" rows="2" class="form-input-text text-xs" placeholder="{{ generatedPreview.headline }}"></textarea>
+                </div>
+                <div>
+                  <label class="text-[11px] font-bold text-slate-600 block mb-1">الكلمات الدلالية (Keywords):</label>
+                  <input type="text" [(ngModel)]="generatedPreview.metaKeywords" class="form-input-text text-xs" placeholder="اسم المنتج, دفع عند الاستلام, تسوق">
+                </div>
+              </div>
+            </div>
+
+            <!-- PANEL 10: IMAGES -->
+            <div *ngIf="editorTab === 'images'" class="space-y-4">
+              <div class="flex items-center justify-between">
+                <label class="text-xs font-bold text-slate-700">معرض صور المنتج (سلايدر العرض):</label>
+                <label class="cursor-pointer bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-3 py-1.5 rounded-xl transition shadow flex items-center gap-1.5">
+                  <i class="bi bi-upload"></i>
+                  <span>رفع صورة جديدة</span>
+                  <input type="file" accept="image/*" (change)="onProductImageUploaded($event)" class="hidden">
                 </label>
-                <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5">
-                  <div *ngFor="let img of generatedPreview.images; let i = index" class="relative group rounded-xl overflow-hidden border border-slate-200 bg-white aspect-square shadow-sm">
-                    <img [src]="resolveUrl(img)" class="w-full h-full object-contain p-1" alt="Product Preview">
-                    <button type="button" (click)="generatedPreview.images.splice(i, 1)" class="absolute top-1 left-1 bg-red-600 hover:bg-red-700 text-white w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition shadow text-xs" title="حذف الصورة">
-                      <i class="bi bi-x"></i>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <input type="text" [(ngModel)]="manualImageUrl" class="form-input-text text-xs flex-1" placeholder="أو أدخل رابط صورة مباشر (https://...)">
+                <button type="button" (click)="addManualImage()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-4 py-2 rounded-xl shrink-0">
+                  إضافة
+                </button>
+              </div>
+
+              <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3 pt-2">
+                <div *ngFor="let img of (generatedPreview.images || []); let i = index" class="relative group rounded-xl overflow-hidden border border-slate-200 bg-white aspect-square shadow-sm">
+                  <img [src]="resolveUrl(img)" class="w-full h-full object-contain p-1" alt="Product Image">
+                  <div class="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
+                    <button type="button" (click)="setAsMainImage(i)" *ngIf="i > 0" class="text-white text-xs bg-indigo-600 p-1.5 rounded-full" title="تعيين كغلاف رئيسي">
+                      <i class="bi bi-star-fill"></i>
+                    </button>
+                    <button type="button" (click)="removeProductImage(i)" class="text-white text-xs bg-rose-600 p-1.5 rounded-full" title="حذف">
+                      <i class="bi bi-trash"></i>
                     </button>
                   </div>
                 </div>

@@ -5,6 +5,7 @@ import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { Title, Meta, DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { environment } from '../../../environments/environment';
 import { StorefrontService } from '../../services/storefront.service';
+import { PixelTrackingService } from '../../services/pixel-tracking.service';
 import {
   ProductLandingPage,
   PublicLandingOrderRequest,
@@ -23,6 +24,7 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private storefrontService = inject(StorefrontService);
+  private pixelTrackingService = inject(PixelTrackingService);
   private titleService = inject(Title);
   private metaService = inject(Meta);
   private sanitizer = inject(DomSanitizer);
@@ -37,6 +39,36 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
 
   pageData = signal<ProductLandingPage | null>(null);
   orderSuccessData = signal<PublicLandingOrderResponse | null>(null);
+
+  // EasyOrders Sections Configuration (Toggles)
+  sectionsConfig: any = {
+    showCountdown: true,
+    showStickyBuyButton: true,
+    showVideo: true,
+    showBundleOffers: true,
+    showSpecs: true,
+    showFeatures: true,
+    showWhyChooseUs: true,
+    showGuarantees: true,
+    showReviews: true,
+    showFaq: true,
+    showCircularNodes: true
+  };
+
+  // Quantity Tier Bundles (EasyOrders signature feature)
+  bundles = signal<Array<{
+    quantity: number;
+    title: string;
+    price: number;
+    originalPrice?: number;
+    discountBadge: string;
+    isPopular: boolean;
+    isFreeShipping: boolean;
+  }>>([]);
+  selectedBundleIndex = signal<number>(0);
+
+  // Technical Specs
+  technicalSpecs = signal<Array<{ key: string; value: string }>>([]);
 
   // Parsed Theme & Content
   theme: any = {
@@ -218,16 +250,69 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
       next: (page) => {
         this.pageData.set(page);
 
-        // Dynamically update document title and meta tags with product branding
-        const productTitle = page.title || 'عرض خاص';
-        const productDesc = page.headline || page.subheadline || `عرض خاص وتخفيض لفترة محدودة على ${productTitle}. اطلب الآن والدفع عند الاستلام.`;
+        // 1. Dynamic Store & Product SEO Optimization
         const storeName = page.storeDisplayName || page.storeSubdomain || '';
-        this.titleService.setTitle(storeName ? `${productTitle} | ${storeName}` : productTitle);
-        this.metaService.updateTag({ name: 'description', content: productDesc });
-        this.metaService.updateTag({ property: 'og:title', content: productTitle });
-        this.metaService.updateTag({ property: 'og:description', content: productDesc });
+        const pageTitle = page.metaTitle || (storeName ? `${page.title} | ${storeName}` : page.title);
+        const pageDesc = page.metaDescription || page.headline || page.subheadline || `عرض خاص وتخفيض لفترة محدودة على ${page.title}. اطلب الآن والدفع عند الاستلام بعد المعاينة.`;
+        const pageKeywords = page.metaKeywords || `${page.title}, ${page.niche}, تسوق أونلاين, دفع عند الاستلام, شحن مجاني مصر, تسوق`;
+        
+        // Parse images early for OG Image
+        try {
+          this.images = JSON.parse(page.mediaUrlsJson || '[]');
+        } catch {
+          this.images = [];
+        }
+        if (this.images.length > 0) {
+          this.selectedImage = this.images[0];
+        } else {
+          this.selectedImage = 'https://placehold.co/600x500/1e293b/f8fafc?text=' + encodeURIComponent(page.title);
+        }
 
-        // Parse theme
+        const pageOgImage = this.resolveUrl(page.ogImageUrl || (this.images.length > 0 ? this.images[0] : ''));
+
+        this.titleService.setTitle(pageTitle);
+        this.metaService.updateTag({ name: 'description', content: pageDesc });
+        this.metaService.updateTag({ name: 'keywords', content: pageKeywords });
+        this.metaService.updateTag({ property: 'og:title', content: pageTitle });
+        this.metaService.updateTag({ property: 'og:description', content: pageDesc });
+        this.metaService.updateTag({ property: 'og:image', content: pageOgImage });
+        this.metaService.updateTag({ property: 'og:type', content: 'product' });
+        this.metaService.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
+        this.metaService.updateTag({ name: 'twitter:title', content: pageTitle });
+        this.metaService.updateTag({ name: 'twitter:description', content: pageDesc });
+        this.metaService.updateTag({ name: 'twitter:image', content: pageOgImage });
+
+        // 2. Initialize Social Media Tracking Pixels (Meta, TikTok, Snapchat, GA4/GTM)
+        const fbPixel = page.facebookPixelId || page.storeFacebookPixelId;
+        const ttPixel = page.tiktokPixelId || page.storeTikTokPixelId;
+        const snapPixel = page.snapchatPixelId || page.storeSnapchatPixelId;
+        const gaPixel = page.googleAnalyticsId || page.storeGoogleAnalyticsId;
+
+        this.pixelTrackingService.initialize({
+          facebookPixelId: fbPixel,
+          tiktokPixelId: ttPixel,
+          snapchatPixelId: snapPixel,
+          googleAnalyticsId: gaPixel
+        });
+
+        this.pixelTrackingService.trackPageView(pageTitle);
+        this.pixelTrackingService.trackViewContent({
+          id: page.slug,
+          name: page.title,
+          category: page.niche,
+          price: page.sellingPrice,
+          currency: 'EGP'
+        });
+
+        // 3. Parse Sections Configuration (EasyOrders Show/Hide Control)
+        try {
+          if (page.sectionsConfigJson) {
+            const parsedConfig = JSON.parse(page.sectionsConfigJson);
+            this.sectionsConfig = { ...this.sectionsConfig, ...parsedConfig };
+          }
+        } catch {}
+
+        // 4. Parse Theme
         try {
           this.theme = JSON.parse(page.themeConfigJson || '{}');
           if (!this.theme.primaryColor) this.theme.primaryColor = '#0284c7';
@@ -236,7 +321,7 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
           this.theme = { primaryColor: '#0284c7', accentColor: '#f59e0b' };
         }
 
-        // Parse and normalize content
+        // 5. Parse and normalize Content
         try {
           const raw = JSON.parse(page.contentJson || '{}');
 
@@ -299,7 +384,7 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
             guarantees: raw.guarantees || []
           };
 
-          // Parse Visual Specs Callouts (Image 2 style)
+          // 6. Parse Technical Specs (EasyOrders style Table)
           let parsedSpecs: any[] = [];
           try {
             parsedSpecs = JSON.parse(page.specsJson || '[]');
@@ -307,16 +392,24 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
           if (!Array.isArray(parsedSpecs) || parsedSpecs.length === 0) {
             parsedSpecs = raw.specs || [];
           }
-          if (!Array.isArray(parsedSpecs) || parsedSpecs.length === 0) {
-            parsedSpecs = [
-              { title: 'خامات ومواد أصلية فاخرة', description: 'مقاومة للصدمات والخدوش وعوامل الاستخدام', badge: 'Top Notch' },
-              { title: 'مقاومة الماء والغبار', description: 'معايير تصنيع موثوقة لحماية فائقة', badge: 'Water-Resistant' },
-              { title: 'ضمان معتمد واستبدال فوري', description: 'معاينة وفحص مجاني قبل دفع الحساب', badge: '2 Years Warranty' }
+          if (Array.isArray(parsedSpecs) && parsedSpecs.length > 0) {
+            this.technicalSpecs.set(parsedSpecs.map((s: any) => ({
+              key: s.key || s.title || 'المواصفة',
+              value: s.value || s.description || s.spec || ''
+            })));
+            this.specs.set(parsedSpecs);
+          } else {
+            const defaultSpecs = [
+              { key: 'الضمان المعتمد', value: 'سنتين استبدال فوري ومعاينة قبل الدفع' },
+              { key: 'سرعة التوصيل', value: 'شحن فوري لباب البيت خلال 24 - 48 ساعة' },
+              { key: 'خدمة العملاء', value: 'متابعة عبر الواتساب على مدار الساعة' },
+              { key: 'سياسة الاستبدال', value: '14 يوماً حق استبدال واسترجاع مجاني' }
             ];
+            this.technicalSpecs.set(defaultSpecs);
+            this.specs.set(defaultSpecs.map(s => ({ title: s.key, description: s.value })));
           }
-          this.specs.set(parsedSpecs);
 
-          // Parse Variants / Colors (Image 1 style)
+          // 7. Parse Variants / Colors
           let parsedVariants: any[] = [];
           try {
             parsedVariants = JSON.parse(page.variantOptionsJson || '[]');
@@ -329,7 +422,7 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
             this.selectedVariant.set(parsedVariants[0].name);
           }
 
-          // Parse Circular Feature Nodes (Image 1 style)
+          // 8. Parse Circular Feature Nodes
           let circular = raw.circularFeatures || [];
           if (!Array.isArray(circular) || circular.length === 0) {
             circular = [
@@ -343,7 +436,52 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
           }
           this.circularFeatures.set(circular);
 
-          // Conditional Size Selection (only if product has sizes e.g. shoes, clothes)
+          // 9. Parse Quantity Tier Bundles (EasyOrders style)
+          let parsedBundles: any[] = [];
+          try {
+            parsedBundles = JSON.parse(page.bundleOffersJson || '[]');
+          } catch {}
+          if (!Array.isArray(parsedBundles) || parsedBundles.length === 0) {
+            const orig = page.originalPrice && page.originalPrice > page.sellingPrice ? page.originalPrice : Math.round(page.sellingPrice * 1.35);
+            parsedBundles = [
+              {
+                quantity: 1,
+                title: 'قطعة واحدة (شراء أساسي)',
+                price: page.sellingPrice,
+                originalPrice: orig,
+                discountBadge: 'العرض الأساسي',
+                isPopular: false,
+                isFreeShipping: page.isFreeShipping
+              },
+              {
+                quantity: 2,
+                title: 'قطعتين (وفّر 150 ج.م إضافية)',
+                price: Math.round(page.sellingPrice * 1.8),
+                originalPrice: orig * 2,
+                discountBadge: 'الأكثر طلباً 🔥',
+                isPopular: true,
+                isFreeShipping: true
+              },
+              {
+                quantity: 3,
+                title: '3 قطع (باقة التوفير العائلية)',
+                price: Math.round(page.sellingPrice * 2.5),
+                originalPrice: orig * 3,
+                discountBadge: 'أعلى توفير 🎁',
+                isPopular: false,
+                isFreeShipping: true
+              }
+            ];
+          }
+          this.bundles.set(parsedBundles);
+          const popIdx = parsedBundles.findIndex((b: any) => b.isPopular);
+          this.selectedBundleIndex.set(popIdx >= 0 ? popIdx : 0);
+          const activeB = parsedBundles[this.selectedBundleIndex()];
+          if (activeB) {
+            this.orderForm.quantity = activeB.quantity;
+          }
+
+          // 10. Conditional Size Selection
           const hasSizesFlag = !!raw.hasSizes;
           this.hasSizes.set(hasSizesFlag);
           if (hasSizesFlag) {
@@ -377,21 +515,6 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
             guarantees: []
           };
         }
-
-        // Parse images
-        try {
-          this.images = JSON.parse(page.mediaUrlsJson || '[]');
-        } catch {
-          this.images = [];
-        }
-
-        if (this.images.length > 0) {
-          this.selectedImage = this.images[0];
-        } else {
-          this.selectedImage = 'https://placehold.co/600x500/1e293b/f8fafc?text=' + encodeURIComponent(page.title);
-        }
-
-        this.injectPixels(page.storeFacebookPixelId, page.storeTikTokPixelId);
 
         this.loading.set(false);
       },
@@ -443,30 +566,80 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
     }
   }
 
+  selectBundle(index: number): void {
+    const list = this.bundles();
+    if (index >= 0 && index < list.length) {
+      this.selectedBundleIndex.set(index);
+      const b = list[index];
+      this.orderForm.quantity = b.quantity;
+      this.onInitiateCheckout();
+    }
+  }
+
   changeQuantity(delta: number): void {
     const newQty = this.orderForm.quantity + delta;
     if (newQty >= 1 && newQty <= 20) {
       this.orderForm.quantity = newQty;
+      // Match bundle if exists
+      const matchIdx = this.bundles().findIndex(b => b.quantity === newQty);
+      if (matchIdx >= 0) {
+        this.selectedBundleIndex.set(matchIdx);
+      }
     }
   }
 
+  onInitiateCheckout(): void {
+    const p = this.pageData();
+    if (!p) return;
+    this.pixelTrackingService.trackInitiateCheckout({
+      id: p.slug,
+      name: p.title,
+      quantity: this.orderForm.quantity,
+      totalAmount: this.totalAmount,
+      currency: 'EGP'
+    });
+  }
+
   scrollToOrderForm(): void {
+    this.onInitiateCheckout();
     const element = document.getElementById('orderSection');
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   }
 
+  get isFreeShippingActive(): boolean {
+    const p = this.pageData();
+    if (!p) return true;
+    if (p.isFreeShipping) return true;
+    // Check if selected bundle gives free shipping
+    const bList = this.bundles();
+    if (bList.length > 0 && this.selectedBundleIndex() < bList.length) {
+      return !!bList[this.selectedBundleIndex()].isFreeShipping;
+    }
+    return false;
+  }
+
   get shippingCost(): number {
     const p = this.pageData();
-    if (!p || p.isFreeShipping) return 0;
+    if (!p || this.isFreeShippingActive) return 0;
     return p.customShippingCost ?? 40;
   }
 
   get totalAmount(): number {
     const p = this.pageData();
     if (!p) return 0;
-    return (p.sellingPrice * this.orderForm.quantity) + this.shippingCost;
+    const bList = this.bundles();
+    let productSubtotal = p.sellingPrice * this.orderForm.quantity;
+
+    if (bList.length > 0 && this.selectedBundleIndex() < bList.length) {
+      const activeB = bList[this.selectedBundleIndex()];
+      if (activeB.quantity === this.orderForm.quantity) {
+        productSubtotal = activeB.price;
+      }
+    }
+
+    return productSubtotal + this.shippingCost;
   }
 
   submitOrder(): void {
@@ -493,19 +666,28 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
       this.orderForm.notes = `المقاس المختار: ${this.selectedSize()}` + (this.orderForm.notes ? ` | ${this.orderForm.notes}` : '');
     }
 
+    // Include selected bundle note
+    const bList = this.bundles();
+    if (bList.length > 0 && this.selectedBundleIndex() < bList.length) {
+      const b = bList[this.selectedBundleIndex()];
+      this.orderForm.notes = `عرض الباقة: ${b.title}` + (this.orderForm.notes ? ` | ${this.orderForm.notes}` : '');
+    }
+
     this.submitting.set(true);
     this.storefrontService.submitPublicOrder(this.subdomain, this.slug, this.orderForm).subscribe({
       next: (res) => {
         this.submitting.set(false);
         this.orderSuccessData.set(res);
 
-        // Track purchase event if pixel exists
-        if ((window as any).fbq) {
-          (window as any).fbq('track', 'Purchase', {
-            value: res.totalAmount,
-            currency: 'EGP'
-          });
-        }
+        // Fire Purchase event across Meta, TikTok, Snapchat, GA4
+        const p = this.pageData();
+        this.pixelTrackingService.trackPurchase({
+          orderNumber: res.orderNumber,
+          totalAmount: res.totalAmount,
+          currency: 'EGP',
+          productName: p?.title || 'طلب منتج',
+          quantity: this.orderForm.quantity
+        });
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
       },

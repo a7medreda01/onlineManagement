@@ -5,6 +5,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Title, Meta } from '@angular/platform-browser';
 import { environment } from '../../../environments/environment';
 import { StorefrontService } from '../../services/storefront.service';
+import { PixelTrackingService } from '../../services/pixel-tracking.service';
 import { StorefrontSettings, ProductLandingPage } from '../../models/models';
 import { getSubdomain } from '../../utils/subdomain.util';
 
@@ -18,6 +19,7 @@ import { getSubdomain } from '../../utils/subdomain.util';
 export class PublicStoreComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private storefrontService = inject(StorefrontService);
+  private pixelTrackingService = inject(PixelTrackingService);
   private titleService = inject(Title);
   private metaService = inject(Meta);
 
@@ -114,14 +116,35 @@ export class PublicStoreComponent implements OnInit {
       next: (settings) => {
         this.settings.set(settings);
 
-        const storeName = settings?.storeDisplayName || 'المتجر الإلكتروني';
-        const bio = settings?.bio || `أهلاً بكم في ${storeName}. تسوق أفضل المنتجات بأعلى جودة وضمان.`;
+        const storeName = settings?.metaTitle || settings?.storeDisplayName || 'المتجر الإلكتروني';
+        const bio = settings?.metaDescription || settings?.bio || `أهلاً بكم في ${storeName}. تسوق أفضل المنتجات بأعلى جودة وضمان ومعاينة قبل الدفع.`;
+        const keywords = settings?.metaKeywords || `${settings?.storeDisplayName}, متجر إلكتروني, دفع عند الاستلام, تسوق مصر, تسوق أونلاين`;
+        const shareImg = this.resolveUrl(settings?.socialShareImageUrl || settings?.logoUrl || settings?.coverUrl);
+
         this.titleService.setTitle(storeName);
         this.metaService.updateTag({ name: 'description', content: bio });
+        this.metaService.updateTag({ name: 'keywords', content: keywords });
         this.metaService.updateTag({ property: 'og:title', content: storeName });
         this.metaService.updateTag({ property: 'og:description', content: bio });
-        if (settings?.logoUrl) {
-          this.metaService.updateTag({ property: 'og:image', content: settings.logoUrl });
+        this.metaService.updateTag({ property: 'og:type', content: 'website' });
+        if (shareImg) {
+          this.metaService.updateTag({ property: 'og:image', content: shareImg });
+          this.metaService.updateTag({ name: 'twitter:image', content: shareImg });
+        }
+        this.metaService.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
+        this.metaService.updateTag({ name: 'twitter:title', content: storeName });
+        this.metaService.updateTag({ name: 'twitter:description', content: bio });
+
+        // Initialize Store Social Media Tracking Pixels
+        if (settings) {
+          this.pixelTrackingService.initialize({
+            facebookPixelId: settings.facebookPixelId,
+            tiktokPixelId: settings.tiktokPixelId,
+            snapchatPixelId: settings.snapchatPixelId,
+            googleAnalyticsId: settings.googleAnalyticsId,
+            googleTagManagerId: settings.googleTagManagerId
+          });
+          this.pixelTrackingService.trackPageView(storeName);
         }
 
         this.storefrontService.getPublicStorePages(this.subdomain).subscribe({

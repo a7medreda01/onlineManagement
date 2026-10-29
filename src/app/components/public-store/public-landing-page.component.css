@@ -901,3 +901,33 @@
   margin-bottom: 0;
 }
 
+/* ─── EASYORDERS QUANTITY BUNDLE STYLING ─── */
+.bundle-selector-card {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 1.25rem;
+  padding: 1rem;
+  box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.04);
+}
+
+.bundle-option-row {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.bundle-option-row:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.bundle-row-active {
+  border-color: #4f46e5 !important;
+  background: rgba(79, 70, 229, 0.04) !important;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.1) !important;
+}
+
+.bundle-row-inactive {
+  border-color: #e2e8f0;
+}
+

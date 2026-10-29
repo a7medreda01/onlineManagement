@@ -27,9 +27,9 @@ import { UpgradeModalComponent } from '../shared/upgrade-modal/upgrade-modal.com
 })
 export class StorefrontComponent implements OnInit {
   // Under Development mode
-  isUnderDevelopment = signal<boolean>(true);
+  isUnderDevelopment = signal<boolean>(false);
 
-  activeTab: 'pages' | 'settings' = 'pages';
+  activeTab: 'pages' | 'settings' | 'pixels' | 'seo' | 'sections' = 'pages';
 
   // State signals
   settings = signal<StorefrontSettings | null>(null);
@@ -103,7 +103,17 @@ export class StorefrontComponent implements OnInit {
     contactPhone: '',
     facebookPixelId: '',
     tiktokPixelId: '',
+    snapchatPixelId: '',
     googleAnalyticsId: '',
+    googleTagManagerId: '',
+    metaTitle: '',
+    metaDescription: '',
+    metaKeywords: '',
+    socialShareImageUrl: '',
+    showAnnouncementBar: true,
+    announcementText: '',
+    announcementLink: '',
+    sectionsConfigJson: '',
     customDomain: '',
     customDomainStatus: 'PendingDns',
     isActive: true
@@ -217,6 +227,15 @@ export class StorefrontComponent implements OnInit {
     sellingPrice?: number;
     originalPrice?: number;
     images?: string[];
+    videoUrl?: string;
+    facebookPixelId?: string;
+    tiktokPixelId?: string;
+    snapchatPixelId?: string;
+    googleAnalyticsId?: string;
+    metaTitle?: string;
+    metaDescription?: string;
+    metaKeywords?: string;
+    ogImageUrl?: string;
   } = {};
 
   editingPageId: number | null = null;
@@ -597,13 +616,64 @@ export class StorefrontComponent implements OnInit {
   // ==========================================
 
   // Visual Editor State
-  editorTab: 'general' | 'images' | 'features' | 'why' | 'reviews' | 'faq' = 'general';
+  editorTab: 'general' | 'sections' | 'bundles' | 'specs' | 'features' | 'why' | 'reviews' | 'faq' | 'pixels_seo' | 'images' = 'general';
+  
+  pageSectionsConfig = {
+    showCountdown: true,
+    showVideo: true,
+    showFeatures: true,
+    showSpecs: true,
+    showWhyChooseUs: true,
+    showReviews: true,
+    showFaq: true,
+    showGuarantees: true,
+    showStickyBuyButton: true
+  };
+
+  editableBundles: Array<{
+    quantity: number;
+    title: string;
+    price: number;
+    originalPrice?: number;
+    discountBadge?: string;
+    isPopular?: boolean;
+    isFreeShipping?: boolean;
+  }> = [];
+
+  editableSpecs: Array<{ key: string; value: string }> = [];
+
   editableFeatures: Array<{ title: string; description: string; icon: string }> = [];
   editableWhyChooseUs: Array<{ title: string; text: string }> = [];
   editableReviews: Array<{ name: string; city: string; rating: number; comment: string }> = [];
   editableFaqs: Array<{ question: string; answer: string }> = [];
   uploadingProductImage = signal<boolean>(false);
   manualImageUrl = '';
+
+  addBundle(): void {
+    const nextQty = (this.editableBundles.length || 0) + 1;
+    const basePrice = this.generatedPreview.suggestedPrice || 399;
+    this.editableBundles.push({
+      quantity: nextQty,
+      title: nextQty === 1 ? 'قطعة واحدة (شراء أساسي)' : `${nextQty} قطع (عرض خاص)`,
+      price: Math.round(basePrice * nextQty * (nextQty === 1 ? 1 : 0.85)),
+      originalPrice: Math.round(basePrice * nextQty * 1.35),
+      discountBadge: nextQty === 2 ? 'الأكثر طلباً 🔥' : (nextQty > 2 ? 'أفضل توفير 🎁' : 'العرض الأساسي'),
+      isPopular: nextQty === 2,
+      isFreeShipping: nextQty >= 2
+    });
+  }
+
+  removeBundle(index: number): void {
+    this.editableBundles.splice(index, 1);
+  }
+
+  addSpec(): void {
+    this.editableSpecs.push({ key: 'اسم المواصفة', value: 'القيمة أو التفاصيل الفنية' });
+  }
+
+  removeSpec(index: number): void {
+    this.editableSpecs.splice(index, 1);
+  }
 
   initEditableContent(contentJson?: string): void {
     try {
@@ -775,6 +845,41 @@ export class StorefrontComponent implements OnInit {
         this.aiRequest.images = [];
       }
 
+      try {
+        if (existingPage.sectionsConfigJson) {
+          this.pageSectionsConfig = { ...this.pageSectionsConfig, ...JSON.parse(existingPage.sectionsConfigJson) };
+        }
+      } catch {}
+
+      try {
+        this.editableBundles = JSON.parse(existingPage.bundleOffersJson || '[]');
+      } catch {
+        this.editableBundles = [];
+      }
+      if (!this.editableBundles || this.editableBundles.length === 0) {
+        const baseP = existingPage.sellingPrice || 399;
+        const origP = existingPage.originalPrice || Math.round(baseP * 1.35);
+        this.editableBundles = [
+          { quantity: 1, title: 'قطعة واحدة', price: baseP, originalPrice: origP, discountBadge: 'العرض الأساسي', isPopular: false, isFreeShipping: existingPage.isFreeShipping },
+          { quantity: 2, title: 'قطعتين (وفّر 150 ج.م)', price: Math.round(baseP * 1.8), originalPrice: origP * 2, discountBadge: 'الأكثر طلباً 🔥', isPopular: true, isFreeShipping: true },
+          { quantity: 3, title: '3 قطع (باقة التوفير)', price: Math.round(baseP * 2.5), originalPrice: origP * 3, discountBadge: 'أعلى توفير 🎁', isPopular: false, isFreeShipping: true }
+        ];
+      }
+
+      try {
+        const sp = JSON.parse(existingPage.specsJson || '[]');
+        this.editableSpecs = sp.map((s: any) => ({ key: s.key || s.title || '', value: s.value || s.description || s.spec || '' }));
+      } catch {
+        this.editableSpecs = [];
+      }
+      if (this.editableSpecs.length === 0) {
+        this.editableSpecs = [
+          { key: 'الضمان', value: 'سنتين استبدال فوري ومعاينة قبل الدفع' },
+          { key: 'سرعة التوصيل', value: 'شحن فوري لباب البيت خلال 24 - 48 ساعة' },
+          { key: 'خدمة العملاء', value: 'متابعة عبر الواتساب على مدار الساعة' }
+        ];
+      }
+
       this.generatedPreview = {
         title: existingPage.title,
         slug: existingPage.slug,
@@ -786,7 +891,16 @@ export class StorefrontComponent implements OnInit {
         suggestedOriginalPrice: existingPage.originalPrice ?? existingPage.sellingPrice * 1.4,
         themeConfigJson: existingPage.themeConfigJson,
         contentJson: existingPage.contentJson,
-        images: this.aiRequest.images
+        images: this.aiRequest.images,
+        videoUrl: existingPage.videoUrl || '',
+        facebookPixelId: existingPage.facebookPixelId || '',
+        tiktokPixelId: existingPage.tiktokPixelId || '',
+        snapchatPixelId: existingPage.snapchatPixelId || '',
+        googleAnalyticsId: existingPage.googleAnalyticsId || '',
+        metaTitle: existingPage.metaTitle || '',
+        metaDescription: existingPage.metaDescription || '',
+        metaKeywords: existingPage.metaKeywords || '',
+        ogImageUrl: existingPage.ogImageUrl || ''
       };
 
       this.initEditableContent(existingPage.contentJson);
@@ -796,6 +910,27 @@ export class StorefrontComponent implements OnInit {
       this.editingPageId = null;
       this.wizardStep = 1;
       this.editorTab = 'general';
+      this.pageSectionsConfig = {
+        showCountdown: true,
+        showVideo: true,
+        showFeatures: true,
+        showSpecs: true,
+        showWhyChooseUs: true,
+        showReviews: true,
+        showFaq: true,
+        showGuarantees: true,
+        showStickyBuyButton: true
+      };
+      this.editableBundles = [
+        { quantity: 1, title: 'قطعة واحدة', price: 399, originalPrice: 550, discountBadge: 'العرض الأساسي', isPopular: false, isFreeShipping: true },
+        { quantity: 2, title: 'قطعتين (وفّر 150 ج.م)', price: 699, originalPrice: 1100, discountBadge: 'الأكثر طلباً 🔥', isPopular: true, isFreeShipping: true },
+        { quantity: 3, title: '3 قطع (باقة التوفير العائلية)', price: 999, originalPrice: 1650, discountBadge: 'أعلى توفير 🎁', isPopular: false, isFreeShipping: true }
+      ];
+      this.editableSpecs = [
+        { key: 'الضمان', value: 'سنتين استبدال فوري ومعاينة قبل الدفع' },
+        { key: 'سرعة التوصيل', value: 'شحن فوري لباب البيت خلال 24 - 48 ساعة' },
+        { key: 'خدمة العملاء', value: 'متابعة عبر الواتساب على مدار الساعة' }
+      ];
       this.aiRequest = {
         selectedProductId: null,
         productName: '',
@@ -969,7 +1104,18 @@ export class StorefrontComponent implements OnInit {
       themeConfigJson: this.generatedPreview.themeConfigJson || '{}',
       contentJson: JSON.stringify(contentPayload),
       mediaUrlsJson: JSON.stringify(this.generatedPreview.images || []),
-      specsJson: this.generatedPreview.specsJson || '[]',
+      specsJson: JSON.stringify(this.editableSpecs),
+      bundleOffersJson: JSON.stringify(this.editableBundles),
+      sectionsConfigJson: JSON.stringify(this.pageSectionsConfig),
+      videoUrl: this.generatedPreview.videoUrl || null,
+      facebookPixelId: this.generatedPreview.facebookPixelId || null,
+      tiktokPixelId: this.generatedPreview.tiktokPixelId || null,
+      snapchatPixelId: this.generatedPreview.snapchatPixelId || null,
+      googleAnalyticsId: this.generatedPreview.googleAnalyticsId || null,
+      metaTitle: this.generatedPreview.metaTitle || null,
+      metaDescription: this.generatedPreview.metaDescription || null,
+      metaKeywords: this.generatedPreview.metaKeywords || null,
+      ogImageUrl: this.generatedPreview.ogImageUrl || null,
       variantOptionsJson: this.generatedPreview.variantOptionsJson || '[]',
       sellingPrice: this.generatedPreview.suggestedPrice || 399,
       originalPrice: this.generatedPreview.suggestedOriginalPrice || 599,

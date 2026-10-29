@@ -1,7 +1,7 @@
 <!-- ============================================================ -->
 <!-- 1. TOP ANNOUNCEMENT TICKER -->
 <!-- ============================================================ -->
-<div *ngIf="!loading() && !error() && settings()" class="top-store-ticker">
+<div *ngIf="!loading() && !error() && settings() && (settings()?.showAnnouncementBar !== false)" class="top-store-ticker">
   <div class="max-w-7xl mx-auto px-4 flex items-center justify-between text-xs font-semibold">
     <div class="ticker-content flex items-center gap-4 sm:gap-6 overflow-hidden whitespace-nowrap">
       <span *ngIf="settings()?.announcementText" class="ticker-item font-bold text-amber-300">
