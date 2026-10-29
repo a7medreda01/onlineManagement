@@ -3,6 +3,17 @@
   "rewrites": [
     {
       "source": "/(.*)",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(facebookexternalhit|Facebot|WhatsApp|Twitterbot|TelegramBot|LinkedInBot|Pinterest|Slackbot|Discordbot|bingbot|Google-InspectionTool).*"
+        }
+      ],
+      "destination": "https://besnesy.runasp.net/api/public/store/bot-meta?path=/$1"
+    },
+    {
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ],
