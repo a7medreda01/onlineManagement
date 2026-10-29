@@ -1063,7 +1063,7 @@ export class StorefrontComponent implements OnInit {
       return;
     }
 
-    if (isPublished && !(this.generatedPreview.suggestedPrice > 0)) {
+    if (isPublished && !((this.generatedPreview.suggestedPrice ?? 0) > 0)) {
       this.notificationService.error('حدد سعر بيع صحيح قبل النشر');
       return;
     }
