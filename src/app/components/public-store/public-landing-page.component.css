@@ -449,6 +449,32 @@
   }
 }
 
+@media (min-width: 1024px) {
+  .order-form-card {
+    max-width: 1080px;
+    padding: 2.25rem 2.5rem;
+    border-radius: 1.75rem;
+  }
+
+  .bundle-pill-card {
+    min-height: 86px;
+    padding: 0.65rem 0.4rem;
+  }
+
+  .bundle-pill-title {
+    font-size: 13px;
+  }
+
+  .bundle-pill-price {
+    font-size: 15px;
+  }
+
+  .bundle-pill-badge {
+    font-size: 9.5px;
+    padding: 2px 7px;
+  }
+}
+
 .landing-page-root .order-form-input,
 .landing-page-root .compact-form-input,
 .landing-page-root input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
