@@ -424,13 +424,18 @@
                    (click)="selectBundle(idx)"
                    class="bundle-pill-card"
                    [class.bundle-pill-active]="selectedBundleIndex() === idx">
-                <span *ngIf="b.discountBadge" 
-                      class="bundle-pill-badge"
-                      [class.badge-popular]="b.isPopular">
-                  {{ b.discountBadge }}
+                <span class="bundle-pill-badge" [class.badge-popular]="b.isPopular">
+                  {{ b.isPopular ? 'الأكثر طلباً 🔥' : (idx === 0 ? 'العرض الأساسي' : 'أعلى توفير 🎁') }}
                 </span>
-                <div class="bundle-pill-title">{{ b.title }}</div>
-                <div class="bundle-pill-price">{{ b.price | currency:'EGP':'symbol':'1.0-0' }}</div>
+                <div class="bundle-pill-title">
+                  {{ b.quantity === 1 ? 'قطعة واحدة' : (b.quantity === 2 ? 'قطعتين' : b.quantity + ' قطع') }}
+                </div>
+                <div class="bundle-pill-price">
+                  {{ b.price | number:'1.0-0' }} <span class="text-[10px] font-normal font-cairo">ج.م</span>
+                </div>
+                <div *ngIf="b.quantity > 1" class="text-[9px] font-bold text-amber-700 bg-amber-50 rounded px-1 mt-0.5 inline-block">
+                  {{ b.quantity === 2 ? 'وفّر 150 ج' : 'توفير إضافي' }}
+                </div>
                 <span *ngIf="b.isFreeShipping" class="bundle-pill-ship">
                   <i class="bi bi-truck"></i> شحن مجاني
                 </span>
@@ -468,11 +473,18 @@
               </div>
 
               <div>
-                <label class="block text-[11px] font-bold text-slate-700 mb-0.5">رقم الهاتف <span class="text-rose-500">*</span></label>
-                <div class="relative flex items-center">
-                  <span class="absolute left-2.5 text-xs text-slate-400 font-mono pointer-events-none select-none" dir="ltr">🇪🇬 +20</span>
+                <label class="block text-[11px] font-bold text-slate-700 mb-0.5">رقم الهاتف (واتساب) <span class="text-rose-500">*</span></label>
+                <div class="flex items-center rounded-xl border border-slate-300 bg-white overflow-hidden transition-all focus-within:border-blue-600 focus-within:ring-2 focus-within:ring-blue-100 h-[42px]">
+                  <span class="px-2.5 py-2 bg-slate-100 text-slate-700 text-xs font-bold font-mono border-l border-slate-200 shrink-0 select-none" dir="ltr">
+                    +20
+                  </span>
                   <input type="tel" [(ngModel)]="orderForm.phone" name="phone"
-                         class="compact-form-input font-mono" style="padding-left: 3.5rem !important; text-align: left;" placeholder="01012345678" required>
+                         class="flex-1 py-1 px-2.5 text-xs sm:text-sm font-mono text-slate-900 border-none outline-none bg-transparent"
+                         dir="ltr"
+                         placeholder="01012345678" required>
+                  <span class="pl-2.5 text-emerald-600 shrink-0">
+                    <i class="bi bi-whatsapp text-sm"></i>
+                  </span>
                 </div>
               </div>
             </div>
@@ -488,8 +500,15 @@
                 <label class="block text-[11px] font-bold text-slate-700">هاتف بديل (اختياري)</label>
                 <button type="button" (click)="showAltPhone.set(false); orderForm.alternativePhone = ''" class="text-[10px] text-rose-500 hover:underline cursor-pointer">إلغاء</button>
               </div>
-              <input type="tel" [(ngModel)]="orderForm.alternativePhone" name="alternativePhone"
-                     class="compact-form-input font-mono" style="text-align: left;" placeholder="01112345678">
+              <div class="flex items-center rounded-xl border border-slate-300 bg-white overflow-hidden transition-all focus-within:border-blue-600 focus-within:ring-2 focus-within:ring-blue-100 h-[42px]">
+                <span class="px-2.5 py-2 bg-slate-100 text-slate-700 text-xs font-bold font-mono border-l border-slate-200 shrink-0 select-none" dir="ltr">
+                  +20
+                </span>
+                <input type="tel" [(ngModel)]="orderForm.alternativePhone" name="alternativePhone"
+                       class="flex-1 py-1 px-2.5 text-xs sm:text-sm font-mono text-slate-900 border-none outline-none bg-transparent"
+                       dir="ltr"
+                       placeholder="01112345678">
+              </div>
             </div>
 
             <!-- Governorate & District (Side by side on ALL screens!) -->
@@ -530,28 +549,28 @@
                      class="compact-form-input" placeholder="أي تعليمات إضافية للتسليم...">
             </div>
 
-            <!-- Price Summary (Compact & Clear) -->
-            <div class="bg-slate-50 border border-slate-200/90 rounded-xl p-2.5 mt-1 space-y-1 text-xs">
-              <div class="flex justify-between text-slate-600 text-[11px]">
+            <!-- Price Summary (Compact & Clear Receipt Style) -->
+            <div class="bg-slate-50 border border-slate-200/90 rounded-xl p-2.5 mt-1 space-y-1.5 text-xs">
+              <div class="flex justify-between items-center text-slate-600 text-[11px]">
                 <span>قيمة العرض ({{ orderForm.quantity }} {{ orderForm.quantity === 1 ? 'قطعة' : 'قطع' }}):</span>
-                <span class="font-bold text-slate-900 font-mono">{{ (totalAmount - shippingCost) | currency:'EGP':'symbol':'1.0-0' }}</span>
+                <span class="font-bold text-slate-900 font-mono">{{ (totalAmount - shippingCost) | number:'1.0-0' }} ج.م</span>
               </div>
-              <div class="flex justify-between text-slate-600 text-[11px]">
+              <div class="flex justify-between items-center text-slate-600 text-[11px]">
                 <span>مصاريف التوصيل:</span>
-                <span class="font-bold text-emerald-600">{{ isFreeShippingActive ? 'شحن مجاني 🎁' : (shippingCost | currency:'EGP':'symbol':'1.0-0') }}</span>
+                <span class="font-bold text-emerald-600">{{ isFreeShippingActive ? 'شحن مجاني 🎁' : ((shippingCost | number:'1.0-0') + ' ج.م') }}</span>
               </div>
-              <div class="flex justify-between items-center pt-1.5 border-t border-slate-200 text-sm font-black">
-                <span class="text-slate-900">الإجمالي عند الاستلام:</span>
-                <span class="text-xl text-emerald-600 font-mono font-black">{{ totalAmount | currency:'EGP':'symbol':'1.0-0' }}</span>
+              <div class="flex justify-between items-center pt-2 border-t border-slate-200 text-sm font-black">
+                <span class="text-slate-900">المطلوب عند الاستلام:</span>
+                <span class="text-xl text-emerald-600 font-mono font-black">{{ totalAmount | number:'1.0-0' }} <span class="text-xs font-cairo">ج.م</span></span>
               </div>
             </div>
 
             <!-- Submit Button (Sleek & Immediate) -->
             <button type="submit" [disabled]="submitting()"
-                    class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-[0.99] disabled:opacity-60 text-white font-black text-base py-3 px-4 rounded-xl transition shadow-md flex items-center justify-center gap-2 cursor-pointer mt-0.5">
+                    class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-[0.99] disabled:opacity-60 text-white font-black text-sm sm:text-base py-3 px-4 rounded-xl transition shadow-md flex items-center justify-center gap-2 cursor-pointer mt-0.5">
               <span *ngIf="submitting()" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-              <i *ngIf="!submitting()" class="bi bi-bag-check-fill text-lg"></i>
-              <span>{{ submitting() ? 'جاري تسجيل طلبك...' : 'تأكيد الطلب — الدفع عند الاستلام 🚀' }}</span>
+              <i *ngIf="!submitting()" class="bi bi-shield-check text-base"></i>
+              <span>{{ submitting() ? 'جاري تسجيل طلبك...' : 'تأكيد الطلب — الدفع عند الاستلام' }}</span>
             </button>
 
             <div class="text-center text-[10px] text-slate-400 flex items-center justify-center gap-1">
@@ -651,10 +670,10 @@
     </footer>
 
     <!-- 10. MOBILE STICKY CTA (Optimized for Mobile) -->
-    <div *ngIf="sectionsConfig.showStickyBuyButton" class="mobile-sticky-order-bar-light lg:hidden fixed bottom-0 left-0 right-0 p-3 z-40 flex items-center justify-between gap-3">
+    <div *ngIf="sectionsConfig.showStickyBuyButton && !isOrderSectionVisible()" class="mobile-sticky-order-bar-light lg:hidden fixed bottom-0 left-0 right-0 p-3 z-40 flex items-center justify-between gap-3 animate-fadeIn">
       <div>
         <span class="text-[11px] text-slate-500 block">الإجمالي عند الاستلام</span>
-        <span class="text-lg font-black text-emerald-600 font-mono">{{ totalAmount | currency:'EGP':'symbol':'1.0-0' }}</span>
+        <span class="text-lg font-black text-emerald-600 font-mono">{{ totalAmount | number:'1.0-0' }} ج.م</span>
       </div>
       <button (click)="scrollToOrderForm()" class="flex-1 bg-slate-900 hover:bg-indigo-600 text-white font-black text-sm py-3 px-4 rounded-xl shadow-md flex items-center justify-center gap-2 transition cursor-pointer">
         <i class="bi bi-bag-check-fill"></i>

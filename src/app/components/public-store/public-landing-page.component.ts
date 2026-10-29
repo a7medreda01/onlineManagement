@@ -200,6 +200,8 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
 
   showAltPhone = signal<boolean>(false);
   showNotes = signal<boolean>(false);
+  isOrderSectionVisible = signal<boolean>(false);
+  private orderSectionObserver?: IntersectionObserver;
 
   // Popular Egyptian Governorates
   governorates = [
@@ -259,6 +261,7 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
     if (this.timerInterval) {
       clearInterval(this.timerInterval);
     }
+    this.orderSectionObserver?.disconnect();
   }
 
   loadLandingPage(): void {
@@ -522,12 +525,9 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
             ];
           }
           this.bundles.set(parsedBundles);
-          const popIdx = parsedBundles.findIndex((b: any) => b.isPopular);
-          this.selectedBundleIndex.set(popIdx >= 0 ? popIdx : 0);
-          const activeB = parsedBundles[this.selectedBundleIndex()];
-          if (activeB) {
-            this.orderForm.quantity = activeB.quantity;
-          }
+          // Default selection to 1 piece (the first bundle, index 0)
+          this.selectedBundleIndex.set(0);
+          this.orderForm.quantity = parsedBundles[0]?.quantity || 1;
 
           // 10. Conditional Size Selection
           const hasSizesFlag = !!raw.hasSizes;
@@ -565,12 +565,29 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
         }
 
         this.loading.set(false);
+        this.setupOrderSectionObserver();
       },
       error: (err) => {
         this.loading.set(false);
         this.error.set(err?.error?.Message || 'عذراً، صفحة الهبوط المطلوبة غير موجودة أو تم إيقاف نشرها.');
       }
     });
+  }
+
+  setupOrderSectionObserver(): void {
+    if (typeof window === 'undefined' || !('IntersectionObserver' in window)) return;
+    setTimeout(() => {
+      const el = document.getElementById('orderSection');
+      if (el) {
+        this.orderSectionObserver?.disconnect();
+        this.orderSectionObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            this.isOrderSectionVisible.set(entry.isIntersecting);
+          });
+        }, { threshold: 0.1 });
+        this.orderSectionObserver.observe(el);
+      }
+    }, 500);
   }
 
   activeFaqIndex: number | null = 0;
