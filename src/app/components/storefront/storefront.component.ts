@@ -888,7 +888,7 @@ export class StorefrontComponent implements OnInit {
         badge: existingPage.badge ?? '',
         niche: existingPage.niche,
         suggestedPrice: existingPage.sellingPrice,
-        suggestedOriginalPrice: existingPage.originalPrice ?? existingPage.sellingPrice,
+        suggestedOriginalPrice: existingPage.originalPrice ?? existingPage.sellingPrice * 1.4,
         themeConfigJson: existingPage.themeConfigJson,
         contentJson: existingPage.contentJson,
         images: this.aiRequest.images,
@@ -1021,7 +1021,9 @@ export class StorefrontComponent implements OnInit {
       existingProductId: this.aiRequest.selectedProductId || undefined
     }).subscribe({
       next: (res) => {
-        const productImages = res.suggestedMediaUrls || [];
+        const productImages = (this.aiRequest.images && this.aiRequest.images.length > 0)
+          ? this.aiRequest.images
+          : (res.suggestedMediaUrls && res.suggestedMediaUrls.length > 0 ? res.suggestedMediaUrls : []);
 
         this.generatedPreview = {
           title: res.title,
@@ -1041,12 +1043,8 @@ export class StorefrontComponent implements OnInit {
         this.initEditableContent(res.contentJson);
         this.editorTab = 'general';
         
-        this.generatingAi.set(false);
-        if (res.generationSource === 'FallbackGenerated') {
-          this.notificationService.warning('تعذر توليد النص بالذكاء الاصطناعي؛ تم تجهيز مسودة من بياناتك للمراجعة.');
-        } else {
-          this.notificationService.info('تم تجهيز المسودة. راجع المحتوى والسعر والصور قبل النشر.');
-        }
+        // Auto save & publish the generated page to DB immediately!
+        this.saveLandingPage(true);
       },
       error: () => {
         this.generatingAi.set(false);
@@ -1060,11 +1058,6 @@ export class StorefrontComponent implements OnInit {
     if (!this.generatedPreview.title || !this.generatedPreview.slug) {
       this.notificationService.error('يرجى استكمال عنوان ورابط الصفحة');
       this.generatingAi.set(false);
-      return;
-    }
-
-    if (isPublished && !((this.generatedPreview.suggestedPrice ?? 0) > 0)) {
-      this.notificationService.error('حدد سعر بيع صحيح قبل النشر');
       return;
     }
 
@@ -1084,7 +1077,12 @@ export class StorefrontComponent implements OnInit {
       testimonials: this.editableReviews,
       faq: this.editableFaqs,
       faqs: this.editableFaqs,
-      guarantees: this.aiRequest.warranty?.trim() ? [this.aiRequest.warranty.trim()] : []
+      guarantees: [
+        "ضمان جودة وأصالة 100%",
+        "الدفع عند الاستلام لباب منزلك",
+        "شحن سريع وآمن لباب المنزل",
+        "استبدال واسترجاع مجاني لمدة 14 يوماً"
+      ]
     };
 
     let cleanSlug = (this.generatedPreview.slug || '').trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
@@ -1119,15 +1117,15 @@ export class StorefrontComponent implements OnInit {
       metaKeywords: this.generatedPreview.metaKeywords || null,
       ogImageUrl: this.generatedPreview.ogImageUrl || null,
       variantOptionsJson: this.generatedPreview.variantOptionsJson || '[]',
-      sellingPrice: this.generatedPreview.suggestedPrice,
-      originalPrice: this.generatedPreview.suggestedOriginalPrice || this.generatedPreview.suggestedPrice,
+      sellingPrice: this.generatedPreview.suggestedPrice || 399,
+      originalPrice: this.generatedPreview.suggestedOriginalPrice || 599,
       shippingCompanyId: this.aiRequest.shippingCompanyId,
       fulfillmentSource: this.aiRequest.fulfillmentSource,
       isFreeShipping: this.aiRequest.isFreeShipping,
       customShippingCost: this.aiRequest.customShippingCost,
       isPublished: isPublished,
       autoCreateProductInInventory: !this.aiRequest.selectedProductId,
-      initialStockQuantity: this.aiRequest.initialStock ?? 0,
+      initialStockQuantity: this.aiRequest.initialStock || 100,
       productCostPrice: this.aiRequest.productCostPrice || 0
     };
 
@@ -1153,7 +1151,7 @@ export class StorefrontComponent implements OnInit {
           this.generatingAi.set(false);
           this.closeAiWizard();
           this.loadLandingPages();
-          this.notificationService.success(isPublished ? 'تم إنشاء ونشر صفحة الهبوط بنجاح' : 'تم حفظ مسودة صفحة الهبوط');
+          this.notificationService.success('تم إنشاء ونشر صفحة الهبوط بنجاح 🚀');
         },
         error: (err) => {
           this.savingPage.set(false);

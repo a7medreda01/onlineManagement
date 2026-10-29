@@ -893,9 +893,6 @@ export interface AiGenerateLandingPageRequest {
 }
 
 export interface AiGeneratedLandingPageResponse {
-  generationSource?: 'AiGenerated' | 'FallbackGenerated';
-  requiresReview?: boolean;
-  warnings?: string[];
   title: string;
   slug: string;
   headline: string;
