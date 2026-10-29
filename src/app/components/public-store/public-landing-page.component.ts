@@ -198,6 +198,9 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
     notes: ''
   };
 
+  showAltPhone = signal<boolean>(false);
+  showNotes = signal<boolean>(false);
+
   // Popular Egyptian Governorates
   governorates = [
     { id: 1, name: 'القاهرة' },
