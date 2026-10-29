@@ -136,7 +136,7 @@ export class StorefrontComponent implements OnInit {
     niche: 'مجوهرات وفضة فاخرة عيار 925',
     productTypes: 'سلاسل، خواتم، أساور، أنسيالات، هدايا ملكية',
     brandVibe: 'فخم وملكي فاخر',
-    storeDescriptionOrIdea: 'متجر متخصص في أرقى تشكيلات المجوهرات والفضة الإيطالية عيار 925 مع معاينة وفحص الشحنة قبل الدفع'
+    storeDescriptionOrIdea: 'متجر متخصص في أرقى تشكيلات المجوهرات والفضة الإيطالية عيار 925 مع الدفع عند الاستلام وضمان استبدال معتمد'
   };
 
   openAiFullStoreModal(): void {
@@ -258,7 +258,7 @@ export class StorefrontComponent implements OnInit {
       if (!this.aiRequest.productName) this.aiRequest.productName = 'ساعة رولكس صبمارينر إميرالد Submariner Emerald';
       this.aiRequest.keyFeatures = 'مقاومة فائقة للماء 50M، محرك حركة فائق الدقة، عقارب مضيئة بالظلام، شاشة دقيقة';
       this.aiRequest.materials = 'هيكل فولاذ 316L وتيتانيوم، زجاج ياقوتي Sapphire مضاد للخدش، طارة سيراميك خضراء';
-      this.aiRequest.warranty = 'ضمان عامين كاملين مع فحص ومعاينة حرة قبل الدفع';
+      this.aiRequest.warranty = 'ضمان عامين كاملين واستبدال فوري عند وجود عيوب صناعة';
       this.aiRequest.colorVariantsStr = 'أخضر زمردي, أسود ملكي, فضي بلاتيني';
       if (!this.aiRequest.targetSellingPrice) this.aiRequest.targetSellingPrice = 850;
     } else if (nicheName.includes('مجوهرات')) {
@@ -696,7 +696,7 @@ export class StorefrontComponent implements OnInit {
       }));
       if (this.editableWhyChooseUs.length === 0) {
         this.editableWhyChooseUs = [
-          { title: 'تجنب المنتجات الرديئة والمقلدة', text: 'نضمن لك الحصول على النسخة الأصلية 100% مع الفحص والمعاينة قبل الدفع.' }
+          { title: 'تجنب المنتجات الرديئة والمقلدة', text: 'نضمن لك الحصول على النسخة الأصلية 100% مع الدفع عند الاستلام وضمان الاستبدال.' }
         ];
       }
 
@@ -718,7 +718,7 @@ export class StorefrontComponent implements OnInit {
       }));
       if (this.editableFaqs.length === 0) {
         this.editableFaqs = [
-          { question: 'هل يمكنني معاينة المنتج قبل الاستلام والدفع؟', answer: 'نعم بالتأكيد! يمكنك فحص الشحنة مع المندوب قبل دفع أي مبالغ.' }
+          { question: 'ما هو نظام الدفع والتوصيل؟', answer: 'الدفع نقداً عند استلام شحنتك لباب المنزل، مع ضمان استبدال واسترجاع كامل.' }
         ];
       }
       // Handle product sizes configuration
@@ -874,7 +874,7 @@ export class StorefrontComponent implements OnInit {
       }
       if (this.editableSpecs.length === 0) {
         this.editableSpecs = [
-          { key: 'الضمان', value: 'سنتين استبدال فوري ومعاينة قبل الدفع' },
+          { key: 'الضمان', value: 'سنتين استبدال فوري ضد عيوب الصناعة' },
           { key: 'سرعة التوصيل', value: 'شحن فوري لباب البيت خلال 24 - 48 ساعة' },
           { key: 'خدمة العملاء', value: 'متابعة عبر الواتساب على مدار الساعة' }
         ];
@@ -927,7 +927,7 @@ export class StorefrontComponent implements OnInit {
         { quantity: 3, title: '3 قطع (باقة التوفير العائلية)', price: 999, originalPrice: 1650, discountBadge: 'أعلى توفير 🎁', isPopular: false, isFreeShipping: true }
       ];
       this.editableSpecs = [
-        { key: 'الضمان', value: 'سنتين استبدال فوري ومعاينة قبل الدفع' },
+        { key: 'الضمان', value: 'سنتين استبدال فوري ضد عيوب الصناعة' },
         { key: 'سرعة التوصيل', value: 'شحن فوري لباب البيت خلال 24 - 48 ساعة' },
         { key: 'خدمة العملاء', value: 'متابعة عبر الواتساب على مدار الساعة' }
       ];
@@ -1079,7 +1079,7 @@ export class StorefrontComponent implements OnInit {
       faqs: this.editableFaqs,
       guarantees: [
         "ضمان جودة وأصالة 100%",
-        "معاينة كاملة قبل دفع أي مليم",
+        "الدفع عند الاستلام لباب منزلك",
         "شحن سريع وآمن لباب المنزل",
         "استبدال واسترجاع مجاني لمدة 14 يوماً"
       ]

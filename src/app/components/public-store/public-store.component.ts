@@ -45,14 +45,14 @@ export class PublicStoreComponent implements OnInit {
 
   // Testimonials / Social Proof
   storeReviews = [
-    { name: 'أحمد محمود', city: 'القاهرة', rating: 5, comment: 'تجربة ممتازة وسريعة جداً. عاينت المنتج مع مندوب الشحن وتأكدت من الجودة قبل ما أدفع قرش واحد!', verified: true, date: 'منذ يومين' },
+    { name: 'أحمد محمود', city: 'القاهرة', rating: 5, comment: 'تجربة ممتازة وسريعة جداً. استلمت المنتج مغلف وسليم، وخامته ممتازة ومطابقة للمواصفات تماماً!', verified: true, date: 'منذ يومين' },
     { name: 'سارة إبراهيم', city: 'الإسكندرية', rating: 5, comment: 'خامة المنتج رائعة ومطابقة للصور بالظبط، والتغليف راقي وفخم. هتعامل معاكم دايماً بإذن الله.', verified: true, date: 'منذ 4 أيام' },
     { name: 'طارق عبد الله', city: 'الجيزة', rating: 5, comment: 'خدمة العملاء في قمة الذوق وسرعة الرد على الواتساب. التوصيل تم في أقل من 48 ساعة.', verified: true, date: 'منذ أسبوع' }
   ];
 
   // Store FAQs
   storeFaqs = [
-    { question: 'هل يمكنني معاينة وفحص المنتج قبل الدفع؟', answer: 'نعم بكل تأكيد! يحق لك فتح الشحنة وفحص المنتج والتأكد من مطابقته للمواصفات أمام مندوب التوصيل قبل دفع أي مبلغ.' },
+    { question: 'ما هو نظام الدفع والتوصيل؟', answer: 'الدفع يتم نقداً عند الاستلام لباب منزلك، مع حق الاستبدال والاسترجاع السريع خلال 14 يوماً ضد أي عيوب صناعة.' },
     { question: 'ما هي مدة التوصيل لكافة المحافظات؟', answer: 'يتم تسليم الطلبات داخل القاهرة والجيزة والإسكندرية خلال 24 إلى 48 ساعة، وخلال 2 إلى 3 أيام عمل لباقي محافظات الجمهورية عبر شركات شحن موثوقة (بوسطة).' },
     { question: 'كيف يمكنني تأكيد طلبي أو الاستفسار؟', answer: 'يمكنك اختيار المنتج والضغط على "طلب سريع" وملء بياناتك مباشرة، أو الضغط على زر "طلب عبر واتساب" للتواصل الفوري مع خدمة العملاء.' },
     { question: 'ما هي سياسة الاستبدال والاسترجاع؟', answer: 'نضمن لك استبدال أو استرجاع سهل وسريع خلال 14 يوماً من استلام الشحنة في حالة وجود أي عيب مصنعي أو رغبة في استبدال المقاس/اللون.' }
@@ -67,10 +67,10 @@ export class PublicStoreComponent implements OnInit {
       }
     } catch {}
     return [
-      { title: 'معاينة قبل الدفع', description: 'افحص المنتج بنفسك وتأكد من جودته أمام مندوب الشحن قبل سداد أي مليم.', icon: 'bi-eye' },
+      { title: 'ضمان استبدال 14 يوم', description: 'حق الاستبدال والاسترجاع الفوري في حال وجود أي ملاحظة أو عيب صناعة.', icon: 'bi-patch-check' },
       { title: 'دفع عند الاستلام', description: 'لا تدفع أي مبلغ مسبقاً — الدفع نقداً عند استلام شحنتك بيدك.', icon: 'bi-cash-stack' },
       { title: 'شحن سريع ومجاني', description: 'شحن فوري ومتابعة خطوة بخطوة حتى باب البيت.', icon: 'bi-truck' },
-      { title: 'ضمان ذهبي 14 يوم', description: 'حق الاستبدال أو الاسترجاع الفوري في حال وجود أي ملاحظة.', icon: 'bi-shield-check' }
+      { title: 'منتجات أصلية 100%', description: 'نضمن لك جودة وخامات أصلية مطابقة للصور المعروضة.', icon: 'bi-shield-check' }
     ];
   }
 
@@ -86,7 +86,7 @@ export class PublicStoreComponent implements OnInit {
       { label: 'منتج متوفر', value: `${this.pages().length}+` },
       { label: 'تقييم موثق', value: '4.9 ★' },
       { label: 'دفع باستلام', value: 'COD' },
-      { label: 'معاينة وفحص', value: '100%' }
+      { label: 'جودة أصلية', value: '100%' }
     ];
   }
 
@@ -117,7 +117,7 @@ export class PublicStoreComponent implements OnInit {
         this.settings.set(settings);
 
         const storeName = settings?.metaTitle || settings?.storeDisplayName || 'المتجر الإلكتروني';
-        const bio = settings?.metaDescription || settings?.bio || `أهلاً بكم في ${storeName}. تسوق أفضل المنتجات بأعلى جودة وضمان ومعاينة قبل الدفع.`;
+        const bio = settings?.metaDescription || settings?.bio || `أهلاً بكم في ${storeName}. تسوق أفضل المنتجات بأعلى جودة وضمان استبدال معتمد.`;
         const keywords = settings?.metaKeywords || `${settings?.storeDisplayName}, متجر إلكتروني, دفع عند الاستلام, تسوق مصر, تسوق أونلاين`;
         const shareImg = this.resolveUrl(settings?.socialShareImageUrl || settings?.logoUrl || settings?.coverUrl);
 

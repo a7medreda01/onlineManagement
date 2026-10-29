@@ -269,7 +269,7 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
         // 1. Dynamic Store & Product SEO Optimization
         const storeName = page.storeDisplayName || page.storeSubdomain || '';
         const pageTitle = page.metaTitle || (storeName ? `${page.title} | ${storeName}` : page.title);
-        const pageDesc = page.metaDescription || page.headline || page.subheadline || `عرض خاص وتخفيض لفترة محدودة على ${page.title}. اطلب الآن والدفع عند الاستلام بعد المعاينة.`;
+        const pageDesc = page.metaDescription || page.headline || page.subheadline || `عرض خاص وتخفيض لفترة محدودة على ${page.title}. اطلب الآن والدفع عند الاستلام مع ضمان استبدال شامل.`;
         const pageKeywords = page.metaKeywords || `${page.title}, ${page.niche}, تسوق أونلاين, دفع عند الاستلام, شحن مجاني مصر, تسوق`;
         
         // Parse images early for OG Image
@@ -369,7 +369,7 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
           let whyChooseUs = raw.whyChooseUs || raw.painPoints || [];
           if (!Array.isArray(whyChooseUs) || whyChooseUs.length === 0) {
             whyChooseUs = [
-              { title: 'تجنب المنتجات الرديئة والمقلدة', text: 'نوفر لك النسخة الأصلية 100% مع ضمان حقيقي واسترجاع مجاني.', problem: 'الخوف من شراء منتج مخالف للصور والوصف؟', solution: 'نضمن تطابق المنتج بنسبة 100% مع صور الإعلان والمعاينة قبل الدفع.' },
+              { title: 'تجنب المنتجات الرديئة والمقلدة', text: 'نوفر لك النسخة الأصلية 100% مع ضمان حقيقي واسترجاع مجاني.', problem: 'الخوف من شراء منتج مخالف للصور والوصف؟', solution: 'نضمن تطابق المنتج بنسبة 100% مع صور الإعلان مع ضمان استبدال مجاني.' },
               { title: 'شحن فوري لباب بيتك بدون مفاجآت', text: 'شحن آمن مع متابعة مستمرة عبر واتساب حتى استلامك للشحنة.', problem: 'تأخر الشحن أو مصاريف توصيل مخفية؟', solution: 'شحن سريع ومجاني حتى باب بيتك مع التزام تام بموعد التسليم.' }
             ];
           } else {
@@ -385,7 +385,7 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
           if (!Array.isArray(reviews) || reviews.length === 0) {
             reviews = [
               { name: 'كريم سامي', city: 'القاهرة', rating: 5, comment: 'بصراحة المنتج طلع أحسن من الصور بكتير، وخامته ممتازة جداً وتغليفه شيك جداً، شكراً ليكم.' },
-              { name: 'منى عبد العزيز', city: 'الجيزة', rating: 5, comment: 'وصلني في أقل من 24 ساعة، والمندوب كان محترم وانتظرني لحد ما عاينت المنتج. خدمة 10 على 10.' },
+              { name: 'منى عبد العزيز', city: 'الجيزة', rating: 5, comment: 'وصلني في أقل من 24 ساعة، والمندوب كان محترم جداً والمنتج وصل مغلف وسليم تماماً. خدمة 10 على 10.' },
               { name: 'عمر هشام', city: 'الإسكندرية', rating: 5, comment: 'أفضل تجربة شراء أونلاين، جودة وسعر ممتازين ومكمل معاكوا دايماً.' }
             ];
           } else {
@@ -400,7 +400,7 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
           let faq = raw.faq || raw.faqs || [];
           if (!Array.isArray(faq) || faq.length === 0) {
             faq = [
-              { question: 'هل يمكنني معاينة المنتج قبل الاستلام والدفع؟', answer: 'بالتأكيد! يمكنك فتح الشحنة ومعاينة المنتج والتأكد التام منه قبل دفع أي مبلغ للمندوب.' },
+              { question: 'ما هو نظام الدفع والتوصيل؟', answer: 'الدفع يتم عند استلام الشحنة لباب منزلك، مع ضمان استبدال واسترجاع مجاني لمدة 14 يوماً ضد عيوب الصناعة.' },
               { question: 'كم تستغرق مدة التوصيل؟', answer: 'يصلك الطلب خلال 24 إلى 48 ساعة كحد أقصى لجميع محافظات جمهورية مصر العربية.' },
               { question: 'ما هي سياسة الاسترجاع أو الاستبدال؟', answer: 'نوفر لك ضمان استبدال واسترجاع مجاني لمدة 14 يوماً في حالة وجود أي ملاحظة أو عيب صناعة.' },
               { question: 'هل الشحن مجاني فعلاً؟', answer: 'نعم، الشحن مجاني بالكامل لفترة محدودة ولن تدفع أي رسوم إضافية غير سعر المنتج المعروض.' }
@@ -431,7 +431,7 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
             this.specs.set(parsedSpecs);
           } else {
             const defaultSpecs = [
-              { key: 'الضمان المعتمد', value: 'سنتين استبدال فوري ومعاينة قبل الدفع' },
+              { key: 'الضمان المعتمد', value: 'سنتين استبدال فوري ضد عيوب الصناعة' },
               { key: 'سرعة التوصيل', value: 'شحن فوري لباب البيت خلال 24 - 48 ساعة' },
               { key: 'خدمة العملاء', value: 'متابعة عبر الواتساب على مدار الساعة' },
               { key: 'سياسة الاستبدال', value: '14 يوماً حق استبدال واسترجاع مجاني' }

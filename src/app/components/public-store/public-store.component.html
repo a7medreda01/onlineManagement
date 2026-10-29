@@ -7,7 +7,7 @@
       <span *ngIf="settings()?.announcementText" class="ticker-item font-bold text-amber-300">
         <i class="bi bi-megaphone-fill"></i> {{ settings()?.announcementText }}
       </span>
-      <span class="ticker-item"><i class="bi bi-shield-check text-emerald-400"></i> معاينة وفحص قبل الدفع 100%</span>
+      <span class="ticker-item"><i class="bi bi-shield-check text-emerald-400"></i> دفع عند الاستلام 100%</span>
       <span class="ticker-item hidden sm:inline"><i class="bi bi-truck text-sky-400"></i> شحن سريع لجميع المحافظات</span>
       <span class="ticker-item hidden md:inline"><i class="bi bi-cash-stack text-amber-400"></i> الدفع عند الاستلام (COD)</span>
     </div>
@@ -114,7 +114,7 @@
     </div>
   </div>
   <h5 class="font-black text-slate-900 text-2xl mb-2">جاري تجهيز تشكيلة المتجر...</h5>
-  <p class="text-slate-500 text-sm max-w-xs">نحمّل أحدث العروض والمجوهرات الفاخرة مع ميزة المعاينة قبل الدفع</p>
+  <p class="text-slate-500 text-sm max-w-xs">نحمّل أحدث العروض الحصرية مع خدمة الدفع عند الاستلام</p>
 </div>
 
 <!-- ============================================================ -->
@@ -159,7 +159,7 @@
           </span>
           <span class="badge-status-hero">
             <span class="live-dot"></span>
-            معاينة وفحص قبل السداد 100%
+            دفع عند الاستلام 100%
           </span>
         </div>
 
@@ -168,7 +168,7 @@
         </h1>
 
         <p class="text-xs sm:text-base text-slate-200 max-w-2xl mx-auto font-medium leading-relaxed drop-shadow px-2">
-          {{ settings()?.heroSubheadline || settings()?.bio || 'أهلاً بكم في متجرنا الرسمي. نوفر لكم أفضل التشكيلات والمجوهرات الفاخرة بأعلى معايير الجودة مع ميزة المعاينة قبل الدفع بضمان 100%.' }}
+          {{ settings()?.heroSubheadline || settings()?.bio || 'أهلاً بكم في متجرنا الرسمي. نوفر لكم أفضل التشكيلات الحصرية بأعلى معايير الجودة مع ضمان استبدال معتمد والدفع عند الاستلام 100%.' }}
         </p>
 
         <!-- Live Highlights Bar -->
@@ -214,7 +214,7 @@
           <span>تشكيلة المعروضات والمنتجات</span>
           <span class="count-badge-simple font-mono font-bold">{{ filteredPages.length }} منتج</span>
         </h2>
-        <p class="text-slate-500 text-xs sm:text-sm mt-1">اختر منتجك المفضل واطلب فوراً مع ميزة المعاينة قبل الدفع</p>
+        <p class="text-slate-500 text-xs sm:text-sm mt-1">اختر منتجك المفضل واطلب فوراً مع خدمة الدفع عند الاستلام لباب بيتك</p>
       </div>
 
       <!-- Search & Filters Row -->
@@ -290,10 +290,10 @@
             </span>
           </div>
 
-          <!-- Floating Inspection Badge -->
+          <!-- Floating Guarantee Badge -->
           <div class="card-badges-bottom">
             <span class="badge-inspection">
-              <i class="bi bi-eye"></i> معاينة قبل الدفع
+              <i class="bi bi-patch-check"></i> ضمان استبدال 14 يوم
             </span>
           </div>
         </div>
@@ -330,7 +330,7 @@
 
           <!-- Action CTA Button -->
           <a [routerLink]="['/store', settings()?.subdomain || 'demo', page.slug]" class="card-buy-btn">
-            <span>طلب معاينة وشراء الآن</span>
+            <span>اطلب الآن والدفع عند الاستلام</span>
             <i class="bi bi-arrow-left text-base"></i>
           </a>
         </div>
@@ -348,7 +348,7 @@
         <div>
           <h4 class="font-black text-white text-lg sm:text-xl">{{ settings()?.storeDisplayName }}</h4>
           <p class="text-xs text-slate-400 mt-1 max-w-md">{{ settings()?.bio || 'جميع الحقوق محفوظة للمتجر الرسمي. تسوق
-            بأمان مع ضمان المعاينة قبل الدفع والدفع عند الاستلام.' }}</p>
+            بأمان مع ضمان الاستبدال والدفع عند الاستلام.' }}</p>
         </div>
 
         <div class="flex items-center gap-4 text-xs text-slate-400">
