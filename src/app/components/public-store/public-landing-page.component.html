@@ -243,7 +243,8 @@
           </h1>
 
           <!-- Clean Short Description (Muted, Elegant, Not Cluttered) -->
-          <p *ngIf="pageData()?.headline || pageData()?.subheadline" class="text-slate-500 text-xs sm:text-sm leading-relaxed mb-4">
+          <p *ngIf="pageData()?.headline || pageData()?.subheadline"
+            class="text-slate-500 text-xs sm:text-sm leading-relaxed mb-4">
             {{ pageData()?.headline || pageData()?.subheadline }}
           </p>
 
@@ -260,10 +261,12 @@
               </span>
             </div>
             <div class="flex items-center gap-1.5">
-              <span *ngIf="discountPercentage > 0" class="inline-flex items-center gap-1 bg-rose-50 text-rose-600 border border-rose-200/80 text-[11px] font-black px-2.5 py-1 rounded-full">
+              <span *ngIf="discountPercentage > 0"
+                class="inline-flex items-center gap-1 bg-rose-50 text-rose-600 border border-rose-200/80 text-[11px] font-black px-2.5 py-1 rounded-full">
                 وفر {{ discountPercentage }}%
               </span>
-              <span *ngIf="pageData()?.isFreeShipping" class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[11px] font-bold px-2.5 py-1 rounded-full">
+              <span *ngIf="pageData()?.isFreeShipping"
+                class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[11px] font-bold px-2.5 py-1 rounded-full">
                 شحن مجاني
               </span>
             </div>
@@ -307,12 +310,14 @@
     </section>
 
     <!-- 3.5 CIRCULAR SPEC NODES (أبرز المميزات السريعة) -->
-    <section *ngIf="sectionsConfig.showCircularNodes && circularFeatures().length > 0" class="py-6 sm:py-8 px-4 bg-slate-50 border-b border-slate-200/80">
+    <section *ngIf="sectionsConfig.showCircularNodes && circularFeatures().length > 0"
+      class="py-6 sm:py-8 px-4 bg-slate-50 border-b border-slate-200/80">
       <div class="max-w-6xl mx-auto">
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-4">
           <div *ngFor="let node of circularFeatures()"
             class="circular-feature-card group hover:-translate-y-1 transition-all duration-300">
-            <div class="circular-feature-circle group-hover:bg-slate-900 group-hover:text-amber-400 group-hover:scale-110 transition-all duration-300">
+            <div
+              class="circular-feature-circle group-hover:bg-slate-900 group-hover:text-amber-400 group-hover:scale-110 transition-all duration-300">
               <i [class]="'bi ' + (node.icon || 'bi-patch-check-fill')"></i>
             </div>
             <h4 class="circular-feature-title">{{ node.title }}</h4>
@@ -341,17 +346,12 @@
         </div>
         <div
           class="w-full lg:w-[460px] rounded-2xl overflow-hidden shadow-2xl border border-slate-800 bg-black aspect-video flex items-center justify-center relative">
-          <iframe *ngIf="isVideoEmbed(pageData()?.videoUrl) && safeVideoUrl()"
-            [src]="safeVideoUrl()"
+          <iframe *ngIf="isVideoEmbed(pageData()?.videoUrl) && safeVideoUrl()" [src]="safeVideoUrl()"
             class="w-full h-full border-0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerpolicy="strict-origin-when-cross-origin"
-            allowfullscreen>
+            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
           </iframe>
-          <video *ngIf="!isVideoEmbed(pageData()?.videoUrl)"
-            [src]="pageData()?.videoUrl"
-            controls
-            playsinline
+          <video *ngIf="!isVideoEmbed(pageData()?.videoUrl)" [src]="pageData()?.videoUrl" controls playsinline
             class="w-full h-full object-cover">
           </video>
         </div>
@@ -365,9 +365,8 @@
         <div class="text-center mb-10">
           <div
             class="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 text-xs font-black px-4 py-1.5 rounded-full mb-2.5 border border-indigo-200 shadow-xs">
-            <span class="animate-bounce-gentle">✨</span>
+            <i class="bi bi-stars"></i>
             <span>مواصفات ومميزات استثنائية</span>
-            <span class="animate-pulse-gentle">⚡</span>
           </div>
           <h2 class="text-2xl sm:text-4xl font-black text-slate-900 mb-2">
             أهم مواصفات ومميزات {{ pageData()?.title }}
@@ -381,7 +380,7 @@
           <div *ngFor="let feat of content.features"
             class="p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:border-indigo-300 hover:bg-white hover:shadow-xl transition-all duration-300 flex flex-col items-center text-center group">
             <div
-              class="feature-icon-float w-16 h-16 rounded-2xl bg-white border border-slate-200 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white group-hover:scale-110 flex items-center justify-center text-3xl mb-4 transition-all duration-300 shadow-sm">
+              class="w-16 h-16 rounded-2xl bg-white border border-slate-200 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white group-hover:scale-110 flex items-center justify-center text-3xl mb-4 transition-all duration-300 shadow-sm">
               <i [class]="'bi ' + (feat.icon || 'bi-patch-check-fill')"></i>
             </div>
             <h3
@@ -397,20 +396,14 @@
     </section>
 
     <!-- 5.2. TECHNICAL SPECIFICATIONS TABLE (جدول المواصفات والتفاصيل الفنية) -->
-    <section *ngIf="(sectionsConfig.showSpecs || technicalSpecs().length > 0) && technicalSpecs().length > 0"
-      class="specs-section-wrapper py-12 sm:py-16 px-4 bg-slate-50 border-b border-slate-200 relative">
-      <!-- Floating Ambient Emojis for Scroll Depth -->
-      <div class="floating-ambient-item float-1 pointer-events-none select-none">⚙️</div>
-      <div class="floating-ambient-item float-2 pointer-events-none select-none">✨</div>
-      <div class="floating-ambient-item float-3 pointer-events-none select-none">🔍</div>
-
-      <div class="max-w-4xl mx-auto relative z-10">
+    <section *ngIf="sectionsConfig.showSpecs && technicalSpecs().length > 0"
+      class="py-12 sm:py-16 px-4 bg-slate-50 border-b border-slate-200">
+      <div class="max-w-4xl mx-auto">
         <div class="text-center mb-10">
           <div
             class="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 text-xs font-black px-4 py-1.5 rounded-full mb-2.5 border border-indigo-200 shadow-xs">
-            <span class="animate-spin-slow">⚙️</span>
+            <i class="bi bi-card-checklist"></i>
             <span>المواصفات الفنية المعتمدة</span>
-            <span class="animate-bounce-gentle">✨</span>
           </div>
           <h2 class="text-2xl sm:text-3xl font-black text-slate-900 mb-2">
             جدول المواصفات والتفاصيل الفنية
@@ -420,30 +413,15 @@
           </p>
         </div>
 
-        <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-lg divide-y divide-slate-100 relative">
-          <!-- Top Verifiable Strip -->
-          <div class="px-5 py-3 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white flex items-center justify-between text-xs font-bold border-b border-indigo-900/50">
-            <span class="flex items-center gap-2">
-              <span class="animate-pulse">💎</span>
-              <span>بيانات قياسية موثقة بنسبة 100%</span>
-            </span>
-            <span class="text-amber-400 font-mono text-[11px] bg-white/10 px-2.5 py-1 rounded-full flex items-center gap-1.5 border border-white/10">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-              <span>فحص أصلي معتمد</span>
-            </span>
-          </div>
-
+        <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-lg divide-y divide-slate-100">
           <div *ngFor="let s of technicalSpecs(); let even = even"
-            class="spec-row-interactive flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:px-6 transition group"
-            [class.bg-slate-50/50]="even"
-            [class.bg-white]="!even">
-            <div class="flex items-center gap-3 mb-1.5 sm:mb-0">
-              <div class="spec-emoji-badge">
-                <span class="spec-emoji-anim">{{ getSpecEmoji(s.key) }}</span>
-              </div>
-              <span class="text-xs sm:text-sm font-bold text-slate-700 group-hover:text-indigo-600 transition-colors">{{ s.key }}</span>
+            class="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:px-6 transition hover:bg-indigo-50/30"
+            [class.bg-slate-50/50]="even" [class.bg-white]="!even">
+            <div class="flex items-center gap-3 mb-1 sm:mb-0">
+              <span class="w-2.5 h-2.5 rounded-full bg-indigo-600 shrink-0"></span>
+              <span class="text-xs sm:text-sm font-bold text-slate-700">{{ s.key }}</span>
             </div>
-            <div class="text-xs sm:text-sm font-black text-slate-900 text-right sm:text-left pr-11 sm:pr-0 font-mono">
+            <div class="text-xs sm:text-sm font-black text-slate-900 text-right sm:text-left pr-5 sm:pr-0">
               {{ s.value }}
             </div>
           </div>
@@ -540,26 +518,30 @@
               <i class="bi bi-shield-check"></i> الدفع عند الاستلام لباب بيتك
             </span>
             <h3 class="text-xl sm:text-2xl font-black text-slate-900 mb-1">أكمل بيانات الشحن الفوري</h3>
-            <p class="text-slate-500 text-xs sm:text-sm mt-0.5 mb-0">سيتواصل معك فريقنا هاتفياً أو عبر واتساب لتأكيد ميعاد التوصيل</p>
+            <p class="text-slate-500 text-xs sm:text-sm mt-0.5 mb-0">سيتواصل معك فريقنا هاتفياً أو عبر واتساب لتأكيد
+              ميعاد التوصيل</p>
           </div>
 
           <form (ngSubmit)="submitOrder()" class="flex flex-col gap-4 sm:gap-5">
 
             <!-- STEP 1: اختيار العرض والكمية -->
             <div class="bg-slate-50/90 border border-slate-200 rounded-2xl p-3.5 sm:p-5 shadow-2xs">
-              
+
               <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-200/80">
                 <div class="flex items-center gap-2">
-                  <span class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-black flex items-center justify-center shrink-0">1</span>
+                  <span
+                    class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-black flex items-center justify-center shrink-0">1</span>
                   <h4 class="text-xs sm:text-sm font-black text-slate-900 mb-0">اختر العرض الأنسب لك:</h4>
                 </div>
-                <span *ngIf="bundles().length > 1" class="text-[11px] text-amber-700 font-bold bg-amber-50 border border-amber-200/90 px-2 py-0.5 rounded-full">
+                <span *ngIf="bundles().length > 1"
+                  class="text-[11px] text-amber-700 font-bold bg-amber-50 border border-amber-200/90 px-2 py-0.5 rounded-full">
                   خصومات حصرية 🔥
                 </span>
               </div>
 
               <!-- Quantity Stepper: Only shown when no bundles exist -->
-              <div *ngIf="bundles().length <= 1" class="flex items-center justify-between bg-white border border-slate-200 rounded-xl p-3 shadow-2xs">
+              <div *ngIf="bundles().length <= 1"
+                class="flex items-center justify-between bg-white border border-slate-200 rounded-xl p-3 shadow-2xs">
                 <span class="text-xs font-bold text-slate-800">الكمية المطلوبة:</span>
                 <div class="flex items-center gap-1 bg-slate-50 border border-slate-200 rounded-lg p-0.5">
                   <button (click)="changeQuantity(-1)" type="button"
@@ -598,13 +580,16 @@
                 class="variant-selection-card mt-3 pt-3 border-t border-slate-200/80">
                 <div class="flex items-center justify-between mb-2">
                   <span class="text-[11px] font-bold text-slate-700">اختر اللون / الموديل:</span>
-                  <span class="text-[10px] font-black text-slate-900 bg-white px-2 py-0.5 rounded border border-slate-200">{{ selectedVariant() }}</span>
+                  <span
+                    class="text-[10px] font-black text-slate-900 bg-white px-2 py-0.5 rounded border border-slate-200">{{
+                    selectedVariant() }}</span>
                 </div>
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
                   <button *ngFor="let v of variantOptions()" type="button" (click)="selectVariant(v.name)"
                     class="variant-card-btn py-1 px-2" [class.variant-card-active]="selectedVariant() === v.name">
                     <div *ngIf="v.colorCode" class="variant-color-dot" [style.backgroundColor]="v.colorCode"></div>
-                    <img *ngIf="v.image" [src]="resolveUrl(v.image)" class="w-5 h-5 object-contain rounded" alt="variant">
+                    <img *ngIf="v.image" [src]="resolveUrl(v.image)" class="w-5 h-5 object-contain rounded"
+                      alt="variant">
                     <span class="text-[11px] font-bold truncate">{{ v.name }}</span>
                   </button>
                 </div>
@@ -614,23 +599,30 @@
 
             <!-- STEP 2: بيانات التوصيل والاستلام -->
             <div class="bg-white border border-slate-200 rounded-2xl p-3.5 sm:p-5 shadow-2xs flex flex-col gap-3">
-              
+
               <div class="flex items-center gap-2 pb-2.5 border-b border-slate-100">
-                <span class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-black flex items-center justify-center shrink-0">2</span>
+                <span
+                  class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-black flex items-center justify-center shrink-0">2</span>
                 <h4 class="text-xs sm:text-sm font-black text-slate-900 mb-0">بيانات التوصيل والمستلم:</h4>
               </div>
 
               <!-- Name & Phone Row -->
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 <div>
-                  <label class="block text-[11px] sm:text-xs font-bold text-slate-700 mb-1">الاسم بالكامل <span class="text-rose-500">*</span></label>
-                  <input type="text" [(ngModel)]="orderForm.customerName" name="customerName" class="compact-form-input" placeholder="مثال: أحمد محمد علي" required>
+                  <label class="block text-[11px] sm:text-xs font-bold text-slate-700 mb-1">الاسم بالكامل <span
+                      class="text-rose-500">*</span></label>
+                  <input type="text" [(ngModel)]="orderForm.customerName" name="customerName" class="compact-form-input"
+                    placeholder="مثال: أحمد محمد علي" required>
                 </div>
 
                 <div>
-                  <label class="block text-[11px] sm:text-xs font-bold text-slate-700 mb-1">رقم الهاتف (واتساب) <span class="text-rose-500">*</span></label>
-                  <div class="flex items-center rounded-xl border border-slate-300 bg-white overflow-hidden transition-all focus-within:border-blue-600 focus-within:ring-2 focus-within:ring-blue-100 h-[42px]">
-                    <span class="px-2.5 py-2 bg-slate-100 text-slate-700 text-xs font-bold font-mono border-l border-slate-200 shrink-0 select-none" dir="ltr">
+                  <label class="block text-[11px] sm:text-xs font-bold text-slate-700 mb-1">رقم الهاتف (واتساب) <span
+                      class="text-rose-500">*</span></label>
+                  <div
+                    class="flex items-center rounded-xl border border-slate-300 bg-white overflow-hidden transition-all focus-within:border-blue-600 focus-within:ring-2 focus-within:ring-blue-100 h-[42px]">
+                    <span
+                      class="px-2.5 py-2 bg-slate-100 text-slate-700 text-xs font-bold font-mono border-l border-slate-200 shrink-0 select-none"
+                      dir="ltr">
                       +20
                     </span>
                     <input type="tel" [(ngModel)]="orderForm.phone" name="phone"
@@ -656,8 +648,11 @@
                   <button type="button" (click)="showAltPhone.set(false); orderForm.alternativePhone = ''"
                     class="text-[10px] text-rose-500 hover:underline cursor-pointer">إلغاء</button>
                 </div>
-                <div class="flex items-center rounded-xl border border-slate-300 bg-white overflow-hidden transition-all focus-within:border-blue-600 focus-within:ring-2 focus-within:ring-blue-100 h-[42px]">
-                  <span class="px-2.5 py-2 bg-slate-100 text-slate-700 text-xs font-bold font-mono border-l border-slate-200 shrink-0 select-none" dir="ltr">
+                <div
+                  class="flex items-center rounded-xl border border-slate-300 bg-white overflow-hidden transition-all focus-within:border-blue-600 focus-within:ring-2 focus-within:ring-blue-100 h-[42px]">
+                  <span
+                    class="px-2.5 py-2 bg-slate-100 text-slate-700 text-xs font-bold font-mono border-l border-slate-200 shrink-0 select-none"
+                    dir="ltr">
                     +20
                   </span>
                   <input type="tel" [(ngModel)]="orderForm.alternativePhone" name="alternativePhone"
@@ -669,14 +664,16 @@
               <!-- Governorate & District Row -->
               <div class="grid grid-cols-2 gap-2.5">
                 <div>
-                  <label class="block text-[11px] sm:text-xs font-bold text-slate-700 mb-1">المحافظة <span class="text-rose-500">*</span></label>
+                  <label class="block text-[11px] sm:text-xs font-bold text-slate-700 mb-1">المحافظة <span
+                      class="text-rose-500">*</span></label>
                   <select [(ngModel)]="orderForm.governorateId" (change)="onGovernorateChange()" name="governorateId"
                     class="compact-form-input cursor-pointer" required>
                     <option *ngFor="let gov of governorates" [value]="gov.id">{{ gov.name }}</option>
                   </select>
                 </div>
                 <div>
-                  <label class="block text-[11px] sm:text-xs font-bold text-slate-700 mb-1">المنطقة / الحي <span class="text-rose-500">*</span></label>
+                  <label class="block text-[11px] sm:text-xs font-bold text-slate-700 mb-1">المنطقة / الحي <span
+                      class="text-rose-500">*</span></label>
                   <input type="text" [(ngModel)]="orderForm.districtName" name="districtName" class="compact-form-input"
                     placeholder="مثال: المعادي، نصر">
                 </div>
@@ -684,7 +681,8 @@
 
               <!-- Detailed Address -->
               <div>
-                <label class="block text-[11px] sm:text-xs font-bold text-slate-700 mb-1">العنوان بالتفصيل <span class="text-rose-500">*</span></label>
+                <label class="block text-[11px] sm:text-xs font-bold text-slate-700 mb-1">العنوان بالتفصيل <span
+                    class="text-rose-500">*</span></label>
                 <input type="text" [(ngModel)]="orderForm.address" name="address" class="compact-form-input"
                   placeholder="اسم الشارع — رقم العمارة — الشقة..." required>
               </div>
@@ -709,14 +707,16 @@
             </div>
 
             <!-- الفاتورة وزر التأكيد الموحد (بدون أي تكرار) -->
-            <div class="bg-gradient-to-b from-slate-50 to-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-xs">
-              
+            <div
+              class="bg-gradient-to-b from-slate-50 to-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-xs">
+
               <!-- Total Breakdown -->
               <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-200">
                 <div>
                   <span class="text-xs text-slate-500 block">المبلغ المطلوب عند الاستلام:</span>
                   <span class="text-[11px] text-emerald-600 font-bold">
-                    {{ isFreeShippingActive ? 'شحن مجاني 🎁' : ('مصاريف الشحن: ' + (shippingCost | number:'1.0-0') + ' ج.م') }}
+                    {{ isFreeShippingActive ? 'شحن مجاني 🎁' : ('مصاريف الشحن: ' + (shippingCost | number:'1.0-0') + '
+                    ج.م') }}
                   </span>
                 </div>
                 <div class="text-left">
@@ -729,14 +729,16 @@
               <!-- THE SINGLE PROMINENT SUBMIT BUTTON -->
               <button type="submit" [disabled]="submitting()"
                 class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-[0.99] disabled:opacity-60 text-white font-black text-base sm:text-lg py-3.5 px-4 rounded-xl transition shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 cursor-pointer">
-                <span *ngIf="submitting()" class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                <span *ngIf="submitting()"
+                  class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
                 <i *ngIf="!submitting()" class="bi bi-shield-check text-xl"></i>
                 <span>
                   {{ submitting() ? 'جاري تسجيل طلبك...' : ('تأكيد الطلب') }}
                 </span>
               </button>
 
-              <div class="text-center text-[11px] text-slate-500 flex items-center justify-center gap-1.5 mt-2.5 font-medium">
+              <div
+                class="text-center text-[11px] text-slate-500 flex items-center justify-center gap-1.5 mt-2.5 font-medium">
                 <i class="bi bi-shield-lock-fill text-emerald-600"></i>
                 <span>بياناتك آمنة • معاينة وفحص الشحنة قبل الدفع • ضمان استبدال 14 يوم</span>
               </div>
@@ -766,14 +768,16 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
-          <div *ngFor="let rev of content.customerReviews" class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:shadow-md transition">
+          <div *ngFor="let rev of content.customerReviews"
+            class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:shadow-md transition">
             <div class="flex items-start justify-between gap-2 mb-2">
               <div class="flex items-center gap-2.5 min-w-0">
                 <div class="reviewer-avatar w-9 h-9 text-xs font-black shrink-0">{{ rev.name?.charAt(0) || 'ع' }}</div>
                 <div class="min-w-0">
                   <div class="flex items-center gap-1.5 flex-wrap">
                     <h3 class="text-xs sm:text-sm font-bold text-slate-900 mb-0 leading-tight">{{ rev.name }}</h3>
-                    <span class="inline-flex items-center gap-0.5 text-[10px] text-emerald-600 font-bold bg-emerald-50 px-1.5 py-0.5 rounded-full border border-emerald-200/60 shrink-0">
+                    <span
+                      class="inline-flex items-center gap-0.5 text-[10px] text-emerald-600 font-bold bg-emerald-50 px-1.5 py-0.5 rounded-full border border-emerald-200/60 shrink-0">
                       <i class="bi bi-patch-check-fill text-[9px]"></i>
                       شراء مؤكد
                     </span>
@@ -827,8 +831,9 @@
       <div class="max-w-4xl mx-auto">
         <div class="text-slate-200 font-bold text-sm mb-1">متجر {{ pageData()?.storeDisplayName || 'متجرنا' }}</div>
         <div class="text-xs text-slate-500 mb-3">
-          {{ pageData()?.niche || 'متجر إلكتروني' }} — 
-          <a href="https://besnesy.com" target="_blank" rel="noopener noreferrer" class="hover:text-amber-400 text-slate-400 font-bold transition underline underline-offset-4 decoration-slate-700 hover:decoration-amber-400">
+          {{ pageData()?.niche || 'متجر إلكتروني' }} —
+          <a href="https://besnesy.com" target="_blank" rel="noopener noreferrer"
+            class="hover:text-amber-400 text-slate-400 font-bold transition underline underline-offset-4 decoration-slate-700 hover:decoration-amber-400">
             مدعوم بمنصة Besnesy 🛍️
           </a>
         </div>

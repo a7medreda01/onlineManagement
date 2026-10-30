@@ -143,9 +143,9 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
       }
     }
     return cleanUrl.includes('youtube.com') ||
-           cleanUrl.includes('youtu.be') ||
-           cleanUrl.includes('youtube-nocookie.com') ||
-           cleanUrl.includes('vimeo.com');
+      cleanUrl.includes('youtu.be') ||
+      cleanUrl.includes('youtube-nocookie.com') ||
+      cleanUrl.includes('vimeo.com');
   }
 
   getVideoSafeUrl(url?: string): SafeResourceUrl {
@@ -195,23 +195,6 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
     if (t.includes('استشعار') || t.includes('حركة') || t.includes('تنبيه') || t.includes('إشعار')) return 'bi-bell-fill';
     if (t.includes('شحن') || t.includes('توصيل')) return 'bi-truck';
     return 'bi-patch-check-fill';
-  }
-
-  getSpecEmoji(key: string): string {
-    const k = (key || '').toLowerCase();
-    if (k.includes('دقة') || k.includes('تصوير') || k.includes('كاميرا') || k.includes('عدسة') || k.includes('فيديو') || k.includes('resolution')) return '📷';
-    if (k.includes('واي فاي') || k.includes('wifi') || k.includes('اتصال') || k.includes('شبكة') || k.includes('بلوتوث') || k.includes('تطبيق')) return '📶';
-    if (k.includes('بطارية') || k.includes('شحن') || k.includes('طاقة') || k.includes('battery') || k.includes('تشغيل')) return '🔋';
-    if (k.includes('رؤية') || k.includes('ليل') || k.includes('إضاءة') || k.includes('night')) return '🌙';
-    if (k.includes('ذاكرة') || k.includes('تخزين') || k.includes('كارت') || k.includes('sd') || k.includes('ram')) return '💾';
-    if (k.includes('صوت') || k.includes('ميكروفون') || k.includes('تسجيل') || k.includes('audio')) return '🎙️';
-    if (k.includes('أبعاد') || k.includes('حجم') || k.includes('وزن') || k.includes('سمك') || k.includes('مقاس')) return '📐';
-    if (k.includes('استشعار') || k.includes('حركة') || k.includes('أمان') || k.includes('إنذار') || k.includes('sensor')) return '🚨';
-    if (k.includes('توافق') || k.includes('نظام') || k.includes('أندرويد') || k.includes('ios') || k.includes('هاتف')) return '📱';
-    if (k.includes('مقاوم') || k.includes('ماء') || k.includes('حرارة') || k.includes('صدمات')) return '🛡️';
-    if (k.includes('محتويات') || k.includes('علبة') || k.includes('ملحقات') || k.includes('كرتونة')) return '📦';
-    if (k.includes('ضمان') || k.includes('صناعة') || k.includes('منشأ') || k.includes('موديل')) return '🏷️';
-    return '⚙️';
   }
 
   // Conditional Size Selection (e.g. shoes, clothing, abayas)
@@ -334,7 +317,7 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
         const pageTitle = page.metaTitle || (storeName ? `${page.title} | ${storeName}` : page.title);
         const pageDesc = page.metaDescription || page.headline || page.subheadline || `عرض خاص وتخفيض لفترة محدودة على ${page.title}. اطلب الآن والدفع عند الاستلام مع ضمان استبدال شامل.`;
         const pageKeywords = page.metaKeywords || `${page.title}, ${page.niche}, تسوق أونلاين, دفع عند الاستلام, شحن مجاني مصر, تسوق`;
-        
+
         // Parse images early for OG Image
         try {
           this.images = JSON.parse(page.mediaUrlsJson || '[]');
@@ -389,12 +372,7 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
             const parsedConfig = JSON.parse(page.sectionsConfigJson);
             this.sectionsConfig = { ...this.sectionsConfig, ...parsedConfig };
           }
-        } catch {}
-
-        // Automatically activate specs section if the product has specifications configured
-        if (page.specsJson && page.specsJson !== '[]') {
-          this.sectionsConfig.showSpecs = true;
-        }
+        } catch { }
 
         // 4. Parse Theme
         try {
@@ -487,7 +465,7 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
           let parsedSpecs: any[] = [];
           try {
             parsedSpecs = JSON.parse(page.specsJson || '[]');
-          } catch {}
+          } catch { }
           if (!Array.isArray(parsedSpecs) || parsedSpecs.length === 0) {
             parsedSpecs = raw.specs || [];
           }
@@ -512,7 +490,7 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
           let parsedVariants: any[] = [];
           try {
             parsedVariants = JSON.parse(page.variantOptionsJson || '[]');
-          } catch {}
+          } catch { }
           if (!Array.isArray(parsedVariants) || parsedVariants.length === 0) {
             parsedVariants = raw.variantOptions || [];
           }
@@ -547,7 +525,7 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
           let parsedBundles: any[] = [];
           try {
             parsedBundles = JSON.parse(page.bundleOffersJson || '[]');
-          } catch {}
+          } catch { }
           if (!Array.isArray(parsedBundles) || parsedBundles.length === 0) {
             const orig = page.originalPrice && page.originalPrice > page.sellingPrice ? page.originalPrice : Math.round(page.sellingPrice * 1.35);
             parsedBundles = [
