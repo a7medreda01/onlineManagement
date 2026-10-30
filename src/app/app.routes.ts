@@ -40,17 +40,16 @@ export const isMainDomainActive: CanMatchFn = () => !getSubdomain();
 export const routes: Routes = [
   // When accessed via merchant subdomain (e.g. seven.besnesy.com)
   // Clean redirect legacy /store/subdomain paths to clean root paths
-  // TEMP-LOCAL-ONLY: disabled for design preview (NG04014)
-  // {
-  //   path: 'store/:subdomain/:slug',
-  //   canMatch: [isSubdomainActive],
-  //   redirectTo: ':slug'
-  // },
-  // {
-  //   path: 'store/:subdomain',
-  //   canMatch: [isSubdomainActive],
-  //   redirectTo: ''
-  // },
+  {
+    path: 'store/:subdomain/:slug',
+    canMatch: [isSubdomainActive],
+    redirectTo: ':slug'
+  },
+  {
+    path: 'store/:subdomain',
+    canMatch: [isSubdomainActive],
+    redirectTo: ''
+  },
   // Direct subdomain root -> directly load the merchant store catalog!
   {
     path: '',
