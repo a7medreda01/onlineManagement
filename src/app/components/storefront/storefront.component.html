@@ -1484,12 +1484,18 @@
                 </button>
               </div>
 
-              <div class="space-y-2.5">
-                <div *ngFor="let s of editableSpecs; let i = index" class="flex items-center gap-2 p-2 bg-slate-50 border border-slate-200 rounded-xl">
-                  <input type="text" [(ngModel)]="s.key" class="form-input-text text-xs font-bold w-1/3" placeholder="المواصفة (مثال: خامة التصنيع)">
-                  <input type="text" [(ngModel)]="s.value" class="form-input-text text-xs flex-1" placeholder="القيمة (مثال: ستانلس ستيل إيطالي 316L)">
-                  <button type="button" (click)="removeSpec(i)" class="text-rose-500 hover:text-rose-700 p-2 text-base shrink-0">
-                    <i class="bi bi-trash"></i>
+              <div class="space-y-3">
+                <div *ngFor="let s of editableSpecs; let i = index" class="p-3 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                  <div class="w-full sm:w-1/3 shrink-0">
+                    <label class="text-[11px] font-bold text-slate-500 block mb-1">اسم المواصفة:</label>
+                    <input type="text" [(ngModel)]="s.key" class="form-input-text text-xs font-bold" placeholder="مثال: الضمان">
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <label class="text-[11px] font-bold text-slate-500 block mb-1">تفاصيل وقيمة المواصفة:</label>
+                    <input type="text" [(ngModel)]="s.value" class="form-input-text text-xs" placeholder="مثال: سنتين استبدال فوري ومعاينة قبل الدفع">
+                  </div>
+                  <button type="button" (click)="removeSpec(i)" class="self-end sm:self-center p-2.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-xl transition shrink-0 cursor-pointer" title="حذف المواصفة">
+                    <i class="bi bi-trash text-base"></i>
                   </button>
                 </div>
               </div>

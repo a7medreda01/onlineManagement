@@ -39,6 +39,7 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
 
   pageData = signal<ProductLandingPage | null>(null);
   orderSuccessData = signal<PublicLandingOrderResponse | null>(null);
+  safeVideoUrl = signal<SafeResourceUrl | null>(null);
 
   // EasyOrders Sections Configuration (Toggles)
   sectionsConfig: any = {
@@ -303,6 +304,13 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
     this.storefrontService.getPublicLandingPage(this.subdomain, this.slug).subscribe({
       next: (page) => {
         this.pageData.set(page);
+
+        // Precompute safe video URL once to prevent iframe reloading / flickering on timer ticks
+        if (page.videoUrl && this.isVideoEmbed(page.videoUrl)) {
+          this.safeVideoUrl.set(this.getVideoSafeUrl(page.videoUrl));
+        } else {
+          this.safeVideoUrl.set(null);
+        }
 
         // 1. Dynamic Store & Product SEO Optimization
         const storeName = page.storeDisplayName || page.storeSubdomain || '';

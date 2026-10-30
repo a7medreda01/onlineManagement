@@ -359,19 +359,14 @@
           <h3 class="text-xl sm:text-3xl font-black text-white mb-3">
             شاهد {{ pageData()?.title }} أثناء الاستخدام الفعلي
           </h3>
-          <p class="text-slate-400 text-xs sm:text-sm leading-relaxed mb-6">
+          <p class="text-slate-400 text-xs sm:text-sm leading-relaxed mb-0">
             دقة التفاصيل وفخامة الخامات كما ستصلك تماماً حتى باب منزلك مع ضمان استبدال شامل.
           </p>
-          <button (click)="scrollToOrderForm()"
-            class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-6 py-3 rounded-full text-xs sm:text-sm transition shadow-lg inline-flex items-center gap-2 cursor-pointer">
-            <i class="bi bi-bag-check-fill"></i>
-            <span>احصل على نسختك الآن</span>
-          </button>
         </div>
         <div
           class="w-full lg:w-[460px] rounded-2xl overflow-hidden shadow-2xl border border-slate-800 bg-black aspect-video flex items-center justify-center relative">
-          <iframe *ngIf="isVideoEmbed(pageData()?.videoUrl)"
-            [src]="getVideoSafeUrl(pageData()?.videoUrl)"
+          <iframe *ngIf="isVideoEmbed(pageData()?.videoUrl) && safeVideoUrl()"
+            [src]="safeVideoUrl()"
             class="w-full h-full border-0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             referrerpolicy="strict-origin-when-cross-origin"
@@ -748,23 +743,6 @@
                 <i class="bi bi-shield-lock-fill text-emerald-600"></i>
                 <span>بياناتك آمنة • معاينة وفحص الشحنة قبل الدفع • ضمان استبدال 14 يوم</span>
               </div>
-
-              <!-- 3 Clean Trust Badges -->
-              <div class="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-slate-200 text-center text-[10px] text-slate-600">
-                <div class="p-2 bg-white rounded-xl border border-slate-200/80 shadow-2xs">
-                  <i class="bi bi-patch-check-fill text-emerald-600 block text-base mb-0.5"></i>
-                  <span class="font-bold">ضمان استبدال</span>
-                </div>
-                <div class="p-2 bg-white rounded-xl border border-slate-200/80 shadow-2xs">
-                  <i class="bi bi-truck text-blue-600 block text-base mb-0.5"></i>
-                  <span class="font-bold">توصيل سريع</span>
-                </div>
-                <div class="p-2 bg-white rounded-xl border border-slate-200/80 shadow-2xs">
-                  <i class="bi bi-cash-coin text-amber-600 block text-base mb-0.5"></i>
-                  <span class="font-bold">دفع عند الاستلام</span>
-                </div>
-              </div>
-
             </div>
 
           </form>
