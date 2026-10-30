@@ -74,11 +74,6 @@
           <i class="bi bi-whatsapp text-sm"></i>
           <span class="font-extrabold">تواصل سريـع</span>
         </a>
-
-        <a *ngIf="settings()?.contactPhone" [href]="'tel:' + settings()?.contactPhone" class="nav-phone-btn shadow-md hidden sm:inline-flex text-xs py-1.5 px-3">
-          <i class="bi bi-telephone-fill text-xs"></i>
-          <span class="font-bold">اتصال</span>
-        </a>
       </div>
 
     </div>
@@ -289,13 +284,6 @@
               <i class="bi bi-truck"></i> شحن مجاني
             </span>
           </div>
-
-          <!-- Floating Guarantee Badge -->
-          <div class="card-badges-bottom">
-            <span class="badge-inspection">
-              <i class="bi bi-patch-check"></i> ضمان استبدال 14 يوم
-            </span>
-          </div>
         </div>
 
         <!-- Card Content Body -->
@@ -316,10 +304,12 @@
           <!-- Price Engine -->
           <div class="card-price-engine">
             <div class="price-stack">
-              <span class="price-current font-mono">EGP {{ page.sellingPrice | number:'1.0-0' }}</span>
+              <span class="price-current font-mono">
+                {{ page.sellingPrice | number:'1.0-0' }} <span class="text-xs font-bold font-cairo">ج.م</span>
+              </span>
               <span *ngIf="page.originalPrice && page.originalPrice > page.sellingPrice"
                 class="price-original font-mono">
-                EGP {{ page.originalPrice | number:'1.0-0' }}
+                {{ page.originalPrice | number:'1.0-0' }} ج.م
               </span>
             </div>
 
@@ -329,8 +319,8 @@
           </div>
 
           <!-- Action CTA Button -->
-          <a [routerLink]="['/store', settings()?.subdomain || 'demo', page.slug]" class="card-buy-btn">
-            <span>اطلب الآن والدفع عند الاستلام</span>
+          <a [routerLink]="getProductLink(page.slug)" class="card-buy-btn">
+            <span>اطلب الآن — الدفع عند الاستلام</span>
             <i class="bi bi-arrow-left text-base"></i>
           </a>
         </div>
@@ -347,8 +337,7 @@
       <div class="flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-right">
         <div>
           <h4 class="font-black text-white text-lg sm:text-xl">{{ settings()?.storeDisplayName }}</h4>
-          <p class="text-xs text-slate-400 mt-1 max-w-md">{{ settings()?.bio || 'جميع الحقوق محفوظة للمتجر الرسمي. تسوق
-            بأمان مع ضمان الاستبدال والدفع عند الاستلام.' }}</p>
+          <p class="text-xs text-slate-400 mt-1 max-w-md">{{ settings()?.bio || 'جميع الحقوق محفوظة للمتجر الرسمي. تسوق بأمان مع ضمان الاستبدال والدفع عند الاستلام.' }}</p>
         </div>
 
         <div class="flex items-center gap-4 text-xs text-slate-400">
@@ -358,6 +347,13 @@
           <span>•</span>
           <span><i class="bi bi-patch-check-fill text-emerald-400"></i> ضمان الاستبدال</span>
         </div>
+      </div>
+
+      <div class="mt-8 pt-6 border-t border-slate-800/80 text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-right">
+        <span>جميع الحقوق محفوظة © {{ settings()?.storeDisplayName }} {{ currentYear }}</span>
+        <a href="https://besnesy.com" target="_blank" rel="noopener noreferrer" class="hover:text-amber-400 text-slate-400 font-bold transition underline underline-offset-4 decoration-slate-700 hover:decoration-amber-400">
+          مدعوم بمنصة Besnesy 🛍️
+        </a>
       </div>
     </div>
   </footer>

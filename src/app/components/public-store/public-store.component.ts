@@ -291,4 +291,12 @@ export class PublicStoreComponent implements OnInit {
       window.scrollTo({ top: y, behavior: 'smooth' });
     }
   }
+
+  getProductLink(slug: string): any[] | string {
+    const hostSub = getSubdomain();
+    if (hostSub) {
+      return ['/', slug];
+    }
+    return ['/store', this.subdomain || 'demo', slug];
+  }
 }
