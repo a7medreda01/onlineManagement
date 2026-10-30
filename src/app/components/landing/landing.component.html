@@ -1,460 +1,356 @@
-<div class="landing-page" [class.dark]="isDarkMode" dir="rtl">
+<div class="landing-page font-cairo flex flex-col relative overflow-x-hidden" dir="rtl">
 
-  <!-- ========== AMBIENT BACKGROUND ========== -->
-  <div class="lp-bg" aria-hidden="true">
-    <span class="lp-bg-glow lp-bg-glow-a"></span>
-    <span class="lp-bg-glow lp-bg-glow-b"></span>
-    <span class="lp-bg-grid"></span>
+  <!-- Animated Orbs -->
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+    <div class="landing-orb landing-orb-1"></div>
+    <div class="landing-orb landing-orb-2"></div>
+    <div class="landing-orb landing-orb-3"></div>
   </div>
 
   <!-- ========== HEADER ========== -->
-  <header class="lp-header">
-    <div class="lp-container lp-header-inner">
+  <header class="lp-header border-b backdrop-blur-xl sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
 
-      <!-- Brand -->
-      <a routerLink="/" class="lp-brand">
-        <span class="lp-brand-mark">
-          <img *ngIf="!imageError" src="assets/besnesy_logo.jpg" alt="Besnesy" (error)="imageError = true" />
-          <span *ngIf="imageError" class="lp-brand-letter">B</span>
-        </span>
-        <span class="lp-brand-copy">
-          <span class="lp-brand-name">Besnesy</span>
-          <span class="lp-brand-tag">منصة إدارة المتاجر</span>
-        </span>
-      </a>
+      <!-- Logo -->
+      <div class="flex items-center gap-2.5">
+        <div class="relative">
+          <div class="absolute -inset-1 bg-gradient-to-r from-sky-500 to-indigo-600 rounded-xl blur opacity-20"></div>
+          <div class="relative w-9 h-9 sm:w-10 sm:h-10 lp-logo-bg border rounded-xl flex items-center justify-center overflow-hidden">
+            <img src="assets/besnesy_logo.jpg" alt="Besnesy" class="w-full h-full object-cover" (error)="imageError = true" *ngIf="!imageError" />
+            <span *ngIf="imageError" class="font-black text-sky-500 text-lg">B</span>
+          </div>
+        </div>
+        <div>
+          <div class="font-black text-base sm:text-lg lp-brand-name tracking-wide leading-tight">Besnesy</div>
+          <div class="text-[10px] lp-muted hidden sm:block">Run Your Business Smarter</div>
+        </div>
+      </div>
 
-      <!-- Nav -->
-      <nav class="lp-nav">
+      <!-- Nav Links -->
+      <nav class="hidden md:flex items-center gap-6 text-xs font-semibold lp-muted">
         <a href="#features" class="lp-nav-link">المميزات</a>
-        <a href="#how" class="lp-nav-link">كيف تعمل</a>
-        <a href="#pricing" class="lp-nav-link">الباقات</a>
-        <a href="https://wa.me/201080225502" target="_blank" rel="noopener" class="lp-nav-link">تواصل معنا</a>
+        <a routerLink="/pricing" class="lp-nav-link">الخطط والأسعار</a>
+        <a href="https://wa.me/201080225502" target="_blank" class="lp-nav-link-green">تواصل معنا</a>
       </nav>
 
       <!-- Actions -->
-      <div class="lp-header-actions">
-        <button (click)="toggleTheme()" class="lp-icon-btn" type="button"
-                [attr.aria-label]="isDarkMode ? 'التبديل للوضع الفاتح' : 'التبديل للوضع الداكن'">
-          <i class="bi" [class.bi-sun-fill]="isDarkMode" [class.bi-moon-stars-fill]="!isDarkMode"></i>
+      <div class="flex items-center gap-2">
+        <button (click)="toggleTheme()" class="lp-icon-btn w-8 h-8 rounded-lg flex items-center justify-center text-sm" title="تغيير المظهر">
+          <i class="bi text-amber-400" [class.bi-sun-fill]="isDarkMode" [class.bi-moon-stars-fill]="!isDarkMode"></i>
         </button>
-
-        <a routerLink="/login" class="lp-btn lp-btn-ghost lp-btn-sm">
-          <i class="bi bi-box-arrow-in-right"></i>
+        <a routerLink="/login" class="lp-btn-ghost px-3 py-1.5 rounded-lg font-semibold text-xs flex items-center gap-1.5">
+          <i class="bi bi-box-arrow-in-right text-sky-500"></i>
           <span>دخول</span>
         </a>
-
-        <a routerLink="/signup" class="lp-btn lp-btn-primary lp-btn-sm">
+        <a routerLink="/signup" class="px-3 py-1.5 rounded-lg text-white bg-gradient-to-r from-sky-500 to-indigo-600 hover:opacity-90 font-bold text-xs shadow-lg transition flex items-center gap-1.5">
           <i class="bi bi-rocket-takeoff-fill"></i>
-          <span>ابدأ مجاناً</span>
+          <span class="hidden sm:inline">ابدأ مجاناً</span>
+          <span class="sm:hidden">مجاناً</span>
         </a>
       </div>
     </div>
   </header>
 
-  <main>
-
-    <!-- ========== HERO ========== -->
-    <section class="lp-hero">
-      <div class="lp-container lp-hero-grid">
-
-        <div class="lp-hero-copy">
-          <span class="lp-eyebrow">
-            <span class="lp-dot"></span>
-            عرض الافتتاح — خطة مجانية مدى الحياة
-          </span>
-
-          <h1 class="lp-h1">
-            إدارة متجرك الأونلاين
-            <span class="lp-h1-accent">باحترافية كاملة</span>
-          </h1>
-
-          <p class="lp-lead">
-            منصة واحدة لإدارة الأوردرات، المنتجات، فريق العمل، الشحن مع بوسطة،
-            والتقارير المالية — بدون جداول ولا أدوات متفرقة.
-          </p>
-
-          <div class="lp-hero-actions">
-            <a routerLink="/signup" class="lp-btn lp-btn-primary lp-btn-lg">
-              <i class="bi bi-rocket-takeoff-fill"></i>
-              <span>ابدأ تجربتك المجانية</span>
-            </a>
-            <a routerLink="/pricing" class="lp-btn lp-btn-ghost lp-btn-lg">
-              <i class="bi bi-tag-fill"></i>
-              <span>استعرض الباقات</span>
-            </a>
-          </div>
-
-          <ul class="lp-hero-points">
-            <li><i class="bi bi-check2-circle"></i> بدون بطاقة ائتمانية</li>
-            <li><i class="bi bi-check2-circle"></i> إعداد في دقائق</li>
-            <li><i class="bi bi-check2-circle"></i> دعم عربي كامل</li>
-          </ul>
-        </div>
-
-        <!-- Product preview (pure CSS mockup) -->
-        <div class="lp-hero-visual" aria-hidden="true">
-          <div class="lp-mock">
-            <div class="lp-mock-bar">
-              <span class="lp-mock-dots"><i></i><i></i><i></i></span>
-              <span class="lp-mock-title">لوحة تحكم Besnesy</span>
-            </div>
-
-            <div class="lp-mock-body">
-              <div class="lp-mock-stats">
-                <div class="lp-mock-stat">
-                  <span class="lp-mock-label">مبيعات اليوم</span>
-                  <span class="lp-mock-value">12,450 <small>ج.م</small></span>
-                  <span class="lp-mock-trend up"><i class="bi bi-arrow-up-short"></i> 12%</span>
-                </div>
-                <div class="lp-mock-stat">
-                  <span class="lp-mock-label">أوردرات</span>
-                  <span class="lp-mock-value">84</span>
-                  <span class="lp-mock-trend up"><i class="bi bi-arrow-up-short"></i> 8%</span>
-                </div>
-                <div class="lp-mock-stat">
-                  <span class="lp-mock-label">معدل التحويل</span>
-                  <span class="lp-mock-value">4.8<small>%</small></span>
-                  <span class="lp-mock-trend up"><i class="bi bi-arrow-up-short"></i> 1.2%</span>
-                </div>
-              </div>
-
-              <div class="lp-mock-chart">
-                <div class="lp-mock-chart-head">
-                  <span>آخر 7 أيام</span>
-                  <span class="lp-mock-chip">P&amp;L</span>
-                </div>
-                <div class="lp-mock-bars">
-                  <span></span><span></span><span></span><span></span>
-                  <span></span><span></span><span></span>
-                </div>
-              </div>
-
-              <div class="lp-mock-orders">
-                <div class="lp-mock-order">
-                  <span class="lp-mock-avatar">أ</span>
-                  <span class="lp-mock-order-name">أحمد محمد</span>
-                  <span class="lp-mock-order-amount">1,299 ج.م</span>
-                  <span class="lp-mock-status">تم الشحن</span>
-                </div>
-                <div class="lp-mock-order">
-                  <span class="lp-mock-avatar">م</span>
-                  <span class="lp-mock-order-name">منى سعيد</span>
-                  <span class="lp-mock-order-amount">599 ج.م</span>
-                  <span class="lp-mock-status pending">قيد التأكيد</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Stats band -->
-      <div class="lp-container">
-        <div class="lp-stats">
-          <div class="lp-stat">
-            <span class="lp-stat-value">100+</span>
-            <span class="lp-stat-label">متجر نشط</span>
-          </div>
-          <div class="lp-stat">
-            <span class="lp-stat-value">∞</span>
-            <span class="lp-stat-label">أوردر شهرياً</span>
-          </div>
-          <div class="lp-stat">
-            <span class="lp-stat-value">24/7</span>
-            <span class="lp-stat-label">دعم فني</span>
-          </div>
-          <div class="lp-stat">
-            <span class="lp-stat-value">100%</span>
-            <span class="lp-stat-label">عزل بيانات كل متجر</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========== FEATURES ========== -->
-    <section id="features" class="lp-section lp-section-alt">
-      <div class="lp-container">
-
-        <div class="lp-section-head">
-          <span class="lp-section-badge"><i class="bi bi-stars"></i> مميزات النظام</span>
-          <h2 class="lp-h2">كل ما تحتاجه لإدارة متجرك</h2>
-          <p class="lp-section-sub">
-            منصة شاملة تجمع المبيعات، المخزون، الفريق، والتقارير المالية في مكان واحد.
-          </p>
-        </div>
-
-        <div class="lp-features">
-          <article *ngFor="let feat of systemFeatures" class="lp-feature">
-            <div class="lp-feature-icon">
-              <i [class]="'bi ' + feat.icon"></i>
-            </div>
-            <h3 class="lp-feature-title">{{ feat.title }}</h3>
-            <p class="lp-feature-desc">{{ feat.desc }}</p>
-          </article>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- ========== HOW IT WORKS ========== -->
-    <section id="how" class="lp-section">
-      <div class="lp-container">
-
-        <div class="lp-section-head">
-          <span class="lp-section-badge"><i class="bi bi-lightning-charge-fill"></i> خطوات بسيطة</span>
-          <h2 class="lp-h2">ابدأ البيع في 3 خطوات</h2>
-          <p class="lp-section-sub">من التسجيل لأول أوردر — كل حاجة جاهزة من أول يوم.</p>
-        </div>
-
-        <div class="lp-steps">
-          <div class="lp-step">
-            <span class="lp-step-num">01</span>
-            <h3 class="lp-step-title">أنشئ حسابك</h3>
-            <p class="lp-step-desc">سجّل متجرك مجاناً خلال دقيقة واحدة، بدون أي بيانات دفع.</p>
-          </div>
-          <div class="lp-step">
-            <span class="lp-step-num">02</span>
-            <h3 class="lp-step-title">جهّز منتجاتك</h3>
-            <p class="lp-step-desc">أضف المنتجات، الأسعار، وصفحات الهبوط بهوية متجرك.</p>
-          </div>
-          <div class="lp-step">
-            <span class="lp-step-num">03</span>
-            <h3 class="lp-step-title">استقبل الطلبات</h3>
-            <p class="lp-step-desc">تابع الأوردرات، اطبع البوليصات، وشوف أرباحك لحظة بلحظة.</p>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- ========== PRICING ========== -->
-    <section id="pricing" class="lp-section lp-section-alt">
-      <div class="lp-container">
-
-        <div class="lp-section-head">
-          <span class="lp-section-badge"><i class="bi bi-gift-fill"></i> الباقات والأسعار</span>
-          <h2 class="lp-h2">باقات الاشتراك</h2>
-          <p class="lp-section-sub">اختر الباقة المناسبة لحجم متجرك — ويمكنك الترقية في أي وقت.</p>
-
-          <!-- Billing toggle -->
-          <div class="lp-toggle">
-            <button type="button" class="lp-toggle-opt" [class.is-active]="!isAnnual" (click)="isAnnual = false">شهري</button>
-            <button type="button" class="lp-toggle-opt" [class.is-active]="isAnnual" (click)="isAnnual = true">
-              سنوي <span class="lp-toggle-save">وفّر</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Loading skeleton -->
-        <div *ngIf="loadingPlans()" class="lp-plans">
-          <div *ngFor="let i of [1,2,3]" class="lp-plan lp-plan-skeleton">
-            <div class="lp-skeleton w-1/3"></div>
-            <div class="lp-skeleton w-1/2 lp-skeleton-lg"></div>
-            <div class="lp-skeleton w-full"></div>
-            <div class="lp-skeleton w-4/5"></div>
-            <div class="lp-skeleton w-2/3"></div>
-            <div class="lp-skeleton w-full lp-skeleton-btn"></div>
-          </div>
-        </div>
-
-        <!-- Plans -->
-        <div *ngIf="!loadingPlans() && plans().length > 0" class="lp-plans">
-          <article *ngFor="let plan of plans(); let i = index"
-                   class="lp-plan"
-                   [class.is-popular]="isPopular(plan, plans())">
-
-            <span *ngIf="isPopular(plan, plans())" class="lp-plan-ribbon">
-              <i class="bi bi-trophy-fill"></i> الأكثر طلباً
-            </span>
-
-            <header class="lp-plan-head">
-              <span class="lp-plan-badge">{{ plan.badge || ('باقة ' + plan.name) }}</span>
-              <h3 class="lp-plan-name">{{ plan.name }}</h3>
-              <p class="lp-plan-desc">{{ plan.description }}</p>
-            </header>
-
-            <div class="lp-plan-price">
-
-              <!-- Limited-time free offer -->
-              <ng-container *ngIf="isLimitedFreeOffer(plan)">
-                <div class="lp-price-line">
-                  <span class="lp-price-value">0</span>
-                  <span class="lp-price-cur">ج.م</span>
-                  <span class="lp-price-per">/ {{ isAnnual ? 'سنوياً' : 'شهرياً' }}</span>
-                </div>
-                <div class="lp-price-note">
-                  <i class="bi bi-gift-fill"></i> مجاناً لفترة محدودة
-                </div>
-                <div *ngIf="getOriginalPrice(plan) > 0" class="lp-price-was">
-                  السعر الأصلي {{ getOriginalPrice(plan) | number:'1.0-0' }} ج.م
-                </div>
-              </ng-container>
-
-              <!-- Permanent free -->
-              <ng-container *ngIf="!isLimitedFreeOffer(plan) && isPermanentFree(plan)">
-                <div class="lp-price-line">
-                  <span class="lp-price-value">مجاناً</span>
-                </div>
-                <div class="lp-price-was">مدى الحياة للمشاريع الناشئة</div>
-              </ng-container>
-
-              <!-- Paid -->
-              <ng-container *ngIf="!isLimitedFreeOffer(plan) && !isPermanentFree(plan)">
-                <div class="lp-price-line">
-                  <span class="lp-price-value">{{ getDisplayPrice(plan) | number:'1.0-0' }}</span>
-                  <span class="lp-price-cur">ج.م</span>
-                  <span class="lp-price-per">/ {{ isAnnual ? 'سنوياً' : 'شهرياً' }}</span>
-                </div>
-                <div *ngIf="getOriginalPrice(plan) > getDisplayPrice(plan)" class="lp-price-was">
-                  {{ getOriginalPrice(plan) | number:'1.0-0' }} ج.م
-                </div>
-                <div *ngIf="plan.annualOfferPrice > 0 && isAnnual && plan.annualPrice > plan.annualOfferPrice"
-                     class="lp-price-note">
-                  <i class="bi bi-check-circle-fill"></i> خصم سنوي خاص
-                </div>
-              </ng-container>
-            </div>
-
-            <ul class="lp-plan-list">
-              <li class="lp-plan-item is-on">
-                <i class="bi bi-check-circle-fill"></i>
-                <span>{{ plan.maxModerators >= 100 ? 'حسابات موظفين بلا حدود' : (plan.maxModerators > 0 ? 'حتى ' + plan.maxModerators + ' حسابات موظفين' : 'بدون حسابات موظفين') }}</span>
-              </li>
-              <li class="lp-plan-item is-on">
-                <i class="bi bi-check-circle-fill"></i>
-                <span>{{ plan.maxProducts ? 'حتى ' + plan.maxProducts + ' منتج' : 'منتجات بلا حدود' }}</span>
-              </li>
-              <li class="lp-plan-item is-on">
-                <i class="bi bi-check-circle-fill"></i>
-                <span>{{ plan.maxOrdersPerMonth ? 'حتى ' + plan.maxOrdersPerMonth + ' أوردر/شهر' : 'أوردرات بلا حدود' }}</span>
-              </li>
-
-              <li class="lp-plan-item" [class.is-on]="plan.allowOnlineStorefront !== false" [class.is-off]="plan.allowOnlineStorefront === false">
-                <i class="bi" [class.bi-check-circle-fill]="plan.allowOnlineStorefront !== false" [class.bi-x-circle]="plan.allowOnlineStorefront === false"></i>
-                <span>متجر إلكتروني أونلاين كامل</span>
-              </li>
-              <li class="lp-plan-item" [class.is-on]="plan.allowAiLandingPages" [class.is-off]="!plan.allowAiLandingPages">
-                <i class="bi" [class.bi-check-circle-fill]="plan.allowAiLandingPages" [class.bi-x-circle]="!plan.allowAiLandingPages"></i>
-                <span>صفحات هبوط بالذكاء الاصطناعي</span>
-              </li>
-              <li class="lp-plan-item" [class.is-on]="plan.allowManualLandingPages !== false" [class.is-off]="plan.allowManualLandingPages === false">
-                <i class="bi" [class.bi-check-circle-fill]="plan.allowManualLandingPages !== false" [class.bi-x-circle]="plan.allowManualLandingPages === false"></i>
-                <span>صفحات هبوط يدوية</span>
-              </li>
-              <li class="lp-plan-item" [class.is-on]="plan.allowBostaIntegration" [class.is-off]="!plan.allowBostaIntegration">
-                <i class="bi" [class.bi-check-circle-fill]="plan.allowBostaIntegration" [class.bi-x-circle]="!plan.allowBostaIntegration"></i>
-                <span>ربط Bosta وشحن جماعي</span>
-              </li>
-              <li class="lp-plan-item" [class.is-on]="plan.allowFinancialReports" [class.is-off]="!plan.allowFinancialReports">
-                <i class="bi" [class.bi-check-circle-fill]="plan.allowFinancialReports" [class.bi-x-circle]="!plan.allowFinancialReports"></i>
-                <span>تقارير الأرباح والمالية P&amp;L</span>
-              </li>
-              <li class="lp-plan-item" [class.is-on]="plan.allowPayrollAndShifts" [class.is-off]="!plan.allowPayrollAndShifts">
-                <i class="bi" [class.bi-check-circle-fill]="plan.allowPayrollAndShifts" [class.bi-x-circle]="!plan.allowPayrollAndShifts"></i>
-                <span>المرتبات والسلف والشيفتات</span>
-              </li>
-            </ul>
-
-            <button type="button" class="lp-btn lp-plan-cta"
-                    [class.lp-btn-primary]="isPopular(plan, plans()) || !isFree(plan)"
-                    [class.lp-btn-ghost]="isFree(plan) && !isPopular(plan, plans())"
-                    (click)="onPlanAction(plan)">
-              <i class="bi bi-rocket-takeoff-fill"></i>
-              <span>{{ isFree(plan) ? 'ابدأ مجاناً' : 'اشترك الآن' }}</span>
-            </button>
-          </article>
-        </div>
-
-        <!-- Fallback -->
-        <div *ngIf="!loadingPlans() && plans().length === 0" class="lp-empty">
-          <i class="bi bi-wifi-off"></i>
-          <p>تعذّر تحميل الباقات — تواصل معنا عبر واتساب لمعرفة التفاصيل.</p>
-          <button (click)="openWhatsApp()" class="lp-btn lp-btn-ghost lp-btn-sm">
-            <i class="bi bi-whatsapp"></i> تواصل معنا
-          </button>
-        </div>
-
-        <p class="lp-plans-note">
-          <i class="bi bi-info-circle"></i>
-          جميع الباقات تشمل: دعم عربي كامل، أمان عالٍ، نسخ احتياطية، وتحديثات مجانية مدى الحياة.
-        </p>
-
-      </div>
-    </section>
-
-    <!-- ========== CTA ========== -->
-    <section class="lp-cta-wrap">
-      <div class="lp-container">
-        <div class="lp-cta">
-          <div class="lp-cta-glow" aria-hidden="true"></div>
-          <div class="lp-cta-content">
-            <h2 class="lp-cta-title">ابدأ الآن وحوّل متجرك لمنظومة احترافية</h2>
-            <p class="lp-cta-sub">
-              سجّل متجرك اليوم واستفد من العرض الافتتاحي — سنة كاملة مجاناً
-              لأول 100 مشترك بدلاً من 5000 ج.م.
-            </p>
-            <div class="lp-cta-actions">
-              <a routerLink="/signup" class="lp-btn lp-btn-light lp-btn-lg">
-                <i class="bi bi-rocket-takeoff-fill"></i>
-                <span>سجّل متجرك مجاناً</span>
-              </a>
-              <button (click)="openWhatsApp()" class="lp-btn lp-btn-outline-light lp-btn-lg" type="button">
-                <i class="bi bi-whatsapp"></i>
-                <span>تواصل مع الدعم</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- ========== FOOTER ========== -->
-  <footer class="lp-footer">
-    <div class="lp-container lp-footer-grid">
-
-      <div class="lp-footer-brand">
-        <div class="lp-brand">
-          <span class="lp-brand-mark">
-            <img *ngIf="!imageError" src="assets/besnesy_logo.jpg" alt="Besnesy" (error)="imageError = true" />
-            <span *ngIf="imageError" class="lp-brand-letter">B</span>
-          </span>
-          <span class="lp-brand-copy">
-            <span class="lp-brand-name">Besnesy</span>
-            <span class="lp-brand-tag">منصة إدارة المتاجر</span>
-          </span>
-        </div>
-        <p class="lp-footer-text">
-          نظام متكامل لإدارة المتاجر الأونلاين: أوردرات، مخزون، شحن، فريق، وتقارير مالية.
-        </p>
-      </div>
-
-      <div class="lp-footer-col">
-        <h4>المنصة</h4>
-        <a href="#features">المميزات</a>
-        <a href="#how">كيف تعمل</a>
-        <a href="#pricing">الباقات</a>
-      </div>
-
-      <div class="lp-footer-col">
-        <h4>الحساب</h4>
-        <a routerLink="/signup">إنشاء متجر</a>
-        <a routerLink="/login">تسجيل الدخول</a>
-        <a routerLink="/super-admin/login">بوابة Admin</a>
-      </div>
-
-      <div class="lp-footer-col">
-        <h4>الدعم</h4>
-        <a href="https://wa.me/201080225502" target="_blank" rel="noopener">واتساب</a>
-        <a href="https://www.facebook.com/RunXTech" target="_blank" rel="noopener noreferrer">RunX</a>
-      </div>
-
+  <!-- ========== HERO ========== -->
+  <section class="relative py-16 sm:py-28 px-4 sm:px-6 max-w-5xl mx-auto text-center w-full">
+    <!-- Promo badge -->
+    <div class="lp-promo-badge inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold mb-8">
+      <i class="bi bi-fire text-rose-400 animate-pulse"></i>
+      <span>عرض افتتاحي — خطة مجانية مدى الحياة</span>
+      <i class="bi bi-arrow-left text-[10px]"></i>
     </div>
 
-    <div class="lp-container lp-footer-bottom">
-      <span>جميع الحقوق محفوظة © 2026 — Besnesy</span>
-      <span>Developed by <a href="https://www.facebook.com/RunXTech" target="_blank" rel="noopener noreferrer">RunX</a></span>
+    <h1 class="text-3xl sm:text-5xl md:text-6xl font-black lp-heading leading-tight mb-6">
+      إدارة متجرك الأونلاين
+      <span class="bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500 bg-clip-text text-transparent block sm:inline"> باحترافية كاملة</span>
+    </h1>
+
+    <p class="text-sm sm:text-lg lp-muted max-w-2xl mx-auto leading-relaxed mb-10">
+      منصة Besnesy — نظام متكامل لإدارة الأوردرات، المنتجات، فريق العمل، الشحن مع بوسطة، التقارير المالية P&L، والمزيد.
+    </p>
+
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+      <a routerLink="/signup" class="w-full sm:w-auto px-8 py-3.5 rounded-xl text-white bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 hover:opacity-90 font-black text-base shadow-2xl shadow-blue-500/20 transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2">
+        <i class="bi bi-rocket-takeoff-fill"></i>
+        ابدأ تجربتك المجانية الآن
+      </a>
+      <a routerLink="/pricing" class="w-full sm:w-auto px-8 py-3.5 rounded-xl lp-btn-ghost font-bold text-sm flex items-center justify-center gap-2">
+        <i class="bi bi-tag-fill"></i>
+        استعرض الخطط والأسعار
+      </a>
+    </div>
+
+    <!-- Stats -->
+    <div class="mt-14 grid grid-cols-3 gap-4 sm:gap-8 max-w-lg mx-auto">
+      <div class="text-center">
+        <div class="text-2xl sm:text-3xl font-black text-sky-500">100+</div>
+        <div class="text-xs lp-muted mt-0.5">متجر نشط</div>
+      </div>
+      <div class="text-center lp-stat-mid">
+        <div class="text-2xl sm:text-3xl font-black text-emerald-500">∞</div>
+        <div class="text-xs lp-muted mt-0.5">أوردر/شهر</div>
+      </div>
+      <div class="text-center">
+        <div class="text-2xl sm:text-3xl font-black text-amber-500">24/7</div>
+        <div class="text-xs lp-muted mt-0.5">دعم فني</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FEATURES ========== -->
+  <section id="features" class="py-14 sm:py-20 px-4 sm:px-6 lp-section-alt border-y">
+    <div class="max-w-6xl mx-auto space-y-10">
+      <div class="text-center space-y-3">
+        <span class="lp-section-badge inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold">
+          <i class="bi bi-stars"></i> مميزات النظام
+        </span>
+        <h2 class="text-2xl sm:text-4xl font-black lp-heading">كل ما تحتاجه لإدارة متجرك</h2>
+        <p class="lp-muted text-xs sm:text-sm max-w-xl mx-auto">منصة شاملة تجمع بين إدارة المبيعات، المخزون، الفريق، والتقارير المالية في مكان واحد.</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div *ngFor="let feat of systemFeatures" class="lp-card p-4 rounded-2xl border transition-all duration-300 group cursor-default">
+          <div class="flex items-center gap-3 mb-2">
+            <div class="w-10 h-10 rounded-xl border flex items-center justify-center text-lg shrink-0 group-hover:scale-110 transition-transform"
+                 [ngClass]="getFeatureColorClass(feat.color)">
+              <i [class]="'bi ' + feat.icon"></i>
+            </div>
+            <h3 class="font-bold text-sm lp-text leading-tight">{{ feat.title }}</h3>
+          </div>
+          <p class="text-xs lp-muted leading-relaxed">{{ feat.desc }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== PRICING ========== -->
+  <section id="pricing" class="py-14 sm:py-20 px-4 sm:px-6">
+    <div class="max-w-6xl mx-auto space-y-10">
+
+      <div class="text-center space-y-4">
+        <span class="lp-section-badge-amber inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold">
+          <i class="bi bi-gift-fill"></i> الباقات والأسعار
+        </span>
+        <h2 class="text-2xl sm:text-4xl font-black lp-heading">باقات الاشتراك</h2>
+        <p class="lp-muted text-xs sm:text-sm">اختر الباقة المناسبة لحجم متجرك — ويمكنك الترقية في أي وقت.</p>
+
+        <!-- Annual / Monthly Toggle -->
+        <div class="flex items-center justify-center gap-3 pt-2">
+          <span class="text-xs font-bold lp-toggle-label" [class.lp-toggle-active]="!isAnnual" [class.lp-toggle-inactive]="isAnnual">شهري</span>
+          <button (click)="isAnnual = !isAnnual" class="relative w-12 h-6 rounded-full transition-colors duration-300 focus:outline-none"
+                  [class.bg-amber-500]="isAnnual" [class.lp-toggle-off]="!isAnnual">
+            <span class="absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-all duration-300"
+                  [class.right-0.5]="!isAnnual" [class.left-0.5]="isAnnual"></span>
+          </button>
+          <span class="text-xs font-bold flex items-center gap-1" [class.text-amber-500]="isAnnual" [class.lp-toggle-inactive]="!isAnnual">
+            سنوي
+            <span class="bg-emerald-500/20 text-emerald-500 text-[10px] px-1.5 py-0.5 rounded-full border border-emerald-500/30 font-black">توفير!</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Loading Skeleton -->
+      <div *ngIf="loadingPlans()" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+        <div *ngFor="let i of [1,2,3,4]" class="lp-card rounded-3xl border p-6 sm:p-7 animate-pulse space-y-4">
+          <div class="h-4 lp-skeleton rounded w-1/3"></div>
+          <div class="h-7 lp-skeleton rounded w-1/2"></div>
+          <div class="h-3 lp-skeleton rounded w-full"></div>
+          <div class="h-10 lp-skeleton rounded w-1/2 mt-4"></div>
+          <div class="space-y-2 pt-2">
+            <div class="h-3 lp-skeleton rounded w-4/5"></div>
+            <div class="h-3 lp-skeleton rounded w-3/5"></div>
+            <div class="h-3 lp-skeleton rounded w-2/3"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Plans Grid (3 Official Plans) -->
+      <div *ngIf="!loadingPlans() && plans().length > 0" class="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch max-w-5xl mx-auto">
+        <div *ngFor="let plan of plans(); let i = index"
+             class="lp-plan-card rounded-3xl border p-6 sm:p-7 flex flex-col justify-between space-y-6 relative transition-all duration-300"
+             [class.lp-plan-popular]="isPopular(plan, plans())"
+             [class.lp-plan-normal]="!isPopular(plan, plans())">
+
+          <!-- Popular Badge -->
+          <div *ngIf="isPopular(plan, plans())" class="absolute -top-3.5 right-6 bg-gradient-to-r from-amber-500 to-amber-600 text-white font-black text-[11px] px-4 py-1 rounded-full shadow-lg">
+            <i class="bi bi-trophy-fill ml-1"></i> الأكثر طلباً 🔥
+          </div>
+
+          <div class="space-y-5">
+            <!-- Plan Badge & Name -->
+            <div class="space-y-2">
+              <span class="inline-block text-[11px] font-black px-3 py-1 rounded-full border"
+                    [ngClass]="i === 0 ? 'lp-badge-neutral' : i === 1 ? 'lp-badge-amber' : 'lp-badge-indigo'">
+                {{ plan.badge || 'باقة ' + plan.name }}
+              </span>
+              <h3 class="text-xl sm:text-2xl font-black lp-heading">{{ plan.name }}</h3>
+              <p class="text-xs lp-muted leading-relaxed">{{ plan.description }}</p>
+            </div>
+
+            <!-- Price -->
+            <div class="py-4 lp-price-divider border-y">
+              <!-- Case 1: Limited-time Free Offer (Original Price > 0 and Active Price is 0) -->
+              <ng-container *ngIf="isLimitedFreeOffer(plan)">
+                <div class="space-y-1.5">
+                  <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[11px] font-black shadow-sm animate-pulse">
+                    <i class="bi bi-gift-fill"></i>
+                    <span>عرض مجاناً لفترة محدودة 🔥</span>
+                  </div>
+                  <div class="flex items-baseline gap-1.5">
+                    <span class="text-3xl sm:text-4xl font-black text-emerald-400">0</span>
+                    <span class="text-sm lp-muted font-bold">ج.م</span>
+                    <span class="text-xs lp-muted">/ {{ isAnnual ? 'سنوياً' : 'شهرياً' }}</span>
+                  </div>
+                  <div *ngIf="getOriginalPrice(plan) > 0" class="text-xs text-rose-500 font-bold line-through">
+                    السعر الأصلي: {{ getOriginalPrice(plan) | number:'1.0-0' }} ج.م
+                  </div>
+                </div>
+              </ng-container>
+
+              <!-- Case 2: Permanent Free Plan -->
+              <ng-container *ngIf="!isLimitedFreeOffer(plan) && isPermanentFree(plan)">
+                <div class="text-3xl sm:text-4xl font-black text-emerald-500">مجاناً</div>
+                <div class="text-xs lp-muted mt-1">مدى الحياة للمشاريع الناشئة</div>
+              </ng-container>
+
+              <!-- Case 3: Regular Paid Plan -->
+              <ng-container *ngIf="!isLimitedFreeOffer(plan) && !isPermanentFree(plan)">
+                <div class="flex items-baseline gap-2">
+                  <span class="text-3xl sm:text-4xl font-black" [class.text-amber-500]="isPopular(plan, plans())" [class.text-sky-500]="!isPopular(plan, plans())">
+                    {{ getDisplayPrice(plan) | number:'1.0-0' }}
+                  </span>
+                  <span class="text-sm lp-muted font-bold">ج.م</span>
+                  <span class="text-xs lp-muted">/ {{ isAnnual ? 'سنوياً' : 'شهرياً' }}</span>
+                </div>
+                <div *ngIf="getOriginalPrice(plan) > 0 && getOriginalPrice(plan) > getDisplayPrice(plan)" class="text-xs text-rose-500 font-bold line-through mt-1">
+                  {{ getOriginalPrice(plan) | number:'1.0-0' }} ج.م
+                </div>
+                <div *ngIf="plan.annualOfferPrice > 0 && isAnnual && plan.annualPrice > plan.annualOfferPrice" class="mt-1.5 text-[11px] text-emerald-500 font-bold flex items-center gap-1">
+                  <i class="bi bi-check-circle-fill"></i> خصم سنوي خاص!
+                </div>
+              </ng-container>
+            </div>
+
+            <!-- Features Checklist -->
+            <ul class="space-y-2 text-xs sm:text-sm">
+              <li class="flex items-center gap-2.5 lp-text">
+                <i class="bi bi-check-circle-fill text-emerald-500 shrink-0"></i>
+                <span>{{ plan.maxModerators >= 100 ? 'حسابات موظفين بلا حدود' : (plan.maxModerators > 0 ? 'حتى ' + plan.maxModerators + ' حسابات موظفين' : 'بدون حسابات موظفين') }}</span>
+              </li>
+              <li class="flex items-center gap-2.5 lp-text">
+                <i class="bi bi-check-circle-fill text-emerald-500 shrink-0"></i>
+                <span>{{ plan.maxProducts ? 'حتى ' + plan.maxProducts + ' منتج' : 'منتجات بلا حدود' }}</span>
+              </li>
+              <li class="flex items-center gap-2.5 lp-text">
+                <i class="bi bi-check-circle-fill text-emerald-500 shrink-0"></i>
+                <span>{{ plan.maxOrdersPerMonth ? 'حتى ' + plan.maxOrdersPerMonth + ' أوردر/شهر' : 'أوردرات بلا حدود' }}</span>
+              </li>
+              <li class="lp-feature-row flex items-center gap-2.5" [class.lp-feature-on]="plan.allowOnlineStorefront !== false" [class.lp-feature-off]="plan.allowOnlineStorefront === false">
+                <i class="bi shrink-0" [class.bi-check-circle-fill]="plan.allowOnlineStorefront !== false" [class.bi-x-circle]="plan.allowOnlineStorefront === false"></i>
+                <span>متجر إلكتروني أونلاين كامل للعملاء</span>
+              </li>
+              <li class="lp-feature-row flex items-center gap-2.5" [class.lp-feature-on]="plan.allowManualLandingPages !== false" [class.lp-feature-off]="plan.allowManualLandingPages === false">
+                <i class="bi shrink-0" [class.bi-check-circle-fill]="plan.allowManualLandingPages !== false" [class.bi-x-circle]="plan.allowManualLandingPages === false"></i>
+                <span>إنشاء وتصميم صفحات هبوط يدوياً</span>
+              </li>
+              <li class="lp-feature-row flex items-center gap-2.5" [class.lp-feature-on]="plan.allowAiLandingPages" [class.lp-feature-off]="!plan.allowAiLandingPages">
+                <i class="bi shrink-0" [class.bi-check-circle-fill]="plan.allowAiLandingPages" [class.bi-x-circle]="!plan.allowAiLandingPages"></i>
+                <span>توليد صفحات هبوط بالذكاء الاصطناعي AI</span>
+              </li>
+              <li class="lp-feature-row flex items-center gap-2.5" [class.lp-feature-on]="plan.allowBostaIntegration" [class.lp-feature-off]="!plan.allowBostaIntegration">
+                <i class="bi shrink-0" [class.bi-check-circle-fill]="plan.allowBostaIntegration" [class.bi-x-circle]="!plan.allowBostaIntegration"></i>
+                <span>ربط آلي Bosta API وشحن جماعي</span>
+              </li>
+              <li class="lp-feature-row flex items-center gap-2.5" [class.lp-feature-on]="plan.allowWalletsAndDeposits" [class.lp-feature-off]="!plan.allowWalletsAndDeposits">
+                <i class="bi shrink-0" [class.bi-check-circle-fill]="plan.allowWalletsAndDeposits" [class.bi-x-circle]="!plan.allowWalletsAndDeposits"></i>
+                <span>الخزائن والعربونات</span>
+              </li>
+              <li class="lp-feature-row flex items-center gap-2.5" [class.lp-feature-on]="plan.allowExpensesTracking" [class.lp-feature-off]="!plan.allowExpensesTracking">
+                <i class="bi shrink-0" [class.bi-check-circle-fill]="plan.allowExpensesTracking" [class.bi-x-circle]="!plan.allowExpensesTracking"></i>
+                <span>إدارة المصروفات اليومية</span>
+              </li>
+              <li class="lp-feature-row flex items-center gap-2.5" [class.lp-feature-on]="plan.allowFinancialReports" [class.lp-feature-off]="!plan.allowFinancialReports">
+                <i class="bi shrink-0" [class.bi-check-circle-fill]="plan.allowFinancialReports" [class.bi-x-circle]="!plan.allowFinancialReports"></i>
+                <span>تقارير الأرباح والمالية P&L</span>
+              </li>
+              <li class="lp-feature-row flex items-center gap-2.5" [class.lp-feature-on]="plan.allowPayrollAndShifts" [class.lp-feature-off]="!plan.allowPayrollAndShifts">
+                <i class="bi shrink-0" [class.bi-check-circle-fill]="plan.allowPayrollAndShifts" [class.bi-x-circle]="!plan.allowPayrollAndShifts"></i>
+                <span>نظام المرتبات والسلف والشيفتات</span>
+              </li>
+              <li class="lp-feature-row flex items-center gap-2.5" [class.lp-feature-on]="plan.allowPurchasesManagement" [class.lp-feature-off]="!plan.allowPurchasesManagement">
+                <i class="bi shrink-0" [class.bi-check-circle-fill]="plan.allowPurchasesManagement" [class.bi-x-circle]="!plan.allowPurchasesManagement"></i>
+                <span>فواتير المشتريات وإدارة الموردين</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- CTA Button -->
+          <button type="button" (click)="onPlanAction(plan)"
+             class="w-full py-3 rounded-xl font-black text-center text-sm transition-all flex items-center justify-center gap-2 cursor-pointer"
+             [ngClass]="isPopular(plan, plans()) ? 'bg-gradient-to-r from-amber-500 to-amber-600 hover:opacity-90 text-white shadow-lg'
+                       : i === 3                 ? 'bg-gradient-to-r from-indigo-600 to-sky-600 hover:opacity-90 text-white shadow-lg'
+                       :                           'lp-btn-ghost border'">
+            <i class="bi bi-rocket-takeoff-fill text-xs"></i>
+            {{ isFree(plan) ? 'ابدأ مجاناً' : 'اشترك الآن' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- No Plans Fallback -->
+      <div *ngIf="!loadingPlans() && plans().length === 0" class="text-center py-12 lp-muted space-y-3">
+        <i class="bi bi-wifi-off text-4xl"></i>
+        <p>تعذّر تحميل الباقات — تواصل معنا عبر واتساب لمعرفة التفاصيل.</p>
+        <button (click)="openWhatsApp()" class="lp-btn-ghost border px-5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 mx-auto">
+          <i class="bi bi-whatsapp text-emerald-500"></i> تواصل معنا
+        </button>
+      </div>
+
+      <!-- Note -->
+      <p class="text-center text-xs lp-muted pt-2">
+        <i class="bi bi-info-circle ml-1"></i>
+        جميع الباقات تشمل: دعم عربي كامل، أمان عالٍ، نسخ احتياطية، وتحديثات مجانية مدى الحياة.
+      </p>
+    </div>
+  </section>
+
+  <!-- ========== CTA BANNER ========== -->
+  <section class="py-12 sm:py-16 px-4 sm:px-6">
+    <div class="max-w-5xl mx-auto">
+      <div class="relative rounded-3xl bg-gradient-to-br from-sky-600 via-blue-700 to-indigo-800 p-8 sm:p-14 overflow-hidden shadow-2xl text-center space-y-6">
+        <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-white/5 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="absolute -left-10 -top-10 w-48 h-48 bg-indigo-300/10 rounded-full blur-2xl pointer-events-none"></div>
+        <h2 class="text-2xl sm:text-4xl font-black text-white relative z-10">ابدأ الآن وحوّل متجرك إلى منظومة احترافية</h2>
+        <p class="text-sky-100 text-xs sm:text-base max-w-2xl mx-auto relative z-10">سجل متجرك اليوم واستفد من العرض الافتتاحي — سنة كاملة مجاناً لأول 100 مشترك بدلاً من 5000 ج.م.</p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 relative z-10">
+          <a routerLink="/signup" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-white text-blue-900 font-extrabold text-sm hover:bg-sky-50 shadow-xl transition-all">
+            سجّل متجرك الآن مجاناً <i class="bi bi-emoji-smile-fill ml-1"></i>
+          </a>
+          <button (click)="openWhatsApp()" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm border border-white/20 transition flex items-center justify-center gap-2">
+            <i class="bi bi-whatsapp text-emerald-300"></i>
+            تواصل مع الدعم
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="mt-auto lp-footer border-t py-8 px-6 text-xs">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex flex-wrap items-center justify-center sm:justify-start gap-3">
+        <span class="font-extrabold lp-brand-name text-sm">Besnesy</span>
+        <span class="lp-divider">•</span>
+        <a href="https://www.facebook.com/RunXTech" target="_blank" rel="noopener noreferrer" class="text-sky-500 hover:text-sky-400 font-bold transition">
+          Developed by RunX
+        </a>
+        <span class="lp-divider">•</span>
+        <span class="lp-muted">جميع الحقوق محفوظة © 2026</span>
+      </div>
+      <div class="flex items-center gap-5 font-semibold lp-muted">
+        <a routerLink="/signup" class="hover:text-sky-500 transition">إنشاء متجر</a>
+        <a routerLink="/login" class="hover:text-sky-500 transition">تسجيل الدخول</a>
+        <a routerLink="/super-admin/login" class="hover:text-amber-500 transition">بوابة Admin</a>
+      </div>
     </div>
   </footer>
 

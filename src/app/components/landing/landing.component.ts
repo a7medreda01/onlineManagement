@@ -35,8 +35,7 @@ export interface PlanDto {
   selector: 'app-landing',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: './landing.component.html',
-  styleUrls: ['./landing.component.css']
+  templateUrl: './landing.component.html'
 })
 export class LandingComponent implements OnInit {
   imageError = false;
