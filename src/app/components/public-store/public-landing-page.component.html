@@ -447,124 +447,27 @@
 
           <form (ngSubmit)="submitOrder()">
             
-            <!-- Desktop 2-Column Grid / Mobile 1-Column Stack -->
+            <!-- Desktop 2-Column Grid / Mobile 1-Column Sequential Stack -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-start">
 
-              <!-- COLUMN 1: Shipping Input Fields (Right side in RTL - 7 cols on Desktop) -->
-              <div class="lg:col-span-7 order-2 lg:order-1 flex flex-col gap-3">
-                <div class="hidden lg:flex items-center gap-2 pb-2 border-b border-slate-100 text-slate-800 font-bold text-sm">
-                  <i class="bi bi-geo-alt-fill text-indigo-600"></i>
-                  <span>بيانات التوصيل والمستلم:</span>
-                </div>
+              <!-- COLUMN 1: Offer/Bundles Selection + Shipping Information (7 cols on Desktop) -->
+              <div class="lg:col-span-7 flex flex-col gap-4">
 
-                <!-- Name & Phone Row -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  <div>
-                    <label class="block text-[11px] sm:text-xs font-bold text-slate-700 mb-1">الاسم بالكامل <span class="text-rose-500">*</span></label>
-                    <input type="text" [(ngModel)]="orderForm.customerName" name="customerName" class="compact-form-input" placeholder="مثال: أحمد محمد علي" required>
-                  </div>
-
-                  <div>
-                    <label class="block text-[11px] sm:text-xs font-bold text-slate-700 mb-1">رقم الهاتف (واتساب) <span class="text-rose-500">*</span></label>
-                    <div class="flex items-center rounded-xl border border-slate-300 bg-white overflow-hidden transition-all focus-within:border-blue-600 focus-within:ring-2 focus-within:ring-blue-100 h-[42px]">
-                      <span class="px-2.5 py-2 bg-slate-100 text-slate-700 text-xs font-bold font-mono border-l border-slate-200 shrink-0 select-none" dir="ltr">
-                        +20
-                      </span>
-                      <input type="tel" [(ngModel)]="orderForm.phone" name="phone"
-                        class="flex-1 py-1 px-2.5 text-xs sm:text-sm font-mono text-slate-900 border-none outline-none bg-transparent"
-                        dir="ltr" placeholder="01012345678" required>
-                      <span class="pl-2.5 text-emerald-600 shrink-0">
-                        <i class="bi bi-whatsapp text-sm"></i>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Alternative Phone Toggle -->
-                <div *ngIf="!showAltPhone()" class="-mt-0.5">
-                  <button type="button" (click)="showAltPhone.set(true)"
-                    class="text-[11px] text-blue-600 hover:text-blue-800 font-bold inline-flex items-center gap-1 cursor-pointer">
-                    <i class="bi bi-plus-circle"></i> إضافة رقم هاتف بديل (اختياري)
-                  </button>
-                </div>
-                <div *ngIf="showAltPhone()" class="animate-fadeIn">
-                  <div class="flex items-center justify-between mb-1">
-                    <label class="block text-[11px] font-bold text-slate-700">هاتف بديل (اختياري)</label>
-                    <button type="button" (click)="showAltPhone.set(false); orderForm.alternativePhone = ''"
-                      class="text-[10px] text-rose-500 hover:underline cursor-pointer">إلغاء</button>
-                  </div>
-                  <div class="flex items-center rounded-xl border border-slate-300 bg-white overflow-hidden transition-all focus-within:border-blue-600 focus-within:ring-2 focus-within:ring-blue-100 h-[42px]">
-                    <span class="px-2.5 py-2 bg-slate-100 text-slate-700 text-xs font-bold font-mono border-l border-slate-200 shrink-0 select-none" dir="ltr">
-                      +20
-                    </span>
-                    <input type="tel" [(ngModel)]="orderForm.alternativePhone" name="alternativePhone"
-                      class="flex-1 py-1 px-2.5 text-xs sm:text-sm font-mono text-slate-900 border-none outline-none bg-transparent"
-                      dir="ltr" placeholder="01112345678">
-                  </div>
-                </div>
-
-                <!-- Governorate & District Row -->
-                <div class="grid grid-cols-2 gap-2.5">
-                  <div>
-                    <label class="block text-[11px] sm:text-xs font-bold text-slate-700 mb-1">المحافظة <span class="text-rose-500">*</span></label>
-                    <select [(ngModel)]="orderForm.governorateId" (change)="onGovernorateChange()" name="governorateId"
-                      class="compact-form-input cursor-pointer" required>
-                      <option *ngFor="let gov of governorates" [value]="gov.id">{{ gov.name }}</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label class="block text-[11px] sm:text-xs font-bold text-slate-700 mb-1">المنطقة / الحي <span class="text-rose-500">*</span></label>
-                    <input type="text" [(ngModel)]="orderForm.districtName" name="districtName" class="compact-form-input"
-                      placeholder="مثال: المعادي، نصر">
-                  </div>
-                </div>
-
-                <!-- Detailed Address -->
-                <div>
-                  <label class="block text-[11px] sm:text-xs font-bold text-slate-700 mb-1">العنوان بالتفصيل <span class="text-rose-500">*</span></label>
-                  <input type="text" [(ngModel)]="orderForm.address" name="address" class="compact-form-input"
-                    placeholder="اسم الشارع — رقم العمارة — الشقة..." required>
-                </div>
-
-                <!-- Notes Toggle -->
-                <div *ngIf="!showNotes()" class="-mt-0.5">
-                  <button type="button" (click)="showNotes.set(true)"
-                    class="text-[11px] text-slate-500 hover:text-slate-700 font-medium inline-flex items-center gap-1 cursor-pointer">
-                    <i class="bi bi-chat-left-text"></i> إضافة ملاحظات للتوصيل (اختياري)
-                  </button>
-                </div>
-                <div *ngIf="showNotes()" class="animate-fadeIn">
-                  <div class="flex items-center justify-between mb-1">
-                    <label class="block text-[11px] font-bold text-slate-700">ملاحظات للمندوب</label>
-                    <button type="button" (click)="showNotes.set(false); orderForm.notes = ''"
-                      class="text-[10px] text-rose-500 hover:underline cursor-pointer">إلغاء</button>
-                  </div>
-                  <input type="text" [(ngModel)]="orderForm.notes" name="notes" class="compact-form-input"
-                    placeholder="أي تعليمات إضافية للتسليم...">
-                </div>
-
-                <!-- Submit Button on Desktop -->
-                <div class="hidden lg:block mt-2">
-                  <button type="submit" [disabled]="submitting()"
-                    class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-[0.99] disabled:opacity-60 text-white font-black text-base py-3.5 px-6 rounded-xl transition shadow-lg flex items-center justify-center gap-2 cursor-pointer">
-                    <span *ngIf="submitting()" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                    <i *ngIf="!submitting()" class="bi bi-bag-check-fill text-lg"></i>
-                    <span>{{ submitting() ? 'جاري تسجيل طلبك...' : 'تأكيد الطلب — الدفع عند الاستلام' }}</span>
-                  </button>
-                  <div class="text-center text-xs text-slate-500 flex items-center justify-center gap-1.5 mt-2.5">
-                    <i class="bi bi-shield-lock-fill text-emerald-600"></i>
-                    <span>بياناتك آمنة ومشفرة — الدفع عند الاستلام لباب منزلك مع ضمان استبدال معتمد</span>
-                  </div>
-                </div>
-
-              </div>
-
-              <!-- COLUMN 2: Order Summary, Product Mini Card, Bundles & Invoice (Left side in RTL - 5 cols on Desktop) -->
-              <div class="lg:col-span-5 order-1 lg:order-2 flex flex-col gap-3 lg:sticky lg:top-6">
-                
-                <div class="bg-slate-50/90 border border-slate-200 rounded-2xl p-3 sm:p-4 shadow-xs">
+                <!-- STEP 1: اختيار العرض والموديل -->
+                <div class="bg-slate-50/90 border border-slate-200/90 rounded-2xl p-3.5 sm:p-5 shadow-2xs">
                   
-                  <!-- Mini Product Card -->
+                  <!-- Step 1 Header -->
+                  <div class="flex items-center justify-between pb-2.5 mb-3 border-b border-slate-200/80">
+                    <div class="flex items-center gap-2">
+                      <span class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-black flex items-center justify-center shrink-0">1</span>
+                      <h4 class="text-xs sm:text-sm font-black text-slate-900 mb-0">اختر العرض الأنسب لك:</h4>
+                    </div>
+                    <span class="text-[11px] text-amber-700 font-bold bg-amber-50 border border-amber-200/90 px-2 py-0.5 rounded-full">
+                      خصومات حصرية 🔥
+                    </span>
+                  </div>
+
+                  <!-- Mini Product Header -->
                   <div class="bg-white border border-slate-200 rounded-xl p-2.5 mb-3 flex items-center justify-between gap-3 shadow-2xs">
                     <div class="flex items-center gap-2.5 min-w-0">
                       <img [src]="selectedImage"
@@ -575,12 +478,13 @@
                         <div class="flex items-center gap-1.5">
                           <span class="text-xs sm:text-sm font-black text-emerald-600 font-mono">{{ pageData()?.sellingPrice | currency:'EGP':'symbol':'1.0-0' }}</span>
                           <span *ngIf="selectedSize()"
-                            class="text-[9px] bg-slate-200 text-slate-700 px-1.5 py-0.2 rounded font-bold">المقاس: {{ selectedSize() }}</span>
+                            class="text-[9px] bg-slate-100 text-slate-700 border border-slate-200 px-1.5 py-0.5 rounded font-bold">المقاس: {{ selectedSize() }}</span>
                         </div>
                       </div>
                     </div>
-                    <!-- Quantity Stepper -->
-                    <div class="flex items-center gap-1 bg-slate-50 border border-slate-200 rounded-lg p-0.5 flex-shrink-0">
+
+                    <!-- Quantity Stepper: Only shown when no bundles exist -->
+                    <div *ngIf="bundles().length <= 1" class="flex items-center gap-1 bg-slate-50 border border-slate-200 rounded-lg p-0.5 flex-shrink-0">
                       <button (click)="changeQuantity(-1)" type="button"
                         class="w-7 h-7 flex items-center justify-center font-black text-slate-600 hover:bg-white rounded text-xs transition cursor-pointer">−</button>
                       <span class="w-6 text-center text-xs font-black font-mono">{{ orderForm.quantity }}</span>
@@ -589,12 +493,8 @@
                     </div>
                   </div>
 
-                  <!-- Quantity Bundles -->
-                  <div *ngIf="bundles().length > 1" class="mb-3">
-                    <div class="flex items-center justify-between mb-1.5">
-                      <span class="text-[11px] font-black text-slate-800">اختر العرض الأنسب لك:</span>
-                      <span class="text-[10px] text-amber-600 font-bold">خصومات إضافية 🔥</span>
-                    </div>
+                  <!-- Quantity Bundles (3-Column Grid) -->
+                  <div *ngIf="bundles().length > 1" class="mb-2">
                     <div class="grid grid-cols-3 gap-1.5 sm:gap-2">
                       <div *ngFor="let b of bundles(); let idx = index" (click)="selectBundle(idx)" class="bundle-pill-card"
                         [class.bundle-pill-active]="selectedBundleIndex() === idx">
@@ -620,8 +520,8 @@
 
                   <!-- Color / Variant Options -->
                   <div *ngIf="variantOptions().length > 1"
-                    class="variant-selection-card mb-3 p-2 bg-white rounded-xl border border-slate-200">
-                    <div class="flex items-center justify-between mb-1.5">
+                    class="variant-selection-card mt-3 p-2.5 bg-white rounded-xl border border-slate-200">
+                    <div class="flex items-center justify-between mb-2">
                       <span class="text-[11px] font-bold text-slate-700">اختر اللون / الموديل:</span>
                       <span class="text-[10px] font-black text-slate-900 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">{{ selectedVariant() }}</span>
                     </div>
@@ -635,52 +535,199 @@
                     </div>
                   </div>
 
-                  <!-- Invoice Receipt -->
-                  <div class="bg-white border border-slate-200 rounded-xl p-3 space-y-2 text-xs shadow-2xs">
-                    <div class="flex justify-between items-center text-slate-600 text-[11px] sm:text-xs">
-                      <span>قيمة العرض ({{ orderForm.quantity }} {{ orderForm.quantity === 1 ? 'قطعة' : 'قطع' }}):</span>
-                      <span class="font-bold text-slate-900 font-mono">{{ (totalAmount - shippingCost) | number:'1.0-0' }} ج.م</span>
+                </div>
+
+                <!-- STEP 2: بيانات التوصيل والاستلام -->
+                <div class="bg-white border border-slate-200/90 rounded-2xl p-3.5 sm:p-5 shadow-2xs flex flex-col gap-3">
+                  
+                  <!-- Step 2 Header -->
+                  <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
+                    <div class="flex items-center gap-2">
+                      <span class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-black flex items-center justify-center shrink-0">2</span>
+                      <h4 class="text-xs sm:text-sm font-black text-slate-900 mb-0">بيانات التوصيل والمستلم:</h4>
                     </div>
-                    <div class="flex justify-between items-center text-slate-600 text-[11px] sm:text-xs">
-                      <span>مصاريف التوصيل:</span>
-                      <span class="font-bold text-emerald-600">{{ isFreeShippingActive ? 'شحن مجاني 🎁' : ((shippingCost | number:'1.0-0') + ' ج.م') }}</span>
+                    <span class="text-[11px] text-slate-500 font-medium">الدفع نقداً عند الاستلام</span>
+                  </div>
+
+                  <!-- Name & Phone Row -->
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <div>
+                      <label class="block text-[11px] sm:text-xs font-bold text-slate-700 mb-1">الاسم بالكامل <span class="text-rose-500">*</span></label>
+                      <input type="text" [(ngModel)]="orderForm.customerName" name="customerName" class="compact-form-input" placeholder="مثال: أحمد محمد علي" required>
                     </div>
-                    <div class="flex justify-between items-center pt-2.5 border-t border-slate-200 text-sm font-black">
-                      <span class="text-slate-900">المطلوب عند الاستلام:</span>
-                      <span class="text-xl sm:text-2xl text-emerald-600 font-mono font-black">{{ totalAmount | number:'1.0-0' }} <span class="text-xs font-cairo">ج.م</span></span>
+
+                    <div>
+                      <label class="block text-[11px] sm:text-xs font-bold text-slate-700 mb-1">رقم الهاتف (واتساب) <span class="text-rose-500">*</span></label>
+                      <div class="flex items-center rounded-xl border border-slate-300 bg-white overflow-hidden transition-all focus-within:border-blue-600 focus-within:ring-2 focus-within:ring-blue-100 h-[42px]">
+                        <span class="px-2.5 py-2 bg-slate-100 text-slate-700 text-xs font-bold font-mono border-l border-slate-200 shrink-0 select-none" dir="ltr">
+                          +20
+                        </span>
+                        <input type="tel" [(ngModel)]="orderForm.phone" name="phone"
+                          class="flex-1 py-1 px-2.5 text-xs sm:text-sm font-mono text-slate-900 border-none outline-none bg-transparent"
+                          dir="ltr" placeholder="01012345678" required>
+                        <span class="pl-2.5 text-emerald-600 shrink-0">
+                          <i class="bi bi-whatsapp text-sm"></i>
+                        </span>
+                      </div>
                     </div>
                   </div>
 
-                  <!-- Mini Trust Badges in Summary Card -->
-                  <div class="grid grid-cols-3 gap-2 mt-3 text-center text-[10px] text-slate-600">
-                    <div class="p-1.5 bg-white rounded-lg border border-slate-200/80">
-                      <i class="bi bi-shield-check text-emerald-600 block text-sm mb-0.5"></i>
-                      <span>ضمان استبدال</span>
+                  <!-- Alternative Phone Toggle -->
+                  <div *ngIf="!showAltPhone()" class="-mt-0.5">
+                    <button type="button" (click)="showAltPhone.set(true)"
+                      class="text-[11px] text-blue-600 hover:text-blue-800 font-bold inline-flex items-center gap-1 cursor-pointer">
+                      <i class="bi bi-plus-circle"></i> إضافة رقم هاتف بديل (اختياري)
+                    </button>
+                  </div>
+                  <div *ngIf="showAltPhone()" class="animate-fadeIn">
+                    <div class="flex items-center justify-between mb-1">
+                      <label class="block text-[11px] font-bold text-slate-700">هاتف بديل (اختياري)</label>
+                      <button type="button" (click)="showAltPhone.set(false); orderForm.alternativePhone = ''"
+                        class="text-[10px] text-rose-500 hover:underline cursor-pointer">إلغاء</button>
                     </div>
-                    <div class="p-1.5 bg-white rounded-lg border border-slate-200/80">
-                      <i class="bi bi-truck text-blue-600 block text-sm mb-0.5"></i>
-                      <span>توصيل سريع</span>
+                    <div class="flex items-center rounded-xl border border-slate-300 bg-white overflow-hidden transition-all focus-within:border-blue-600 focus-within:ring-2 focus-within:ring-blue-100 h-[42px]">
+                      <span class="px-2.5 py-2 bg-slate-100 text-slate-700 text-xs font-bold font-mono border-l border-slate-200 shrink-0 select-none" dir="ltr">
+                        +20
+                      </span>
+                      <input type="tel" [(ngModel)]="orderForm.alternativePhone" name="alternativePhone"
+                        class="flex-1 py-1 px-2.5 text-xs sm:text-sm font-mono text-slate-900 border-none outline-none bg-transparent"
+                        dir="ltr" placeholder="01112345678">
                     </div>
-                    <div class="p-1.5 bg-white rounded-lg border border-slate-200/80">
-                      <i class="bi bi-cash-coin text-amber-600 block text-sm mb-0.5"></i>
-                      <span>دفع باستلام</span>
+                  </div>
+
+                  <!-- Governorate & District Row -->
+                  <div class="grid grid-cols-2 gap-2.5">
+                    <div>
+                      <label class="block text-[11px] sm:text-xs font-bold text-slate-700 mb-1">المحافظة <span class="text-rose-500">*</span></label>
+                      <select [(ngModel)]="orderForm.governorateId" (change)="onGovernorateChange()" name="governorateId"
+                        class="compact-form-input cursor-pointer" required>
+                        <option *ngFor="let gov of governorates" [value]="gov.id">{{ gov.name }}</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="block text-[11px] sm:text-xs font-bold text-slate-700 mb-1">المنطقة / الحي <span class="text-rose-500">*</span></label>
+                      <input type="text" [(ngModel)]="orderForm.districtName" name="districtName" class="compact-form-input"
+                        placeholder="مثال: المعادي، نصر">
+                    </div>
+                  </div>
+
+                  <!-- Detailed Address -->
+                  <div>
+                    <label class="block text-[11px] sm:text-xs font-bold text-slate-700 mb-1">العنوان بالتفصيل <span class="text-rose-500">*</span></label>
+                    <input type="text" [(ngModel)]="orderForm.address" name="address" class="compact-form-input"
+                      placeholder="اسم الشارع — رقم العمارة — الشقة..." required>
+                  </div>
+
+                  <!-- Notes Toggle -->
+                  <div *ngIf="!showNotes()" class="-mt-0.5">
+                    <button type="button" (click)="showNotes.set(true)"
+                      class="text-[11px] text-slate-500 hover:text-slate-700 font-medium inline-flex items-center gap-1 cursor-pointer">
+                      <i class="bi bi-chat-left-text"></i> إضافة ملاحظات للتوصيل (اختياري)
+                    </button>
+                  </div>
+                  <div *ngIf="showNotes()" class="animate-fadeIn">
+                    <div class="flex items-center justify-between mb-1">
+                      <label class="block text-[11px] font-bold text-slate-700">ملاحظات للمندوب</label>
+                      <button type="button" (click)="showNotes.set(false); orderForm.notes = ''"
+                        class="text-[10px] text-rose-500 hover:underline cursor-pointer">إلغاء</button>
+                    </div>
+                    <input type="text" [(ngModel)]="orderForm.notes" name="notes" class="compact-form-input"
+                      placeholder="أي تعليمات إضافية للتسليم...">
+                  </div>
+
+                  <!-- Submit Button on Desktop Form Footer -->
+                  <div class="hidden lg:block mt-2 pt-2 border-t border-slate-100">
+                    <button type="submit" [disabled]="submitting()"
+                      class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-[0.99] disabled:opacity-60 text-white font-black text-base py-3.5 px-6 rounded-xl transition shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2 cursor-pointer">
+                      <span *ngIf="submitting()" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                      <i *ngIf="!submitting()" class="bi bi-bag-check-fill text-lg"></i>
+                      <span>{{ submitting() ? 'جاري تسجيل طلبك...' : ('تأكيد الطلب — الدفع عند الاستلام (' + (totalAmount | number:'1.0-0') + ' ج.م)') }}</span>
+                    </button>
+                    <div class="text-center text-xs text-slate-500 flex items-center justify-center gap-1.5 mt-2">
+                      <i class="bi bi-shield-lock-fill text-emerald-600"></i>
+                      <span>بياناتك آمنة ومشفرة — الدفع عند الاستلام لباب منزلك مع ضمان استبدال معتمد</span>
                     </div>
                   </div>
 
                 </div>
 
-                <!-- Submit Button on Mobile (only shown on mobile screens) -->
-                <div class="lg:hidden mt-1">
-                  <button type="submit" [disabled]="submitting()"
-                    class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-[0.99] disabled:opacity-60 text-white font-black text-sm sm:text-base py-3 px-4 rounded-xl transition shadow-md flex items-center justify-center gap-2 cursor-pointer">
-                    <span *ngIf="submitting()" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                    <i *ngIf="!submitting()" class="bi bi-shield-check text-base"></i>
-                    <span>{{ submitting() ? 'جاري تسجيل طلبك...' : 'تأكيد الطلب — الدفع عند الاستلام' }}</span>
-                  </button>
-                  <div class="text-center text-[10px] text-slate-400 flex items-center justify-center gap-1 mt-1.5">
-                    <i class="bi bi-shield-lock-fill text-emerald-600"></i>
-                    <span>الدفع نقداً عند استلام شحنتك لباب منزلك مع ضمان استبدال معتمد</span>
+              </div>
+
+              <!-- COLUMN 2: Order Summary, Invoice, Big Submit CTA & Trust Badges (5 cols on Desktop, Sticky) -->
+              <div class="lg:col-span-5 flex flex-col gap-3.5 lg:sticky lg:top-6">
+                
+                <div class="bg-gradient-to-b from-slate-50 to-white border-2 border-slate-200/90 rounded-2xl p-4 sm:p-5 shadow-xs">
+                  
+                  <div class="flex items-center gap-2 pb-3 mb-3 border-b border-slate-200 text-slate-900 font-black text-sm">
+                    <i class="bi bi-receipt text-blue-600 text-base"></i>
+                    <span>ملخص الطلب والفاتورة</span>
                   </div>
+
+                  <!-- Selected Offer Pill -->
+                  <div class="flex items-center justify-between bg-blue-50/70 border border-blue-100 rounded-xl px-3 py-2 mb-3">
+                    <div class="flex items-center gap-2 text-xs font-bold text-blue-900">
+                      <i class="bi bi-box-seam text-blue-600"></i>
+                      <span>العرض المختار:</span>
+                    </div>
+                    <span class="text-xs font-black text-blue-700">
+                      {{ orderForm.quantity }} {{ orderForm.quantity === 1 ? 'قطعة واحدة' : (orderForm.quantity === 2 ? 'قطعتين' : orderForm.quantity + ' قطع') }}
+                    </span>
+                  </div>
+
+                  <!-- Invoice Breakdown -->
+                  <div class="space-y-2 text-xs">
+                    <div class="flex justify-between items-center text-slate-600">
+                      <span>قيمة المنتجات:</span>
+                      <span class="font-bold text-slate-900 font-mono text-sm">{{ (totalAmount - shippingCost) | number:'1.0-0' }} ج.م</span>
+                    </div>
+                    <div class="flex justify-between items-center text-slate-600">
+                      <span>مصاريف الشحن والتوصيل:</span>
+                      <span class="font-bold text-emerald-600">{{ isFreeShippingActive ? 'شحن مجاني 🎁' : ((shippingCost | number:'1.0-0') + ' ج.م') }}</span>
+                    </div>
+                    <div class="flex justify-between items-center pt-3 border-t border-slate-200 text-sm font-black">
+                      <div>
+                        <span class="text-slate-900 block font-black">المطلوب عند الاستلام:</span>
+                        <span class="text-[10px] text-slate-400 font-normal">الدفع نقداً بعد فحص الشحنة</span>
+                      </div>
+                      <span class="text-2xl sm:text-3xl text-emerald-600 font-mono font-black tracking-tight">
+                        {{ totalAmount | number:'1.0-0' }} <span class="text-xs font-cairo font-bold">ج.م</span>
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- BIG CTA SUBMIT BUTTON (Appears directly after inputs on Mobile, and inside summary card on Desktop) -->
+                  <div class="mt-4 pt-3 border-t border-slate-100">
+                    <button type="submit" [disabled]="submitting()"
+                      class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-[0.99] disabled:opacity-60 text-white font-black text-base sm:text-lg py-3.5 px-4 rounded-xl transition shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 cursor-pointer">
+                      <span *ngIf="submitting()" class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                      <i *ngIf="!submitting()" class="bi bi-shield-check text-xl"></i>
+                      <span>
+                        {{ submitting() ? 'جاري تسجيل طلبك...' : ('تأكيد الطلب — الدفع عند الاستلام (' + (totalAmount | number:'1.0-0') + ' ج.م)') }}
+                      </span>
+                    </button>
+                    
+                    <div class="text-center text-[11px] text-slate-500 flex items-center justify-center gap-1.5 mt-2.5 font-medium">
+                      <i class="bi bi-shield-lock-fill text-emerald-600"></i>
+                      <span>الدفع نقداً عند استلام شحنتك لباب منزلك مع ضمان استبدال معتمد</span>
+                    </div>
+                  </div>
+
+                  <!-- Trust Badges -->
+                  <div class="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-slate-200/80 text-center text-[10px] text-slate-600">
+                    <div class="p-2 bg-white rounded-xl border border-slate-200/90 shadow-2xs">
+                      <i class="bi bi-shield-check text-emerald-600 block text-base mb-0.5"></i>
+                      <span class="font-bold">ضمان استبدال</span>
+                    </div>
+                    <div class="p-2 bg-white rounded-xl border border-slate-200/90 shadow-2xs">
+                      <i class="bi bi-truck text-blue-600 block text-base mb-0.5"></i>
+                      <span class="font-bold">توصيل سريع</span>
+                    </div>
+                    <div class="p-2 bg-white rounded-xl border border-slate-200/90 shadow-2xs">
+                      <i class="bi bi-cash-coin text-amber-600 block text-base mb-0.5"></i>
+                      <span class="font-bold">دفع عند استلام</span>
+                    </div>
+                  </div>
+
                 </div>
 
               </div>

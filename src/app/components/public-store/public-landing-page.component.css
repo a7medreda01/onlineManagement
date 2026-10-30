@@ -528,40 +528,42 @@
 
 /* Bundles Modern 3-Column Pill Cards */
 .bundle-pill-card {
-  padding: 0.45rem 0.25rem;
-  border-radius: 0.75rem;
+  padding: 0.5rem 0.3rem;
+  border-radius: 0.85rem;
   border: 1.5px solid #e2e8f0;
   background: #ffffff;
   text-align: center;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: 70px;
+  min-height: 74px;
   position: relative;
 }
 
 .bundle-pill-card:hover {
   border-color: #93c5fd;
-  transform: translateY(-1px);
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
 }
 
 .bundle-pill-active {
   border-color: #2563eb !important;
   background: #eff6ff !important;
-  box-shadow: 0 0 0 2px rgba(37,99,235,0.2) !important;
+  box-shadow: 0 0 0 2.5px rgba(37, 99, 235, 0.25) !important;
+  transform: translateY(-1px);
 }
 
 .bundle-pill-badge {
-  font-size: 8px;
+  font-size: 8.5px;
   font-weight: 800;
-  padding: 1px 5px;
+  padding: 1.5px 6px;
   border-radius: 9999px;
   background: #334155;
   color: #fbbf24;
-  margin-bottom: 2px;
+  margin-bottom: 2.5px;
   max-width: 95%;
   white-space: nowrap;
   overflow: hidden;
@@ -575,14 +577,14 @@
 }
 
 .bundle-pill-title {
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 800;
   color: #0f172a;
-  line-height: 1.2;
+  line-height: 1.25;
 }
 
 .bundle-pill-price {
-  font-size: 12.5px;
+  font-size: 13.5px;
   font-weight: 900;
   color: #059669;
   font-family: monospace;
@@ -594,7 +596,43 @@
   font-weight: 700;
   color: #059669;
   display: block;
-  margin-top: 1px;
+  margin-top: 2px;
+}
+
+/* Variant Selector Buttons */
+.variant-card-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1.5px solid #e2e8f0;
+  background: #ffffff;
+  border-radius: 0.65rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 36px;
+  color: #334155;
+}
+
+.variant-card-btn:hover {
+  border-color: #93c5fd;
+  background: #f8fafc;
+}
+
+.variant-card-btn.variant-card-active {
+  border-color: #2563eb !important;
+  background: #eff6ff !important;
+  color: #1d4ed8 !important;
+  font-weight: 800;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+.variant-color-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.15);
+  flex-shrink: 0;
 }
 
 @keyframes fadeInAnim {
