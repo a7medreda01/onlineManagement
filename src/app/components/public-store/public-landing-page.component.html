@@ -226,62 +226,45 @@
         <!-- ── Product Info Column (Clean & Focused) ── -->
         <div class="lg:col-span-6 product-info-col">
 
-          <!-- Rating Row -->
-          <div class="rating-row">
-            <div class="stars">
+          <!-- Rating Row (Minimal & High Trust) -->
+          <div class="flex items-center gap-2 mb-2">
+            <div class="flex items-center text-amber-400 text-xs">
               <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
               <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
               <i class="bi bi-star-fill"></i>
             </div>
-            <span class="text-slate-900 font-bold text-sm">4.9 / 5.0</span>
-            <span class="text-slate-500 text-xs">({{ content?.customerReviews?.length || 24 }}+ تقييم موثق)</span>
+            <span class="text-slate-800 font-black text-xs">4.9</span>
+            <span class="text-slate-400 text-[11px]">({{ content?.customerReviews?.length || 24 }}+ تقييم موثق)</span>
           </div>
 
-          <!-- Offer Badge Tag -->
-          <div *ngIf="pageData()?.badge" class="mb-1">
-            <span
-              class="inline-flex items-center gap-1.5 bg-rose-50 text-rose-700 border border-rose-200 text-xs font-black px-3.5 py-1.5 rounded-full shadow-sm">
-              <i class="bi bi-fire text-rose-600"></i>
-              {{ pageData()?.badge }}
-            </span>
-          </div>
-
-          <!-- Title -->
-          <h1 class="text-2xl sm:text-4xl font-black text-slate-900 leading-tight">
+          <!-- Product Title -->
+          <h1 class="text-2xl sm:text-4xl font-black text-slate-900 leading-tight mb-2">
             {{ pageData()?.title }}
           </h1>
 
-          <!-- Headline -->
-          <p class="text-base sm:text-lg font-bold text-blue-600 leading-relaxed">
-            {{ pageData()?.headline }}
+          <!-- Clean Short Description (Muted, Elegant, Not Cluttered) -->
+          <p *ngIf="pageData()?.headline || pageData()?.subheadline" class="text-slate-500 text-xs sm:text-sm leading-relaxed mb-4">
+            {{ pageData()?.headline || pageData()?.subheadline }}
           </p>
 
-          <!-- Subheadline -->
-          <p *ngIf="pageData()?.subheadline" class="text-slate-600 text-sm sm:text-base leading-relaxed">
-            {{ pageData()?.subheadline }}
-          </p>
-
-          <!-- Luxurious Pricing Block -->
-          <div class="p-3.5 sm:p-4 bg-slate-50/90 border border-slate-200 rounded-2xl flex items-center justify-between gap-3 shadow-2xs mt-2">
-            <div>
-              <span class="block text-[11px] font-bold text-slate-500 mb-0.5">سعر العرض اليوم</span>
-              <div class="flex items-baseline gap-2">
-                <span class="text-2xl sm:text-3xl font-black text-emerald-600 font-mono tracking-tight">{{ pageData()?.sellingPrice | number:'1.0-0' }}</span>
-                <span class="text-xs font-black text-emerald-700">ج.م</span>
-                <span *ngIf="(pageData()?.originalPrice || 0) > (pageData()?.sellingPrice || 0)"
-                  class="text-xs sm:text-sm text-slate-400 line-through font-mono">
-                  {{ pageData()?.originalPrice | number:'1.0-0' }} ج.م
-                </span>
-              </div>
-            </div>
-            <div class="flex flex-col items-end gap-1">
-              <span *ngIf="discountPercentage > 0" class="inline-flex items-center gap-1 bg-rose-600 text-white text-[11px] font-black px-2.5 py-1 rounded-full shadow-xs">
-                <i class="bi bi-fire"></i>
-                وفرت {{ discountPercentage }}%
+          <!-- Elegant Pricing Block (Clean without heavy borders) -->
+          <div class="flex items-center justify-between py-3 my-2 border-y border-slate-100">
+            <div class="flex items-baseline gap-2">
+              <span class="text-3xl sm:text-4xl font-black text-slate-900 font-mono tracking-tight">
+                {{ pageData()?.sellingPrice | number:'1.0-0' }}
               </span>
-              <span class="text-[10px] text-emerald-700 font-bold flex items-center gap-1 bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 rounded-md">
-                <i class="bi bi-truck"></i>
-                {{ pageData()?.isFreeShipping ? 'شحن مجاني' : 'توصيل سريع' }}
+              <span class="text-xs font-black text-slate-700">ج.م</span>
+              <span *ngIf="(pageData()?.originalPrice || 0) > (pageData()?.sellingPrice || 0)"
+                class="text-xs sm:text-sm text-slate-400 line-through font-mono mr-1">
+                {{ pageData()?.originalPrice | number:'1.0-0' }} ج.م
+              </span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span *ngIf="discountPercentage > 0" class="inline-flex items-center gap-1 bg-rose-50 text-rose-600 border border-rose-200/80 text-[11px] font-black px-2.5 py-1 rounded-full">
+                وفر {{ discountPercentage }}%
+              </span>
+              <span *ngIf="pageData()?.isFreeShipping" class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[11px] font-bold px-2.5 py-1 rounded-full">
+                شحن مجاني
               </span>
             </div>
           </div>
@@ -301,28 +284,21 @@
           </div>
 
           <!-- Hero Direct Action (Scrolls straight down to order form) -->
-          <div class="flex flex-col gap-2.5 mt-3">
-            <button (click)="scrollToOrderForm()" class="cta-primary cta-pulse-btn cursor-pointer">
-              <i class="bi bi-bag-check-fill text-xl"></i>
-              <span>اطلب الآن — شحن سريع لباب بيتك 👇</span>
-              <i class="bi bi-arrow-down text-sm opacity-70"></i>
+          <div class="flex flex-col gap-2 mt-3">
+            <button (click)="scrollToOrderForm()"
+              class="w-full bg-slate-950 hover:bg-slate-900 text-white font-black text-base sm:text-lg py-3.5 px-6 rounded-2xl transition shadow-lg shadow-slate-950/15 flex items-center justify-center gap-2.5 cursor-pointer active:scale-[0.99]">
+              <i class="bi bi-bag-check-fill text-amber-400 text-lg"></i>
+              <span>اطلب الآن — الدفع عند الاستلام</span>
             </button>
 
             <!-- Hero Quick Trust Badges -->
-            <ul class="flex items-center justify-between gap-1 pt-2 border-t border-slate-100 text-[10px] sm:text-xs text-slate-600 list-none p-0 m-0">
-              <li class="flex items-center gap-1 font-bold text-slate-700">
-                <i class="bi bi-shield-check text-emerald-600"></i>
-                <span>ضمان استبدال 14 يوم</span>
-              </li>
-              <li class="flex items-center gap-1 font-bold text-slate-700">
-                <i class="bi bi-truck text-blue-600"></i>
-                <span>توصيل سريع 24-48 ساعة</span>
-              </li>
-              <li class="flex items-center gap-1 font-bold text-slate-700">
-                <i class="bi bi-cash-coin text-amber-600"></i>
-                <span>الدفع عند الاستلام</span>
-              </li>
-            </ul>
+            <div class="flex items-center justify-center gap-3 pt-2 text-[11px] text-slate-500 font-medium">
+              <span>ضمان استبدال 14 يوم</span>
+              <span class="text-slate-300">•</span>
+              <span>شحن سريع لباب بيتك</span>
+              <span class="text-slate-300">•</span>
+              <span>معاينة قبل الدفع</span>
+            </div>
           </div>
 
         </div>
@@ -735,7 +711,7 @@
                 <span *ngIf="submitting()" class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
                 <i *ngIf="!submitting()" class="bi bi-shield-check text-xl"></i>
                 <span>
-                  {{ submitting() ? 'جاري تسجيل طلبك...' : ('تأكيد الطلب — الدفع عند الاستلام (' + (totalAmount | number:'1.0-0') + ' ج.م)') }}
+                  {{ submitting() ? 'جاري تسجيل طلبك...' : ('تأكيد الطلب') }}
                 </span>
               </button>
 
