@@ -391,6 +391,11 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
           }
         } catch {}
 
+        // Automatically activate specs section if the product has specifications configured
+        if (page.specsJson && page.specsJson !== '[]') {
+          this.sectionsConfig.showSpecs = true;
+        }
+
         // 4. Parse Theme
         try {
           this.theme = JSON.parse(page.themeConfigJson || '{}');

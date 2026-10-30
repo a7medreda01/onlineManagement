@@ -397,7 +397,7 @@
     </section>
 
     <!-- 5.2. TECHNICAL SPECIFICATIONS TABLE (جدول المواصفات والتفاصيل الفنية) -->
-    <section *ngIf="sectionsConfig.showSpecs && technicalSpecs().length > 0"
+    <section *ngIf="(sectionsConfig.showSpecs || technicalSpecs().length > 0) && technicalSpecs().length > 0"
       class="specs-section-wrapper py-12 sm:py-16 px-4 bg-slate-50 border-b border-slate-200 relative">
       <!-- Floating Ambient Emojis for Scroll Depth -->
       <div class="floating-ambient-item float-1 pointer-events-none select-none">⚙️</div>
