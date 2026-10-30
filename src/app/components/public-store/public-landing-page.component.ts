@@ -197,6 +197,23 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
     return 'bi-patch-check-fill';
   }
 
+  getSpecEmoji(key: string): string {
+    const k = (key || '').toLowerCase();
+    if (k.includes('دقة') || k.includes('تصوير') || k.includes('كاميرا') || k.includes('عدسة') || k.includes('فيديو') || k.includes('resolution')) return '📷';
+    if (k.includes('واي فاي') || k.includes('wifi') || k.includes('اتصال') || k.includes('شبكة') || k.includes('بلوتوث') || k.includes('تطبيق')) return '📶';
+    if (k.includes('بطارية') || k.includes('شحن') || k.includes('طاقة') || k.includes('battery') || k.includes('تشغيل')) return '🔋';
+    if (k.includes('رؤية') || k.includes('ليل') || k.includes('إضاءة') || k.includes('night')) return '🌙';
+    if (k.includes('ذاكرة') || k.includes('تخزين') || k.includes('كارت') || k.includes('sd') || k.includes('ram')) return '💾';
+    if (k.includes('صوت') || k.includes('ميكروفون') || k.includes('تسجيل') || k.includes('audio')) return '🎙️';
+    if (k.includes('أبعاد') || k.includes('حجم') || k.includes('وزن') || k.includes('سمك') || k.includes('مقاس')) return '📐';
+    if (k.includes('استشعار') || k.includes('حركة') || k.includes('أمان') || k.includes('إنذار') || k.includes('sensor')) return '🚨';
+    if (k.includes('توافق') || k.includes('نظام') || k.includes('أندرويد') || k.includes('ios') || k.includes('هاتف')) return '📱';
+    if (k.includes('مقاوم') || k.includes('ماء') || k.includes('حرارة') || k.includes('صدمات')) return '🛡️';
+    if (k.includes('محتويات') || k.includes('علبة') || k.includes('ملحقات') || k.includes('كرتونة')) return '📦';
+    if (k.includes('ضمان') || k.includes('صناعة') || k.includes('منشأ') || k.includes('موديل')) return '🏷️';
+    return '⚙️';
+  }
+
   // Conditional Size Selection (e.g. shoes, clothing, abayas)
   hasSizes = signal<boolean>(false);
   selectedSize = signal<string>('');

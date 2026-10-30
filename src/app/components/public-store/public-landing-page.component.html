@@ -365,8 +365,9 @@
         <div class="text-center mb-10">
           <div
             class="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 text-xs font-black px-4 py-1.5 rounded-full mb-2.5 border border-indigo-200 shadow-xs">
-            <i class="bi bi-stars"></i>
+            <span class="animate-bounce-gentle">✨</span>
             <span>مواصفات ومميزات استثنائية</span>
+            <span class="animate-pulse-gentle">⚡</span>
           </div>
           <h2 class="text-2xl sm:text-4xl font-black text-slate-900 mb-2">
             أهم مواصفات ومميزات {{ pageData()?.title }}
@@ -380,7 +381,7 @@
           <div *ngFor="let feat of content.features"
             class="p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:border-indigo-300 hover:bg-white hover:shadow-xl transition-all duration-300 flex flex-col items-center text-center group">
             <div
-              class="w-16 h-16 rounded-2xl bg-white border border-slate-200 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white group-hover:scale-110 flex items-center justify-center text-3xl mb-4 transition-all duration-300 shadow-sm">
+              class="feature-icon-float w-16 h-16 rounded-2xl bg-white border border-slate-200 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white group-hover:scale-110 flex items-center justify-center text-3xl mb-4 transition-all duration-300 shadow-sm">
               <i [class]="'bi ' + (feat.icon || 'bi-patch-check-fill')"></i>
             </div>
             <h3
@@ -397,13 +398,19 @@
 
     <!-- 5.2. TECHNICAL SPECIFICATIONS TABLE (جدول المواصفات والتفاصيل الفنية) -->
     <section *ngIf="sectionsConfig.showSpecs && technicalSpecs().length > 0"
-      class="py-12 sm:py-16 px-4 bg-slate-50 border-b border-slate-200">
-      <div class="max-w-4xl mx-auto">
+      class="specs-section-wrapper py-12 sm:py-16 px-4 bg-slate-50 border-b border-slate-200 relative">
+      <!-- Floating Ambient Emojis for Scroll Depth -->
+      <div class="floating-ambient-item float-1 pointer-events-none select-none">⚙️</div>
+      <div class="floating-ambient-item float-2 pointer-events-none select-none">✨</div>
+      <div class="floating-ambient-item float-3 pointer-events-none select-none">🔍</div>
+
+      <div class="max-w-4xl mx-auto relative z-10">
         <div class="text-center mb-10">
           <div
             class="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 text-xs font-black px-4 py-1.5 rounded-full mb-2.5 border border-indigo-200 shadow-xs">
-            <i class="bi bi-card-checklist"></i>
+            <span class="animate-spin-slow">⚙️</span>
             <span>المواصفات الفنية المعتمدة</span>
+            <span class="animate-bounce-gentle">✨</span>
           </div>
           <h2 class="text-2xl sm:text-3xl font-black text-slate-900 mb-2">
             جدول المواصفات والتفاصيل الفنية
@@ -413,16 +420,30 @@
           </p>
         </div>
 
-        <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-lg divide-y divide-slate-100">
+        <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-lg divide-y divide-slate-100 relative">
+          <!-- Top Verifiable Strip -->
+          <div class="px-5 py-3 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white flex items-center justify-between text-xs font-bold border-b border-indigo-900/50">
+            <span class="flex items-center gap-2">
+              <span class="animate-pulse">💎</span>
+              <span>بيانات قياسية موثقة بنسبة 100%</span>
+            </span>
+            <span class="text-amber-400 font-mono text-[11px] bg-white/10 px-2.5 py-1 rounded-full flex items-center gap-1.5 border border-white/10">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+              <span>فحص أصلي معتمد</span>
+            </span>
+          </div>
+
           <div *ngFor="let s of technicalSpecs(); let even = even"
-            class="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:px-6 transition hover:bg-indigo-50/30"
+            class="spec-row-interactive flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:px-6 transition group"
             [class.bg-slate-50/50]="even"
             [class.bg-white]="!even">
-            <div class="flex items-center gap-3 mb-1 sm:mb-0">
-              <span class="w-2.5 h-2.5 rounded-full bg-indigo-600 shrink-0"></span>
-              <span class="text-xs sm:text-sm font-bold text-slate-700">{{ s.key }}</span>
+            <div class="flex items-center gap-3 mb-1.5 sm:mb-0">
+              <div class="spec-emoji-badge">
+                <span class="spec-emoji-anim">{{ getSpecEmoji(s.key) }}</span>
+              </div>
+              <span class="text-xs sm:text-sm font-bold text-slate-700 group-hover:text-indigo-600 transition-colors">{{ s.key }}</span>
             </div>
-            <div class="text-xs sm:text-sm font-black text-slate-900 text-right sm:text-left pr-5 sm:pr-0">
+            <div class="text-xs sm:text-sm font-black text-slate-900 text-right sm:text-left pr-11 sm:pr-0 font-mono">
               {{ s.value }}
             </div>
           </div>
