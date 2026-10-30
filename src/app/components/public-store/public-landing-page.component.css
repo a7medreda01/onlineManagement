@@ -452,8 +452,8 @@
 
 @media (min-width: 1024px) {
   .order-form-card {
-    max-width: 1080px;
-    padding: 2.25rem 2.5rem;
+    max-width: 680px;
+    padding: 2.25rem 2rem;
     border-radius: 1.75rem;
   }
 

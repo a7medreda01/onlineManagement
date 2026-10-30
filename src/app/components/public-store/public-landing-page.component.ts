@@ -134,18 +134,50 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
 
   isVideoEmbed(url?: string): boolean {
     if (!url) return false;
-    return url.includes('youtube.com') || url.includes('youtu.be') || url.includes('vimeo.com');
+    let cleanUrl = url.trim().toLowerCase();
+    if (cleanUrl.includes('<iframe')) {
+      const srcMatch = cleanUrl.match(/src=["']([^"']+)["']/i);
+      if (srcMatch && srcMatch[1]) {
+        cleanUrl = srcMatch[1].toLowerCase();
+      }
+    }
+    return cleanUrl.includes('youtube.com') ||
+           cleanUrl.includes('youtu.be') ||
+           cleanUrl.includes('youtube-nocookie.com') ||
+           cleanUrl.includes('vimeo.com');
   }
 
   getVideoSafeUrl(url?: string): SafeResourceUrl {
     if (!url) return '';
-    let embedUrl = url;
-    if (url.includes('youtube.com/watch?v=')) {
-      embedUrl = url.replace('watch?v=', 'embed/');
-    } else if (url.includes('youtu.be/')) {
-      embedUrl = url.replace('youtu.be/', 'www.youtube.com/embed/');
+    let cleanUrl = url.trim();
+
+    // If user pasted an entire iframe tag, extract the src
+    if (cleanUrl.includes('<iframe')) {
+      const srcMatch = cleanUrl.match(/src=["']([^"']+)["']/i);
+      if (srcMatch && srcMatch[1]) {
+        cleanUrl = srcMatch[1];
+      }
     }
-    return this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
+
+    // YouTube regex matching shorts, watch, youtu.be, embed
+    const ytMatch = cleanUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/)|youtube-nocookie\.com\/embed\/)([\w-]{11})/i);
+    if (ytMatch && ytMatch[1]) {
+      const videoId = ytMatch[1];
+      return this.sanitizer.bypassSecurityTrustResourceUrl(
+        `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&enablejsapi=1`
+      );
+    }
+
+    // Vimeo regex
+    const vimeoMatch = cleanUrl.match(/vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/(?:[^\/]*)\/videos\/|album\/(?:\d+)\/video\/|video\/|)(\d+)/i);
+    if (vimeoMatch && vimeoMatch[1]) {
+      const vimeoId = vimeoMatch[1];
+      return this.sanitizer.bypassSecurityTrustResourceUrl(
+        `https://player.vimeo.com/video/${vimeoId}?title=0&byline=0&portrait=0`
+      );
+    }
+
+    return this.sanitizer.bypassSecurityTrustResourceUrl(cleanUrl);
   }
 
   getFeatureIcon(title: string): string {
@@ -473,19 +505,13 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
             this.selectedVariant.set('');
           }
 
-          // 8. Parse Circular Feature Nodes
+          // 8. Parse Circular Feature Nodes (Only if provided in page content)
           let circular = raw.circularFeatures || [];
-          if (!Array.isArray(circular) || circular.length === 0) {
-            circular = [
-              { title: 'إصدار وتوافق', spec: 'أداء فائق', icon: 'bi-cpu-fill' },
-              { title: 'عمر البطارية', spec: 'تدوم طويلاً', icon: 'bi-battery-charging' },
-              { title: 'اتصال ومكالمات', spec: 'استجابة سريعة', icon: 'bi-lightning-charge-fill' },
-              { title: 'إعدادات متقدمة', spec: 'تخصيص كامل', icon: 'bi-gear-wide-connected' },
-              { title: 'مشغل صوتيات', spec: 'صوت نقي', icon: 'bi-music-note-beamed' },
-              { title: 'إشعارات وتطبيقات', spec: 'تنبيهات فورية', icon: 'bi-chat-dots-fill' }
-            ];
+          if (Array.isArray(circular) && circular.length > 0) {
+            this.circularFeatures.set(circular);
+          } else {
+            this.circularFeatures.set([]);
           }
-          this.circularFeatures.set(circular);
 
           // 9. Parse Quantity Tier Bundles (EasyOrders style)
           let parsedBundles: any[] = [];
