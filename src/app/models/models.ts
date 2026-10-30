@@ -919,6 +919,8 @@ export interface PublicLandingOrderRequest {
   quantity: number;
   selectedVariant?: string;
   notes?: string;
+  totalAmount?: number;
+  shippingCost?: number;
 }
 
 export interface PublicLandingOrderResponse {

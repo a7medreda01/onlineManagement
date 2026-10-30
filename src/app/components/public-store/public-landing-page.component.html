@@ -1,27 +1,23 @@
-<div class="landing-page-root">
+<div class="pp-root">
 
   <!-- ============================================================ -->
-  <!-- 1. LOADING STATE -->
+  <!-- 1. LOADING -->
   <!-- ============================================================ -->
-  <div *ngIf="loading()" class="min-h-screen flex flex-col items-center justify-center p-6 text-center bg-slate-50">
-    <div class="w-16 h-16 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-    <h3 class="text-xl font-bold text-slate-900 mb-1">جاري تحضير صفحة المنتج...</h3>
-    <p class="text-slate-500 text-sm">أفضل تجربة شراء في انتظارك</p>
+  <div *ngIf="loading()" class="pp-state">
+    <div class="pp-loader"><span></span></div>
+    <h3 class="pp-state-title">جاري تحضير صفحة المنتج...</h3>
+    <p class="pp-state-text">أفضل تجربة شراء في انتظارك</p>
   </div>
 
   <!-- ============================================================ -->
-  <!-- 2. ERROR STATE -->
+  <!-- 2. ERROR -->
   <!-- ============================================================ -->
-  <div *ngIf="!loading() && error()"
-    class="min-h-screen flex flex-col items-center justify-center p-6 text-center bg-slate-50">
-    <div class="bg-white border border-slate-200 rounded-3xl p-8 max-w-md w-full shadow-xl">
-      <div class="w-16 h-16 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl">
-        <i class="bi bi-exclamation-triangle"></i>
-      </div>
-      <h3 class="text-xl font-bold text-slate-900 mb-2">الصفحة غير متوفرة</h3>
-      <p class="text-slate-500 text-sm mb-6">{{ error() }}</p>
-      <a [routerLink]="getStoreCatalogLink()"
-        class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-6 rounded-full transition shadow-md">
+  <div *ngIf="!loading() && error()" class="pp-state">
+    <div class="pp-state-card">
+      <div class="pp-state-icon is-danger"><i class="bi bi-exclamation-triangle"></i></div>
+      <h3 class="pp-state-title">الصفحة غير متوفرة</h3>
+      <p class="pp-state-text">{{ error() }}</p>
+      <a [routerLink]="getStoreCatalogLink()" class="pp-btn pp-btn-ink">
         <i class="bi bi-shop"></i>
         <span>تصفح باقي منتجات المتجر</span>
       </a>
@@ -29,819 +25,611 @@
   </div>
 
   <!-- ============================================================ -->
-  <!-- 3. ORDER CONFIRMATION / THANK YOU SCREEN -->
+  <!-- 3. ORDER SUCCESS -->
   <!-- ============================================================ -->
-  <div *ngIf="!loading() && orderSuccessData()"
-    class="min-h-screen py-12 px-4 flex items-center justify-center bg-slate-50">
-    <div class="bg-white border border-emerald-200 rounded-3xl p-6 sm:p-10 max-w-xl w-full shadow-2xl text-center">
-      <div
-        class="w-20 h-20 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl animate-bounce">
-        <i class="bi bi-check-circle-fill"></i>
-      </div>
+  <div *ngIf="!loading() && orderSuccessData()" class="pp-state pp-state-success">
+    <div class="pp-success-card">
 
-      <span
-        class="inline-block bg-emerald-50 text-emerald-700 border border-emerald-200 text-sm font-bold px-4 py-1.5 rounded-full mb-3">
-        تم استلام طلبك بنجاح! 🎉
-      </span>
+      <div class="pp-success-icon"><i class="bi bi-check-lg"></i></div>
+      <span class="pp-eyebrow pp-eyebrow-success">تم استلام طلبك بنجاح</span>
 
-      <h2 class="text-2xl sm:text-3xl font-black text-slate-900 mb-2">
-        شكراً لطلبك من {{ pageData()?.storeDisplayName || 'متجرنا' }}
+      <h2 class="pp-success-title">
+        شكراً لثقتك في {{ pageData()?.storeDisplayName || 'متجرنا' }}
       </h2>
-      <p class="text-slate-600 text-sm sm:text-base mb-6 leading-relaxed">
-        لقد سجلنا طلبك برقم <strong class="text-emerald-600 font-mono text-lg">#{{ orderSuccessData()?.orderNumber
-          }}</strong>، وسيتواصل معك مندوبنا هاتفياً خلال ساعات لتأكيد ميعاد التوصيل.
+      <p class="pp-success-text">
+        سجّلنا طلبك برقم
+        <strong class="pp-order-num">#{{ orderSuccessData()?.orderNumber }}</strong>
+        وسيتواصل معك مندوبنا هاتفياً خلال ساعات لتأكيد ميعاد التوصيل.
       </p>
 
-      <!-- Order Summary Card -->
-      <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 text-right mb-6">
-        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200 pb-3 mb-3">
-          ملخص الطلب
-        </h4>
-        <div class="flex justify-between py-1.5 text-sm">
-          <span class="text-slate-500">المنتج:</span>
-          <span class="font-bold text-slate-900">{{ pageData()?.title }}</span>
+      <div class="pp-receipt">
+        <h4 class="pp-receipt-title">ملخص الطلب</h4>
+
+        <div class="pp-receipt-row">
+          <span>المنتج</span>
+          <strong>{{ pageData()?.title }}</strong>
         </div>
-        <div *ngIf="selectedVariant()" class="flex justify-between py-1.5 text-sm">
-          <span class="text-slate-500">الخيار / اللون:</span>
-          <span class="font-bold text-slate-900">{{ selectedVariant() }}</span>
+        <div *ngIf="selectedVariant()" class="pp-receipt-row">
+          <span>الخيار / اللون</span>
+          <strong>{{ selectedVariant() }}</strong>
         </div>
-        <div *ngIf="selectedSize()" class="flex justify-between py-1.5 text-sm">
-          <span class="text-slate-500">المقاس:</span>
-          <span class="font-bold text-slate-900">{{ selectedSize() }}</span>
+        <div *ngIf="selectedSize()" class="pp-receipt-row">
+          <span>المقاس</span>
+          <strong>{{ selectedSize() }}</strong>
         </div>
-        <div class="flex justify-between py-1.5 text-sm">
-          <span class="text-slate-500">الكمية:</span>
-          <span class="font-bold text-slate-900">{{ orderForm.quantity }} قطع</span>
+        <div class="pp-receipt-row">
+          <span>الكمية</span>
+          <strong>{{ orderForm.quantity }} قطع</strong>
         </div>
-        <div class="flex justify-between py-1.5 text-sm">
-          <span class="text-slate-500">اسم العميل:</span>
-          <span class="font-bold text-slate-900">{{ orderForm.customerName }}</span>
+        <div class="pp-receipt-row">
+          <span>اسم العميل</span>
+          <strong>{{ orderForm.customerName }}</strong>
         </div>
-        <div class="flex justify-between py-1.5 text-sm">
-          <span class="text-slate-500">العنوان:</span>
-          <span class="font-bold text-slate-900">{{ orderForm.address }}</span>
+        <div class="pp-receipt-row">
+          <span>العنوان</span>
+          <strong>{{ orderForm.address }}</strong>
         </div>
-        <div class="flex justify-between items-center pt-3 mt-2 border-t border-slate-200 text-base sm:text-lg">
-          <span class="font-bold text-slate-800">المبلغ عند الاستلام (COD):</span>
-          <span class="font-black text-emerald-600 text-xl">{{ orderSuccessData()?.totalAmount |
-            currency:'EGP':'symbol':'1.0-0' }}</span>
+
+        <div class="pp-receipt-total">
+          <span>المبلغ عند الاستلام (COD)</span>
+          <span class="pp-receipt-total-value">{{ orderSuccessData()?.totalAmount | number:'1.0-0' }} <small>ج.م</small></span>
         </div>
       </div>
 
-      <!-- Action Buttons -->
-      <div class="flex flex-col gap-3">
-        <a [href]="getWhatsAppChatUrl()" target="_blank"
-          class="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 px-6 rounded-2xl transition shadow-md">
-          <i class="bi bi-whatsapp text-xl"></i>
-          <span>تأكيد الطلب السريع عبر واتساب</span>
-        </a>
-
-        <a [routerLink]="getStoreCatalogLink()"
-          class="w-full flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 px-6 rounded-2xl transition border border-slate-200">
-          <i class="bi bi-shop"></i>
-          <span>العودة لكتالوج المتجر</span>
-        </a>
+      <div class="pp-success-note">
+        <i class="bi bi-telephone-inbound"></i>
+        <div>
+          <strong>سيتم التواصل معك لتأكيد الطلب</strong>
+          <p>سيتواصل معك فريق خدمة العملاء هاتفياً أو عبر واتساب لتأكيد العنوان وميعاد استلام الشحنة لباب منزلك.</p>
+        </div>
       </div>
+
+      <a [routerLink]="getStoreCatalogLink()" class="pp-btn pp-btn-ghost pp-btn-block">
+        <i class="bi bi-shop"></i>
+        <span>تصفح باقي منتجات المتجر</span>
+      </a>
+
     </div>
   </div>
 
   <!-- ============================================================ -->
-  <!-- 4. MAIN PRODUCT LANDING PAGE -->
+  <!-- 4. MAIN PRODUCT PAGE -->
   <!-- ============================================================ -->
   <div *ngIf="!loading() && !error() && !orderSuccessData() && pageData()">
 
-    <!-- 1. TOP URGENCY COUNTDOWN BAR -->
-    <div *ngIf="sectionsConfig.showCountdown" class="urgency-bar">
-      <div class="max-w-6xl mx-auto flex items-center justify-between gap-2 text-xs sm:text-sm font-semibold">
-        <div class="flex items-center gap-1.5">
-          <span
-            class="bg-rose-600 text-white text-[10px] sm:text-[11px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-            عرض اليوم 🔥
-          </span>
-          <span class="hidden sm:inline text-slate-300">خصم حصري ينتهي قريباً:</span>
+    <!-- ─── 4.1 COUNTDOWN ─── -->
+    <div *ngIf="sectionsConfig.showCountdown" class="pp-urgency">
+      <div class="pp-container pp-urgency-inner">
+        <div class="pp-urgency-start">
+          <span class="pp-urgency-tag"><i class="bi bi-lightning-charge-fill"></i> عرض اليوم</span>
+          <span class="pp-urgency-text">خصم حصري ينتهي قريباً</span>
         </div>
 
-        <div class="flex items-center gap-1 font-mono font-black text-xs sm:text-sm">
-          <span class="bg-white/10 text-white px-2 py-0.5 rounded-md shadow-inner">{{ timerHours < 10 ? '0' + timerHours
-              : timerHours }}</span>
-              <span>:</span>
-              <span class="bg-white/10 text-white px-2 py-0.5 rounded-md shadow-inner">{{ timerMinutes < 10 ? '0' +
-                  timerMinutes : timerMinutes }}</span>
-                  <span>:</span>
-                  <span class="bg-white/10 text-white px-2 py-0.5 rounded-md shadow-inner">{{ timerSeconds < 10 ? '0' +
-                      timerSeconds : timerSeconds }}</span>
+        <div class="pp-timer">
+          <span>{{ timerHours < 10 ? '0' + timerHours : timerHours }}</span>
+          <b>:</b>
+          <span>{{ timerMinutes < 10 ? '0' + timerMinutes : timerMinutes }}</span>
+          <b>:</b>
+          <span>{{ timerSeconds < 10 ? '0' + timerSeconds : timerSeconds }}</span>
         </div>
 
-        <div class="flex items-center gap-1.5 text-[11px] sm:text-xs text-amber-400 font-bold">
-          <i class="bi bi-shield-check"></i>
-          <span>دفع عند الاستلام</span>
-        </div>
+        <span class="pp-urgency-cod"><i class="bi bi-shield-check"></i> دفع عند الاستلام</span>
       </div>
     </div>
 
-    <!-- 2. BRAND HEADER -->
-    <header class="brand-nav">
-      <div class="max-w-6xl mx-auto flex items-center justify-between">
-        <a [routerLink]="getStoreCatalogLink()" class="flex items-center gap-2.5 no-underline group">
-          <img *ngIf="pageData()?.storeLogoUrl" [src]="resolveUrl(pageData()?.storeLogoUrl)"
-            class="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-slate-200 object-cover shadow-sm" alt="logo">
-          <div *ngIf="!pageData()?.storeLogoUrl"
-            class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-900 flex items-center justify-center text-white font-black text-sm sm:text-base shadow-sm">
+    <!-- ─── 4.2 HEADER ─── -->
+    <header class="pp-header">
+      <div class="pp-container pp-header-inner">
+
+        <a [routerLink]="getStoreCatalogLink()" class="pp-brand">
+          <img *ngIf="pageData()?.storeLogoUrl" [src]="resolveUrl(pageData()?.storeLogoUrl)" class="pp-brand-logo" alt="logo">
+          <span *ngIf="!pageData()?.storeLogoUrl" class="pp-brand-logo pp-brand-letter">
             {{ (pageData()?.storeDisplayName || 'S').charAt(0) }}
-          </div>
-          <div>
-            <h2 class="text-xs sm:text-base font-black text-slate-900 group-hover:text-indigo-600 transition mb-0">
-              {{ pageData()?.storeDisplayName || 'المتجر الرسمي' }}
-            </h2>
-            <p class="text-[10px] sm:text-[11px] text-slate-500 mb-0 flex items-center gap-1">
-              <i class="bi bi-patch-check-fill text-blue-600"></i>
-              <span>{{ pageData()?.niche || 'متجر معتمد' }}</span>
-            </p>
-          </div>
+          </span>
+          <span class="pp-brand-copy">
+            <strong>{{ pageData()?.storeDisplayName || 'المتجر الرسمي' }}</strong>
+            <small><i class="bi bi-patch-check-fill"></i> {{ pageData()?.niche || 'متجر معتمد' }}</small>
+          </span>
         </a>
 
-        <div class="flex items-center gap-2 sm:gap-3">
+        <div class="pp-header-actions">
           <a *ngIf="pageData()?.storeWhatsApp" [href]="'https://wa.me/' + pageData()?.storeWhatsApp" target="_blank"
-            class="flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs sm:text-sm font-bold px-3 py-1.5 sm:px-4 sm:py-2 rounded-full transition">
+             class="pp-btn pp-btn-wa pp-btn-sm">
             <i class="bi bi-whatsapp"></i>
-            <span class="hidden sm:inline">واتساب</span>
+            <span class="pp-hide-sm">واتساب</span>
           </a>
-          <button (click)="scrollToOrderForm()"
-            class="bg-slate-900 hover:bg-indigo-600 text-white text-xs sm:text-sm font-bold px-4 py-2 sm:px-6 sm:py-2.5 rounded-full transition shadow-md">
-            اطلب الآن ⚡
+          <button (click)="scrollToOrderForm()" class="pp-btn pp-btn-gold pp-btn-sm" type="button">
+            <span>اطلب الآن</span>
+            <i class="bi bi-arrow-down-short"></i>
           </button>
         </div>
+
       </div>
     </header>
 
-    <!-- 3. HERO & PRODUCT SHOWCASE -->
-    <section class="product-hero-section">
-      <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-start">
+    <!-- ─── 4.3 HERO ─── -->
+    <section class="pp-hero">
+      <div class="pp-container pp-hero-grid">
 
-        <!-- ── Gallery Column ── -->
-        <div class="lg:col-span-6 flex flex-col gap-3">
+        <!-- Gallery -->
+        <div class="pp-gallery">
+          <div class="pp-stage">
+            <img [src]="resolveUrl(selectedImage)" [alt]="pageData()?.title" class="pp-stage-img">
 
-          <!-- Main Stage -->
-          <div class="gallery-stage">
-            <img [src]="resolveUrl(selectedImage)" [alt]="pageData()?.title" class="gallery-main-img">
-
-            <!-- Badge Strip -->
-            <div class="badge-strip">
-              <span *ngIf="discountPercentage > 0" class="badge-save">وفّر {{ discountPercentage }}%</span>
-              <span class="badge-verified">
-                <i class="bi bi-patch-check-fill"></i>
-                أصلي 100%
-              </span>
+            <div class="pp-stage-badges">
+              <span *ngIf="discountPercentage > 0" class="pp-badge pp-badge-gold">وفّر {{ discountPercentage }}%</span>
+              <span class="pp-badge pp-badge-glass"><i class="bi bi-patch-check-fill"></i> أصلي 100%</span>
             </div>
 
-            <!-- Nav Arrows -->
-            <button *ngIf="images.length > 1" (click)="nextImage()" type="button"
-              class="gallery-arrow gallery-arrow-left" title="التالية">
+            <button *ngIf="images.length > 1" (click)="nextImage()" type="button" class="pp-arrow pp-arrow-next" title="التالية">
               <i class="bi bi-chevron-left"></i>
             </button>
-            <button *ngIf="images.length > 1" (click)="prevImage()" type="button"
-              class="gallery-arrow gallery-arrow-right" title="السابقة">
+            <button *ngIf="images.length > 1" (click)="prevImage()" type="button" class="pp-arrow pp-arrow-prev" title="السابقة">
               <i class="bi bi-chevron-right"></i>
             </button>
 
-            <!-- Counter -->
-            <div *ngIf="images.length > 1" class="img-counter">{{ activeImageIndex() + 1 }} / {{ images.length }}</div>
+            <div *ngIf="images.length > 1" class="pp-counter">{{ activeImageIndex() + 1 }} / {{ images.length }}</div>
           </div>
 
-          <!-- Thumbnails -->
-          <div *ngIf="images.length > 1" class="thumb-strip">
+          <div *ngIf="images.length > 1" class="pp-thumbs">
             <button *ngFor="let img of images; let idx = index" (click)="selectImage(idx)" type="button"
-              class="thumb-btn" [class.thumb-active]="activeImageIndex() === idx"
-              [class.thumb-inactive]="activeImageIndex() !== idx">
-              <img [src]="resolveUrl(img)" class="w-full h-full object-cover rounded-md" alt="thumb">
+                    class="pp-thumb" [class.is-active]="activeImageIndex() === idx">
+              <img [src]="resolveUrl(img)" alt="thumb">
             </button>
           </div>
         </div>
 
-        <!-- ── Product Info Column (Clean & Focused) ── -->
-        <div class="lg:col-span-6 product-info-col">
+        <!-- Info -->
+        <div class="pp-info">
 
-          <!-- Rating Row -->
-          <div class="rating-row">
-            <div class="stars">
+          <div class="pp-rating">
+            <span class="pp-stars">
+              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
               <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-              <i class="bi bi-star-fill"></i>
-            </div>
-            <span class="text-slate-900 font-bold text-sm">4.9 / 5.0</span>
-            <span class="text-slate-500 text-xs">({{ content?.customerReviews?.length || 24 }}+ تقييم موثق)</span>
-          </div>
-
-          <!-- Offer Badge Tag -->
-          <div *ngIf="pageData()?.badge" class="mb-1">
-            <span
-              class="inline-flex items-center gap-1.5 bg-rose-50 text-rose-700 border border-rose-200 text-xs font-black px-3.5 py-1.5 rounded-full shadow-sm">
-              <i class="bi bi-fire text-rose-600"></i>
-              {{ pageData()?.badge }}
             </span>
+            <strong>4.9 / 5.0</strong>
+            <span class="pp-rating-count">({{ content?.customerReviews?.length || 24 }}+ تقييم موثق)</span>
           </div>
 
-          <!-- Title -->
-          <h1 class="text-2xl sm:text-4xl font-black text-slate-900 leading-tight">
-            {{ pageData()?.title }}
-          </h1>
+          <span *ngIf="pageData()?.badge" class="pp-eyebrow pp-eyebrow-rose">
+            <i class="bi bi-fire"></i> {{ pageData()?.badge }}
+          </span>
 
-          <!-- Headline -->
-          <p class="text-base sm:text-lg font-bold text-blue-600 leading-relaxed">
-            {{ pageData()?.headline }}
-          </p>
+          <h1 class="pp-title">{{ pageData()?.title }}</h1>
+          <p class="pp-headline">{{ pageData()?.headline }}</p>
+          <p *ngIf="pageData()?.subheadline" class="pp-subheadline">{{ pageData()?.subheadline }}</p>
 
-          <!-- Subheadline -->
-          <p *ngIf="pageData()?.subheadline" class="text-slate-600 text-sm sm:text-base leading-relaxed">
-            {{ pageData()?.subheadline }}
-          </p>
-
-          <!-- Size Selector (Only if product has real sizes) -->
-          <div *ngIf="hasSizes() && sizes().length > 0" class="size-selector-card">
-            <div class="size-label">
-              <span>اختر المقاس:</span>
-              <span class="text-blue-600 font-semibold cursor-pointer text-xs">جدول المقاسات 📏</span>
+          <!-- Price block -->
+          <div class="pp-price-block">
+            <div class="pp-price-main">
+              <span class="pp-price-label">السعر اليوم</span>
+              <div class="pp-price-line">
+                <span class="pp-price-value">{{ pageData()?.sellingPrice | number:'1.0-0' }}</span>
+                <span class="pp-price-cur">ج.م</span>
+                <span *ngIf="(pageData()?.originalPrice || 0) > (pageData()?.sellingPrice || 0)"
+                      class="pp-price-was">{{ pageData()?.originalPrice | number:'1.0-0' }} ج.م</span>
+              </div>
             </div>
-            <div class="flex flex-wrap gap-2">
-              <button *ngFor="let s of sizes()" type="button" (click)="selectSize(s)" class="size-btn"
-                [class.size-btn-active]="selectedSize() === s">
-                {{ s }}
-              </button>
+            <div class="pp-price-meta">
+              <span *ngIf="discountPercentage > 0" class="pp-save-pill">توفير {{ discountPercentage }}%</span>
+              <span class="pp-price-cod"><i class="bi bi-cash-coin"></i> الدفع عند الاستلام</span>
             </div>
           </div>
 
-          <!-- Hero Direct Action (Scrolls straight down to order form where price & offers are) -->
-          <div class="flex flex-col gap-3 mt-4">
-            <button (click)="scrollToOrderForm()" class="cta-primary cta-pulse-btn cursor-pointer">
-              <i class="bi bi-bag-check-fill text-xl"></i>
-              <span>اطلب الآن — شحن سريع لباب بيتك 👇</span>
-              <i class="bi bi-arrow-down text-sm opacity-70"></i>
-            </button>
+          <!-- Sizes -->
+          <div *ngIf="hasSizes() && sizes().length > 0" class="pp-sizes">
+            <div class="pp-sizes-head">
+              <span>اختر المقاس</span>
+              <span class="pp-link">جدول المقاسات</span>
+            </div>
+            <div class="pp-sizes-list">
+              <button *ngFor="let s of sizes()" type="button" (click)="selectSize(s)"
+                      class="pp-size" [class.is-active]="selectedSize() === s">{{ s }}</button>
+            </div>
           </div>
 
+          <button (click)="scrollToOrderForm()" class="pp-btn pp-btn-gold pp-btn-lg pp-btn-block pp-cta-pulse" type="button">
+            <i class="bi bi-bag-check-fill"></i>
+            <span>اطلب الآن — شحن سريع لباب بيتك</span>
+          </button>
+
+          <ul class="pp-hero-trust">
+            <li><i class="bi bi-shield-check"></i> ضمان استبدال 14 يوم</li>
+            <li><i class="bi bi-truck"></i> توصيل 24 - 48 ساعة</li>
+            <li><i class="bi bi-cash-coin"></i> بدون دفع مقدم</li>
+          </ul>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── 4.4 TRUST STRIP ─── -->
+    <section *ngIf="sectionsConfig.showGuarantees" class="pp-trust">
+      <div class="pp-container pp-trust-grid">
+        <div class="pp-trust-item">
+          <span class="pp-trust-icon"><i class="bi bi-patch-check-fill"></i></span>
+          <h4>ضمان أصالة 100%</h4>
+          <p>مطابق للصور والوصف تماماً</p>
+        </div>
+        <div class="pp-trust-item">
+          <span class="pp-trust-icon"><i class="bi bi-truck"></i></span>
+          <h4>شحن سريع ومجاني</h4>
+          <p>خلال 24 - 48 ساعة فقط</p>
+        </div>
+        <div class="pp-trust-item">
+          <span class="pp-trust-icon"><i class="bi bi-cash-coin"></i></span>
+          <h4>الدفع عند الاستلام</h4>
+          <p>سدد بأمان عند وصول المندوب</p>
+        </div>
+        <div class="pp-trust-item">
+          <span class="pp-trust-icon"><i class="bi bi-arrow-repeat"></i></span>
+          <h4>استبدال 14 يوم</h4>
+          <p>دعم فني واستبدال سريع</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── 4.5 FEATURES ─── -->
+    <section *ngIf="(sectionsConfig.showFeatures || sectionsConfig.showSpecs) && content?.features?.length > 0" class="pp-section">
+      <div class="pp-container">
+
+        <div class="pp-section-head">
+          <span class="pp-eyebrow"><i class="bi bi-stars"></i> مواصفات استثنائية</span>
+          <h2 class="pp-h2">أهم مميزات {{ pageData()?.title }}</h2>
+          <p class="pp-section-sub">تقنيات متطورة وخامات عالية الجودة صُممت لتمنحك أداءً فائقاً وتجربة استخدام لا تُنسى</p>
+        </div>
+
+        <div class="pp-features">
+          <article *ngFor="let feat of content.features" class="pp-feature">
+            <span class="pp-feature-icon"><i [class]="'bi ' + (feat.icon || 'bi-patch-check-fill')"></i></span>
+            <h3>{{ feat.title || feat }}</h3>
+            <p>{{ feat.description || 'مصنوع بأعلى معايير الدقة لضمان أفضل تجربة استخدام.' }}</p>
+          </article>
         </div>
 
       </div>
     </section>
 
-    <!-- 4. VIDEO SHOWCASE (If provided) -->
-    <section *ngIf="sectionsConfig.showVideo && pageData()?.videoUrl" class="py-10 px-4 bg-slate-950 text-white">
-      <div
-        class="max-w-5xl mx-auto rounded-3xl overflow-hidden border border-slate-800 bg-gradient-to-br from-slate-900 to-slate-950 shadow-2xl p-6 sm:p-10 flex flex-col lg:flex-row items-center gap-8">
-        <div class="flex-1 text-right">
-          <div
-            class="inline-flex items-center gap-2 bg-amber-400/10 text-amber-400 border border-amber-400/20 text-xs font-black px-3.5 py-1 rounded-full mb-3">
-            <i class="bi bi-play-circle-fill"></i>
-            <span>فيديو توضيحي للمنتج</span>
-          </div>
-          <h3 class="text-xl sm:text-3xl font-black text-white mb-3">
-            شاهد {{ pageData()?.title }} أثناء الاستخدام الفعلي
-          </h3>
-          <p class="text-slate-400 text-xs sm:text-sm leading-relaxed mb-6">
-            دقة التفاصيل وفخامة الخامات كما ستصلك تماماً حتى باب منزلك مع ضمان استبدال شامل.
-          </p>
-          <button (click)="scrollToOrderForm()"
-            class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-6 py-3 rounded-full text-xs sm:text-sm transition shadow-lg inline-flex items-center gap-2 cursor-pointer">
+    <!-- ─── 4.6 VIDEO ─── -->
+    <section *ngIf="sectionsConfig.showVideo && pageData()?.videoUrl" class="pp-section pp-section-dark">
+      <div class="pp-container pp-video">
+        <div class="pp-video-copy">
+          <span class="pp-eyebrow pp-eyebrow-gold"><i class="bi bi-play-circle-fill"></i> فيديو توضيحي</span>
+          <h2 class="pp-h2 pp-h2-light">شاهد {{ pageData()?.title }} أثناء الاستخدام الفعلي</h2>
+          <p>دقة التفاصيل وفخامة الخامات كما ستصلك تماماً حتى باب منزلك مع ضمان استبدال شامل.</p>
+          <button (click)="scrollToOrderForm()" class="pp-btn pp-btn-gold" type="button">
             <i class="bi bi-bag-check-fill"></i>
             <span>احصل على نسختك الآن</span>
           </button>
         </div>
-        <div
-          class="w-full lg:w-[440px] rounded-2xl overflow-hidden shadow-2xl border border-slate-800 bg-black aspect-video flex items-center justify-center relative">
+        <div class="pp-video-frame">
           <iframe *ngIf="isVideoEmbed(pageData()!.videoUrl!)" [src]="getVideoSafeUrl(pageData()!.videoUrl!)"
-            class="w-full h-full" frameborder="0" allowfullscreen></iframe>
-          <video *ngIf="!isVideoEmbed(pageData()!.videoUrl!)" [src]="pageData()!.videoUrl" controls
-            class="w-full h-full object-cover"></video>
+                  frameborder="0" allowfullscreen></iframe>
+          <video *ngIf="!isVideoEmbed(pageData()!.videoUrl!)" [src]="pageData()!.videoUrl" controls></video>
         </div>
       </div>
     </section>
 
-    <!-- 5. PRODUCT FEATURES & SPECIFICATIONS WITH ICONS (الميزة مع الأيقونة) -->
-    <section *ngIf="(sectionsConfig.showFeatures || sectionsConfig.showSpecs) && content?.features?.length > 0"
-      class="py-12 sm:py-16 px-4 bg-white border-y border-slate-200">
-      <div class="max-w-6xl mx-auto">
-        <div class="text-center mb-10">
-          <div
-            class="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 text-xs font-black px-4 py-1.5 rounded-full mb-2.5 border border-indigo-200 shadow-xs">
-            <i class="bi bi-stars"></i>
-            <span>مواصفات ومميزات استثنائية</span>
-          </div>
-          <h2 class="text-2xl sm:text-4xl font-black text-slate-900 mb-2">
-            أهم مواصفات ومميزات {{ pageData()?.title }}
-          </h2>
-          <p class="text-slate-500 text-xs sm:text-sm max-w-xl mx-auto">
-            تقنيات متطورة وخامات عالية الجودة صُممت لتمنحك أداءً فائقاً وتجربة استخدام لا تُنسى
-          </p>
+    <!-- ─── 4.7 WHY CHOOSE US ─── -->
+    <section *ngIf="sectionsConfig.showWhyChooseUs && content?.whyChooseUs?.length > 0" class="pp-section pp-section-ink">
+      <div class="pp-container">
+        <div class="pp-section-head">
+          <span class="pp-eyebrow pp-eyebrow-gold"><i class="bi bi-shield-check"></i> المشكلة والحل</span>
+          <h2 class="pp-h2 pp-h2-light">وداعاً للمشاكل التقليدية مع {{ pageData()?.title }}</h2>
+          <p class="pp-section-sub">صممنا هذا المنتج خصيصاً ليحل المشاكل الشائعة التي تواجهها مع البدائل الرديئة في السوق</p>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
-          <div *ngFor="let feat of content.features"
-            class="p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:border-indigo-300 hover:bg-white hover:shadow-xl transition-all duration-300 flex flex-col items-center text-center group">
-            <div
-              class="w-16 h-16 rounded-2xl bg-white border border-slate-200 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white group-hover:scale-110 flex items-center justify-center text-3xl mb-4 transition-all duration-300 shadow-sm">
-              <i [class]="'bi ' + (feat.icon || 'bi-patch-check-fill')"></i>
+        <div class="pp-why">
+          <article *ngFor="let item of content.whyChooseUs; let i = index" class="pp-why-card">
+            <span class="pp-why-num">{{ i + 1 < 10 ? '0' + (i + 1) : i + 1 }}</span>
+            <div>
+              <h3>{{ item.title || item.problem }}</h3>
+              <p>{{ item.text || item.solution }}</p>
             </div>
-            <h3
-              class="text-base sm:text-lg font-black text-slate-900 mb-2 group-hover:text-indigo-600 transition-colors">
-              {{ feat.title || feat }}
-            </h3>
-            <p class="text-slate-500 text-xs sm:text-sm leading-relaxed mb-0">
-              {{ feat.description || 'مصنوع بأعلى معايير الدقة لضمان أفضل تجربة استخدام.' }}
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 5.5. WHY CHOOSE US / PROBLEM & SOLUTION (المشكلة والحل) -->
-    <section *ngIf="sectionsConfig.showWhyChooseUs && content?.whyChooseUs?.length > 0"
-      class="py-12 sm:py-16 px-4 bg-slate-900 text-white">
-      <div class="max-w-5xl mx-auto">
-        <div class="text-center mb-10">
-          <div
-            class="inline-flex items-center gap-2 bg-amber-400/10 text-amber-400 border border-amber-400/20 text-xs font-black px-4 py-1.5 rounded-full mb-2.5 shadow-xs">
-            <i class="bi bi-shield-check"></i>
-            <span>المشكلة والحل</span>
-          </div>
-          <h2 class="text-2xl sm:text-4xl font-black text-white mb-2">
-            وداعاً للمشاكل التقليدية مع {{ pageData()?.title }}
-          </h2>
-          <p class="text-slate-400 text-xs sm:text-sm max-w-xl mx-auto">
-            صممنا هذا المنتج خصيصاً ليحل المشاكل الشائعة التي تواجهها مع البدائل الرديئة في السوق
-          </p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
-          <div *ngFor="let item of content.whyChooseUs; let i = index"
-            class="p-6 rounded-2xl bg-slate-800/90 border border-slate-700/80 hover:border-amber-400/50 transition-all duration-300 shadow-lg">
-            <div class="flex items-start gap-4">
-              <div
-                class="w-12 h-12 rounded-xl bg-amber-400/10 border border-amber-400/20 text-amber-400 flex items-center justify-center text-2xl shrink-0">
-                <i class="bi bi-check-circle-fill"></i>
-              </div>
-              <div class="flex-1">
-                <h3 class="text-base sm:text-lg font-black text-white mb-2">
-                  {{ item.title || item.problem }}
-                </h3>
-                <p class="text-slate-300 text-xs sm:text-sm leading-relaxed mb-0">
-                  {{ item.text || item.solution }}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 6. GUARANTEES STRIP -->
-    <section *ngIf="sectionsConfig.showGuarantees" class="py-10 px-4 bg-slate-50 border-b border-slate-200">
-      <div class="max-w-5xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 text-center">
-        <div class="p-3 bg-white border border-slate-200 rounded-2xl flex flex-col items-center shadow-xs">
-          <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl mb-1.5">
-            <i class="bi bi-shield-check"></i>
-          </div>
-          <h4 class="text-xs sm:text-sm font-bold text-slate-900 mb-0.5">ضمان أصالة 100%</h4>
-          <p class="text-[11px] text-slate-500 mb-0">مطابق للصور والوصف تماماً</p>
-        </div>
-        <div class="p-3 bg-white border border-slate-200 rounded-2xl flex flex-col items-center shadow-xs">
-          <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl mb-1.5">
-            <i class="bi bi-truck"></i>
-          </div>
-          <h4 class="text-xs sm:text-sm font-bold text-slate-900 mb-0.5">شحن سريع ومجاني</h4>
-          <p class="text-[11px] text-slate-500 mb-0">خلال 24 - 48 ساعة فقط</p>
-        </div>
-        <div class="p-3 bg-white border border-slate-200 rounded-2xl flex flex-col items-center shadow-xs">
-          <div
-            class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl mb-1.5">
-            <i class="bi bi-cash-coin"></i>
-          </div>
-          <h4 class="text-xs sm:text-sm font-bold text-slate-900 mb-0.5">الدفع عند الاستلام</h4>
-          <p class="text-[11px] text-slate-500 mb-0">سدد بأمان عند وصول المندوب</p>
-        </div>
-        <div class="p-3 bg-white border border-slate-200 rounded-2xl flex flex-col items-center shadow-xs">
-          <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-xl mb-1.5">
-            <i class="bi bi-arrow-repeat"></i>
-          </div>
-          <h4 class="text-xs sm:text-sm font-bold text-slate-900 mb-0.5">استبدال 14 يوم</h4>
-          <p class="text-[11px] text-slate-500 mb-0">دعم فني واستبدال سريع</p>
+          </article>
         </div>
       </div>
     </section>
 
     <!-- ============================================================ -->
-    <!-- 7. ORDER FORM SECTION (السعر والباقات ونموذج الطلب هنا) -->
+    <!-- 4.8 ORDER SECTION -->
     <!-- ============================================================ -->
-    <section id="orderSection" class="order-form-section">
-      <div class="max-w-xl lg:max-w-5xl mx-auto">
-        <div class="order-form-card">
+    <section id="orderSection" class="pp-order">
+      <div class="pp-container">
 
-          <!-- Header (Compact on mobile, Spacious on desktop) -->
-          <div class="text-center mb-4 lg:mb-8">
-            <span
-              class="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] sm:text-xs font-bold px-3.5 py-1 rounded-full mb-1.5 shadow-xs">
-              <i class="bi bi-shield-check"></i> الدفع عند الاستلام لباب بيتك
-            </span>
-            <h3 class="text-lg sm:text-2xl font-black text-slate-900 mb-1">أكمل بيانات الشحن الفوري</h3>
-            <p class="text-slate-500 text-xs sm:text-sm mt-0.5 mb-0">سيتواصل معك فريقنا هاتفياً أو عبر واتساب لتأكيد ميعاد التوصيل</p>
-          </div>
+        <div class="pp-order-head">
+          <span class="pp-eyebrow pp-eyebrow-success"><i class="bi bi-shield-check"></i> الدفع عند الاستلام لباب بيتك</span>
+          <h2 class="pp-h2">أكمل بيانات الشحن الفوري</h2>
+          <p class="pp-section-sub">سيتواصل معك فريقنا هاتفياً أو عبر واتساب لتأكيد ميعاد التوصيل</p>
+        </div>
 
-          <form (ngSubmit)="submitOrder()">
-            
-            <!-- Desktop 2-Column Grid / Mobile 1-Column Sequential Stack -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-start">
+        <form (ngSubmit)="submitOrder()" class="pp-order-form">
+          <div class="pp-order-grid">
 
-              <!-- COLUMN 1: Offer/Bundles Selection + Shipping Information (7 cols on Desktop) -->
-              <div class="lg:col-span-7 flex flex-col gap-4">
+            <!-- ── Column: steps ── -->
+            <div class="pp-order-steps">
 
-                <!-- STEP 1: اختيار العرض والموديل -->
-                <div class="bg-slate-50/90 border border-slate-200/90 rounded-2xl p-3.5 sm:p-5 shadow-2xs">
-                  
-                  <!-- Step 1 Header -->
-                  <div class="flex items-center justify-between pb-2.5 mb-3 border-b border-slate-200/80">
-                    <div class="flex items-center gap-2">
-                      <span class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-black flex items-center justify-center shrink-0">1</span>
-                      <h4 class="text-xs sm:text-sm font-black text-slate-900 mb-0">اختر العرض الأنسب لك:</h4>
-                    </div>
-                    <span class="text-[11px] text-amber-700 font-bold bg-amber-50 border border-amber-200/90 px-2 py-0.5 rounded-full">
-                      خصومات حصرية 🔥
+              <!-- STEP 1: offers -->
+              <div class="pp-step">
+                <div class="pp-step-head">
+                  <span class="pp-step-num">1</span>
+                  <h3>اختر العرض الأنسب لك</h3>
+                  <span class="pp-step-tag">خصومات حصرية</span>
+                </div>
+
+                <!-- Product mini row -->
+                <div class="pp-mini-product">
+                  <img [src]="selectedImage" alt="product">
+                  <div class="pp-mini-copy">
+                    <strong>{{ pageData()?.title }}</strong>
+                    <span>
+                      {{ pageData()?.sellingPrice | number:'1.0-0' }} ج.م
+                      <em *ngIf="selectedSize()">• المقاس: {{ selectedSize() }}</em>
                     </span>
                   </div>
 
-                  <!-- Mini Product Header -->
-                  <div class="bg-white border border-slate-200 rounded-xl p-2.5 mb-3 flex items-center justify-between gap-3 shadow-2xs">
-                    <div class="flex items-center gap-2.5 min-w-0">
-                      <img [src]="selectedImage"
-                        class="w-12 h-12 object-contain rounded-lg border border-slate-200 bg-white p-1 flex-shrink-0"
-                        alt="product">
-                      <div class="min-w-0">
-                        <h4 class="text-xs sm:text-sm font-bold text-slate-900 mb-0.5 truncate">{{ pageData()?.title }}</h4>
-                        <div class="flex items-center gap-1.5">
-                          <span class="text-xs sm:text-sm font-black text-emerald-600 font-mono">{{ pageData()?.sellingPrice | currency:'EGP':'symbol':'1.0-0' }}</span>
-                          <span *ngIf="selectedSize()"
-                            class="text-[9px] bg-slate-100 text-slate-700 border border-slate-200 px-1.5 py-0.5 rounded font-bold">المقاس: {{ selectedSize() }}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Quantity Stepper: Only shown when no bundles exist -->
-                    <div *ngIf="bundles().length <= 1" class="flex items-center gap-1 bg-slate-50 border border-slate-200 rounded-lg p-0.5 flex-shrink-0">
-                      <button (click)="changeQuantity(-1)" type="button"
-                        class="w-7 h-7 flex items-center justify-center font-black text-slate-600 hover:bg-white rounded text-xs transition cursor-pointer">−</button>
-                      <span class="w-6 text-center text-xs font-black font-mono">{{ orderForm.quantity }}</span>
-                      <button (click)="changeQuantity(1)" type="button"
-                        class="w-7 h-7 flex items-center justify-center font-black text-slate-600 hover:bg-white rounded text-xs transition cursor-pointer">+</button>
-                    </div>
+                  <div *ngIf="bundles().length <= 1" class="pp-qty">
+                    <button (click)="changeQuantity(-1)" type="button" aria-label="تقليل">−</button>
+                    <span>{{ orderForm.quantity }}</span>
+                    <button (click)="changeQuantity(1)" type="button" aria-label="زيادة">+</button>
                   </div>
-
-                  <!-- Quantity Bundles (3-Column Grid) -->
-                  <div *ngIf="bundles().length > 1" class="mb-2">
-                    <div class="grid grid-cols-3 gap-1.5 sm:gap-2">
-                      <div *ngFor="let b of bundles(); let idx = index" (click)="selectBundle(idx)" class="bundle-pill-card"
-                        [class.bundle-pill-active]="selectedBundleIndex() === idx">
-                        <span class="bundle-pill-badge" [class.badge-popular]="b.isPopular">
-                          {{ b.isPopular ? 'الأكثر طلباً 🔥' : (idx === 0 ? 'العرض الأساسي' : 'أعلى توفير 🎁') }}
-                        </span>
-                        <div class="bundle-pill-title">
-                          {{ b.quantity === 1 ? 'قطعة واحدة' : (b.quantity === 2 ? 'قطعتين' : b.quantity + ' قطع') }}
-                        </div>
-                        <div class="bundle-pill-price">
-                          {{ b.price | number:'1.0-0' }} <span class="text-[10px] font-normal font-cairo">ج.م</span>
-                        </div>
-                        <div *ngIf="b.quantity > 1"
-                          class="text-[9px] font-bold text-amber-700 bg-amber-50 rounded px-1 mt-0.5 inline-block">
-                          {{ b.quantity === 2 ? 'وفّر 150 ج' : 'توفير إضافي' }}
-                        </div>
-                        <span *ngIf="b.isFreeShipping" class="bundle-pill-ship">
-                          <i class="bi bi-truck"></i> شحن مجاني
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Color / Variant Options -->
-                  <div *ngIf="variantOptions().length > 1"
-                    class="variant-selection-card mt-3 p-2.5 bg-white rounded-xl border border-slate-200">
-                    <div class="flex items-center justify-between mb-2">
-                      <span class="text-[11px] font-bold text-slate-700">اختر اللون / الموديل:</span>
-                      <span class="text-[10px] font-black text-slate-900 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">{{ selectedVariant() }}</span>
-                    </div>
-                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
-                      <button *ngFor="let v of variantOptions()" type="button" (click)="selectVariant(v.name)"
-                        class="variant-card-btn py-1 px-2" [class.variant-card-active]="selectedVariant() === v.name">
-                        <div *ngIf="v.colorCode" class="variant-color-dot" [style.backgroundColor]="v.colorCode"></div>
-                        <img *ngIf="v.image" [src]="resolveUrl(v.image)" class="w-5 h-5 object-contain rounded" alt="variant">
-                        <span class="text-[11px] font-bold truncate">{{ v.name }}</span>
-                      </button>
-                    </div>
-                  </div>
-
                 </div>
 
-                <!-- STEP 2: بيانات التوصيل والاستلام -->
-                <div class="bg-white border border-slate-200/90 rounded-2xl p-3.5 sm:p-5 shadow-2xs flex flex-col gap-3">
-                  
-                  <!-- Step 2 Header -->
-                  <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
-                    <div class="flex items-center gap-2">
-                      <span class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-black flex items-center justify-center shrink-0">2</span>
-                      <h4 class="text-xs sm:text-sm font-black text-slate-900 mb-0">بيانات التوصيل والمستلم:</h4>
-                    </div>
-                    <span class="text-[11px] text-slate-500 font-medium">الدفع نقداً عند الاستلام</span>
+                <!-- Bundles -->
+                <div *ngIf="bundles().length > 1 && sectionsConfig.showBundleOffers" class="pp-bundles">
+                  <button *ngFor="let b of bundles(); let idx = index" type="button" (click)="selectBundle(idx)"
+                          class="pp-bundle" [class.is-active]="selectedBundleIndex() === idx">
+                    <span class="pp-bundle-badge" [class.is-popular]="b.isPopular">
+                      {{ b.isPopular ? 'الأكثر طلباً' : (idx === 0 ? 'العرض الأساسي' : 'أعلى توفير') }}
+                    </span>
+                    <span class="pp-bundle-qty">{{ b.quantity === 1 ? 'قطعة واحدة' : (b.quantity === 2 ? 'قطعتين' : b.quantity + ' قطع') }}</span>
+                    <span class="pp-bundle-price">{{ b.price | number:'1.0-0' }} <small>ج.م</small></span>
+                    <span *ngIf="b.isFreeShipping" class="pp-bundle-ship"><i class="bi bi-truck"></i> شحن مجاني</span>
+                    <span *ngIf="!b.isFreeShipping && b.originalPrice && b.originalPrice > b.price" class="pp-bundle-old">
+                      {{ b.originalPrice | number:'1.0-0' }} ج.م
+                    </span>
+                  </button>
+                </div>
+
+                <!-- Variants -->
+                <div *ngIf="variantOptions().length > 1" class="pp-variants">
+                  <div class="pp-variants-head">
+                    <span>اختر اللون / الموديل</span>
+                    <strong>{{ selectedVariant() }}</strong>
+                  </div>
+                  <div class="pp-variants-list">
+                    <button *ngFor="let v of variantOptions()" type="button" (click)="selectVariant(v.name)"
+                            class="pp-variant" [class.is-active]="selectedVariant() === v.name">
+                      <span *ngIf="v.colorCode" class="pp-variant-dot" [style.backgroundColor]="v.colorCode"></span>
+                      <img *ngIf="v.image" [src]="resolveUrl(v.image)" alt="variant">
+                      <span>{{ v.name }}</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- STEP 2: shipping data -->
+              <div class="pp-step">
+                <div class="pp-step-head">
+                  <span class="pp-step-num">2</span>
+                  <h3>بيانات التوصيل والمستلم</h3>
+                  <span class="pp-step-tag is-muted">الدفع نقداً عند الاستلام</span>
+                </div>
+
+                <div class="pp-fields">
+                  <div class="pp-field">
+                    <label>الاسم بالكامل <b>*</b></label>
+                    <input type="text" [(ngModel)]="orderForm.customerName" name="customerName"
+                           class="pp-input" placeholder="مثال: أحمد محمد علي" required>
                   </div>
 
-                  <!-- Name & Phone Row -->
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    <div>
-                      <label class="block text-[11px] sm:text-xs font-bold text-slate-700 mb-1">الاسم بالكامل <span class="text-rose-500">*</span></label>
-                      <input type="text" [(ngModel)]="orderForm.customerName" name="customerName" class="compact-form-input" placeholder="مثال: أحمد محمد علي" required>
-                    </div>
-
-                    <div>
-                      <label class="block text-[11px] sm:text-xs font-bold text-slate-700 mb-1">رقم الهاتف (واتساب) <span class="text-rose-500">*</span></label>
-                      <div class="flex items-center rounded-xl border border-slate-300 bg-white overflow-hidden transition-all focus-within:border-blue-600 focus-within:ring-2 focus-within:ring-blue-100 h-[42px]">
-                        <span class="px-2.5 py-2 bg-slate-100 text-slate-700 text-xs font-bold font-mono border-l border-slate-200 shrink-0 select-none" dir="ltr">
-                          +20
-                        </span>
-                        <input type="tel" [(ngModel)]="orderForm.phone" name="phone"
-                          class="flex-1 py-1 px-2.5 text-xs sm:text-sm font-mono text-slate-900 border-none outline-none bg-transparent"
-                          dir="ltr" placeholder="01012345678" required>
-                        <span class="pl-2.5 text-emerald-600 shrink-0">
-                          <i class="bi bi-whatsapp text-sm"></i>
-                        </span>
-                      </div>
+                  <div class="pp-field">
+                    <label>رقم الهاتف (واتساب) <b>*</b></label>
+                    <div class="pp-phone">
+                      <span class="pp-phone-prefix" dir="ltr">+20</span>
+                      <input type="tel" [(ngModel)]="orderForm.phone" name="phone" dir="ltr"
+                             placeholder="01012345678" required>
+                      <i class="bi bi-whatsapp"></i>
                     </div>
                   </div>
 
-                  <!-- Alternative Phone Toggle -->
-                  <div *ngIf="!showAltPhone()" class="-mt-0.5">
-                    <button type="button" (click)="showAltPhone.set(true)"
-                      class="text-[11px] text-blue-600 hover:text-blue-800 font-bold inline-flex items-center gap-1 cursor-pointer">
+                  <div *ngIf="!showAltPhone()" class="pp-field-full">
+                    <button type="button" (click)="showAltPhone.set(true)" class="pp-link-btn">
                       <i class="bi bi-plus-circle"></i> إضافة رقم هاتف بديل (اختياري)
                     </button>
                   </div>
-                  <div *ngIf="showAltPhone()" class="animate-fadeIn">
-                    <div class="flex items-center justify-between mb-1">
-                      <label class="block text-[11px] font-bold text-slate-700">هاتف بديل (اختياري)</label>
-                      <button type="button" (click)="showAltPhone.set(false); orderForm.alternativePhone = ''"
-                        class="text-[10px] text-rose-500 hover:underline cursor-pointer">إلغاء</button>
+
+                  <div *ngIf="showAltPhone()" class="pp-field-full">
+                    <div class="pp-field-head">
+                      <label>هاتف بديل (اختياري)</label>
+                      <button type="button" (click)="showAltPhone.set(false); orderForm.alternativePhone = ''" class="pp-cancel">إلغاء</button>
                     </div>
-                    <div class="flex items-center rounded-xl border border-slate-300 bg-white overflow-hidden transition-all focus-within:border-blue-600 focus-within:ring-2 focus-within:ring-blue-100 h-[42px]">
-                      <span class="px-2.5 py-2 bg-slate-100 text-slate-700 text-xs font-bold font-mono border-l border-slate-200 shrink-0 select-none" dir="ltr">
-                        +20
-                      </span>
-                      <input type="tel" [(ngModel)]="orderForm.alternativePhone" name="alternativePhone"
-                        class="flex-1 py-1 px-2.5 text-xs sm:text-sm font-mono text-slate-900 border-none outline-none bg-transparent"
-                        dir="ltr" placeholder="01112345678">
+                    <div class="pp-phone">
+                      <span class="pp-phone-prefix" dir="ltr">+20</span>
+                      <input type="tel" [(ngModel)]="orderForm.alternativePhone" name="alternativePhone" dir="ltr"
+                             placeholder="01112345678">
                     </div>
                   </div>
 
-                  <!-- Governorate & District Row -->
-                  <div class="grid grid-cols-2 gap-2.5">
-                    <div>
-                      <label class="block text-[11px] sm:text-xs font-bold text-slate-700 mb-1">المحافظة <span class="text-rose-500">*</span></label>
-                      <select [(ngModel)]="orderForm.governorateId" (change)="onGovernorateChange()" name="governorateId"
-                        class="compact-form-input cursor-pointer" required>
-                        <option *ngFor="let gov of governorates" [value]="gov.id">{{ gov.name }}</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label class="block text-[11px] sm:text-xs font-bold text-slate-700 mb-1">المنطقة / الحي <span class="text-rose-500">*</span></label>
-                      <input type="text" [(ngModel)]="orderForm.districtName" name="districtName" class="compact-form-input"
-                        placeholder="مثال: المعادي، نصر">
-                    </div>
+                  <div class="pp-field">
+                    <label>المحافظة <b>*</b></label>
+                    <select [(ngModel)]="orderForm.governorateId" (change)="onGovernorateChange()" name="governorateId"
+                            class="pp-input pp-select" required>
+                      <option *ngFor="let gov of governorates" [value]="gov.id">{{ gov.name }}</option>
+                    </select>
                   </div>
 
-                  <!-- Detailed Address -->
-                  <div>
-                    <label class="block text-[11px] sm:text-xs font-bold text-slate-700 mb-1">العنوان بالتفصيل <span class="text-rose-500">*</span></label>
-                    <input type="text" [(ngModel)]="orderForm.address" name="address" class="compact-form-input"
-                      placeholder="اسم الشارع — رقم العمارة — الشقة..." required>
+                  <div class="pp-field">
+                    <label>المنطقة / الحي <b>*</b></label>
+                    <input type="text" [(ngModel)]="orderForm.districtName" name="districtName"
+                           class="pp-input" placeholder="مثال: المعادي، نصر">
                   </div>
 
-                  <!-- Notes Toggle -->
-                  <div *ngIf="!showNotes()" class="-mt-0.5">
-                    <button type="button" (click)="showNotes.set(true)"
-                      class="text-[11px] text-slate-500 hover:text-slate-700 font-medium inline-flex items-center gap-1 cursor-pointer">
+                  <div class="pp-field-full">
+                    <label>العنوان بالتفصيل <b>*</b></label>
+                    <input type="text" [(ngModel)]="orderForm.address" name="address" class="pp-input"
+                           placeholder="اسم الشارع — رقم العمارة — الشقة..." required>
+                  </div>
+
+                  <div *ngIf="!showNotes()" class="pp-field-full">
+                    <button type="button" (click)="showNotes.set(true)" class="pp-link-btn is-muted">
                       <i class="bi bi-chat-left-text"></i> إضافة ملاحظات للتوصيل (اختياري)
                     </button>
                   </div>
-                  <div *ngIf="showNotes()" class="animate-fadeIn">
-                    <div class="flex items-center justify-between mb-1">
-                      <label class="block text-[11px] font-bold text-slate-700">ملاحظات للمندوب</label>
-                      <button type="button" (click)="showNotes.set(false); orderForm.notes = ''"
-                        class="text-[10px] text-rose-500 hover:underline cursor-pointer">إلغاء</button>
-                    </div>
-                    <input type="text" [(ngModel)]="orderForm.notes" name="notes" class="compact-form-input"
-                      placeholder="أي تعليمات إضافية للتسليم...">
-                  </div>
 
-                  <!-- Submit Button on Desktop Form Footer -->
-                  <div class="hidden lg:block mt-2 pt-2 border-t border-slate-100">
-                    <button type="submit" [disabled]="submitting()"
-                      class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-[0.99] disabled:opacity-60 text-white font-black text-base py-3.5 px-6 rounded-xl transition shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2 cursor-pointer">
-                      <span *ngIf="submitting()" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                      <i *ngIf="!submitting()" class="bi bi-bag-check-fill text-lg"></i>
-                      <span>{{ submitting() ? 'جاري تسجيل طلبك...' : ('تأكيد الطلب — الدفع عند الاستلام (' + (totalAmount | number:'1.0-0') + ' ج.م)') }}</span>
-                    </button>
-                    <div class="text-center text-xs text-slate-500 flex items-center justify-center gap-1.5 mt-2">
-                      <i class="bi bi-shield-lock-fill text-emerald-600"></i>
-                      <span>بياناتك آمنة ومشفرة — الدفع عند الاستلام لباب منزلك مع ضمان استبدال معتمد</span>
+                  <div *ngIf="showNotes()" class="pp-field-full">
+                    <div class="pp-field-head">
+                      <label>ملاحظات للمندوب</label>
+                      <button type="button" (click)="showNotes.set(false); orderForm.notes = ''" class="pp-cancel">إلغاء</button>
                     </div>
+                    <input type="text" [(ngModel)]="orderForm.notes" name="notes" class="pp-input"
+                           placeholder="أي تعليمات إضافية للتسليم...">
                   </div>
-
                 </div>
-
-              </div>
-
-              <!-- COLUMN 2: Order Summary, Invoice, Big Submit CTA & Trust Badges (5 cols on Desktop, Sticky) -->
-              <div class="lg:col-span-5 flex flex-col gap-3.5 lg:sticky lg:top-6">
-                
-                <div class="bg-gradient-to-b from-slate-50 to-white border-2 border-slate-200/90 rounded-2xl p-4 sm:p-5 shadow-xs">
-                  
-                  <div class="flex items-center gap-2 pb-3 mb-3 border-b border-slate-200 text-slate-900 font-black text-sm">
-                    <i class="bi bi-receipt text-blue-600 text-base"></i>
-                    <span>ملخص الطلب والفاتورة</span>
-                  </div>
-
-                  <!-- Selected Offer Pill -->
-                  <div class="flex items-center justify-between bg-blue-50/70 border border-blue-100 rounded-xl px-3 py-2 mb-3">
-                    <div class="flex items-center gap-2 text-xs font-bold text-blue-900">
-                      <i class="bi bi-box-seam text-blue-600"></i>
-                      <span>العرض المختار:</span>
-                    </div>
-                    <span class="text-xs font-black text-blue-700">
-                      {{ orderForm.quantity }} {{ orderForm.quantity === 1 ? 'قطعة واحدة' : (orderForm.quantity === 2 ? 'قطعتين' : orderForm.quantity + ' قطع') }}
-                    </span>
-                  </div>
-
-                  <!-- Invoice Breakdown -->
-                  <div class="space-y-2 text-xs">
-                    <div class="flex justify-between items-center text-slate-600">
-                      <span>قيمة المنتجات:</span>
-                      <span class="font-bold text-slate-900 font-mono text-sm">{{ (totalAmount - shippingCost) | number:'1.0-0' }} ج.م</span>
-                    </div>
-                    <div class="flex justify-between items-center text-slate-600">
-                      <span>مصاريف الشحن والتوصيل:</span>
-                      <span class="font-bold text-emerald-600">{{ isFreeShippingActive ? 'شحن مجاني 🎁' : ((shippingCost | number:'1.0-0') + ' ج.م') }}</span>
-                    </div>
-                    <div class="flex justify-between items-center pt-3 border-t border-slate-200 text-sm font-black">
-                      <div>
-                        <span class="text-slate-900 block font-black">المطلوب عند الاستلام:</span>
-                        <span class="text-[10px] text-slate-400 font-normal">الدفع نقداً بعد فحص الشحنة</span>
-                      </div>
-                      <span class="text-2xl sm:text-3xl text-emerald-600 font-mono font-black tracking-tight">
-                        {{ totalAmount | number:'1.0-0' }} <span class="text-xs font-cairo font-bold">ج.م</span>
-                      </span>
-                    </div>
-                  </div>
-
-                  <!-- BIG CTA SUBMIT BUTTON (Appears directly after inputs on Mobile, and inside summary card on Desktop) -->
-                  <div class="mt-4 pt-3 border-t border-slate-100">
-                    <button type="submit" [disabled]="submitting()"
-                      class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-[0.99] disabled:opacity-60 text-white font-black text-base sm:text-lg py-3.5 px-4 rounded-xl transition shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 cursor-pointer">
-                      <span *ngIf="submitting()" class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                      <i *ngIf="!submitting()" class="bi bi-shield-check text-xl"></i>
-                      <span>
-                        {{ submitting() ? 'جاري تسجيل طلبك...' : ('تأكيد الطلب — الدفع عند الاستلام (' + (totalAmount | number:'1.0-0') + ' ج.م)') }}
-                      </span>
-                    </button>
-                    
-                    <div class="text-center text-[11px] text-slate-500 flex items-center justify-center gap-1.5 mt-2.5 font-medium">
-                      <i class="bi bi-shield-lock-fill text-emerald-600"></i>
-                      <span>الدفع نقداً عند استلام شحنتك لباب منزلك مع ضمان استبدال معتمد</span>
-                    </div>
-                  </div>
-
-                  <!-- Trust Badges -->
-                  <div class="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-slate-200/80 text-center text-[10px] text-slate-600">
-                    <div class="p-2 bg-white rounded-xl border border-slate-200/90 shadow-2xs">
-                      <i class="bi bi-shield-check text-emerald-600 block text-base mb-0.5"></i>
-                      <span class="font-bold">ضمان استبدال</span>
-                    </div>
-                    <div class="p-2 bg-white rounded-xl border border-slate-200/90 shadow-2xs">
-                      <i class="bi bi-truck text-blue-600 block text-base mb-0.5"></i>
-                      <span class="font-bold">توصيل سريع</span>
-                    </div>
-                    <div class="p-2 bg-white rounded-xl border border-slate-200/90 shadow-2xs">
-                      <i class="bi bi-cash-coin text-amber-600 block text-base mb-0.5"></i>
-                      <span class="font-bold">دفع عند استلام</span>
-                    </div>
-                  </div>
-
-                </div>
-
               </div>
 
             </div>
 
-          </form>
-        </div>
-      </div>
-    </section>
+            <!-- ── Column: summary ── -->
+            <aside class="pp-summary">
+              <div class="pp-summary-card">
 
-    <!-- ============================================================ -->
-    <!-- 8. CUSTOMER REVIEWS & FAQ (تحت فورم الطلب مباشرة كما طُلب) -->
-    <!-- ============================================================ -->
+                <div class="pp-summary-head">
+                  <i class="bi bi-receipt"></i>
+                  <h3>ملخص الطلب</h3>
+                </div>
 
-    <!-- Customer Reviews -->
-    <section *ngIf="sectionsConfig.showReviews && content?.customerReviews?.length > 0"
-      class="py-12 px-4 bg-slate-50 border-t border-slate-200">
-      <div class="max-w-5xl mx-auto">
-        <div class="text-center mb-8">
-          <div
-            class="inline-flex items-center gap-2 bg-amber-50 text-amber-700 text-xs font-black px-4 py-1.5 rounded-full mb-2 border border-amber-200">
-            <i class="bi bi-chat-quote-fill"></i>
-            <span>تجارب حقيقية</span>
-          </div>
-          <h2 class="text-xl sm:text-3xl font-black text-slate-900 mb-1">آراء المشترين الذين وثقوا بنا</h2>
-          <p class="text-slate-500 text-xs sm:text-sm">تجارب موثقة لعملاء استلموا المنتج بالفعل</p>
-        </div>
+                <div class="pp-summary-offer">
+                  <span>العرض المختار</span>
+                  <strong>
+                    {{ orderForm.quantity }} {{ orderForm.quantity === 1 ? 'قطعة' : (orderForm.quantity === 2 ? 'قطعتين' : 'قطع') }}
+                  </strong>
+                </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
-          <div *ngFor="let rev of content.customerReviews" class="review-card flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between mb-3">
-                <div class="flex items-center gap-2.5">
-                  <div class="reviewer-avatar">{{ rev.name?.charAt(0) || 'ع' }}</div>
+                <div class="pp-summary-rows">
+                  <div class="pp-summary-row">
+                    <span>قيمة المنتجات</span>
+                    <strong>{{ (totalAmount - shippingCost) | number:'1.0-0' }} ج.م</strong>
+                  </div>
+                  <div class="pp-summary-row">
+                    <span>الشحن والتوصيل</span>
+                    <strong class="is-success">{{ isFreeShippingActive ? 'شحن مجاني' : ((shippingCost | number:'1.0-0') + ' ج.م') }}</strong>
+                  </div>
+                </div>
+
+                <div class="pp-summary-total">
                   <div>
-                    <h3 class="text-xs sm:text-sm font-bold text-slate-900 mb-0">{{ rev.name }}</h3>
-                    <span class="text-[11px] text-slate-500">{{ rev.city || 'القاهرة' }}</span>
+                    <span>المطلوب عند الاستلام</span>
+                    <small>الدفع نقداً بعد فحص الشحنة</small>
                   </div>
+                  <span class="pp-total-value">{{ totalAmount | number:'1.0-0' }} <small>ج.م</small></span>
                 </div>
-                <div class="flex text-amber-400 text-xs gap-0.5">
-                  <i *ngFor="let star of [1,2,3,4,5]" class="bi bi-star-fill"></i>
+
+                <button type="submit" [disabled]="submitting()" class="pp-btn pp-btn-success pp-btn-lg pp-btn-block">
+                  <span *ngIf="submitting()" class="pp-spinner"></span>
+                  <i *ngIf="!submitting()" class="bi bi-shield-check"></i>
+                  <span>{{ submitting() ? 'جاري تسجيل طلبك...' : 'تأكيد الطلب — الدفع عند الاستلام' }}</span>
+                </button>
+
+                <p class="pp-summary-note">
+                  <i class="bi bi-lock-fill"></i>
+                  بياناتك آمنة ومشفرة — الدفع عند الاستلام مع ضمان استبدال معتمد
+                </p>
+
+                <div class="pp-summary-trust">
+                  <div><i class="bi bi-shield-check"></i><span>ضمان استبدال</span></div>
+                  <div><i class="bi bi-truck"></i><span>توصيل سريع</span></div>
+                  <div><i class="bi bi-cash-coin"></i><span>دفع عند استلام</span></div>
                 </div>
+
               </div>
-              <p class="text-slate-600 text-xs sm:text-sm leading-relaxed italic mb-0">
-                "{{ rev.comment }}"
-              </p>
-            </div>
-            <div
-              class="pt-2.5 border-t border-slate-100 flex items-center gap-1.5 text-emerald-600 text-[11px] font-bold mt-3">
-              <i class="bi bi-patch-check-fill"></i>
-              <span>عملية شراء مؤكدة ✓</span>
-            </div>
+            </aside>
+
           </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ─── 4.9 REVIEWS ─── -->
+    <section *ngIf="sectionsConfig.showReviews && content?.customerReviews?.length > 0" class="pp-section pp-section-soft">
+      <div class="pp-container">
+        <div class="pp-section-head">
+          <span class="pp-eyebrow pp-eyebrow-gold"><i class="bi bi-chat-quote-fill"></i> تجارب حقيقية</span>
+          <h2 class="pp-h2">آراء المشترين الذين وثقوا بنا</h2>
+          <p class="pp-section-sub">تجارب موثقة لعملاء استلموا المنتج بالفعل</p>
+        </div>
+
+        <div class="pp-reviews">
+          <article *ngFor="let rev of content.customerReviews" class="pp-review">
+            <div class="pp-review-top">
+              <span class="pp-avatar">{{ rev.name?.charAt(0) || 'ع' }}</span>
+              <div class="pp-review-who">
+                <strong>{{ rev.name }}</strong>
+                <small>{{ rev.city || 'القاهرة' }}</small>
+              </div>
+              <div class="pp-stars pp-stars-sm">
+                <i *ngFor="let star of [1,2,3,4,5]" class="bi bi-star-fill"></i>
+              </div>
+            </div>
+            <p class="pp-review-text">"{{ rev.comment }}"</p>
+            <div class="pp-review-foot"><i class="bi bi-patch-check-fill"></i> عملية شراء مؤكدة</div>
+          </article>
         </div>
       </div>
     </section>
 
-    <!-- FAQ Accordion -->
-    <section *ngIf="sectionsConfig.showFaq && content?.faq?.length > 0"
-      class="py-12 px-4 bg-white border-t border-slate-200">
-      <div class="max-w-3xl mx-auto">
-        <div class="text-center mb-8">
-          <div
-            class="inline-flex items-center gap-2 bg-blue-50 text-blue-700 text-xs font-black px-4 py-1.5 rounded-full mb-2 border border-blue-200">
-            <i class="bi bi-question-circle-fill"></i>
-            <span>الأسئلة الشائعة</span>
-          </div>
-          <h2 class="text-xl sm:text-3xl font-black text-slate-900 mb-1">كل ما يدور ببالك عن الطلب والتوصيل</h2>
-          <p class="text-slate-500 text-xs sm:text-sm">إجابات سريعة وشفافة لأهم تساؤلاتك</p>
+    <!-- ─── 4.10 FAQ ─── -->
+    <section *ngIf="sectionsConfig.showFaq && content?.faq?.length > 0" class="pp-section">
+      <div class="pp-container pp-faq-wrap">
+        <div class="pp-section-head">
+          <span class="pp-eyebrow"><i class="bi bi-question-circle-fill"></i> الأسئلة الشائعة</span>
+          <h2 class="pp-h2">كل ما يدور ببالك عن الطلب والتوصيل</h2>
+          <p class="pp-section-sub">إجابات سريعة وشفافة لأهم تساؤلاتك</p>
         </div>
 
-        <div class="flex flex-col gap-2.5">
-          <div *ngFor="let q of content.faq; let idx = index" class="faq-item">
-            <button (click)="toggleFaq(idx)" type="button" class="faq-q">
+        <div class="pp-faq">
+          <div *ngFor="let q of content.faq; let idx = index" class="pp-faq-item" [class.is-open]="activeFaqIndex === idx">
+            <button (click)="toggleFaq(idx)" type="button" class="pp-faq-q">
               <span>{{ q.question }}</span>
-              <i class="bi flex-shrink-0 text-slate-400 transition-transform"
-                [class.bi-chevron-up]="activeFaqIndex === idx" [class.bi-chevron-down]="activeFaqIndex !== idx"></i>
+              <i class="bi" [class.bi-dash]="activeFaqIndex === idx" [class.bi-plus]="activeFaqIndex !== idx"></i>
             </button>
-            <div *ngIf="activeFaqIndex === idx" class="faq-a">
-              {{ q.answer }}
-            </div>
+            <div *ngIf="activeFaqIndex === idx" class="pp-faq-a">{{ q.answer }}</div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 9. FOOTER -->
-    <footer class="bg-slate-900 border-t border-slate-800 py-8 px-4 text-center">
-      <div class="max-w-4xl mx-auto">
-        <div class="text-slate-200 font-bold text-sm mb-1">متجر {{ pageData()?.storeDisplayName || 'متجرنا' }}</div>
-        <div class="text-xs text-slate-500 mb-3">{{ pageData()?.niche || 'متجر إلكتروني' }} — مدعوم بمنصة Besnesy 🛍️
+    <!-- ─── 4.11 FOOTER ─── -->
+    <footer class="pp-footer">
+      <div class="pp-container pp-footer-inner">
+        <div class="pp-footer-brand">
+          <strong>{{ pageData()?.storeDisplayName || 'متجرنا' }}</strong>
+          <span>{{ pageData()?.niche || 'متجر إلكتروني' }} — مدعوم بمنصة Besnesy</span>
         </div>
-        <a [routerLink]="getStoreCatalogLink()"
-          class="inline-flex items-center gap-2 text-xs text-slate-400 hover:text-white transition">
+
+        <div class="pp-footer-links">
+          <span><i class="bi bi-shield-lock-fill"></i> تسوق آمن 100%</span>
+          <span><i class="bi bi-truck"></i> شحن لجميع المحافظات</span>
+          <span><i class="bi bi-patch-check-fill"></i> ضمان الاستبدال</span>
+        </div>
+
+        <a [routerLink]="getStoreCatalogLink()" class="pp-footer-cta">
           <i class="bi bi-shop"></i> تصفح باقي منتجات المتجر
         </a>
-        <div class="mt-4 pt-4 border-t border-slate-800 text-xs text-slate-600">
-          جميع الحقوق محفوظة © {{ pageData()?.storeDisplayName }} {{ currentYear }}
-        </div>
+
+        <div class="pp-footer-copy">جميع الحقوق محفوظة © {{ currentYear }} {{ pageData()?.storeDisplayName }}</div>
       </div>
     </footer>
 
-    <!-- 10. MOBILE STICKY CTA (Optimized for Mobile) -->
-    <div *ngIf="sectionsConfig.showStickyBuyButton && !isOrderSectionVisible()"
-      class="mobile-sticky-order-bar-light lg:hidden fixed bottom-0 left-0 right-0 p-3 z-40 flex items-center justify-between gap-3 animate-fadeIn">
-      <div>
-        <span class="text-[11px] text-slate-500 block">الإجمالي عند الاستلام</span>
-        <span class="text-lg font-black text-emerald-600 font-mono">{{ totalAmount | number:'1.0-0' }} ج.م</span>
+    <!-- ─── 4.12 MOBILE STICKY CTA ─── -->
+    <div *ngIf="sectionsConfig.showStickyBuyButton && !isOrderSectionVisible()" class="pp-sticky">
+      <div class="pp-sticky-price">
+        <span>الإجمالي عند الاستلام</span>
+        <strong>{{ totalAmount | number:'1.0-0' }} <small>ج.م</small></strong>
       </div>
-      <button (click)="scrollToOrderForm()"
-        class="flex-1 bg-slate-900 hover:bg-indigo-600 text-white font-black text-sm py-3 px-4 rounded-xl shadow-md flex items-center justify-center gap-2 transition cursor-pointer">
+      <button (click)="scrollToOrderForm()" type="button" class="pp-btn pp-btn-gold">
         <i class="bi bi-bag-check-fill"></i>
-        <span>اطلب الآن ⚡</span>
+        <span>اطلب الآن</span>
       </button>
     </div>
 

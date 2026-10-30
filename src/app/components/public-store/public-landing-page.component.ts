@@ -738,6 +738,10 @@ export class PublicLandingPageComponent implements OnInit, OnDestroy {
       this.orderForm.notes = `عرض الباقة: ${b.title}` + (this.orderForm.notes ? ` | ${this.orderForm.notes}` : '');
     }
 
+    // Set exact total amount and shipping cost displayed on landing page
+    this.orderForm.totalAmount = this.totalAmount;
+    this.orderForm.shippingCost = this.shippingCost;
+
     this.submitting.set(true);
     this.storefrontService.submitPublicOrder(this.subdomain, this.slug, this.orderForm).subscribe({
       next: (res) => {
