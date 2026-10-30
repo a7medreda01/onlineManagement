@@ -177,8 +177,8 @@ html {
 .store-cover-overlay {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at center, rgba(15, 23, 42, 0.4) 0%, rgba(9, 13, 22, 0.85) 100%),
-              linear-gradient(to bottom, rgba(9, 13, 22, 0.75) 0%, rgba(9, 13, 22, 0.35) 45%, rgba(9, 13, 22, 0.95) 100%);
+  background: radial-gradient(circle at center, rgba(15, 23, 42, 0.65) 0%, rgba(9, 13, 22, 0.92) 100%),
+              linear-gradient(to bottom, rgba(9, 13, 22, 0.85) 0%, rgba(9, 13, 22, 0.6) 45%, rgba(9, 13, 22, 0.98) 100%);
 }
 
 .store-cover-ambient-glow {
@@ -327,6 +327,18 @@ html {
   font-weight: 600;
 }
 
+.store-stats-strip-hero .stat-num {
+  color: #fbbf24 !important;
+  font-weight: 900 !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.store-stats-strip-hero .stat-label {
+  color: #f1f5f9 !important;
+  font-weight: 700 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
 .stat-divider {
   width: 1px;
   height: 18px;
@@ -459,6 +471,7 @@ html {
   padding: 4px 12px;
   border-radius: 9999px;
   border: 1px solid #cbd5e1;
+  white-space: nowrap;
 }
 
 .search-input-simple {
@@ -587,16 +600,19 @@ html {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.05);
   position: relative;
   width: 100%;
+  text-decoration: none !important;
+  color: inherit !important;
+  cursor: pointer;
 }
 
 .product-luxury-card:hover {
   transform: translateY(-6px);
-  border-color: #fbbf24;
-  box-shadow: 0 20px 40px -15px rgba(245, 158, 11, 0.15), 0 10px 20px -5px rgba(0, 0, 0, 0.04);
+  border-color: #f59e0b;
+  box-shadow: 0 20px 40px -15px rgba(245, 158, 11, 0.18), 0 8px 16px -4px rgba(0, 0, 0, 0.06);
 }
 
 .card-media-stage {
@@ -760,29 +776,47 @@ html {
   border-radius: 9999px;
 }
 
-/* Action Button */
-.card-buy-btn {
+/* Card Action Bar */
+.card-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.85rem;
+  margin-top: 0.25rem;
+  border-top: 1px solid #f1f5f9;
+  color: #0f172a;
+  font-size: 0.85rem;
+  font-weight: 800;
+  transition: all 0.2s ease;
+}
+
+.product-luxury-card:hover .card-action-bar {
+  color: #d97706;
+}
+
+.action-icon-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  background: #0f172a;
-  color: #ffffff !important;
-  font-size: 0.88rem;
-  font-weight: 800;
-  padding: 0.8rem 1rem;
-  border-radius: 9999px;
-  text-decoration: none;
-  transition: all 0.25s ease;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
-  width: 100%;
+  color: #64748b;
+  font-size: 0.85rem;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.card-buy-btn:hover {
-  background: #d97706;
-  color: #ffffff !important;
-  box-shadow: 0 8px 20px rgba(217, 119, 6, 0.35);
-  transform: translateY(-1px);
+.product-luxury-card:hover .action-icon-circle {
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+  transform: translateX(-4px);
+}
+
+.card-buy-btn {
+  display: none;
 }
 
 .btn-whatsapp-icon {
